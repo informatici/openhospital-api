@@ -1,4 +1,4 @@
-package org.isf;
+package org.isf.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -116,12 +116,13 @@ public class PatientController {
     		@RequestParam(value="name", defaultValue="") String name, 
     		@RequestParam(value="code", required=false) Integer code) {
         try {
+        	Patient result = null;
         	if(code != null) {
-        		return this.patientManager.getPatient(code);
+        		result = this.patientManager.getPatient(code);
         	}else if (!name.equals("")) {
-        		return this.patientManager.getPatient(name);
+        		result = this.patientManager.getPatient(name);
         	}
-        	return null;
+        	return result;
 		} catch (OHServiceException e) {
 			this.logger.error("Get patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
@@ -134,11 +135,13 @@ public class PatientController {
 
 	@DeleteMapping("/patient/{code}")
 	@DTO(PatientDTO.class)
-	public void deleteStudent(@PathVariable int code) {
+	public void deletePatient(@PathVariable int code) {
 		try {
-			Patient p = new Patient();
-			p.setCode(code);
-			this.patientManager.deletePatient(p);
+			if(this.patientManager.getPatient(code) != null) {
+				Patient p = new Patient();
+				p.setCode(code);
+				this.patientManager.deletePatient(p);
+			}
 		} catch (OHServiceException e) {
 			this.logger.error("Delete patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
