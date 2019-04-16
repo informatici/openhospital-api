@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -97,11 +98,6 @@ public class PatientController {
 	@GetMapping("/patient/{code}")
 	@DTO(PatientDTO.class)
     public Patient getPatient(@PathVariable Integer code) {
-		/*
-	}
-    		@RequestParam("name") String name, 
-    		@RequestParam("code") Integer code) {
-    		*/
         try {
         	return this.patientManager.getPatient(code);
 		} catch (OHServiceException e) {
@@ -136,4 +132,20 @@ public class PatientController {
 		}
     }
 
+	@DeleteMapping("/patient/{code}")
+	@DTO(PatientDTO.class)
+	public void deleteStudent(@PathVariable int code) {
+		try {
+			Patient p = new Patient();
+			p.setCode(code);
+			this.patientManager.deletePatient(p);
+		} catch (OHServiceException e) {
+			this.logger.error("Delete patient error:", e.getCause());
+			for(OHExceptionMessage emsg: e.getMessages()) {
+				this.logger.error(emsg.getMessage());
+			}
+			throw new ResponseStatusException(
+		          HttpStatus.INTERNAL_SERVER_ERROR, "Delete Patient failed", e);
+		}
+	}
 }
