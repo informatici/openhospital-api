@@ -24,4 +24,5 @@ HELP.md
 /nbdist/
 /.nb-gradle/
 /build/
-/oh-rest-api.log
+*.log
+/oh-rest-api.log.*.gz
