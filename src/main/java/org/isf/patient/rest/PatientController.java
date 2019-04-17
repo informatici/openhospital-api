@@ -39,13 +39,13 @@ public class PatientController {
 	@DTO(PatientDTO.class)
 	Patient newPatient(@RequestBody Patient newPatient) {
 		try {
-			this.logger.debug(newPatient.toString());
-			this.patientManager.newPatient(newPatient);
+			logger.debug(newPatient.toString());
+			patientManager.newPatient(newPatient);
 			return newPatient;
 		} catch (OHServiceException e) {
-			this.logger.error("New patient error:", e.getMessages());
+			logger.error("New patient error:", e.getMessages());
 			for(OHExceptionMessage emsg: e.getMessages()) {
-				this.logger.error(emsg.getMessage());
+				logger.error(emsg.getMessage());
 			}
 			throw new ResponseStatusException(
 		          HttpStatus.INTERNAL_SERVER_ERROR, "New Patient failed: "+ e.getMessages()
@@ -61,11 +61,11 @@ public class PatientController {
 	@DTO(PatientDTO.class)
 	Patient updatePatient(@PathVariable String userId, @RequestBody Patient patient) {
 		try {
-			this.logger.debug(patient.toString());
-			this.patientManager.updatePatient(patient);
+			logger.debug(patient.toString());
+			patientManager.updatePatient(patient);
 			return patient;
 		} catch (OHServiceException e) {
-			this.logger.error("Update patient error:", e);
+			logger.error("Update patient error:", e);
 			for(OHExceptionMessage emsg: e.getMessages()) {
 				this.logger.error(emsg.getMessage());
 			}
@@ -84,9 +84,9 @@ public class PatientController {
     		@RequestParam(value="start", required=false) Integer start,
     		@RequestParam(value="hits", required=false) Integer hits) {
         try {
-        	return this.patientManager.getPatient();
+        	return patientManager.getPatient();
 		} catch (OHServiceException e) {
-			this.logger.error("Get patient error:", e.getCause());
+			logger.error("Get patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
 				this.logger.error(emsg.getMessage());
 			}
@@ -99,11 +99,11 @@ public class PatientController {
 	@DTO(PatientDTO.class)
     public Patient getPatient(@PathVariable Integer code) {
         try {
-        	return this.patientManager.getPatient(code);
+        	return patientManager.getPatient(code);
 		} catch (OHServiceException e) {
-			this.logger.error("Get patient error:", e.getCause());
+			logger.error("Get patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
-				this.logger.error(emsg.getMessage());
+				logger.error(emsg.getMessage());
 			}
 			throw new ResponseStatusException(
 		          HttpStatus.INTERNAL_SERVER_ERROR, "Get Patient failed", e);
@@ -118,15 +118,15 @@ public class PatientController {
         try {
         	Patient result = null;
         	if(code != null) {
-        		result = this.patientManager.getPatient(code);
+        		result = patientManager.getPatient(code);
         	}else if (!name.equals("")) {
-        		result = this.patientManager.getPatient(name);
+        		result = patientManager.getPatient(name);
         	}
         	return result;
 		} catch (OHServiceException e) {
-			this.logger.error("Get patient error:", e.getCause());
+			logger.error("Get patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
-				this.logger.error(emsg.getMessage());
+				logger.error(emsg.getMessage());
 			}
 			throw new ResponseStatusException(
 		          HttpStatus.INTERNAL_SERVER_ERROR, "Get Patient failed", e);
@@ -137,15 +137,15 @@ public class PatientController {
 	@DTO(PatientDTO.class)
 	public void deletePatient(@PathVariable int code) {
 		try {
-			if(this.patientManager.getPatient(code) != null) {
+			if(patientManager.getPatient(code) != null) {
 				Patient p = new Patient();
 				p.setCode(code);
-				this.patientManager.deletePatient(p);
+				patientManager.deletePatient(p);
 			}
 		} catch (OHServiceException e) {
-			this.logger.error("Delete patient error:", e.getCause());
+			logger.error("Delete patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
-				this.logger.error(emsg.getMessage());
+				logger.error(emsg.getMessage());
 			}
 			throw new ResponseStatusException(
 		          HttpStatus.INTERNAL_SERVER_ERROR, "Delete Patient failed", e);
