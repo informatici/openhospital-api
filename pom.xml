@@ -117,9 +117,95 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
-    
+	<profiles>
+	    <profile>
+	        <id>docker</id>
+	        <build>
+	            <plugins>
+	                <plugin>
+	                    <groupId>com.spotify</groupId>
+	                    <artifactId>dockerfile-maven-plugin</artifactId>
+	                    <version>1.4.10</version>
+	                    <configuration>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<repository>informatici/${project.artifactId}</repository>
+				<tag>${project.version}</tag>
+				<buildArgs>
+			      <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+			    </buildArgs>
+			    <dockerfile>src/main/docker/Dockerfile</dockerfile>
+			</configuration>
+	                </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	    <profile>
+	        <id>release</id>
+	        <build>
+	            <plugins>
+	                <plugin>
+	                    <groupId>org.apache.maven.plugins</groupId>
+	                    <artifactId>maven-source-plugin</artifactId>
+						<executions>
+						    <execution>
+						        <id>attach-sources</id>
+						        <goals>
+						            <goal>jar-no-fork</goal>
+						        </goals>
+						    </execution>
+						</executions>
+	                </plugin>
+	                <plugin>
+	                    <groupId>org.apache.maven.plugins</groupId>
+	                    <artifactId>maven-javadoc-plugin</artifactId>
+	                    <executions>
+	                        <execution>
+	                            <id>attach-javadocs</id>
+	                            <goals>
+	                                <goal>jar</goal>
+	                            </goals>
+	                            <configuration>
+	                                <additionalparam>-Xdoclint:none</additionalparam>
+	                                <skip>true</skip>
+	                            </configuration>
+	                        </execution>
+	                    </executions>
+	                </plugin>
+	                <plugin>
+	                    <!-- explicitly define maven-deploy-plugin after other to force exec order -->
+	                    <artifactId>maven-deploy-plugin</artifactId>
+	                    <executions>
+	                        <execution>
+	                            <id>deploy</id>
+	                            <phase>deploy</phase>
+	                            <goals>
+	                                <goal>deploy</goal>
+	                            </goals>
+	                        </execution>
+	                    </executions>
+	                </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+    </profiles>
     
 </project>
