@@ -23,19 +23,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.annotations.Api;
+
+
 @RestController
+@Api(value="/patients",produces ="application/json")
 public class PatientController {
 
+	private static final String DEFAULT_PAGE_SIZE = "80";
+	
 	@Autowired
 	protected PatientBrowserManager patientManager;
+	
 	private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 	
 	public PatientController(PatientBrowserManager patientManager) {
-		super();
 		this.patientManager = patientManager;
 	}
 
-	@PostMapping("/patient")
+	@PostMapping(value = "/patients", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
 	Patient newPatient(@RequestBody Patient newPatient) {
 		try {
@@ -57,7 +63,7 @@ public class PatientController {
 	    }
 	}
 	
-	@PutMapping("/patient/{id}")
+	@PutMapping(value = "/patients/{id}", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
 	Patient updatePatient(@PathVariable String userId, @RequestBody Patient patient) {
 		try {
@@ -78,13 +84,13 @@ public class PatientController {
 	    }
 	}
 	
-	@GetMapping("/patient")
+	@GetMapping(value = "/patients", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
     public List<Patient> getPatients(
-    		@RequestParam(value="start", required=false) Integer start,
-    		@RequestParam(value="hits", required=false) Integer hits) {
+    		@RequestParam(value="page", required=false, defaultValue="0") Integer page,
+    		@RequestParam(value="size", required=false, defaultValue=DEFAULT_PAGE_SIZE) Integer size) {
         try {
-        	return patientManager.getPatient();
+        	return patientManager.getPatient(page, size);
 		} catch (OHServiceException e) {
 			logger.error("Get patient error:", e.getCause());
 			for(OHExceptionMessage emsg: e.getMessages()) {
@@ -95,7 +101,7 @@ public class PatientController {
 		}
     }
 	
-	@GetMapping("/patient/{code}")
+	@GetMapping(value = "/patient/{code}", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
     public Patient getPatient(@PathVariable Integer code) {
         try {
@@ -110,7 +116,7 @@ public class PatientController {
 		}
     }
 
-	@GetMapping("/patient/search")
+	@GetMapping(value = "/patients/search", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
     public Patient searchPatient(
     		@RequestParam(value="name", defaultValue="") String name, 
@@ -133,7 +139,7 @@ public class PatientController {
 		}
     }
 
-	@DeleteMapping("/patient/{code}")
+	@DeleteMapping(value = "/patients/{code}", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
 	public void deletePatient(@PathVariable int code) {
 		try {
