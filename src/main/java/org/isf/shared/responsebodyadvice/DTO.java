@@ -1,4 +1,4 @@
-package org.isf.responsebodyadvice;
+package org.isf.shared.responsebodyadvice;
 
 
 import java.lang.annotation.ElementType;
