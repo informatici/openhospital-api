@@ -1,11 +1,6 @@
 package org.isf.config;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,16 +12,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.RequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
-import org.springframework.util.StringUtils;
+
 
 @Configuration
 @EnableWebSecurity
@@ -68,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticationEntryPoint(restAuthenticationEntryPoint)
             .and()
             .authorizeRequests()
+            .antMatchers("/auth/**").permitAll()
             .antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("admin")
             .antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("admin")
             .antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("admin")
@@ -78,12 +70,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             //.antMatchers("/admin/**").hasAuthority("admin")
             .and()
           .formLogin()
+          	.loginPage("/auth/login")
             .successHandler(successHandler())
             .failureHandler(failureHandler())
             .and()
             .httpBasic()
             .and()
-          .logout().permitAll();
+          .logout()
+          .logoutUrl("/auth/logout")
+          .permitAll();
     }
     
     
@@ -94,33 +89,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Bean
 	public SimpleUrlAuthenticationSuccessHandler successHandler() {
-    	return new SimpleUrlAuthenticationSuccessHandler() {
-    		private RequestCache requestCache = new HttpSessionRequestCache();
-    		 
-    	    @Override
-    	    public void onAuthenticationSuccess(
-    	      HttpServletRequest request,
-    	      HttpServletResponse response, 
-    	      Authentication authentication) 
-    	      throws ServletException, IOException {
-    	  
-    	        SavedRequest savedRequest
-    	          = requestCache.getRequest(request, response);
-    	 
-    	        if (savedRequest == null) {
-    	            clearAuthenticationAttributes(request);
-    	            return;
-    	        }
-    	        String targetUrlParam = getTargetUrlParameter();
-    	        if (isAlwaysUseDefaultTargetUrl()
-    	          || (targetUrlParam != null
-    	          && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
-    	            requestCache.removeRequest(request, response);
-    	            clearAuthenticationAttributes(request);
-    	            return;
-    	        }
-    	        clearAuthenticationAttributes(request);
-    	    }
-    	};
+    	return new OHSimpleUrlAuthenticationSuccessHandler();
     }
 }
