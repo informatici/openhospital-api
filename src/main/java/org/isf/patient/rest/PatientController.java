@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.responsebodyadvice.DTO;
+import org.isf.shared.responsebodyadvice.DTO;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -101,7 +101,7 @@ public class PatientController {
 		}
     }
 	
-	@GetMapping(value = "/patient/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@GetMapping(value = "/patients/{code}", produces = "application/vnd.ohapi.app-v1+json")
 	@DTO(PatientDTO.class)
     public Patient getPatient(@PathVariable Integer code) {
         try {
