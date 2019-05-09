@@ -15,7 +15,7 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
 
 	@ExceptionHandler(value = { OHServiceException.class })
 	protected ResponseEntity<Object> handleOHServiceException(OHServiceException ex) {
-		return buildResponseEntity(new OHAPIError(HttpStatus.BAD_REQUEST, ex));
+		return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
 	}
 
 	@ExceptionHandler(value = { OHAPIException.class })

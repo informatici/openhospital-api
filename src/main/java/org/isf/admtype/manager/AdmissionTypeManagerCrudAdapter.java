@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.shared.manager.BasicManager;
+import org.isf.shared.manager.CRUDManager;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AdmissionTypeManagerCrudAdapter implements BasicManager<AdmissionType, String> {
+public class AdmissionTypeManagerCrudAdapter implements CRUDManager<AdmissionType, String> {
 	@Autowired
 	protected AdmissionTypeBrowserManager manager;
 	
@@ -38,8 +38,8 @@ public class AdmissionTypeManagerCrudAdapter implements BasicManager<AdmissionTy
 	}
 
 	@Override
-	public AdmissionType get(String key) throws OHServiceException {
-		throw new NotImplementedException("Not implemented");
+	public AdmissionType get(String code) throws OHServiceException {
+		return manager.getAdmissionType(code);
 	}
 
 	@Override

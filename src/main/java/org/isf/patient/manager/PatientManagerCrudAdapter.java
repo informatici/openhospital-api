@@ -3,12 +3,12 @@ package org.isf.patient.manager;
 import java.util.List;
 
 import org.isf.patient.model.Patient;
-import org.isf.shared.manager.BasicManager;
+import org.isf.shared.manager.CRUDManager;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PatientManagerCrudAdapter 
-	implements BasicManager<Patient, String> {
+	implements CRUDManager<Patient, String> {
 	@Autowired
 	protected PatientBrowserManager manager;
 	@Override
