@@ -2,8 +2,8 @@ package org.isf.shared.responsebodyadvice;
 
 import java.util.Collection;
 
+import org.isf.shared.controller.SuccessWrapperResponseDto;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -18,29 +18,29 @@ import org.springframework.web.servlet.mvc.method.annotation.AbstractMappingJack
 @ControllerAdvice
 public class DtoMapperResponseBodyAdvice extends AbstractMappingJacksonResponseBodyAdvice {
 
-    //@Autowired
-    //private ModelMapper modelMapper;
-    private static final ModelMapper modelMapper = new ModelMapper();
+	// @Autowired
+	// private ModelMapper modelMapper;
+	private static final ModelMapper modelMapper = new ModelMapper();
 
-    @Override
+	@Override
 	protected void beforeBodyWriteInternal(MappingJacksonValue bodyContainer, MediaType contentType,
 			MethodParameter returnType, ServerHttpRequest request, ServerHttpResponse response) {
 		// TODO Auto-generated method stub
-        DTO ann = returnType.getMethodAnnotation(DTO.class);
-        Assert.state(ann != null, "No Dto annotation");
+		DTO ann = returnType.getMethodAnnotation(DTO.class);
+		Assert.state(ann != null, "No Dto annotation");
 
-        Class<?> dtoType = ann.value();
-        Object value = bodyContainer.getValue();
-        Object returnValue;
+		Class<?> dtoType = ann.value();
+		Object value = bodyContainer.getValue();
+		SuccessWrapperResponseDto<?> returnValue;
 
-        if (value instanceof Page) {
-            returnValue = ((Page<?>) value).map(it -> modelMapper.map(it, dtoType));
-        } else if (value instanceof Collection) {
-            returnValue = ((Collection<?>) value).stream().map(it -> modelMapper.map(it, dtoType));
-        } else {
-            returnValue = modelMapper.map(value, dtoType);
-        }
-        bodyContainer.setValue(returnValue);
+		if (value instanceof Page) {
+			returnValue = new SuccessWrapperResponseDto<>(((Page<?>) value).map(it -> modelMapper.map(it, dtoType)));
+		} else if (value instanceof Collection) {
+			returnValue = new SuccessWrapperResponseDto<>(((Collection<?>) value).stream().map(it -> modelMapper.map(it, dtoType)));
+		} else {
+			returnValue = new SuccessWrapperResponseDto<>(modelMapper.map(value, dtoType));
+		}
+		bodyContainer.setValue(returnValue);
 	}
 
 	@Override

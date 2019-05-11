@@ -7,7 +7,6 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 public class PatientDTO {
-	@NotNull
 	private Integer code;
 
 	@NotNull
@@ -16,9 +15,9 @@ public class PatientDTO {
 	@NotNull
 	private String secondName;
 
-	@NotNull
+	@NotNull(message = "{error.patient.name.null}")
 	private String name;
-	
+
 	private Date birthDate;
 
 	@NotNull
@@ -29,47 +28,47 @@ public class PatientDTO {
 
 	@NotNull
 	private char sex;
-	
+
 	private String address;
 
 	@NotNull
 	private String city;
-	
+
 	private String nextKin;
-	
+
 	private String telephone;
-	
+
 	private String note;
 
 	@NotNull
 	private String mother_name; // mother's name
-	
+
 	private char mother = ' '; // D=dead, A=alive
 
 	@NotNull
 	private String father_name; // father's name
-	
+
 	private char father = ' '; // D=dead, A=alive
 
 	@NotNull
 	private String bloodType; // (0-/+, A-/+ , B-/+, AB-/+)
-	
+
 	private char hasInsurance = ' '; // Y=Yes, N=no
-	
+
 	private char parentTogether = ' '; // parents together: Y or N
-	
+
 	private String taxCode;
-	
+
 	private float height;
-	
+
 	private float weight;
-	
+
 	private int lock;
-	
+
 	private Blob photo;
-	
+
 	private Image photoImage;
-	
+
 	private int hashCode = 0;
 
 	public Integer getCode() {
@@ -287,6 +286,5 @@ public class PatientDTO {
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-	
-	
+
 }
