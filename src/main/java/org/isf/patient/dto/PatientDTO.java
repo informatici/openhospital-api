@@ -1,10 +1,7 @@
 package org.isf.patient.dto;
 
-import java.awt.Image;
-import java.sql.Blob;
-import java.util.Date;
-
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class PatientDTO {
 	@NotNull
@@ -66,10 +63,8 @@ public class PatientDTO {
 	
 	private int lock;
 	
-	private Blob photo;
-	
-	private Image photoImage;
-	
+	private byte[] blobPhoto;
+
 	private int hashCode = 0;
 
 	public Integer getCode() {
@@ -264,22 +259,6 @@ public class PatientDTO {
 		this.lock = lock;
 	}
 
-	public Blob getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(Blob photo) {
-		this.photo = photo;
-	}
-
-	public Image getPhotoImage() {
-		return photoImage;
-	}
-
-	public void setPhotoImage(Image photoImage) {
-		this.photoImage = photoImage;
-	}
-
 	public int getHashCode() {
 		return hashCode;
 	}
@@ -287,6 +266,12 @@ public class PatientDTO {
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-	
-	
+
+    public byte[] getBlobPhoto() {
+        return blobPhoto;
+    }
+
+    public void setBlobPhoto(byte[] photo) {
+        this.blobPhoto = photo;
+    }
 }
