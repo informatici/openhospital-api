@@ -79,7 +79,6 @@ public class PatientController {
 			@RequestParam(value="page", required=false, defaultValue="0") Integer page,
 			@RequestParam(value="size", required=false, defaultValue=DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
         logger.info("Get patients page:"  +  page + " size:" + size);
-        //TODO pagination not working
 	    ArrayList<Patient> patients = patientManager.getPatient(page, size);
         List<PatientDTO> patientDTOS = patients.stream().map(it -> getObjectMapper().map(it, PatientDTO.class)).collect(Collectors.toList());
         if(patientDTOS.size() == 0){
