@@ -1,6 +1,7 @@
 package org.isf.patient.rest;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -32,7 +33,7 @@ import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 
 
 @RestController
-@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class PatientController {
 
 	private static final String DEFAULT_PAGE_SIZE = "80";
