@@ -130,6 +130,6 @@ public class PatientController {
         if (!isDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
         }
-        return (ResponseEntity) ResponseEntity.ok();
+        return (ResponseEntity) ResponseEntity.ok(isDeleted);
     }
 }
