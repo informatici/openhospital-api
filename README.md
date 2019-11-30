@@ -18,7 +18,16 @@ For the moment, to build this project you should
         cd openhospital-api
         mvn clean install -DskipTests=true
 
+ 3. set rsc/database.properties
+ 
+        DB can be created with `docker-compose up` from `openhospital-core` or using a dedicated MySQL server
 
- [openhospital]: https://www.open-hospital.org/
- [core]: https://github.com/informatici/openhospital/openhospital-core
+ 4. start openhospital-api
+ 
+        java -jar openhospital-api-<version>.jar
+
+Service available on localhost:8080
+
+[openhospital]: https://www.open-hospital.org/
+[core]: https://github.com/informatici/openhospital/openhospital-core
 
