@@ -65,10 +65,12 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(patient.getCode());
 	}
 
-	@PutMapping(value = "/patients/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Integer> updatePatient(@PathVariable String userId, @RequestBody PatientDTO patient) throws OHServiceException {
-        logger.info("Update patient "  +  patient.getFirstName() + " " + patient.getSecondName());
-		boolean isUpdated = patientManager.updatePatient(getObjectMapper().map(patient, Patient.class));
+	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Integer> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
+        logger.info("Update patient code:"  +  code);
+        Patient patient = getObjectMapper().map(updatePatient, Patient.class);
+        patient.setCode(code);
+        boolean isUpdated = patientManager.updatePatient(patient);
         if(!isUpdated){
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
         }
