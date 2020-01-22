@@ -5,7 +5,7 @@ jdk:
 before_install:
  - git clone https://github.com/informatici/openhospital-core.git --branch OP-102_master-refactoring-for-api
  - cd openhospital-core
- - mvn clean install -DskipTests=true &>/dev/null
+ - mvn clean install -DskipTests=true
  - cd -
 install: true
 script: 
