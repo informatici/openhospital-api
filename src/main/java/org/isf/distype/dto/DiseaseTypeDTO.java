@@ -1,14 +1,15 @@
-package org.isf.admtype.dto;
+package org.isf.distype.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "Class representing an admission type")
-public class AdmissionTypeDTO {
+@ApiModel(description = "Class representing a disease type")
+public class DiseaseTypeDTO {
 
+    @ApiModelProperty(notes = "Code", example = "", position = 1)
     private String code;
 
-    @ApiModelProperty(notes = "Description", example = "", position = 1)
+    @ApiModelProperty(notes = "Description", example = "", position = 2)
     private String description;
 
     public String getCode() {
