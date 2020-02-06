@@ -34,9 +34,9 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
     @Autowired
     private MessageSource messageSource;
 
-    @ExceptionHandler(value = {OHServiceValidationException.class})
+    @ExceptionHandler(value = {OHDataValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ValidationErrorDto handleOHServiceValidationException(OHServiceValidationException ex, Locale locale) {
+    protected ValidationErrorDto handleOHServiceValidationException(OHDataValidationException ex, Locale locale) {
         final Map<String, Object> errors = ex.getMessages().stream().collect(Collectors.toMap(OHExceptionMessage::getMessage, e -> messageSource.getMessage(e.getMessage(), null, locale)));
         return new ValidationErrorDto(ResponseCode.VALIDATION_ERROR.getValue(), errors);
     }
@@ -61,9 +61,9 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
         return new FailureDto(ResponseCode.INVALID_SQL_ERROR, message);
     }
 
-    @ExceptionHandler(value = {OHServiceOperationNotAllowedException.class})
+    @ExceptionHandler(value = {OHOperationNotAllowedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected ValidationErrorDto handleOHServiceOperationNotAllowedException(OHServiceOperationNotAllowedException ex, Locale locale) {
+    protected ValidationErrorDto handleOHServiceOperationNotAllowedException(OHOperationNotAllowedException ex, Locale locale) {
         final Map<String, Object> errors = ex.getMessages().stream().collect(Collectors.toMap(OHExceptionMessage::getMessage, e -> messageSource.getMessage(e.getMessage(), null, locale)));
         return new ValidationErrorDto(ResponseCode.OPERATION_NOT_ALLOWED_ERROR.getValue(), errors);
     }
