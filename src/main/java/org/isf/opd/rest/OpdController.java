@@ -15,9 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 
@@ -45,6 +50,18 @@ public class OpdController {
             throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(lastOpd.getCode());
+    }
+
+    @GetMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<OpdDTO>> getOpds(int patientcode) throws OHServiceException {
+        logger.info("Get opds");
+        ArrayList<Opd> opds = opdManager.getOpdList(patientcode);
+        List<OpdDTO> opdDTOS = opds.stream().map(it -> getObjectMapper().map(it, OpdDTO.class)).collect(Collectors.toList());
+        if (opdDTOS.size() == 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOS);
+        } else {
+            return ResponseEntity.ok(opdDTOS);
+        }
     }
 
 }
