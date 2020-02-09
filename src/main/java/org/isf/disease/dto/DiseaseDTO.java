@@ -16,7 +16,7 @@ public class DiseaseDTO {
     @ApiModelProperty(notes = "Disease type", position = 3)
     private DiseaseTypeDTO diseaseType;
 
-    private Integer lock;
+    private int lock;
 
     @ApiModelProperty(notes = "Opd include", position = 4)
     private boolean opdInclude;
@@ -51,11 +51,11 @@ public class DiseaseDTO {
         this.diseaseType = diseaseType;
     }
 
-    public Integer getLock() {
+    public int getLock() {
         return lock;
     }
 
-    public void setLock(Integer lock) {
+    public void setLock(int lock) {
         this.lock = lock;
     }
 

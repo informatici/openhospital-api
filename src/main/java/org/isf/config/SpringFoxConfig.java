@@ -35,6 +35,8 @@ public class SpringFoxConfig {
         return SecurityContext.builder()
                 .securityReferences(Arrays.asList(basicAuthReference()))
                 .forPaths(PathSelectors.ant("/patients/**"))
+                //.forPaths(PathSelectors.ant("/diseases/**"))
+                //.forPaths(PathSelectors.ant("/opds/**"))
                 .build();
     }
 

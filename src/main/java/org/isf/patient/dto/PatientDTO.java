@@ -2,7 +2,6 @@ package org.isf.patient.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.eclipse.jdt.core.dom.NullLiteral;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
