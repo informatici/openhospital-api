@@ -35,21 +35,9 @@ public class DiseaseController {
         this.diseaseManager = diseaseBrowserManager;
     }
 
-    @GetMapping(value = "/diseases/diseasesOpd", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DiseaseDTO>> getDiseaseOpd() throws OHServiceException {
-        logger.info("Get DiseaseOpd");
-        ArrayList<Disease> diseases = diseaseManager.getDiseaseOpd();
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
-        if (diseaseDTOS.size() == 0) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
-        } else {
-            return ResponseEntity.ok(diseaseDTOS);
-        }
-    }
-
-    @GetMapping(value = "/diseases/diseasesAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseasesAll", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseAll() throws OHServiceException {
-        logger.info("Get DiseaseAll");
+        logger.info("getDiseaseAll");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseAll();
         List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -59,9 +47,21 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/diseasesOpd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DiseaseDTO>> getDiseaseOpd(@PathVariable String typecode) throws OHServiceException {
-        logger.info("Get DiseaseAll");
+    @GetMapping(value = "/diseasesOpd", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DiseaseDTO>> getDiseaseOpd() throws OHServiceException {
+        logger.info("getDiseaseOpd");
+        ArrayList<Disease> diseases = diseaseManager.getDiseaseOpd();
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        if (diseaseDTOS.size() == 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
+        } else {
+            return ResponseEntity.ok(diseaseDTOS);
+        }
+    }
+
+    @GetMapping(value = "/diseasesOpd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DiseaseDTO>> getDiseaseOpdByTypeCode(@PathVariable String typecode) throws OHServiceException {
+        logger.info("getDiseaseOpdByTypeCode");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseOpd(typecode);
         List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -71,9 +71,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/diseaseIpdOut", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseasesIpdOut", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOut() throws OHServiceException {
-        logger.info("Get DiseaseAll");
+        logger.info("getDiseaseIpdOut");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut();
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -83,9 +83,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/diseaseIpdOut/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOut(@PathVariable String typecode) throws OHServiceException {
-        logger.info("Get DiseaseAll");
+    @GetMapping(value = "/diseasesIpdOut/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOutByTypeCode(@PathVariable String typecode) throws OHServiceException {
+        logger.info("getDiseaseIpdOutByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut(typecode);
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -95,9 +95,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/diseaseIpdIn", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseasesIpdIn", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdIn() throws OHServiceException {
-        logger.info("Get DiseaseAll");
+        logger.info("getDiseaseIpdIn");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn();
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -107,9 +107,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/diseaseIpdIn/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdIn(@PathVariable String typecode) throws OHServiceException {
-        logger.info("Get DiseaseAll");
+    @GetMapping(value = "/diseasesIpdIn/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdInByTypeCode(@PathVariable String typecode) throws OHServiceException {
+        logger.info("getDiseaseIpdInByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn(typecode);
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -119,9 +119,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/disease", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDisease() throws OHServiceException {
-        logger.info("Get DiseaseAll");
+        logger.info("getDisease");
         ArrayList<Disease> diseases = diseaseManager.getDisease();
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -131,9 +131,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/disease/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<DiseaseDTO>> getDisease(@PathVariable String typecode) throws OHServiceException {
-        logger.info("Get DiseaseAll");
+    @GetMapping(value = "/diseases/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DiseaseDTO>> getDiseaseByTypeCode(@PathVariable String typecode) throws OHServiceException {
+        logger.info("getDiseaseByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDisease(typecode);
         List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
@@ -143,9 +143,9 @@ public class DiseaseController {
         }
     }
 
-    @GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<DiseaseDTO> getDisease(@PathVariable int code) throws OHServiceException {
-        logger.info("Get DiseaseAll");
+    @GetMapping(value = "/diseases/disease/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable int code) throws OHServiceException {
+        logger.info("getDiseaseByCode");
         Disease disease = diseaseManager.getDiseaseByCode(code);
         if (disease == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
