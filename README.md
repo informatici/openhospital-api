@@ -1,4 +1,4 @@
-# Open Hospital API [![Build Status](https://travis-ci.org/informatici/openhospital-api.svg?branch=master)](https://travis-ci.org/informatici/openhospital-api)
+# Open Hospital API [![Build Status](https://travis-ci.org/informatici/openhospital-api.svg?branch=develop)](https://travis-ci.org/informatici/openhospital-api)
 
 This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
 
