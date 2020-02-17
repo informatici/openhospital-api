@@ -15,7 +15,7 @@ public class PatientDTO {
 	@NotNull
 	private String secondName;
 
-	@NotNull(message = "{error.patient.name.null}")
+	@NotNull
 	private String name;
 
 	private Date birthDate;
