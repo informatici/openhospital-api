@@ -17,6 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -48,37 +53,56 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-	
+
+	@Bean
+	public CorsFilter corsFilter() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		CorsConfiguration config = new CorsConfiguration();
+		config.addAllowedHeader("*");
+		// config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
+		config.setAllowedMethods(Arrays.asList("*"));
+		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+		config.setAllowCredentials(true);
+		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setMaxAge(3600L);
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
+	}
+
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().disable()
-          .authorizeRequests()
+        http.cors()
+			.and()
+			.csrf()
+				.disable()
+					.authorizeRequests()
             .and()
             .exceptionHandling()
-            //.accessDeniedHandler(accessDeniedHandler)
-            .authenticationEntryPoint(restAuthenticationEntryPoint)
+            	//.accessDeniedHandler(accessDeniedHandler)
+            	.authenticationEntryPoint(restAuthenticationEntryPoint)
             .and()
             .authorizeRequests()
-            .antMatchers("/auth/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("admin")
-            .antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("admin")
-            .antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("admin")
-            .antMatchers(HttpMethod.PATCH, "/patients/**").hasAuthority("admin")
-            .antMatchers(HttpMethod.GET, "/patients/**").hasAnyAuthority("admin", "guest")
-            //.antMatchers("/auth-needed/**").authenticated()
-            //.antMatchers("/noauth-public/**").permitAll()
-            //.antMatchers("/admin/**").hasAuthority("admin")
+            	.antMatchers("/auth/**").permitAll()
+            	.antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.PATCH, "/patients/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.GET, "/patients/**").hasAnyAuthority("admin", "guest")
+            	//.antMatchers("/auth-needed/**").authenticated()
+            	//.antMatchers("/noauth-public/**").permitAll()
+            	//.antMatchers("/admin/**").hasAuthority("admin")
             .and()
-          .formLogin()
-          	.loginPage("/auth/login")
-            .successHandler(successHandler())
-            .failureHandler(failureHandler())
+          	.formLogin()
+          		.loginPage("/auth/login")
+            		.successHandler(successHandler())
+            		.failureHandler(failureHandler())
             .and()
             .httpBasic()
             .and()
-          .logout()
-          .logoutUrl("/auth/logout")
-          .permitAll();
+          	.logout()
+				.logoutUrl("/auth/logout")
+          			.permitAll();
     }
     
     

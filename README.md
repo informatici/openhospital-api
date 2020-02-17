@@ -17,6 +17,10 @@ For the moment, to build this project you should
         git clone https://github.com/informatici/openhospital-api
         cd openhospital-api
         mvn clean install -DskipTests=true
+        
+ 3. call services
+ URL base: localhost:8080/oh-api/patients
+ URL swagger: http://localhost:8080/oh-api/swagger-ui.html
 
  3. set rsc/database.properties
  
