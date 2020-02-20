@@ -3,7 +3,7 @@ jdk:
  - openjdk8
 
 before_install:
- - git clone https://github.com/informatici/openhospital-core.git --branch OP-102_master-refactoring-for-api
+ - git clone https://github.com/informatici/openhospital-core.git --branch OP-127-improve-exceptions-handling
  - cd openhospital-core
  - mvn clean install -DskipTests=true
  - cd -
