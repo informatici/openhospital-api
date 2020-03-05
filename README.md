@@ -6,7 +6,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
 
 For the moment, to build this project you should 
 
- 1. fetch and build the `OP-102_master-refactoring-for-api` branch of the [core] project
+ 1. fetch and build the [core] project
     
         git clone https://github.com/informatici/openhospital-core.git
         cd openhospital-core
