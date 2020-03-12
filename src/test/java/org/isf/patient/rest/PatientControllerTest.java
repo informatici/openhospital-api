@@ -6,11 +6,8 @@ package org.isf.patient.rest;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -18,10 +15,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.lang.reflect.Method;
+import java.util.Optional;
+
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
+import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.OHModelMapper;
 import org.isf.utils.exception.OHException;
 import org.junit.Before;
@@ -34,6 +36,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -116,7 +122,7 @@ public class PatientControllerTest {
 		String request = "/patients";
 		PatientDTO newPatient =  new PatientDTO();
 		
-		//when(patientBrowserManagerMock.getPatient(any(String.class))).thenReturn(null);
+		when(patientBrowserManagerMock.getPatient(any(String.class))).thenReturn(null);
 		
 		this.mockMvc
 			.perform(post(request).content(newPatient.getBlobPhoto()))
@@ -231,6 +237,8 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_Exception() throws Exception {
+		//TODO
+		logger.debug(" ---- > Having issues capturoing the exception returned");
 		
 		Integer code= 12345;
 		String request = "/patients/{code}";
@@ -241,18 +249,24 @@ public class PatientControllerTest {
 		
 		when(patientBrowserManagerMock.updatePatient(any(Patient.class))).thenReturn(false);
 					
-		this.mockMvc
-		.perform(
-				put(request, code)
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
-		.andDo(print())
-		.andExpect(status().is4xxClientError())
-		.andExpect(status().isBadRequest())
-		.andExpect(content().string(containsString("")));
-		//.andExpect(status().isNoContent());  //TODO is not better Not Found than an exception as well for the GET than Non_Content?
-
+		this.mockMvc = MockMvcBuilders.standaloneSetup(patientBrowserManagerMock)
+                .setControllerAdvice(withExceptionControllerAdvice())
+               .build();
 		
+		MvcResult result = this.mockMvc
+				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
+						.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
+				//.andDo(print()).andExpect(status().is4xxClientError()).andExpect(status().isBadRequest())
+				.andDo(print()).andExpect(status().is4xxClientError()).andExpect(status().isNotFound())
+				// .andExpect(status().isNoContent()); //TODO is not better Not Found than an
+				// exception as well for the GET than Non_Content?
+				.andExpect(content().string(containsString(""))).andReturn();
+		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
+		
+		logger.debug("oHAPIException: {}", oHAPIException);
+		
+		//oHAPIException.ifPresent( (se) -> assertThat(se, is(notNullValue())));
+		//oHAPIException.ifPresent( (se) -> assertThat(se, is(instanceOf(OHAPIException.class))));
 	}
 	
 	
@@ -308,6 +322,23 @@ public class PatientControllerTest {
 			return null;
 		}
 
+	}
+	
+	
+	private ExceptionHandlerExceptionResolver withExceptionControllerAdvice() {
+	    final ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
+	        @Override
+	        protected ServletInvocableHandlerMethod getExceptionHandlerMethod(final HandlerMethod handlerMethod,
+	            final Exception exception) {
+	            Method method = new ExceptionHandlerMethodResolver(OHResponseEntityExceptionHandler.class).resolveMethod(exception);
+	            if (method != null) {
+	                return new ServletInvocableHandlerMethod(new OHResponseEntityExceptionHandler(), method);
+	            }
+	            return super.getExceptionHandlerMethod(handlerMethod, exception);
+	        }
+	    };
+	    exceptionResolver.afterPropertiesSet();
+	    return exceptionResolver;
 	}
 	
 }
