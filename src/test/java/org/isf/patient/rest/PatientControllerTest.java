@@ -274,7 +274,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(java.lang.Integer, java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetPatients() {
+	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() {
 		fail("Not yet implemented");
 	}
 
@@ -282,7 +282,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
 	 */
 	@Test
-	public void testGetPatient() {
+	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() {
 		fail("Not yet implemented");
 	}
 
@@ -290,7 +290,40 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
 	 */
 	@Test
-	public void testSearchPatient() {
+	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() {
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 */
+	@Test
+	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() {
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 */
+	@Test
+	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() {
+		fail("Not yet implemented");
+	}
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 */
+	@Test
+	public void when_get_patients_search_without_name_and_witout_code_then_response_null_and_NO_Content() {
+		fail("Not yet implemented");
+	}
+	
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 */
+	@Test
+	public void when_get_patients_search_with_unexistent_name_and_witout_code_then_response_null_and_NO_Content() {
 		fail("Not yet implemented");
 	}
 
