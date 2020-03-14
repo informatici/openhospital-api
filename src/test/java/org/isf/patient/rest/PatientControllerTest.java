@@ -4,11 +4,13 @@
 package org.isf.patient.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -16,7 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -63,15 +69,6 @@ public class PatientControllerTest {
         this.mockMvc = MockMvcBuilders.standaloneSetup(new PatientController(patientBrowserManagerMock)).build();
     }
 	
-	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#PatientController(org.isf.patient.manager.PatientBrowserManager)}.
-	 * @throws Exception 
-	 */
-	@Test
-	public void testPatientControllerTest() throws Exception {
-		fail("Not yet implemented");
-	}
-
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
@@ -165,7 +162,7 @@ public class PatientControllerTest {
 		String request = "/patients";
 		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientDTOHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
 		
 		when(patientBrowserManagerMock.newPatient(any(Patient.class))).thenReturn(true);
@@ -192,7 +189,7 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientDTOHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
 	
 		when(patientBrowserManagerMock.updatePatient(any(Patient.class))).thenReturn(true);
@@ -244,7 +241,7 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientDTOHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
 		
 		when(patientBrowserManagerMock.updatePatient(any(Patient.class))).thenReturn(false);
@@ -272,11 +269,39 @@ public class PatientControllerTest {
 	
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(java.lang.Integer, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() {
-		fail("Not yet implemented");
+	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
+		String request = "/patients";
+		Integer code = 0;
+		
+		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
+		
+		Patient	expectedPatient = PatientHelper.setupPatient();
+		expectedPatient.setCode(code);
+		
+		ArrayList<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
+		
+        List<PatientDTO> expectedPatienDTOList = patientList.stream().map(it -> getObjectMapper().map(it, PatientDTO.class)).collect(Collectors.toList());
+
+	
+		when(patientBrowserManagerMock.getPatient(any(Integer.class),any(Integer.class)))
+			.thenReturn(patientList);
+				
+		this.mockMvc
+		.perform(
+				get(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				)
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatienDTOList))))
+		.andReturn();
+
 	}
+
+	
 
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
@@ -336,14 +361,32 @@ public class PatientControllerTest {
 	}
 
 	
-	static class PatientDTOHelper{
-		public static PatientDTO setup() throws OHException{
-			Patient patient = setupPatient();
-			return OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
-		}
+	static class PatientHelper{
 		
 		public static Patient setupPatient() throws OHException{
 			return  new TestPatient().setup(true);
+		}
+		
+		public static ArrayList<Patient> setupPatientList(int size) {
+			return (ArrayList<Patient>) IntStream.range(1, size+1)
+					.mapToObj(i -> {	Patient ep = null;
+										try {
+											ep = PatientHelper.setupPatient();
+											ep.setCode(i);
+										} catch (OHException e) {
+											e.printStackTrace();
+										}
+										return ep;
+									}
+					).collect(Collectors.toList());
+		}
+	
+	}
+	
+	static class PatientDTOHelper{
+		public static PatientDTO setup() throws OHException{
+			Patient patient = PatientHelper.setupPatient();
+			return OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
 		}
 		
 		public static String asJsonString(PatientDTO patientDTO){
@@ -354,7 +397,17 @@ public class PatientControllerTest {
 			}
 			return null;
 		}
-
+		
+		public static String asJsonString(List<PatientDTO> patientDTOList){
+			try {
+				return new ObjectMapper().writeValueAsString(patientDTOList);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		
 	}
 	
 	
