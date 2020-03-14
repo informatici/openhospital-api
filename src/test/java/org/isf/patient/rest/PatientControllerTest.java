@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -305,51 +306,145 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() {
-		fail("Not yet implemented");
+	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() throws Exception {
+		Integer code = 123;
+		String request = "/patients/{code}";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
+		
+		this.mockMvc
+		.perform(
+				get(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+		.andReturn();
+		
 	}
 
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() {
-		fail("Not yet implemented");
+	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() throws Exception {
+		Integer code = 456;
+		String name = "TestFirstName";
+		String request = "/patients/search";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(name))).thenReturn(patient);
+		
+		this.mockMvc
+		.perform(
+				get(request)
+				.param("name", name)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+		.andReturn();
 	}
 	
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() {
-		fail("Not yet implemented");
+	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
+		Integer code = 678;
+		String request = "/patients/search";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
+		
+		this.mockMvc
+		.perform(
+				get(request)
+				.param("code", code.toString())
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+		.andReturn();
 	}
 	
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() {
-		fail("Not yet implemented");
+	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
+		Integer code = 1000;
+		String request = "/patients/search";
+		
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(null);
+		
+		this.mockMvc
+		.perform(
+				get(request)
+				.param("code", code.toString())
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isNoContent());
 	}
 	
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_witout_code_then_response_null_and_NO_Content() {
-		fail("Not yet implemented");
+	public void when_get_patients_search_without_name_and_witout_code_then_response_null_and_NO_Content() throws Exception {
+		String request = "/patients/search";
+
+		this.mockMvc
+		.perform(
+				get(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isNoContent());
 	}
 	
 	
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void when_get_patients_search_with_unexistent_name_and_witout_code_then_response_null_and_NO_Content() {
-		fail("Not yet implemented");
+	public void when_get_patients_search_with_unexistent_name_and_witout_code_then_response_null_and_NO_Content() throws Exception {
+		Integer code = 456;
+		String name = "unexistent_name";
+		String request = "/patients/search";
+				
+		when(patientBrowserManagerMock.getPatient(eq(name))).thenReturn(null);
+		
+		this.mockMvc
+		.perform(
+				get(request)
+				.param("name", name)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isNoContent());
 	}
 
 	/**
