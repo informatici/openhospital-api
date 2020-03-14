@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -431,7 +432,6 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_get_patients_search_with_unexistent_name_and_witout_code_then_response_null_and_NO_Content() throws Exception {
-		Integer code = 456;
 		String name = "unexistent_name";
 		String request = "/patients/search";
 				
@@ -449,12 +449,83 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * @throws Exception 
 	 */
 	@Test
-	public void testDeletePatient() {
-		fail("Not yet implemented");
+	public void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
+		Integer code = 123;
+		String request = "/patients/{code}";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
+
+		when(patientBrowserManagerMock.deletePatient(eq(patient))).thenReturn(true);
+		
+		this.mockMvc
+		.perform(
+				delete(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString("true")));
+	}
+	
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
+		Integer code = 111;
+		String request = "/patients/{code}";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(null);
+		
+		this.mockMvc
+		.perform(
+				delete(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isNotFound());
 	}
 
+	
+	/**
+	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * @throws Exception 
+	 */
+	@Test
+	public void when_delete_patients_with_existent_code_but_fail_deletion_then_Exception() throws Exception {
+		Integer code = 123;
+		String request = "/patients/{code}";
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		expectedPatientDTO.setCode(code);
+		Patient	patient = PatientHelper.setupPatient();
+		patient.setCode(code);
+				
+		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
+
+		when(patientBrowserManagerMock.deletePatient(eq(patient))).thenReturn(false);
+		
+		this.mockMvc
+		.perform(
+				delete(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				)		
+		.andDo(print())
+		.andExpect(status().isOk())
+		.andExpect(content().string(containsString("Patient is not deleted!")));
+	}
 	
 	static class PatientHelper{
 		
