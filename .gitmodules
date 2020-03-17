@@ -1,4 +1,3 @@
-[submodule "oh-ui"]
-	path = src/main/oh-ui
+[submodule "src/main/openhospital-ui"]
+	path = src/main/openhospital-ui
 	url = https://github.com/paurav-munshi/openhospital-ui.git
-
