@@ -186,57 +186,6 @@
 		</plugins>
 	</build>
 
-<<<<<<< HEAD
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <doclint>none</doclint>
-                                    <skip>true</skip>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <!-- explicitly define maven-deploy-plugin after other to force exec order -->
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-=======
 	<profiles>
 		<profile>
 			<id>bundle-openhospital-api</id>
@@ -365,7 +314,6 @@
 	            </plugins>
 	        </build>
 	    </profile>
->>>>>>> Updated the pom file so that it can selectively build UI and bundles it with API in single jar
     </profiles>
 
 </project>
