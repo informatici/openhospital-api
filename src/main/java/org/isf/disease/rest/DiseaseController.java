@@ -5,6 +5,7 @@ import io.swagger.annotations.Authorization;
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
+import org.isf.shared.mapper.OHModelMapper;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 @RestController
 @Api(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class DiseaseController {
 
     @Autowired
     protected DiseaseBrowserManager diseaseManager;
+
+    @Autowired
+    protected OHModelMapper ohModelMapper;
 
     private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
 
@@ -39,7 +41,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseAll() throws OHServiceException {
         logger.info("getDiseaseAll");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseAll();
-        List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -51,7 +53,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseOpd() throws OHServiceException {
         logger.info("getDiseaseOpd");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseOpd();
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -63,7 +65,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseOpdByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info("getDiseaseOpdByTypeCode");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseOpd(typecode);
-        List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseaseOpd.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -75,7 +77,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOut() throws OHServiceException {
         logger.info("getDiseaseIpdOut");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut();
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -87,7 +89,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOutByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info("getDiseaseIpdOutByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut(typecode);
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -99,7 +101,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdIn() throws OHServiceException {
         logger.info("getDiseaseIpdIn");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn();
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -111,7 +113,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdInByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info("getDiseaseIpdInByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn(typecode);
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -123,7 +125,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDisease() throws OHServiceException {
         logger.info("getDisease");
         ArrayList<Disease> diseases = diseaseManager.getDisease();
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -135,7 +137,7 @@ public class DiseaseController {
     public ResponseEntity<List<DiseaseDTO>> getDiseaseByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info("getDiseaseByTypeCode");
         ArrayList<Disease> diseases = diseaseManager.getDisease(typecode);
-        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> getObjectMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
+        List<DiseaseDTO> diseaseDTOS = diseases.stream().map(it -> ohModelMapper.getModelMapper().map(it, DiseaseDTO.class)).collect(Collectors.toList());
         if (diseaseDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseaseDTOS);
         } else {
@@ -150,7 +152,7 @@ public class DiseaseController {
         if (disease == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(getObjectMapper().map(disease, DiseaseDTO.class));
+        return ResponseEntity.ok(ohModelMapper.getModelMapper().map(disease, DiseaseDTO.class));
     }
 
 }

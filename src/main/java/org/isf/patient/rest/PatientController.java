@@ -6,6 +6,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.mapper.OHModelMapper;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -22,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 
 @RestController
 @Api(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -33,6 +32,9 @@ public class PatientController {
 
     @Autowired
     protected PatientBrowserManager patientManager;
+
+    @Autowired
+    protected OHModelMapper ohModelMapper;
 
     private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
@@ -51,7 +53,7 @@ public class PatientController {
     ResponseEntity<Integer> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
         String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
         logger.info("Create patient " + name);
-        boolean isCreated = patientManager.newPatient(getObjectMapper().map(newPatient, Patient.class));
+        boolean isCreated = patientManager.newPatient(ohModelMapper.getModelMapper().map(newPatient, Patient.class));
         Patient patient = patientManager.getPatient(name);
         if (!isCreated || patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
@@ -62,7 +64,7 @@ public class PatientController {
     @PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
         logger.info("Update patient code:" + code);
-        Patient patient = getObjectMapper().map(updatePatient, Patient.class);
+        Patient patient = ohModelMapper.getModelMapper().map(updatePatient, Patient.class);
         patient.setCode(code);
         boolean isUpdated = patientManager.updatePatient(patient);
         if (!isUpdated) {
@@ -77,7 +79,7 @@ public class PatientController {
             @RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
         logger.info("Get patients page:" + page + " size:" + size);
         ArrayList<Patient> patients = patientManager.getPatient(page, size);
-        List<PatientDTO> patientDTOS = patients.stream().map(it -> getObjectMapper().map(it, PatientDTO.class)).collect(Collectors.toList());
+        List<PatientDTO> patientDTOS = patients.stream().map(it -> ohModelMapper.getModelMapper().map(it, PatientDTO.class)).collect(Collectors.toList());
         if (patientDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
         } else {
@@ -92,7 +94,7 @@ public class PatientController {
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(getObjectMapper().map(patient, PatientDTO.class));
+        return ResponseEntity.ok(ohModelMapper.getModelMapper().map(patient, PatientDTO.class));
     }
 
 
@@ -110,7 +112,7 @@ public class PatientController {
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(getObjectMapper().map(patient, PatientDTO.class));
+        return ResponseEntity.ok(ohModelMapper.getModelMapper().map(patient, PatientDTO.class));
     }
 
     @DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
