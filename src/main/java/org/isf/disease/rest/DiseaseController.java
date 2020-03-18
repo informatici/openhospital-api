@@ -6,6 +6,7 @@ import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
 import org.isf.shared.mapper.OHModelMapper;
+import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +24,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
-public class DiseaseController {
+public class DiseaseController extends OHApiAbstractController {
 
     @Autowired
     protected DiseaseBrowserManager diseaseManager;
-
-    @Autowired
-    protected OHModelMapper ohModelMapper;
 
     private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
 

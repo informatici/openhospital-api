@@ -6,7 +6,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.mapper.OHModelMapper;
+import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -26,15 +26,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
-public class PatientController {
+public class PatientController extends OHApiAbstractController {
 
     private static final String DEFAULT_PAGE_SIZE = "80";
 
     @Autowired
     protected PatientBrowserManager patientManager;
-
-    @Autowired
-    protected OHModelMapper ohModelMapper;
 
     private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 

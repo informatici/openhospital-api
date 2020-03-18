@@ -7,6 +7,7 @@ import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.mapper.OHModelMapper;
+import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -27,15 +28,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
-public class OpdController {
+public class OpdController extends OHApiAbstractController {
 
     private static final String DEFAULT_PAGE_SIZE = "80";
 
     @Autowired
     protected OpdBrowserManager opdManager;
-
-    @Autowired
-    protected OHModelMapper ohModelMapper;
 
     private final Logger logger = LoggerFactory.getLogger(OpdController.class);
 
