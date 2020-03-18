@@ -1,23 +1,17 @@
-package org.isf.admtype.dto;
+package org.isf.dlvrrestype.dto;
 
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 
-/**
- * Not used anymore
- * @author antonio
- *
- */
+public class DeliveryResultTypeDTO {
 
-public class AdmissionTypeDTO {
-	
 	@NotNull
-	@ApiModelProperty(notes = "code of the admission type", example="A", position = 1)
+	@ApiModelProperty(notes = "code of the delivery result type", example="M", position = 1)
 	private String code;
 	
 	@NotNull
-	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
+	@ApiModelProperty(notes = "description of the delivery result type", example="MORTALITÉ MATERNELLE", position = 2)
     private String description;
 	
 	public String getCode() {
