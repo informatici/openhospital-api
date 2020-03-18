@@ -92,8 +92,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	//.antMatchers("/auth-needed/**").authenticated()
             	//.antMatchers("/noauth-public/**").permitAll()
             	//.antMatchers("/admin/**").hasAuthority("admin")
+            	//age types
             	.antMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("admin", "guest")
+            	//disease types
+            	.antMatchers(HttpMethod.POST, "/diseasetypes/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("admin")
+            	.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("admin", "guest")
             .and()
           	.formLogin()
           		.loginPage("/auth/login")
