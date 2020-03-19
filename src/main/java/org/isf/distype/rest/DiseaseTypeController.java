@@ -83,6 +83,10 @@ public class DiseaseTypeController {
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
+        if(!diseaseTypeManager.codeControl(diseaseType.getCode())) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "disease type not found!", OHSeverityLevel.ERROR));
+        }
+        
         if(diseaseTypeManager.updateDiseaseType(diseaseType)) {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
