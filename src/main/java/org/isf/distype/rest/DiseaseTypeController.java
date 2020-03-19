@@ -70,13 +70,17 @@ public class DiseaseTypeController {
         DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
         logger.info("creating new disease type with code `"+ diseaseType.getCode() + "`");
         if(diseaseTypeManager.codeControl(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "specified code is already used!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, 
+        			"specified code is already used!", 
+        			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
         if(diseaseTypeManager.newDiseaseType(diseaseType)) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease type is not created!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, 
+        			"disease type is not created!", 
+        			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -84,13 +88,17 @@ public class DiseaseTypeController {
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
         if(!diseaseTypeManager.codeControl(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease type not found!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, 
+        			"disease type not found!", 
+        			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
         if(diseaseTypeManager.updateDiseaseType(diseaseType)) {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease type is not updated!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, 
+        			"disease type is not updated!", 
+        			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -106,7 +114,9 @@ public class DiseaseTypeController {
 			result.put("deleted", deleted);
 			return ResponseEntity.ok(result);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "No disease type found with the given code!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, 
+					"No disease type found with the given code!", 
+					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

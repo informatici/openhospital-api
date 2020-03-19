@@ -71,7 +71,9 @@ public class AgeTypeController {
 		if(ageTypeManager.updateAgeType(ageTypes)) {
 			return ResponseEntity.ok(ageTypeDTO);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, 
+					"The age type is not updated!", 
+					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
