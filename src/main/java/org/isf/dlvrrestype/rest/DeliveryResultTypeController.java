@@ -52,7 +52,7 @@ public class DeliveryResultTypeController {
 			admtCreated = admtFounds.get(0);
 		if (!isCreated || admtCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
@@ -69,7 +69,7 @@ public class DeliveryResultTypeController {
 		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(admt);
 		if (!isUpdated)
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		return ResponseEntity.ok(admt.getCode());
 	}
 
