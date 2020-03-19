@@ -49,8 +49,6 @@ import io.swagger.annotations.Authorization;
 @Api(value="/bills",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class BillController {
 	
-	private static final String DEFAULT_PAGE_SIZE = "80";
-
 	@Autowired
 	protected BillBrowserManager billManager;
 	
@@ -174,7 +172,7 @@ public class BillController {
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
-			@RequestParam(value="patient_code", required=false, defaultValue="0") Integer code) throws OHServiceException {
+			@RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
         
         GregorianCalendar datefrom = new GregorianCalendar();
         datefrom.setTime(dateFrom);
@@ -217,7 +215,7 @@ public class BillController {
 	@GetMapping(value = "/bills/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> searchBillsPayments(
 			@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
-			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="0") Integer code) throws OHServiceException {
+			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
         logger.info("Get Payments datefrom:"  +  dateFrom + " dateTo:" + dateTo +"patient: "+code);
         
         ArrayList<BillPayments> payments = new ArrayList<BillPayments>();
