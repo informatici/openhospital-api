@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,7 +19,7 @@ public class BillPaymentsDTO {
 	private Integer billId;
 
 	@NotNull
-	@ApiModelProperty(notes = "date of payment", example="2020-03-18T17:50:00", position = 2)
+	@ApiModelProperty(notes = "date of payment", example="2020-03-19T14:58:00.000Z", position = 2)
 	private Date date;
 
 	@NotNull

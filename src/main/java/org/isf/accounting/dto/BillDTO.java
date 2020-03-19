@@ -4,6 +4,9 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import org.isf.patient.dto.PatientDTO;
+import org.isf.priceslist.dto.PriceListDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -12,12 +15,32 @@ public class BillDTO {
 	
 	private Integer id;
 	
+	private PatientDTO patient; 
+
+	
+	private PriceListDTO list;
+
+	public PatientDTO getPatient() {
+		return patient;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public PriceListDTO getList() {
+		return list;
+	}
+
+	public void setList(PriceListDTO list) {
+		this.list = list;
+	}
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-18T16:21:00", position = 1)
+	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00.000Z", position = 1)
 	private Date date;
 	
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill updated", example="2020-03-18T17:30:00", position = 2)
+	@ApiModelProperty(notes = "Date of bill updated", example="2020-03-19T14:58:00.000Z", position = 2)
 	private Date update;
 	
 	@NotNull
@@ -150,5 +173,8 @@ public class BillDTO {
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
 }

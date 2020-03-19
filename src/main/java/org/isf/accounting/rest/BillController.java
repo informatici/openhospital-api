@@ -28,9 +28,11 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,7 +73,7 @@ public class BillController {
      * @throws OHServiceException
      */
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<FullBillDTO> newPatient(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
+    ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
         
 		logger.info("Create Bill "  + newBillDto.toString()); 
       
@@ -117,13 +119,16 @@ public class BillController {
      * @throws OHServiceException
      */
 	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<FullBillDTO> updatePatient(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
+    ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
         
 		logger.info("updated Bill "  + odBillDto.toString()); 
-      
         Bill bill = getObjectMapper().map(odBillDto.getBill(), Bill.class);
         
         bill.setId(id);
+        
+        if(billManager.getBill(id) == null) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found!", OHSeverityLevel.ERROR));
+        }
         
         Patient pat = patientManager.getPatient(bill.getPatName());
         
@@ -133,7 +138,7 @@ public class BillController {
         		  .filter(pricel -> pricel.getName().equals(bill.getListName()))
         		  .findAny()
         		  .orElse(null);
-        
+          
         if(pat != null) {
         	bill.setPatient(pat);
         } else {
@@ -159,28 +164,40 @@ public class BillController {
 	}
 	
 	/**
-	 * Retrieves all the {@link BillItems} associated to the passed {@link Bill} id.
-	 * @param billID the bill id.
-	 * @return a list of {@link BillItems} or <code>null</code> if an error occurred.
-	 * @throws OHServiceException 
+	 * Retrieves all the {@link Bill}s for the specified parameters
+	 * @param dateFrom the low date range endpoint, inclusive. 
+	 * @param dateTo the high date range endpoint, inclusive.
+	 * @param code the patient code, which can be set or not.
+	 * @return a list of retrieved {@link Bill}s or <code>null</code> if an error occurred.
+	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillDTO>> getBills(
-			@RequestParam(value="datefrom") Date dateFrom,
-			@RequestParam(value="dateto") Date dateTo, @RequestParam(value="patient_code") Integer code) throws OHServiceException {
-        logger.info("Get Bills datefrom:"  +  dateFrom + " dateTo:" + dateTo);
+	public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
+			@RequestParam(value="patient_code", required=false, defaultValue="0") Integer code) throws OHServiceException {
         
         GregorianCalendar datefrom = new GregorianCalendar();
         datefrom.setTime(dateFrom);
         
         GregorianCalendar dateto = new GregorianCalendar();
-        datefrom.setTime(dateTo); 
+        dateto.setTime(dateTo);
         
-        Patient pat = patientManager.getPatient(code);
+        ArrayList<Bill> bills = new ArrayList<Bill>();
         
-	    ArrayList<Bill> bills = billManager.getBills(datefrom, dateto, pat);
-	    
-        List<BillDTO> billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        List<BillDTO> billDTOS = new ArrayList<BillDTO>();
+        
+        if(code == null) {
+        	logger.info("Get payments datefrom:"  +  datefrom + " dateTo:" + dateto);
+        	bills = billManager.getBills(datefrom, dateto);
+        } else {
+        	Patient pat = patientManager.getPatient(code);
+             
+            logger.info("Get Bills datefrom:"  +  datefrom + " dateTo:" + dateto +"patient: "+pat);
+             
+     	    bills = billManager.getBills(datefrom, dateto, pat);
+        }
+        
+        billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
         
         if(billDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
@@ -190,33 +207,42 @@ public class BillController {
 	}
 	
 	/**
-	 * Retrieves all the billPayments for a given patient between dateFrom and dateTo
+	 * Retrieves all the billPayments for a given parameters
 	 * @param dateFrom
 	 * @param dateTo
-	 * @param patient
+	 * @param code the patient code, which can be set or not.
 	 * @return the list of payments
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/bills/payments", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillPaymentsDTO>> getPayments(
-			@RequestParam(value="datefrom") Date dateFrom,
-			@RequestParam(value="dateto") Date dateTo, @RequestParam(value="patient_code") Integer code) throws OHServiceException {
-        logger.info("Get getPayments datefrom:"  +  dateFrom + " dateTo:" + dateTo);
+	public ResponseEntity<List<BillPaymentsDTO>> searchBillsPayments(
+			@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="0") Integer code) throws OHServiceException {
+        logger.info("Get Payments datefrom:"  +  dateFrom + " dateTo:" + dateTo +"patient: "+code);
+        
+        ArrayList<BillPayments> payments = new ArrayList<BillPayments>();
+        
+        List<BillPaymentsDTO> paymentsDTOS = new ArrayList<BillPaymentsDTO>();
         
         GregorianCalendar datefrom = new GregorianCalendar();
         datefrom.setTime(dateFrom);
         
         GregorianCalendar dateto = new GregorianCalendar();
-        datefrom.setTime(dateTo); 
+        dateto.setTime(dateTo); 
         
-        Patient pat = patientManager.getPatient(code);
+        logger.info("Get getPayments datefrom:"  +  datefrom + " dateTo:" + dateto);
         
-	    ArrayList<BillPayments> bills = billManager.getPayments(datefrom, dateto, pat);
-	    
-        List<BillPaymentsDTO> paymentsDTOS = bills.stream().map(pay-> getObjectMapper().map(pay, BillPaymentsDTO.class)).collect(Collectors.toList());
+        if(code == null) {
+        	payments = billManager.getPayments(datefrom, dateto);
+        } else {
+        	 Patient pat = patientManager.getPatient(code);             
+             payments = billManager.getPayments(datefrom, dateto, pat);
+        }
+        
+        paymentsDTOS = payments.stream().map(pay-> getObjectMapper().map(pay, BillPaymentsDTO.class)).collect(Collectors.toList());
         
         if(paymentsDTOS.size() == 0){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(paymentsDTOS);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(paymentsDTOS);
         }
@@ -228,8 +254,8 @@ public class BillController {
 	 * @return a list of {@link BillPayments} or <code>null</code> if an error occurred.
 	 * @throws OHServiceException 
 	 */
-	@GetMapping(value = "/bills/payments/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillPaymentsDTO>> getPayments(@PathVariable Integer id) throws OHServiceException {
+	@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
         logger.info("Get getPayments for bill with id:"  + id);
            
 	    ArrayList<BillPayments> bills = billManager.getPayments(id);
@@ -237,7 +263,7 @@ public class BillController {
         List<BillPaymentsDTO> paymentsDTOS = bills.stream().map(pay-> getObjectMapper().map(pay, BillPaymentsDTO.class)).collect(Collectors.toList());
         
         if(paymentsDTOS.size() == 0){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(paymentsDTOS);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(paymentsDTOS);
         }
@@ -245,12 +271,12 @@ public class BillController {
 	
 	/**
 	 * Retrieves all the {@link BillItems} associated to the passed {@link Bill} id.
-	 * @param billID the bill id.
+	 * @param id the bill id.
 	 * @return a list of {@link BillItems} or <code>null</code> if an error occurred.
 	 * @throws OHServiceException 
 	 */
-	@GetMapping(value = "/bills/items/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable Integer id) throws OHServiceException {
+	@GetMapping(value = "/bills/items/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value="bill_id")Integer id) throws OHServiceException {
         logger.info("Get getPayments for bill with id:"  + id);
            
 	    ArrayList<BillItems> items = billManager.getItems(id);
@@ -258,9 +284,167 @@ public class BillController {
         List<BillItemsDTO> itemsDTOS = items.stream().map(it-> getObjectMapper().map(it, BillItemsDTO.class)).collect(Collectors.toList());
         
         if(itemsDTOS.size() == 0){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(itemsDTOS);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(itemsDTOS);
+        }
+	}
+	
+	/**
+	 * Get the {@link Bill} with specified billID
+	 * @param id the bill Id
+	 * @return the {@link Bill} or <code>null</code> if an error occurred.
+	 * @throws OHServiceException 
+	 */
+	@GetMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<BillDTO> getBill(@PathVariable Integer id) throws OHServiceException {
+        logger.info("Get bill with id:"  + id);
+           
+	    Bill bill = billManager.getBill(id);
+	    
+	    BillDTO billDTO = getObjectMapper().map(bill, BillDTO.class);
+        
+        if(billDTO == null){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }else{
+            return ResponseEntity.ok(billDTO);
+        }
+	}
+	
+	/**
+	 * Retrieves all the {@link Bill}s associated to the specified {@link Patient}.
+	 * @param code - the Patient's code
+	 * @return the list of {@link Bill}s
+	 * @throws OHServiceException 
+	 */
+	@GetMapping(value = "/bills/pending/affiliate", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillDTO>> getPendingBillsAffiliate(@RequestParam(value="patient_code") Integer code) throws OHServiceException {
+        logger.info("Get bill with id:"  + code);
+           
+	    List<Bill> bills = billManager.getPendingBillsAffiliate(code);
+	    
+	    List<BillDTO> billDTOS = bills.stream().map(bill-> getObjectMapper().map(bill, BillDTO.class)).collect(Collectors.toList());
+        
+        if(billDTOS.size() == 0){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }else{
+            return ResponseEntity.ok(billDTOS);
+        }
+	}
+
+	/**
+	 * Returns all the pending {@link Bill}s for the specified patient.
+	 * @param code the patient code.
+	 * @return the list of pending bills or <code>null</code> if an error occurred.
+	 * @throws OHServiceException 
+	 */
+	@GetMapping(value = "/bills/pending", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillDTO>> getPendingBills(@RequestParam(value="patient_code") Integer code) throws OHServiceException {
+        logger.info("Get bill with id:"  + code);
+           
+	    List<Bill> bills = billManager.getPendingBills(code);
+	    
+	    List<BillDTO> billDTOS = bills.stream().map(bill-> getObjectMapper().map(bill, BillDTO.class)).collect(Collectors.toList());
+        
+        
+        if(billDTOS.size() == 0){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+        }else{
+            return ResponseEntity.ok(billDTOS);
+        }
+	}
+	
+	/**
+	 * Search all the {@link Bill}s for the specified parameters
+	 * @param dateFrom the low date range endpoint, inclusive. 
+	 * @param dateTo the high date range endpoint, inclusive.
+	 * @param bill item the bill item object.
+	 * @return a list of retrieved {@link Bill}s or <code>null</code> if an error occurred.
+	 * @throws OHServiceException
+	 */
+	@PostMapping(value = "/bills/search/by/item", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
+			@RequestBody BillItemsDTO billItemDTO) throws OHServiceException {
+        
+        GregorianCalendar datefrom = new GregorianCalendar();
+        datefrom.setTime(dateFrom);
+        
+        GregorianCalendar dateto = new GregorianCalendar();
+        dateto.setTime(dateTo);
+               
+        BillItems billItem = getObjectMapper().map(billItemDTO, BillItems.class);
+        	
+        logger.info("Get Bills datefrom:"  +  datefrom + " dateTo:" + dateto + " Bill ITEM ID: "+billItem.getId());
+             
+        ArrayList<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
+        
+        List<BillDTO> billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        
+        if(billDTOS.size() == 0){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }else{
+            return ResponseEntity.ok(billDTOS);
+        }
+	}
+	
+	/**
+	 * Returns all the distinct stored {@link BillItems}.
+	 * 
+	 * @return a list of  distinct {@link BillItems} or null if an error occurs.
+	 * @throws OHServiceException 
+	 */
+	@GetMapping(value = "/bills/items", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillItemsDTO>> getDistinctItems() throws OHServiceException {
+		
+		logger.info("get all the distinct stored BillItems");
+           
+	    ArrayList<BillItems> items = billManager.getDistinctItems();
+	    
+        List<BillItemsDTO> itemsDTOS = items.stream().map(it-> getObjectMapper().map(it, BillItemsDTO.class)).collect(Collectors.toList());
+        
+        if(itemsDTOS.size() == 0){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }else{
+            return ResponseEntity.ok(itemsDTOS);
+        }
+	}
+	
+	@DeleteMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity deleteBill(@PathVariable Integer id) throws OHServiceException {
+        logger.info("Delete bill id:"  +  id);
+        Bill bill = billManager.getBill(id);
+        boolean isDeleted = false;
+        if (bill != null) {
+            isDeleted = billManager.deleteBill(bill);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        if (!isDeleted) {
+            throw new OHAPIException(new OHExceptionMessage(null, "Bill is not deleted!", OHSeverityLevel.ERROR));
+        }
+        return ResponseEntity.ok(isDeleted);
+    }
+	
+	/**
+	 * search all the {@link Bill}s associated to the passed {@link BillPayments}.
+	 * @param payments the {@link BillPayments} associated to the bill to retrieve.
+	 * @return a list of {@link Bill} associated to the passed {@link BillPayments} or <code>null</code> if an error occurred.
+	 * @throws OHServiceException
+	 */
+	@PostMapping(value = "/bills/search/by/payments", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody ArrayList<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
+    
+        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(paymentsDTO.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
+        
+        List<Bill> bills = billManager.getBills(billPayments);
+        
+        List<BillDTO>billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        
+        if(billDTOS.size() == 0){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }else{
+            return ResponseEntity.ok(billDTOS);
         }
 	}
 

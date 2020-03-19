@@ -13,12 +13,28 @@ public class BillItemsDTO {
 	@ApiModelProperty(notes = "Bill id", example="", position = 1)
 	private Integer billId;
 
+	public String getPriceId() {
+		return priceId;
+	}
+
+	public void setPriceId(String priceId) {
+		this.priceId = priceId;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setBillId(Integer billId) {
+		this.billId = billId;
+	}
+
 	@ApiModelProperty(notes = "check if it is a price", example="true", position = 2)
 	private boolean isPrice;
 
 	@NotNull
 	@ApiModelProperty(notes = "The price Id", example="104", position = 3)
-	private String priceID;
+	private String priceId;
 	
 	@NotNull
 	@ApiModelProperty(notes = "item description", example="Acetone 99 % 1ltr", position = 4)
@@ -58,15 +74,7 @@ public class BillItemsDTO {
 	public void setPrice(boolean isPrice) {
 		this.isPrice = isPrice;
 	}
-
-	public String getPriceID() {
-		return priceID;
-	}
-
-	public void setPriceID(String priceID) {
-		this.priceID = priceID;
-	}
-
+	
 	public String getItemDescription() {
 		return itemDescription;
 	}
