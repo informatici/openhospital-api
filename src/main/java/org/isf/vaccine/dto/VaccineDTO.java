@@ -11,15 +11,15 @@ import javax.validation.constraints.NotNull;
 public class VaccineDTO {
 
     @NotNull
-    @ApiModelProperty(notes = "Code of the vaccine", example="Mario", position = 1)
+    @ApiModelProperty(notes = "Code of the vaccine", example="1", position = 1)
     private String code;
 
     @NotNull
-    @ApiModelProperty(notes = "Description of the vaccine", example="Mario", position = 1)
+    @ApiModelProperty(notes = "Description of the vaccine", example="BCG", position = 2)
     private String description;
 
     @NotNull
-    @ApiModelProperty(notes = "Type of the vaccine", example="Mario", position = 1)
+    @ApiModelProperty(notes = "Type of the vaccine", example="C", position = 3)
     private VaccineType vaccineType;
 
     public String getCode() {
