@@ -155,7 +155,7 @@ public class BillController {
         
         boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
     
-        if(!isUpdated || odBillDto == null){
+        if(!isUpdated){
             throw new OHAPIException(new OHExceptionMessage(null, "Bill is not updated!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
