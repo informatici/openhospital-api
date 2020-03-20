@@ -1,4 +1,4 @@
-package org.isf.disease.dto;
+package org.isf.disease.rest;
 
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHAPIException;
