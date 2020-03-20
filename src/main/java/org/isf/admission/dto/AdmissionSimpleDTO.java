@@ -1,18 +1,9 @@
 package org.isf.admission.dto;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.validation.constraints.NotNull;
-
-import org.isf.admtype.dto.AdmissionTypeDTO;
-import org.isf.disctype.dto.DischargeTypeDTO;
-import org.isf.disease.dto.DiseaseDTO;
-import org.isf.dlvrrestype.dto.DeliveryResultTypeDTO;
-import org.isf.dlvrtype.dto.DeliveryTypeDTO;
-import org.isf.operation.dto.OperationDTO;
-import org.isf.patient.dto.PatientDTO;
-import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
-import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author gildas
  *
  */
-public class AdmissionDTO {
+public class AdmissionSimpleDTO {
 
 	@ApiModelProperty(notes = "admission key", example = "12", position = 1)
 	private int id;
@@ -34,42 +25,15 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "type of admission", example = "malnutrition", position = 3)
 	private String type;
 
-	@ApiModelProperty(notes = "ward key", position = 4)
-	private WardDTO ward;
-
 	@NotNull
 	@ApiModelProperty(notes = "a progr. in year for each ward", example = "1", position = 5)
 	private int yProg;
 
-	@NotNull
-	@ApiModelProperty(notes = "patient key", position = 6)
-	private PatientDTO patient;
-
-	@NotNull
 	@ApiModelProperty(notes = "admission date", position = 7)
-	private GregorianCalendar admDate;
-
-	@NotNull
-	@ApiModelProperty(notes = "admission type key", position = 8)
-	private AdmissionTypeDTO admissionType;
+	private Date admDate;
 
 	@ApiModelProperty(notes = "FromHealthUnit", position = 9)
 	private String FHU;
-
-	@ApiModelProperty(notes = "disease in key", example = "1", position = 10)
-	private DiseaseDTO diseaseIn;
-
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 11)
-	private DiseaseDTO diseaseOut1;
-
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 12)
-	private DiseaseDTO diseaseOut2;
-
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 13)
-	private DiseaseDTO diseaseOut3;
-
-	@ApiModelProperty(notes = "operation key", example = "1", position = 14)
-	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
 	private GregorianCalendar opDate;
@@ -80,9 +44,6 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "discharge date", position = 17)
 	private GregorianCalendar disDate;
 
-	@ApiModelProperty(notes = "disChargeType key", position = 18)
-	private DischargeTypeDTO disType;
-
 	@ApiModelProperty(notes = "free note", position = 19)
 	private String note;
 
@@ -92,17 +53,8 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "visite date", position = 21)
 	private GregorianCalendar visitDate;
 
-	@ApiModelProperty(notes = "treatmentType key", position = 22)
-	private PregnantTreatmentTypeDTO pregTreatmentType;
-
 	@ApiModelProperty(notes = "delivery date", position = 23)
 	private GregorianCalendar deliveryDate;
-
-	@ApiModelProperty(notes = "delivery type", position = 24)
-	private DeliveryTypeDTO deliveryType;
-
-	@ApiModelProperty(notes = "delivery type key", position = 25)
-	private DeliveryResultTypeDTO deliveryResult;
 
 	@ApiModelProperty(notes = "weight", position = 26)
 	private Float weight;
@@ -147,14 +99,6 @@ public class AdmissionDTO {
 		this.type = type;
 	}
 
-	public WardDTO getWard() {
-		return ward;
-	}
-
-	public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
-
 	public int getyProg() {
 		return yProg;
 	}
@@ -163,28 +107,12 @@ public class AdmissionDTO {
 		this.yProg = yProg;
 	}
 
-	public PatientDTO getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
-	}
-
-	public GregorianCalendar getAdmDate() {
+	public Date getAdmDate() {
 		return admDate;
 	}
 
-	public void setAdmDate(GregorianCalendar admDate) {
+	public void setAdmDate(Date admDate) {
 		this.admDate = admDate;
-	}
-
-	public AdmissionTypeDTO getAdmissionType() {
-		return admissionType;
-	}
-
-	public void setAdmissionType(AdmissionTypeDTO admissionType) {
-		this.admissionType = admissionType;
 	}
 
 	public String getFHU() {
@@ -193,46 +121,6 @@ public class AdmissionDTO {
 
 	public void setFHU(String fHU) {
 		FHU = fHU;
-	}
-
-	public DiseaseDTO getDiseaseIn() {
-		return diseaseIn;
-	}
-
-	public void setDiseaseIn(DiseaseDTO diseaseIn) {
-		this.diseaseIn = diseaseIn;
-	}
-
-	public DiseaseDTO getDiseaseOut1() {
-		return diseaseOut1;
-	}
-
-	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
-		this.diseaseOut1 = diseaseOut1;
-	}
-
-	public DiseaseDTO getDiseaseOut2() {
-		return diseaseOut2;
-	}
-
-	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
-		this.diseaseOut2 = diseaseOut2;
-	}
-
-	public DiseaseDTO getDiseaseOut3() {
-		return diseaseOut3;
-	}
-
-	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
-		this.diseaseOut3 = diseaseOut3;
-	}
-
-	public OperationDTO getOperation() {
-		return operation;
-	}
-
-	public void setOperation(OperationDTO operation) {
-		this.operation = operation;
 	}
 
 	public GregorianCalendar getOpDate() {
@@ -259,14 +147,6 @@ public class AdmissionDTO {
 		this.disDate = disDate;
 	}
 
-	public DischargeTypeDTO getDisType() {
-		return disType;
-	}
-
-	public void setDisType(DischargeTypeDTO disType) {
-		this.disType = disType;
-	}
-
 	public String getNote() {
 		return note;
 	}
@@ -291,36 +171,12 @@ public class AdmissionDTO {
 		this.visitDate = visitDate;
 	}
 
-	public PregnantTreatmentTypeDTO getPregTreatmentType() {
-		return pregTreatmentType;
-	}
-
-	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
-		this.pregTreatmentType = pregTreatmentType;
-	}
-
 	public GregorianCalendar getDeliveryDate() {
 		return deliveryDate;
 	}
 
 	public void setDeliveryDate(GregorianCalendar deliveryDate) {
 		this.deliveryDate = deliveryDate;
-	}
-
-	public DeliveryTypeDTO getDeliveryType() {
-		return deliveryType;
-	}
-
-	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
-		this.deliveryType = deliveryType;
-	}
-
-	public DeliveryResultTypeDTO getDeliveryResult() {
-		return deliveryResult;
-	}
-
-	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
-		this.deliveryResult = deliveryResult;
 	}
 
 	public Float getWeight() {
