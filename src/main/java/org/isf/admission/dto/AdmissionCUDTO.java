@@ -11,15 +11,16 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class AdmissionCUDTO {
 
-	@ApiModelProperty(notes = "ward code", position = 4)
+	@NotNull
+	@ApiModelProperty(notes = "ward code", example="N", position = 4)
 	private String wardCode;
 
 	@NotNull
-	@ApiModelProperty(notes = "patient id", position = 6)
+	@ApiModelProperty(notes = "patient id", example="1", position = 6)
 	private Integer patientId;
 
 	@NotNull
-	@ApiModelProperty(notes = "admission type code", position = 8)
+	@ApiModelProperty(notes = "admission type code", example="R", position = 8)
 	private String admissionTypeCode;
 
 	@ApiModelProperty(notes = "disease in code", example = "1", position = 10)

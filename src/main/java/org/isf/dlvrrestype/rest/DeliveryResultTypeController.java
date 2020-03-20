@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 
 @RestController
-@Api(value = "/deliveryresulttype", produces = "application/vnd.ohapi.app-v1+json")
+@Api(value = "/deliveryresulttype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryResultTypeController {
 
 	@Autowired
@@ -40,7 +41,7 @@ public class DeliveryResultTypeController {
 		this.dlvrrestManager = dlvrrestManager;
 	}
 
-	@PostMapping(value = "/deliveryresulttypes", produces = "application/vnd.ohapi.app-v1+json")
+	@PostMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		logger.info("Create Delivery result type " + code);
@@ -57,7 +58,7 @@ public class DeliveryResultTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
 
-	@PutMapping(value = "/deliveryresulttypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@PutMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryResultTypet(@PathVariable String code,
 			@RequestBody DeliveryResultTypeDTO admissionTypeDTO) throws OHServiceException {
 		logger.info("Update deliveryresulttypes code:" + code);
@@ -73,7 +74,7 @@ public class DeliveryResultTypeController {
 		return ResponseEntity.ok(admt.getCode());
 	}
 
-	@GetMapping(value = "/deliveryresulttypes", produces = "application/vnd.ohapi.app-v1+json")
+	@GetMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
 		logger.info("Get all Delivery result types ");
 		List<DeliveryResultType> admissionTypes = dlvrrestManager.getDeliveryResultType();
@@ -86,7 +87,7 @@ public class DeliveryResultTypeController {
 		}
 	}
 
-	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete Delivery result type code:" + code);
 		boolean isDeleted = false;

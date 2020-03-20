@@ -1,7 +1,6 @@
 package org.isf.admission.dto;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.validation.constraints.NotNull;
 
@@ -36,13 +35,13 @@ public class AdmissionSimpleDTO {
 	private String FHU;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
-	private GregorianCalendar opDate;
+	private Date opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
-	private GregorianCalendar disDate;
+	private Date disDate;
 
 	@ApiModelProperty(notes = "free note", position = 19)
 	private String note;
@@ -51,19 +50,19 @@ public class AdmissionSimpleDTO {
 	private Float transUnit;
 
 	@ApiModelProperty(notes = "visite date", position = 21)
-	private GregorianCalendar visitDate;
+	private Date visitDate;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
-	private GregorianCalendar deliveryDate;
+	private Date deliveryDate;
 
 	@ApiModelProperty(notes = "weight", position = 26)
 	private Float weight;
 
-	private GregorianCalendar ctrlDate1;
+	private Date ctrlDate1;
 
-	private GregorianCalendar ctrlDate2;
+	private Date ctrlDate2;
 
-	private GregorianCalendar abortDate;
+	private Date abortDate;
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
@@ -123,11 +122,11 @@ public class AdmissionSimpleDTO {
 		FHU = fHU;
 	}
 
-	public GregorianCalendar getOpDate() {
+	public Date getOpDate() {
 		return opDate;
 	}
 
-	public void setOpDate(GregorianCalendar opDate) {
+	public void setOpDate(Date opDate) {
 		this.opDate = opDate;
 	}
 
@@ -139,11 +138,11 @@ public class AdmissionSimpleDTO {
 		this.opResult = opResult;
 	}
 
-	public GregorianCalendar getDisDate() {
+	public Date getDisDate() {
 		return disDate;
 	}
 
-	public void setDisDate(GregorianCalendar disDate) {
+	public void setDisDate(Date disDate) {
 		this.disDate = disDate;
 	}
 
@@ -163,19 +162,19 @@ public class AdmissionSimpleDTO {
 		this.transUnit = transUnit;
 	}
 
-	public GregorianCalendar getVisitDate() {
+	public Date getVisitDate() {
 		return visitDate;
 	}
 
-	public void setVisitDate(GregorianCalendar visitDate) {
+	public void setVisitDate(Date visitDate) {
 		this.visitDate = visitDate;
 	}
 
-	public GregorianCalendar getDeliveryDate() {
+	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
 
-	public void setDeliveryDate(GregorianCalendar deliveryDate) {
+	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 
@@ -187,27 +186,27 @@ public class AdmissionSimpleDTO {
 		this.weight = weight;
 	}
 
-	public GregorianCalendar getCtrlDate1() {
+	public Date getCtrlDate1() {
 		return ctrlDate1;
 	}
 
-	public void setCtrlDate1(GregorianCalendar ctrlDate1) {
+	public void setCtrlDate1(Date ctrlDate1) {
 		this.ctrlDate1 = ctrlDate1;
 	}
 
-	public GregorianCalendar getCtrlDate2() {
+	public Date getCtrlDate2() {
 		return ctrlDate2;
 	}
 
-	public void setCtrlDate2(GregorianCalendar ctrlDate2) {
+	public void setCtrlDate2(Date ctrlDate2) {
 		this.ctrlDate2 = ctrlDate2;
 	}
 
-	public GregorianCalendar getAbortDate() {
+	public Date getAbortDate() {
 		return abortDate;
 	}
 
-	public void setAbortDate(GregorianCalendar abortDate) {
+	public void setAbortDate(Date abortDate) {
 		this.abortDate = abortDate;
 	}
 

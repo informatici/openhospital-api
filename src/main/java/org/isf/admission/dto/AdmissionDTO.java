@@ -1,6 +1,6 @@
 package org.isf.admission.dto;
 
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
@@ -34,7 +34,8 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "type of admission", example = "malnutrition", position = 3)
 	private String type;
 
-	@ApiModelProperty(notes = "ward key", position = 4)
+	@NotNull
+	@ApiModelProperty(notes = "ward", position = 4)
 	private WardDTO ward;
 
 	@NotNull
@@ -42,45 +43,45 @@ public class AdmissionDTO {
 	private int yProg;
 
 	@NotNull
-	@ApiModelProperty(notes = "patient key", position = 6)
+	@ApiModelProperty(notes = "patient", position = 6)
 	private PatientDTO patient;
 
 	@NotNull
 	@ApiModelProperty(notes = "admission date", position = 7)
-	private GregorianCalendar admDate;
+	private Date admDate;
 
 	@NotNull
-	@ApiModelProperty(notes = "admission type key", position = 8)
-	private AdmissionTypeDTO admissionType;
+	@ApiModelProperty(notes = "admission type", position = 8)
+	private AdmissionTypeDTO admType;
 
 	@ApiModelProperty(notes = "FromHealthUnit", position = 9)
 	private String FHU;
 
-	@ApiModelProperty(notes = "disease in key", example = "1", position = 10)
+	@ApiModelProperty(notes = "disease in ", example = "1", position = 10)
 	private DiseaseDTO diseaseIn;
 
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 11)
+	@ApiModelProperty(notes = "disease out ", example = "1", position = 11)
 	private DiseaseDTO diseaseOut1;
 
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 12)
+	@ApiModelProperty(notes = "disease out ", example = "1", position = 12)
 	private DiseaseDTO diseaseOut2;
 
-	@ApiModelProperty(notes = "disease out key", example = "1", position = 13)
+	@ApiModelProperty(notes = "disease out ", example = "1", position = 13)
 	private DiseaseDTO diseaseOut3;
 
-	@ApiModelProperty(notes = "operation key", example = "1", position = 14)
+	@ApiModelProperty(notes = "operation ", example = "1", position = 14)
 	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
-	private GregorianCalendar opDate;
+	private Date opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
-	private GregorianCalendar disDate;
+	private Date disDate;
 
-	@ApiModelProperty(notes = "disChargeType key", position = 18)
+	@ApiModelProperty(notes = "disChargeType ", position = 18)
 	private DischargeTypeDTO disType;
 
 	@ApiModelProperty(notes = "free note", position = 19)
@@ -90,28 +91,28 @@ public class AdmissionDTO {
 	private Float transUnit;
 
 	@ApiModelProperty(notes = "visite date", position = 21)
-	private GregorianCalendar visitDate;
+	private Date visitDate;
 
-	@ApiModelProperty(notes = "treatmentType key", position = 22)
+	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
-	private GregorianCalendar deliveryDate;
+	private Date deliveryDate;
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
 	private DeliveryTypeDTO deliveryType;
 
-	@ApiModelProperty(notes = "delivery type key", position = 25)
+	@ApiModelProperty(notes = "delivery type ", position = 25)
 	private DeliveryResultTypeDTO deliveryResult;
 
 	@ApiModelProperty(notes = "weight", position = 26)
 	private Float weight;
 
-	private GregorianCalendar ctrlDate1;
+	private Date ctrlDate1;
 
-	private GregorianCalendar ctrlDate2;
+	private Date ctrlDate2;
 
-	private GregorianCalendar abortDate;
+	private Date abortDate;
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
@@ -171,20 +172,20 @@ public class AdmissionDTO {
 		this.patient = patient;
 	}
 
-	public GregorianCalendar getAdmDate() {
+	public Date getAdmDate() {
 		return admDate;
 	}
 
-	public void setAdmDate(GregorianCalendar admDate) {
+	public void setAdmDate(Date admDate) {
 		this.admDate = admDate;
 	}
 
-	public AdmissionTypeDTO getAdmissionType() {
-		return admissionType;
+	public AdmissionTypeDTO getAdmType() {
+		return admType;
 	}
 
-	public void setAdmissionType(AdmissionTypeDTO admissionType) {
-		this.admissionType = admissionType;
+	public void setAdmType(AdmissionTypeDTO admType) {
+		this.admType = admType;
 	}
 
 	public String getFHU() {
@@ -235,11 +236,11 @@ public class AdmissionDTO {
 		this.operation = operation;
 	}
 
-	public GregorianCalendar getOpDate() {
+	public Date getOpDate() {
 		return opDate;
 	}
 
-	public void setOpDate(GregorianCalendar opDate) {
+	public void setOpDate(Date opDate) {
 		this.opDate = opDate;
 	}
 
@@ -251,11 +252,11 @@ public class AdmissionDTO {
 		this.opResult = opResult;
 	}
 
-	public GregorianCalendar getDisDate() {
+	public Date getDisDate() {
 		return disDate;
 	}
 
-	public void setDisDate(GregorianCalendar disDate) {
+	public void setDisDate(Date disDate) {
 		this.disDate = disDate;
 	}
 
@@ -283,11 +284,11 @@ public class AdmissionDTO {
 		this.transUnit = transUnit;
 	}
 
-	public GregorianCalendar getVisitDate() {
+	public Date getVisitDate() {
 		return visitDate;
 	}
 
-	public void setVisitDate(GregorianCalendar visitDate) {
+	public void setVisitDate(Date visitDate) {
 		this.visitDate = visitDate;
 	}
 
@@ -299,11 +300,11 @@ public class AdmissionDTO {
 		this.pregTreatmentType = pregTreatmentType;
 	}
 
-	public GregorianCalendar getDeliveryDate() {
+	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
 
-	public void setDeliveryDate(GregorianCalendar deliveryDate) {
+	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 
@@ -331,27 +332,27 @@ public class AdmissionDTO {
 		this.weight = weight;
 	}
 
-	public GregorianCalendar getCtrlDate1() {
+	public Date getCtrlDate1() {
 		return ctrlDate1;
 	}
 
-	public void setCtrlDate1(GregorianCalendar ctrlDate1) {
+	public void setCtrlDate1(Date ctrlDate1) {
 		this.ctrlDate1 = ctrlDate1;
 	}
 
-	public GregorianCalendar getCtrlDate2() {
+	public Date getCtrlDate2() {
 		return ctrlDate2;
 	}
 
-	public void setCtrlDate2(GregorianCalendar ctrlDate2) {
+	public void setCtrlDate2(Date ctrlDate2) {
 		this.ctrlDate2 = ctrlDate2;
 	}
 
-	public GregorianCalendar getAbortDate() {
+	public Date getAbortDate() {
 		return abortDate;
 	}
 
-	public void setAbortDate(GregorianCalendar abortDate) {
+	public void setAbortDate(Date abortDate) {
 		this.abortDate = abortDate;
 	}
 

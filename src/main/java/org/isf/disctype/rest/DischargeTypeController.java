@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 
 @RestController
-@Api(value = "/dischargetype", produces = "application/vnd.ohapi.app-v1+json")
+@Api(value = "/dischargetype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DischargeTypeController {
 
 	@Autowired
@@ -40,7 +41,7 @@ public class DischargeTypeController {
 		this.discTypeManager = discTypeManager;
 	}
 
-	@PostMapping(value = "/dischargetypes", produces = "application/vnd.ohapi.app-v1+json")
+	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		logger.info("Create discharge type " + code);
@@ -57,7 +58,7 @@ public class DischargeTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
 
-	@PutMapping(value = "/dischargetypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@PutMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@PathVariable String code,
 			@RequestBody DischargeTypeDTO admissionTypeDTO) throws OHServiceException {
 		logger.info("Update dischargetypes code:" + code);
@@ -73,7 +74,7 @@ public class DischargeTypeController {
 		return ResponseEntity.ok(admt.getCode());
 	}
 
-	@GetMapping(value = "/dischargetypes", produces = "application/vnd.ohapi.app-v1+json")
+	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
 		logger.info("Get all discharge types ");
 		List<DischargeType> admissionTypes = discTypeManager.getDischargeType();
@@ -86,7 +87,7 @@ public class DischargeTypeController {
 		}
 	}
 
-	@DeleteMapping(value = "/dischargetypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete discharge type code:" + code);
 		boolean isDeleted = false;

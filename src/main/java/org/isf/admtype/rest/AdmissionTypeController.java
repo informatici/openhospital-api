@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 
 @RestController
-@Api(value = "/admissiontypes", produces = "application/vnd.ohapi.app-v1+json")
+@Api(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdmissionTypeController {
 
 	@Autowired
@@ -40,7 +41,7 @@ public class AdmissionTypeController {
 		this.admtManager = admtManager;
 	}
 
-	@PostMapping(value = "/admissiontypes", produces = "application/vnd.ohapi.app-v1+json")
+	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		logger.info("Create Admission Type " + code);
@@ -57,7 +58,7 @@ public class AdmissionTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
 
-	@PutMapping(value = "/admissiontypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@PutMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@PathVariable String code,
 			@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		logger.info("Update admissiontypes code:" + code);
@@ -73,7 +74,7 @@ public class AdmissionTypeController {
 		return ResponseEntity.ok(admt.getCode());
 	}
 
-	@GetMapping(value = "/admissiontypes", produces = "application/vnd.ohapi.app-v1+json")
+	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
 		logger.info("Get all Admission Types ");
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
@@ -86,7 +87,7 @@ public class AdmissionTypeController {
 		}
 	}
 
-	@DeleteMapping(value = "/admissiontypes/{code}", produces = "application/vnd.ohapi.app-v1+json")
+	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete Admission Type code:" + code);
 		boolean isDeleted = false;

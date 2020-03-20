@@ -2,6 +2,7 @@ package org.isf.admission.rest;
 
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,6 +99,7 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		System.out.println("admissiontype code" + admission.getAdmType().getCode());
 		return ResponseEntity.ok(getObjectMapper().map(admission, AdmissionDTO.class));
 	}
 
@@ -116,7 +118,7 @@ public class AdmissionController {
 		return ResponseEntity.ok(getObjectMapper().map(admission, AdmissionDTO.class));
 	}
 
-	@GetMapping(value = "/admissions/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
 		logger.info("Get patient admissions by patient code:" + patientCode);
@@ -130,9 +132,9 @@ public class AdmissionController {
 		if (admissionsDTOs.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(getObjectMapper().map(admissionsDTOs, AdmissionDTO.class));
+		return ResponseEntity.ok(admissionsDTOs.get(0));
 	}
-
+	
 	@PostMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> newAdmissions(@Valid @RequestBody AdmissionCUDTO newAdmissionCUDTO)
 			throws OHServiceException {
@@ -144,13 +146,13 @@ public class AdmissionController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 		newAdmission.setPatient(patient);
-//
-//		List<Ward> wards = wardManager.getWards().stream()
-//				.filter(w -> w.getCode().equals(newAdmissionCUDTO.getWardCode())).collect(Collectors.toList());
-//		if (wards.size() == 0) {
-//			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found!", OHSeverityLevel.ERROR));
-//		}
-//		newAdmission.setWard(wards.get(0));
+
+		List<Ward> wards = wardManager.getWards().stream()
+				.filter(w -> w.getCode().equals(newAdmissionCUDTO.getWardCode())).collect(Collectors.toList());
+		if (wards.size() == 0) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found!", OHSeverityLevel.ERROR));
+		}
+		newAdmission.setWard(wards.get(0));
 
 		List<AdmissionType> types = admtManager.getAdmissionType().stream()
 				.filter(admt -> admt.getCode().equals(newAdmissionCUDTO.getAdmissionTypeCode()))
@@ -283,6 +285,7 @@ public class AdmissionController {
 
 	/**
 	 * Nested objects are only replaced if a new value has been sent.
+	 * 
 	 * @param updAdmissionCUDTO
 	 * @param id
 	 * @return
@@ -447,22 +450,54 @@ public class AdmissionController {
 	}
 
 	private Admission manualMap(Admission admission, AdmissionSimpleDTO dto) {
-		admission.setAbortDate(dto.getAbortDate());
-		//admission.setAdmDate(dto.getAdmDate());
+		if (dto.getAbortDate() != null) {
+			GregorianCalendar abDate = new GregorianCalendar();
+			abDate.setTime(dto.getAbortDate());
+			admission.setAbortDate(abDate);
+		}
+		if (dto.getAdmDate() != null) {
+			GregorianCalendar abmDate = new GregorianCalendar();
+			abmDate.setTime(dto.getAdmDate());
+			admission.setAdmDate(abmDate);
+		}
 		admission.setAdmitted(dto.getAdmitted());
-		admission.setCtrlDate1(dto.getCtrlDate1());
-		admission.setCtrlDate2(dto.getCtrlDate2());
-		admission.setDeliveryDate(dto.getDeliveryDate());
-		admission.setDisDate(dto.getDisDate());
+		if (dto.getCtrlDate1() != null) {
+			GregorianCalendar ctrlDate1 = new GregorianCalendar();
+			ctrlDate1.setTime(dto.getCtrlDate1());
+			admission.setCtrlDate1(ctrlDate1);
+		}
+		if (dto.getCtrlDate2() != null) {
+			GregorianCalendar ctrlDate2 = new GregorianCalendar();
+			ctrlDate2.setTime(dto.getCtrlDate2());
+			admission.setCtrlDate2(ctrlDate2);
+		}
+		if (dto.getDeliveryDate() != null) {
+			GregorianCalendar dlvDate = new GregorianCalendar();
+			dlvDate.setTime(dto.getDeliveryDate());
+			admission.setDeliveryDate(dlvDate);
+		}
+		if (dto.getDisDate() != null) {
+			GregorianCalendar disDate = new GregorianCalendar();
+			disDate.setTime(dto.getDisDate());
+			admission.setDisDate(disDate);
+		}
 		admission.setFHU(dto.getFHU());
 		admission.setLock(dto.getLock());
 		admission.setNote(dto.getNote());
-		admission.setOpDate(dto.getOpDate());
+		if (dto.getOpDate() != null) {
+			GregorianCalendar opDate = new GregorianCalendar();
+			opDate.setTime(dto.getOpDate());
+			admission.setOpDate(opDate);
+		}
 		admission.setOpResult(dto.getOpResult());
 		admission.setTransUnit(dto.getTransUnit());
 		admission.setType(dto.getType());
 		admission.setUserID(dto.getUserID());
-		admission.setVisitDate(dto.getVisitDate());
+		if (dto.getVisitDate() != null) {
+			GregorianCalendar visitDate = new GregorianCalendar();
+			visitDate.setTime(dto.getVisitDate());
+			admission.setVisitDate(visitDate);
+		}
 		admission.setWeight(dto.getWeight());
 		admission.setYProg(dto.getyProg());
 		return admission;
