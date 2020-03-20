@@ -103,7 +103,7 @@ public class BillController {
         ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>( newBillDto.getBillPayments().stream().map(item -> getObjectMapper().map(item, BillPayments.class)).collect(Collectors.toList()));
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
-    
+        
         if(!isCreated || newBillDto == null){
             throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
         }
