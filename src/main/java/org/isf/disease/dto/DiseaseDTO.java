@@ -4,23 +4,32 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.distype.dto.DiseaseTypeDTO;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Class representing a disease")
 public class DiseaseDTO {
 	@NotNull
 	private Integer code;
 
 	@NotNull
+	@ApiModelProperty(notes = "Disease description")
     private String description;
 
 	@NotNull
+	@ApiModelProperty(notes = "Disease type")
 	private DiseaseTypeDTO diseaseType; 
 
 	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an OPD disease", example="true")
 	private boolean opdInclude;
 
 	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an IPD-IN disease", example="true")
 	private boolean ipdInInclude;
 
 	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an IPD-OUT disease", example="true")
 	private boolean ipdOutInclude;
 
 	public int getCode() {
