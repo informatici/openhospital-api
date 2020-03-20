@@ -15,25 +15,25 @@ public class BillDTO {
 	
 	private Integer id;
 	
-	private PatientDTO patient; 
+	private Integer patientId; 
 
 	
-	private PriceListDTO list;
+	private Integer listId;
 
-	public PatientDTO getPatient() {
-		return patient;
+	public Integer getPatientId() {
+		return patientId;
 	}
 
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
+	public void setPatientId(Integer patientId) {
+		this.patientId = patientId;
 	}
 
-	public PriceListDTO getList() {
-		return list;
+	public Integer getListId() {
+		return listId;
 	}
 
-	public void setList(PriceListDTO list) {
-		this.list = list;
+	public void setListId(Integer listId) {
+		this.listId = listId;
 	}
 	@NotNull
 	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00.000Z", position = 1)
