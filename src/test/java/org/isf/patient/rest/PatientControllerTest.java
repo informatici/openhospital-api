@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -16,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +36,6 @@ import org.isf.utils.exception.OHException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +48,6 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 
 /**
@@ -85,7 +82,7 @@ public class PatientControllerTest {
 		
 		MvcResult result = this.mockMvc
 			.perform(post(request).content(new byte[]{'a', 'b', 'c'}))
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isUnsupportedMediaType())
 			.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
@@ -112,7 +109,7 @@ public class PatientControllerTest {
 				.content(empty_body.getBytes())
 				.contentType(MediaType.APPLICATION_JSON)
 			)
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest())
 			.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
@@ -141,7 +138,7 @@ public class PatientControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(PatientDTOHelper.asJsonString(newPatientDTO))
 			)
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
 			.andExpect(content().string(containsString("Patient is not created!")))
@@ -171,7 +168,7 @@ public class PatientControllerTest {
 			.perform(post(request)
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(PatientDTOHelper.asJsonString(newPatientDTO)))
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
 			.andExpect(content().string(containsString("Patient is not created!")))
@@ -205,7 +202,7 @@ public class PatientControllerTest {
 					post(request)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isCreated())
 			.andExpect(content().string(containsString(code.toString())));
 	}
@@ -230,7 +227,7 @@ public class PatientControllerTest {
 					put(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(code.toString())));
 	}
@@ -249,7 +246,7 @@ public class PatientControllerTest {
 					put(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(new byte[3]))
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isBadRequest())
 			.andReturn();
 		
@@ -277,7 +274,7 @@ public class PatientControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
 						.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
-				.andDo(print()).andExpect(status().is4xxClientError()).andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
+				.andDo(log()).andExpect(status().is4xxClientError()).andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
 				.andExpect(content().string(containsString("Patient is not updated!"))).andReturn();
 
 		//TODO Create OHUpdateAPIException
@@ -315,7 +312,7 @@ public class PatientControllerTest {
 					get(request)
 					.contentType(MediaType.APPLICATION_JSON)
 					)
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatienDTOList))))
 			.andReturn();
@@ -341,7 +338,7 @@ public class PatientControllerTest {
 					get(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
@@ -369,7 +366,7 @@ public class PatientControllerTest {
 					.param("name", name)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
@@ -396,7 +393,7 @@ public class PatientControllerTest {
 					.param("code", code.toString())
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
@@ -419,7 +416,7 @@ public class PatientControllerTest {
 				.param("code", code.toString())
 				.contentType(MediaType.APPLICATION_JSON)
 				)		
-		.andDo(print())
+		.andDo(log())
 		.andExpect(status().isNoContent());
 	}
 	
@@ -436,7 +433,7 @@ public class PatientControllerTest {
 					get(request)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isNoContent());
 	}
 	
@@ -458,7 +455,7 @@ public class PatientControllerTest {
 					.param("name", name)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isNoContent());
 	}
 
@@ -484,7 +481,7 @@ public class PatientControllerTest {
 					delete(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("true")));
 	}
@@ -509,7 +506,7 @@ public class PatientControllerTest {
 					delete(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().isNotFound());
 	}
 	
@@ -535,7 +532,7 @@ public class PatientControllerTest {
 					delete(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
-			.andDo(print())
+			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHDeleteAPIException
 			.andExpect(content().string(containsString("Patient is not deleted!")))
