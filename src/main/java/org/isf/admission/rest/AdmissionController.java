@@ -11,11 +11,10 @@ import javax.validation.Valid;
 import org.isf.admission.dto.AdmissionCUDTO;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.dto.AdmissionSimpleDTO;
+import org.isf.admission.dto.AdmittedPatientDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
-import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
@@ -42,6 +41,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,16 +66,10 @@ public class AdmissionController {
 	private WardBrowserManager wardManager;
 
 	@Autowired
-	private AdmissionTypeBrowserManager admtManager;
-
-	@Autowired
 	private DiseaseBrowserManager diseaseManager;
 
 	@Autowired
 	private OperationBrowserManager operationManager;
-
-	@Autowired
-	private DischargeTypeBrowserManager disTypeManager;
 
 	@Autowired
 	private PregnantTreatmentTypeBrowserManager pregTraitTypeManager;
@@ -118,6 +112,23 @@ public class AdmissionController {
 		return ResponseEntity.ok(getObjectMapper().map(admission, AdmissionDTO.class));
 	}
 
+	@GetMapping(value = "/admissions/admitted/patient", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
+			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
+			@RequestParam(name = "admissionrange", required = false) GregorianCalendar[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) GregorianCalendar[] dischargeRange)
+			throws OHServiceException {
+		logger.info("Get admitted patients search terms:" + searchTerms);
+		List<AdmittedPatientDTO> Amittedpatients = admissionManager
+				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms).stream()
+				.map(admPt -> getObjectMapper().map(admPt, AdmittedPatientDTO.class)).collect(Collectors.toList());
+
+		if (Amittedpatients.size() == 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(Amittedpatients);
+	}
+
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
@@ -134,7 +145,21 @@ public class AdmissionController {
 		}
 		return ResponseEntity.ok(admissionsDTOs.get(0));
 	}
-	
+
+	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int id) throws OHServiceException {
+		logger.info("setting admission to deleted:" + id);
+		boolean isDeleted = false;
+		Admission admission = admissionManager.getAdmission(id);
+		if (admission != null) {
+			isDeleted = admissionManager.setDeleted(id);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+
+		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+	}
+
 	@PostMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> newAdmissions(@Valid @RequestBody AdmissionCUDTO newAdmissionCUDTO)
 			throws OHServiceException {
@@ -154,7 +179,7 @@ public class AdmissionController {
 		}
 		newAdmission.setWard(wards.get(0));
 
-		List<AdmissionType> types = admtManager.getAdmissionType().stream()
+		List<AdmissionType> types = admissionManager.getAdmissionType().stream()
 				.filter(admt -> admt.getCode().equals(newAdmissionCUDTO.getAdmissionTypeCode()))
 				.collect(Collectors.toList());
 		if (types.size() == 0) {
@@ -225,7 +250,7 @@ public class AdmissionController {
 		}
 
 		if (newAdmissionCUDTO.getDisTypeCode() != null) {
-			List<DischargeType> disTypes = disTypeManager.getDischargeType();
+			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(newAdmissionCUDTO.getDisTypeCode()))
 					.collect(Collectors.toList());
@@ -318,7 +343,7 @@ public class AdmissionController {
 		}
 
 		if (updAdmissionCUDTO.getAdmissionTypeCode() != null) {
-			List<AdmissionType> types = admtManager.getAdmissionType().stream()
+			List<AdmissionType> types = admissionManager.getAdmissionType().stream()
 					.filter(admt -> admt.getCode().equals(updAdmissionCUDTO.getAdmissionTypeCode()))
 					.collect(Collectors.toList());
 			if (types.size() == 0) {
@@ -391,7 +416,7 @@ public class AdmissionController {
 		}
 
 		if (updAdmissionCUDTO.getDisTypeCode() != null) {
-			List<DischargeType> disTypes = disTypeManager.getDischargeType();
+			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(updAdmissionCUDTO.getDisTypeCode()))
 					.collect(Collectors.toList());
