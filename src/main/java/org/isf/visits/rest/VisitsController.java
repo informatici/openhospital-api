@@ -36,6 +36,13 @@ public class VisitsController {
         this.visitManager = visitManager;
     }
 
+    /**
+     * Get all the visitors related to a patient
+     *
+     * @param patID the id of the patient
+     * @return NO_CONTENT if there aren't visitors, List<VisitDTO> otherwise
+     * @throws OHServiceException
+     */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
         logger.info("Get visit related to patId: " + patID);
@@ -48,6 +55,13 @@ public class VisitsController {
         }
     }
 
+    /**
+     * Create new visitor
+     *
+     * @param newVisit
+     * @return an error if there are some problem, the visitor id (Integer) otherwise
+     * @throws OHServiceException
+     */
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
         logger.info("Create Visit: " + newVisit);
@@ -55,28 +69,42 @@ public class VisitsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newVisit.getVisitID());
     }
 
+    /**
+     * Create new visitors
+     *
+     * @param newVisits a list with all the visitors
+     * @return an error message if there are some problem, ok otherwise
+     * @throws OHServiceException
+     */
     @PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
+    public ResponseEntity newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
         logger.info("Create Visits");
-        ArrayList<Visit> listVisits= new ArrayList<Visit>();
-        for(VisitDTO visit: newVisits) {
+        ArrayList<Visit> listVisits = new ArrayList<Visit>();
+        for (VisitDTO visit : newVisits) {
             listVisits.add(getObjectMapper().map(visit, Visit.class));
         }
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(true);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 
+    /**
+     * Delete all the visits related to a patient
+     *
+     * @param patID the id of the patient
+     * @return an error message if there are some problem, ok otherwise
+     * @throws OHServiceException
+     */
     @DeleteMapping(value = "/visit/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
         logger.info("Delete Visit related to patId: " + patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits is not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
-        return (ResponseEntity) ResponseEntity.ok(areDeleted);
+        return ResponseEntity.ok(null);
     }
 
 }
