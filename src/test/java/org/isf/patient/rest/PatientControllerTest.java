@@ -511,8 +511,6 @@ public class PatientControllerTest {
 	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
-		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
 				
