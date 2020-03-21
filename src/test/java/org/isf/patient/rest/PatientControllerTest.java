@@ -295,12 +295,8 @@ public class PatientControllerTest {
 	@Test
 	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
 		String request = "/patients";
-		Integer code = 0;
 		
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
-		
-		Patient	expectedPatient = PatientHelper.setupPatient();
-		expectedPatient.setCode(code);
 		
 		ArrayList<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
 		
@@ -470,8 +466,6 @@ public class PatientControllerTest {
 	public void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
-		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
 				
@@ -497,10 +491,6 @@ public class PatientControllerTest {
 	public void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
 		Integer code = 111;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
-		expectedPatientDTO.setCode(code);
-		Patient	patient = PatientHelper.setupPatient();
-		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(null);
 		
