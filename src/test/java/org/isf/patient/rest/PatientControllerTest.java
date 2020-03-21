@@ -62,15 +62,14 @@ public class PatientControllerTest {
 	private final Logger logger = LoggerFactory.getLogger(PatientControllerTest.class);
 
 	@Mock
-    private PatientBrowserManager patientBrowserManagerMock = Mockito.mock(PatientBrowserManager.class);
+    private PatientBrowserManager patientBrowserManagerMock;
 	
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
-    	Mockito.reset(patientBrowserManagerMock);
     	MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders
+    	this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new PatientController(patientBrowserManagerMock))
    				.setControllerAdvice(new OHResponseEntityExceptionHandler())
    				.build();
