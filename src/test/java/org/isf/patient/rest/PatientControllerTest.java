@@ -201,7 +201,7 @@ public class PatientControllerTest {
 			.perform(
 					post(request)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
+					.content(PatientDTOHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
 			.andExpect(status().isCreated())
 			.andExpect(content().string(containsString(code.toString())));
@@ -226,7 +226,7 @@ public class PatientControllerTest {
 			.perform(
 					put(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
+					.content(PatientDTOHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(code.toString())));
@@ -273,7 +273,7 @@ public class PatientControllerTest {
 		
 		MvcResult result = this.mockMvc
 				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
-						.content(PatientDTOHelper.asJsonString(newPatientDTO).getBytes()))
+						.content(PatientDTOHelper.asJsonString(newPatientDTO)))
 				.andDo(log()).andExpect(status().is4xxClientError()).andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
 				.andExpect(content().string(containsString("Patient is not updated!"))).andReturn();
 
