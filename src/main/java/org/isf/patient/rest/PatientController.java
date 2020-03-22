@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
-public class PatientController extends OHApiAbstractController {
+public class PatientController extends OHApiAbstractController<Patient, PatientDTO> {
 
     private static final String DEFAULT_PAGE_SIZE = "80";
 
@@ -50,7 +50,7 @@ public class PatientController extends OHApiAbstractController {
     ResponseEntity<Integer> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
         String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
         logger.info("Create patient " + name);
-        boolean isCreated = patientManager.newPatient(ohModelMapper.getModelMapper().map(newPatient, Patient.class));
+        boolean isCreated = patientManager.newPatient(toModel(newPatient));
         Patient patient = patientManager.getPatient(name);
         if (!isCreated || patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
@@ -61,7 +61,7 @@ public class PatientController extends OHApiAbstractController {
     @PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
         logger.info("Update patient code:" + code);
-        Patient patient = ohModelMapper.getModelMapper().map(updatePatient, Patient.class);
+        Patient patient = toModel(updatePatient);
         patient.setCode(code);
         boolean isUpdated = patientManager.updatePatient(patient);
         if (!isUpdated) {
@@ -76,7 +76,7 @@ public class PatientController extends OHApiAbstractController {
             @RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
         logger.info("Get patients page:" + page + " size:" + size);
         ArrayList<Patient> patients = patientManager.getPatient(page, size);
-        List<PatientDTO> patientDTOS = patients.stream().map(it -> ohModelMapper.getModelMapper().map(it, PatientDTO.class)).collect(Collectors.toList());
+        List<PatientDTO> patientDTOS = toDTOList(patients);
         if (patientDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
         } else {
@@ -91,7 +91,7 @@ public class PatientController extends OHApiAbstractController {
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(ohModelMapper.getModelMapper().map(patient, PatientDTO.class));
+        return ResponseEntity.ok(toDTO(patient));
     }
 
 
@@ -109,7 +109,7 @@ public class PatientController extends OHApiAbstractController {
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(ohModelMapper.getModelMapper().map(patient, PatientDTO.class));
+        return ResponseEntity.ok(toDTO(patient));
     }
 
     @DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,5 +126,15 @@ public class PatientController extends OHApiAbstractController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
         }
         return (ResponseEntity) ResponseEntity.ok(isDeleted);
+    }
+
+    @Override
+    protected Class<PatientDTO> getDTOClass() {
+        return PatientDTO.class;
+    }
+
+    @Override
+    protected Class<Patient> getModelClass() {
+        return Patient.class;
     }
 }

@@ -6,7 +6,6 @@ import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.mapper.OHModelMapper;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
-public class OpdController extends OHApiAbstractController {
+public class OpdController extends OHApiAbstractController<Opd, OpdDTO> {
 
     private static final String DEFAULT_PAGE_SIZE = "80";
 
@@ -44,7 +43,7 @@ public class OpdController extends OHApiAbstractController {
     @PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> newOpd(@RequestBody OpdDTO newOpd) throws OHServiceException {
         logger.info("Create opd for patient " + newOpd.getPatient().getCode());
-        boolean isCreated = opdManager.newOpd(ohModelMapper.getModelMapper().map(newOpd, Opd.class));
+        boolean isCreated = opdManager.newOpd(toModel(newOpd));
         Opd lastOpd = opdManager.getLastOpd(newOpd.getPatient().getCode());
         if (!isCreated || lastOpd == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
@@ -56,7 +55,7 @@ public class OpdController extends OHApiAbstractController {
     public ResponseEntity<List<OpdDTO>> getOpds(int patientcode) throws OHServiceException {
         logger.info("Get opds");
         ArrayList<Opd> opds = opdManager.getOpdList(patientcode);
-        List<OpdDTO> opdDTOS = opds.stream().map(it -> ohModelMapper.getModelMapper().map(it, OpdDTO.class)).collect(Collectors.toList());
+        List<OpdDTO> opdDTOS = toDTOList(opds);
         if (opdDTOS.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOS);
         } else {
@@ -64,4 +63,13 @@ public class OpdController extends OHApiAbstractController {
         }
     }
 
+    @Override
+    protected Class<OpdDTO> getDTOClass() {
+        return OpdDTO.class;
+    }
+
+    @Override
+    protected Class<Opd> getModelClass() {
+        return Opd.class;
+    }
 }
