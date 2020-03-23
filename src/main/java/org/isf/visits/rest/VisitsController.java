@@ -49,7 +49,7 @@ public class VisitsController {
         ArrayList<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = visit.stream().map(it -> getObjectMapper().map(it, VisitDTO.class)).collect(Collectors.toList());
         if (listVisit.size() == 0) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVisit);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listVisit);
         }
