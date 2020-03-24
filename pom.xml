@@ -13,7 +13,7 @@
 	<version>0.0.1</version>
 	<name>openhospital-api</name>
 	<description>Openhospital Spring Boot REST API </description>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -124,6 +124,14 @@
     </dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/openhospital-ui/bundle</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -163,74 +171,22 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>com.github.eirslett</groupId>
-				<artifactId>frontend-maven-plugin</artifactId>
-				<version>${frontend-maven-plugin.version}</version>
-
-				<configuration>
-					<nodeVersion>${node.version}</nodeVersion>
-					<yarnVersion>${yarn.version}</yarnVersion>
-					<workingDirectory>${frontend-src-dir}</workingDirectory>
-					<installDirectory>${project.build.directory}</installDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<id>npm clean</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<phase>pre-clean</phase>
-						<configuration>
-							<arguments>install --no-save rimraf</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install node and npm</id>
-						<goals>
-							<goal>install-node-and-npm</goal>
-						</goals>
-						<phase>generate-resources</phase>
-					</execution>
-					<execution>
-						<id>npm install</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<phase>generate-resources</phase>
-						<configuration>
-							<arguments>install</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>npm compile</id>
-						<goals>
-							<goal>npm</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<arguments>run build</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
+			<!--<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.2.3</version>
 				<configuration>
 				<webResources>
 					<resource>
-					<!-- this is relative to the pom.xml directory -->
 					<directory>${project.basedir}/src/main/openhospital-ui/dist/</directory>
 					</resource>
 				</webResources>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
 
+<<<<<<< HEAD
     <profiles>
         <profile>
             <id>release</id>
@@ -280,6 +236,136 @@
                 </plugins>
             </build>
         </profile>
+=======
+	<profiles>
+		<profile>
+			<id>bundle-openhospital-api</id>
+			<activation>
+				<property>
+					<name>bundle-oh-ui</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.4.1</version>
+						<configuration>
+							<filesets>
+								<fileset>
+								<directory>src/main/openhospital-ui/bundle</directory>
+								<followSymlinks>false</followSymlinks>
+								</fileset>
+								<fileset>
+								<directory>src/main/openhospital-ui/dist</directory>
+								<followSymlinks>false</followSymlinks>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>com.github.eirslett</groupId>
+						<artifactId>frontend-maven-plugin</artifactId>
+						<version>${frontend-maven-plugin.version}</version>
+
+						<configuration>
+							<nodeVersion>${node.version}</nodeVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
+							<workingDirectory>${frontend-src-dir}</workingDirectory>
+							<installDirectory>${project.build.directory}</installDirectory>
+						</configuration>
+						<executions>
+							<execution>
+								<id>install node and npm</id>
+								<goals>
+									<goal>install-node-and-npm</goal>
+								</goals>
+								<phase>validate</phase>
+							</execution>
+							<!--<execution>
+								<id>npm clean</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<phase>pre-clean</phase>
+								<configuration>
+									<arguments>install--> <!--no-save rimraf</arguments>
+								</configuration>
+							</execution>-->
+							<execution>
+								<id>npm install</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<phase>initialize</phase>
+								<configuration>
+									<arguments>install</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>npm compile</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<phase>generate-resources</phase>
+								<configuration>
+									<arguments>run publish-bundle</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	    <profile>
+	        <id>release</id>
+	        <build>
+	            <plugins>
+	                <plugin>
+	                    <groupId>org.apache.maven.plugins</groupId>
+	                    <artifactId>maven-source-plugin</artifactId>
+						<executions>
+						    <execution>
+						        <id>attach-sources</id>
+						        <goals>
+						            <goal>jar-no-fork</goal>
+						        </goals>
+						    </execution>
+						</executions>
+	                </plugin>
+	                <plugin>
+	                    <groupId>org.apache.maven.plugins</groupId>
+	                    <artifactId>maven-javadoc-plugin</artifactId>
+	                    <executions>
+	                        <execution>
+	                            <id>attach-javadocs</id>
+	                            <goals>
+	                                <goal>jar</goal>
+	                            </goals>
+	                            <configuration>
+	                                <additionalparam>-Xdoclint:none</additionalparam>
+	                                <skip>true</skip>
+	                            </configuration>
+	                        </execution>
+	                    </executions>
+	                </plugin>
+	                <plugin>
+	                    <!-- explicitly define maven-deploy-plugin after other to force exec order -->
+	                    <artifactId>maven-deploy-plugin</artifactId>
+	                    <executions>
+	                        <execution>
+	                            <id>deploy</id>
+	                            <phase>deploy</phase>
+	                            <goals>
+	                                <goal>deploy</goal>
+	                            </goals>
+	                        </execution>
+	                    </executions>
+	                </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+>>>>>>> Updated the pom file so that it can selectively build UI and bundles it with API in single jar
     </profiles>
 
 </project>
