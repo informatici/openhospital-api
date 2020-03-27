@@ -2,7 +2,7 @@ package org.isf.operation.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.isf.operationtype.dto.OperationTypeDTO;
+import org.isf.opetype.dto.OperationTypeDTO;
 
 @ApiModel(description = "Class representing an operation")
 public class OperationDTO {
