@@ -31,10 +31,6 @@ public class OpdController extends OHApiAbstractController<Opd, OpdDTO> {
 
     private final Logger logger = LoggerFactory.getLogger(OpdController.class);
 
-    public OpdController(OpdBrowserManager opdBrowserManager) {
-        this.opdManager = opdBrowserManager;
-    }
-
     @PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO newOpd) throws OHServiceException {
         logger.info(String.format("Create opd for patient [%d]", newOpd.getPatient().getCode()));

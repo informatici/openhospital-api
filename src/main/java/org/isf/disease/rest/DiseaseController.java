@@ -79,7 +79,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
 
     @GetMapping(value = "/diseasesIpdOut/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOutByTypeCode(@PathVariable String typecode) throws OHServiceException {
-        logger.info("getDiseaseIpdOutByTypeCode");
+        logger.info(String.format("getDiseaseIpdOutByTypeCode typecode [%s]", typecode));
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut(typecode);
         List<DiseaseDTO> diseaseDTOS = toDTOList(diseases);
         if (diseaseDTOS.size() == 0) {
@@ -103,7 +103,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
 
     @GetMapping(value = "/diseasesIpdIn/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdInByTypeCode(@PathVariable String typecode) throws OHServiceException {
-        logger.info("getDiseaseIpdInByTypeCode");
+        logger.info(String.format("getDiseaseIpdInByTypeCode typecode [%s]", typecode));
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn(typecode);
         List<DiseaseDTO> diseaseDTOS = toDTOList(diseases);
         if (diseaseDTOS.size() == 0) {
@@ -127,7 +127,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
 
     @GetMapping(value = "/diseases/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseByTypeCode(@PathVariable String typecode) throws OHServiceException {
-        logger.info("getDiseaseByTypeCode");
+        logger.info(String.format("getDiseaseByTypeCode typecode [%s]", typecode));
         ArrayList<Disease> diseases = diseaseManager.getDisease(typecode);
         List<DiseaseDTO> diseaseDTOS = toDTOList(diseases);
         if (diseaseDTOS.size() == 0) {
@@ -139,7 +139,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
 
     @GetMapping(value = "/diseases/disease/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable int code) throws OHServiceException {
-        logger.info("getDiseaseByCode");
+        logger.info(String.format("getDiseaseByCode typecode [%d]", code));
         Disease disease = diseaseManager.getDiseaseByCode(code);
         if (disease == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
