@@ -5,11 +5,8 @@ import io.swagger.annotations.Authorization;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -65,8 +61,8 @@ public class OpdController extends OHApiAbstractController<Opd, OpdDTO> {
             @RequestParam(value = "dateFrom", required = false) GregorianCalendar dateFrom,
             @RequestParam(value = "dateTo", required = false) GregorianCalendar dateTo,
             @RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom,
-            @RequestParam(value = "ageTo", required = false, defaultValue = "0") Integer ageTo,
-            @RequestParam(value = "sex", required = false, defaultValue = "M") char sex,
+            @RequestParam(value = "ageTo", required = false, defaultValue = "100") Integer ageTo,
+            @RequestParam(value = "sex", required = false, defaultValue = "A") char sex,
             @RequestParam(value = "newPatient", required = false, defaultValue = "R") char newPatient)  throws OHServiceException {
         logger.info(String.format("Search opds by diseaseTypeCode [%s], diseaseCode [%s], dateFrom [%s], dateTo [%s], ageFrom [%d], ageTo [%d], sex [%c], newPatient [%c]"
                 , diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient));
