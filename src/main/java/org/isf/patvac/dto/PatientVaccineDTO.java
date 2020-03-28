@@ -1,21 +1,28 @@
 package org.isf.patvac.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.isf.patient.dto.PatientDTO;
 
 import java.util.Date;
 
+@ApiModel(description = "Class representing a patient vaccine")
 public class PatientVaccineDTO {
 
+    @ApiModelProperty(notes = "Code", example="", position = 1)
     private int code;
 
+    @ApiModelProperty(notes = "Progr", example="", position = 2)
     private int progr;
 
+    @ApiModelProperty(notes = "Date", example = "1979-05-01", position = 3)
     private Date vaccineDate;
 
+    @ApiModelProperty(notes = "Patient", position = 4)
     private PatientDTO patient;
 
     // TODO
-//    private VaccineDTO vaccine;
+    // private VaccineDTO vaccine;
 
     private int lock;
 
