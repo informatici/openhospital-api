@@ -36,7 +36,7 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
      */
     @PostMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Boolean> newOperation(@RequestBody OperationDTO newOperation) throws OHServiceException {
-        logger.info(String.format("newOperation [%d]", newOperation.getCode()));
+        logger.info(String.format("newOperation [%s]", newOperation.getCode()));
         Boolean createOperation = operationBrowserManager.newOperation(toModel(newOperation));
         return ResponseEntity.status(HttpStatus.CREATED).body(createOperation);
     }
@@ -69,14 +69,14 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
     /**
      * return the {@link Operation}s whose type matches specified string
      *
-     * @param typecode - a type description
+     * @param typeDescription - a type description
      * @return the list of {@link Operation}s. It could be <code>empty</code> or <code>null</code>.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/operationsByTypecode/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<OperationDTO> getOperation(String typecode) throws OHServiceException {
-        logger.info(String.format("getOperation by typecode [%s]", typecode));
-        return toDTOList(operationBrowserManager.getOperation(typecode));
+    @GetMapping(value = "/operations/{typeDescription}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<OperationDTO> getOperation(String typeDescription) throws OHServiceException {
+        logger.info(String.format("getOperation by typeDescription [%s]", typeDescription));
+        return toDTOList(operationBrowserManager.getOperation(typeDescription));
     }
 
     /**
@@ -87,7 +87,7 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
      * @throws OHServiceException
      */
     @PatchMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean updateOperation(OperationDTO operation) throws OHServiceException {
+    public boolean updateOperation(@RequestBody OperationDTO operation) throws OHServiceException {
         logger.info(String.format("updateOperation code [%s]", operation.getCode()));
         // the user has confirmed he wants to overwrite the record
         return operationBrowserManager.updateOperation(toModel(operation));
@@ -101,7 +101,7 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
      * @throws OHServiceException
      */
     @DeleteMapping(value="/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean deleteOperation(OperationDTO operation) throws OHServiceException {
+    public boolean deleteOperation(@RequestBody OperationDTO operation) throws OHServiceException {
         logger.info(String.format("deleteOperation code [%s]", operation.getCode()));
         return operationBrowserManager.deleteOperation(toModel(operation));
     }
@@ -113,7 +113,7 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
      * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/codeControl/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/operations/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean codeControl(String code) throws OHServiceException {
         logger.info(String.format("codeControl [%s]", code));
         return operationBrowserManager.codeControl(code);
@@ -127,7 +127,7 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
      * @return <code>true</code> if the description is already in use, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/descriptionControl/{description}/{typeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/operations/descriptionControl/{description}/{typeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean descriptionControl(String description, String typeCode) throws OHServiceException {
         logger.info(String.format("descriptionControl description [%s] typeCode [%s]", description, typeCode));
         return operationBrowserManager.descriptionControl(description,typeCode);
