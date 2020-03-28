@@ -29,7 +29,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
 
     private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
 
-    @GetMapping(value = "/diseasesAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseAll() throws OHServiceException {
         logger.info("getDiseaseAll");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseAll();
@@ -41,7 +41,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesOpd", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/opd", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseOpd() throws OHServiceException {
         logger.info("getDiseaseOpd");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseOpd();
@@ -53,7 +53,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesOpd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/opd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseOpdByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info("getDiseaseOpdByTypeCode");
         ArrayList<Disease> diseaseOpd = diseaseManager.getDiseaseOpd(typecode);
@@ -65,7 +65,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesIpdOut", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/ipdOut", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOut() throws OHServiceException {
         logger.info("getDiseaseIpdOut");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut();
@@ -77,7 +77,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesIpdOut/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/ipdOut/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdOutByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info(String.format("getDiseaseIpdOutByTypeCode typecode [%s]", typecode));
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdOut(typecode);
@@ -89,7 +89,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesIpdIn", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/ipdIn", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdIn() throws OHServiceException {
         logger.info("getDiseaseIpdIn");
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn();
@@ -101,7 +101,7 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
         }
     }
 
-    @GetMapping(value = "/diseasesIpdIn/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/diseases/ipdIn/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseIpdInByTypeCode(@PathVariable String typecode) throws OHServiceException {
         logger.info(String.format("getDiseaseIpdInByTypeCode typecode [%s]", typecode));
         ArrayList<Disease> diseases = diseaseManager.getDiseaseIpdIn(typecode);
