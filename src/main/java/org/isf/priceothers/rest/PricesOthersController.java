@@ -7,6 +7,8 @@ import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +25,8 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	@Autowired
 	private PricesOthersManager manager;
 
+	private final Logger logger = LoggerFactory.getLogger(PricesOthersController.class);
+
 	/**
 	 * return the list of {@link PricesOthersDTO}s in the DB
 	 * 
@@ -31,6 +35,7 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 */
 	@GetMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PricesOthersDTO> getOthers() throws OHServiceException {
+		logger.info(String.format("getOthers"));
         return toDTOList(manager.getOthers());
 	}
 
@@ -43,6 +48,7 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 */
 	@PostMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean newOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+		logger.info(String.format("newOther [%s]", pricesOthersDTO.getCode()));
         return manager.newOther(toModel(pricesOthersDTO));
 	}
 
@@ -55,6 +61,7 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 */
 	@DeleteMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean deleteOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+		logger.info(String.format("deleteOther [%s]", pricesOthersDTO.getCode()));
         return manager.deleteOther(toModel(pricesOthersDTO));
 	}
 
@@ -66,6 +73,7 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 * @throws OHServiceException
 	 */
 	public boolean updateOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+		logger.info(String.format("updateOther [%s]", pricesOthersDTO.getCode()));
         return manager.updateOther(toModel(pricesOthersDTO));
 	}
 
