@@ -14,6 +14,7 @@ public class PatientVaccineDTO {
 
     private PatientDTO patient;
 
+    // TODO
 //    private VaccineDTO vaccine;
 
     private int lock;
