@@ -3,6 +3,7 @@ package org.isf.vaccine.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -55,16 +56,16 @@ public class VaccineController {
     }
 
     /**
-     * Get all the vacccines related to a code
+     * Get all the vacccines related to a vaccineType code
      *
-     * @param code of the vaccine
+     * @param vaccineTypeCode of the vaccine
      * @return NO_CONTENT if there aren't vaccines related to code, List<VaccineDTO> otherwise
      * @throws OHServiceException
      */
-    @GetMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<VaccineDTO>> getVaccines(@PathVariable String code) throws OHServiceException {
-        logger.info("Get vaccine by code:" + code);
-        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(code);
+    @GetMapping(value = "/vaccines/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
+        logger.info("Get vaccine by code:" + vaccineTypeCode);
+        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = vaccines.stream().map(it -> getObjectMapper().map(it, VaccineDTO.class)).collect(Collectors.toList());
         if (listVaccines.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
@@ -83,7 +84,12 @@ public class VaccineController {
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
         logger.info("Create vaccine: " + newVaccine.toString());
-        boolean isCreated = vaccineManager.newVaccine(getObjectMapper().map(newVaccine, Vaccine.class));
+        boolean isCreated;
+        try {
+             isCreated = vaccineManager.newVaccine(getObjectMapper().map(newVaccine, Vaccine.class));
+        } catch (OHDataIntegrityViolationException e) {
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+        }
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created!", OHSeverityLevel.ERROR));
         }

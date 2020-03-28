@@ -3,6 +3,7 @@ package org.isf.vactype.rest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
@@ -64,7 +65,12 @@ public class VaccineTypeController {
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
         logger.info("Create vaccine type: " + newVaccineType.toString());
-        boolean isCreated = vaccineTypeManager.newVaccineType(getObjectMapper().map(newVaccineType, VaccineType.class));
+        boolean isCreated;
+        try {
+            isCreated = vaccineTypeManager.newVaccineType(getObjectMapper().map(newVaccineType, VaccineType.class));
+        }catch(OHDataIntegrityViolationException e){
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+        }
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not created!", OHSeverityLevel.ERROR));
         }

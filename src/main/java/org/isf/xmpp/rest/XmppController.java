@@ -37,13 +37,13 @@ public class XmppController {
 
     private final Logger logger = LoggerFactory.getLogger(XmppController.class);
 
-    @Autowired
     protected Interaction interaction;
 
-    public XmppController(Interaction interaction) {
-        this.interaction = interaction;
+    @PostMapping(value = "/initInteraction", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity initInteraction(){
+        this.interaction = new Interaction();
+        return ResponseEntity.ok(null);
     }
-
     /**
      * Return the chat manager
      *
