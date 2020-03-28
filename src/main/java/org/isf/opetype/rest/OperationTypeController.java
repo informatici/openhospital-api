@@ -7,6 +7,8 @@ import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.model.OperationType;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,11 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Api(value = "/opetype", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/opetypes", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class OperationTypeController extends OHApiAbstractController<OperationType, OperationTypeDTO> {
 
     @Autowired
     private OperationTypeBrowserManager operationTypeBrowserManager;
+
+    private final Logger logger = LoggerFactory.getLogger(OperationTypeController.class);
 
     /**
      * return the list of {@link OperationType}s
@@ -28,9 +32,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
      * @return the list of {@link OperationType}s. It could be <code>empty</code> or <code>null</code>.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/opetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<OperationTypeDTO>> getOperationType() throws OHServiceException {
-
+        logger.info(String.format("getOperationType"));
         List<OperationType> operationTypeList = operationTypeBrowserManager.getOperationType();
         return ResponseEntity.status(HttpStatus.FOUND).body(toDTOList(operationTypeList));
     }
@@ -42,8 +46,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
      * @return <code>true</code> if the {@link OperationType} has been inserted, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @PostMapping( value = "/opetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping( value = "/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> newOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
+        logger.info(String.format("newOperationType [%s]", operationType.getCode()));
         Boolean created = operationTypeBrowserManager.newOperationType(toModel(operationType));
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -55,8 +60,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
      * @return <code>true</code> if the {@link OperationType} has been updated, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @PatchMapping( value="/opetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping( value="/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> updateOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
+        logger.info(String.format("updateOperationType [%s]", operationType.getCode()));
         Boolean updated = operationTypeBrowserManager.updateOperationType(toModel(operationType));
         return ResponseEntity.ok().body(updated);
     }
@@ -68,8 +74,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
      * @return <code>true</code> if the {@link OperationType} has been delete, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @DeleteMapping(value="/opetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value="/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
+        logger.info(String.format("deleteOperationType [%s]", operationType.getCode()));
         Boolean deleted = operationTypeBrowserManager.deleteOperationType(toModel(operationType));
         return ResponseEntity.ok().body(deleted);
     }
@@ -81,8 +88,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
      * @return <code>true</code> if the code is already in use, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @GetMapping(value="/opetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/opetypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> codeControl(@PathVariable String code) throws OHServiceException {
+        logger.info(String.format("OperationType code [%s]", code));
         Boolean alreadyUsed = operationTypeBrowserManager.codeControl(code);
         return ResponseEntity.ok().body(alreadyUsed);
     }
