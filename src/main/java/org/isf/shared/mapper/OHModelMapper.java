@@ -17,6 +17,7 @@ public class OHModelMapper {
         modelMapper.addConverter(new ByteArrayToBlobConverter());
         return modelMapper;
     }
+
     public static ModelMapper getObjectMapper() {
         return modelMapper == null ? getInstance() : modelMapper;
     }
