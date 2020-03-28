@@ -7,6 +7,8 @@ import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	
 	@Autowired
 	private PregnantTreatmentTypeBrowserManager manager;
+
+	private final Logger logger = LoggerFactory.getLogger(PregnantTreatmentTypeController.class);
 	
 	/**
 	 * return the list of {@link PregnantTreatmentType}s
@@ -29,6 +33,7 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 */
 	@GetMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PregnantTreatmentTypeDTO> getPregnantTreatmentType() throws OHServiceException {
+		logger.info(String.format("getPregnantTreatmentType"));
         return toDTOList(manager.getPregnantTreatmentType());
 	}
 	
@@ -41,6 +46,7 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 */
 	@PostMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+		logger.info(String.format("newPregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
         return manager.newPregnantTreatmentType(toModel(pregnantTreatmentType));
 	}
 
@@ -53,6 +59,7 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 */
 	@PatchMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean updatePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+		logger.info(String.format("updatePregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
         return manager.updatePregnantTreatmentType(toModel(pregnantTreatmentType));
 	}
 	
@@ -65,6 +72,7 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 */
 	@DeleteMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean deletePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+		logger.info(String.format("deletePregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
         return manager.deletePregnantTreatmentType(toModel(pregnantTreatmentType));
 	}
 	
@@ -77,6 +85,7 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 */
 	@GetMapping(value = "/pregtreattype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean codeControl(@PathVariable String code) throws OHServiceException {
+		logger.info(String.format("codeControl code [%s]"), code);
         return manager.codeControl(code);
 	}
 
