@@ -11,6 +11,8 @@ import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,8 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 
 	@Autowired
 	private PriceListManager manager;
+
+	private final Logger logger = LoggerFactory.getLogger(PriceListController.class);
 	
 	/**
 	 * return the list of {@link List}s in the DB
@@ -34,6 +38,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@GetMapping (value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PriceListDTO> getLists() throws OHServiceException {
+		logger.info(String.format("getLists"));
         return toDTOList(manager.getLists());
 	}
 	
@@ -44,6 +49,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@GetMapping(value = "/pricelist/price", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<PriceDTO> getPrices() throws OHServiceException {
+		logger.info(String.format("getPrices"));
         return manager.getPrices().stream().map(it -> modelMapper.map(it, PriceDTO.class)).collect(Collectors.toList());
 	}
 
@@ -56,6 +62,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@PatchMapping(value = "/pricelist/{priceListCode}/price", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean updatePrices(@PathVariable String priceListCode, @RequestBody List<PriceDTO> priceDTOList) throws OHServiceException {
+		logger.info(String.format("updatePrices priceListCode [%s] priceDTOList size [%d]"), priceListCode, priceDTOList.size());
 		List<Price> prices = priceDTOList.stream().map(it -> modelMapper.map(it, Price.class)).collect(Collectors.toList());
         return manager.updatePrices(getListById(priceListCode), new ArrayList<Price>(prices));
 	}
@@ -70,6 +77,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 * @throws OHServiceException
 	 */
 	private PriceList getListById(String priceListCode) throws OHServiceException {
+		logger.info(String.format("getListById priceListCode [%s]"), priceListCode);
 		ArrayList<PriceList> priceLists = manager.getLists();
 		for (Iterator<PriceList> priceListIterator = priceLists.iterator(); priceListIterator.hasNext(); ) {
 			PriceList priceList = priceListIterator.next();
@@ -89,6 +97,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@PostMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean newList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
+		logger.info(String.format("newList code [%s]"), priceListDTO.getCode());
         return manager.newList(toModel(priceListDTO));
 	}
 
@@ -101,6 +110,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@PatchMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean updateList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
+		logger.info(String.format("updateList code [%s]"), priceListDTO.getCode());
         return manager.updateList(toModel(priceListDTO));
 	}
 
@@ -113,6 +123,7 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@DeleteMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean deleteList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
+		logger.info(String.format("deleteList code [%s]"), priceListDTO.getCode());
         return manager.deleteList(toModel(priceListDTO));
 	}
 	
@@ -127,14 +138,15 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	 */
 	@PostMapping(value = "/pricelist/copy/{factor}/{step}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public boolean copyList(@RequestBody PriceListDTO priceListDTO, @RequestParam(value = "factor", defaultValue = "1.") double factor, @RequestParam(value = "factor", defaultValue = "0.") double step) throws OHServiceException {
+		logger.info(String.format("copyList code [%s] factor[%.,2f] step[%.,2f]"), priceListDTO.getCode(), factor, step);
         return manager.copyList(toModel(priceListDTO), factor, step);
 	}
 
-//	TODO: is it useful in a web context
-//	@PostMapping(value = "/pricelist/convert")
-//	public List<PriceForPrint> convertPrice(@RequestBody Map<PriceListDTO, List<PriceDTO>> pricesJson) throws OHServiceException {
-//		return null;
-//	}
+	//	TODO: is it useful in a web context
+	//	@PostMapping(value = "/pricelist/convert")
+	//	public List<PriceForPrint> convertPrice(@RequestBody Map<PriceListDTO, List<PriceDTO>> pricesJson) throws OHServiceException {
+	//		return null;
+	//	}
 
 	@Override
 	protected Class<PriceListDTO> getDTOClass() {

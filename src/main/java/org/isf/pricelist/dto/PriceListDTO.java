@@ -1,10 +1,24 @@
 package org.isf.pricelist.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Class representing price list")
 public class PriceListDTO {
+
+    @ApiModelProperty(notes = "Id", example = "", position = 1)
     private int id;
+
+    @ApiModelProperty(notes = "Code", example = "", position = 2)
     private String code;
+
+    @ApiModelProperty(notes = "Notes", example = "", position = 3)
     private String name;
+
+    @ApiModelProperty(notes = "Description", example = "", position = 4)
     private String description;
+
+    @ApiModelProperty(notes = "Currency", example = "", position = 5)
     private String currency;
 
     public int getId() {
