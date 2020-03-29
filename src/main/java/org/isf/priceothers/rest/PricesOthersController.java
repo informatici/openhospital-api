@@ -10,7 +10,9 @@ import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,9 +36,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PricesOthersDTO> getOthers() throws OHServiceException {
+	public ResponseEntity<List<PricesOthersDTO>> getOthers() throws OHServiceException {
 		logger.info(String.format("getOthers"));
-        return toDTOList(manager.getOthers());
+        return ResponseEntity.ok().body(toDTOList(manager.getOthers()));
 	}
 
 	/**
@@ -47,9 +49,10 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean newOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+	public ResponseEntity<Boolean> newOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("newOther [%s]", pricesOthersDTO.getCode()));
-        return manager.newOther(toModel(pricesOthersDTO));
+		// TODO: to better follow REST conventions we need an URI to use as Location header value on created. Check: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html
+        return manager.newOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.FALSE);
 	}
 
 	/**
@@ -60,9 +63,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean deleteOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+	public ResponseEntity<Boolean> deleteOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("deleteOther [%s]", pricesOthersDTO.getCode()));
-        return manager.deleteOther(toModel(pricesOthersDTO));
+        return manager.deleteOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.FALSE);
 	}
 
 	/**
@@ -72,9 +75,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 * @return <code>true</code> if the list has been updated, <code>false</code> otherwise
 	 * @throws OHServiceException
 	 */
-	public boolean updateOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+	public ResponseEntity<Boolean> updateOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("updateOther [%s]", pricesOthersDTO.getCode()));
-        return manager.updateOther(toModel(pricesOthersDTO));
+        return manager.updateOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.OK).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.FALSE);
 	}
 
 	@Override
