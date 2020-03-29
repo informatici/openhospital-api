@@ -49,8 +49,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
     @PostMapping( value = "/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> newOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
         logger.info(String.format("newOperationType [%s]", operationType.getCode()));
-        Boolean created = operationTypeBrowserManager.newOperationType(toModel(operationType));
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return operationTypeBrowserManager.newOperationType(toModel(operationType))
+                ? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -63,8 +64,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
     @PatchMapping( value="/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> updateOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
         logger.info(String.format("updateOperationType [%s]", operationType.getCode()));
-        Boolean updated = operationTypeBrowserManager.updateOperationType(toModel(operationType));
-        return ResponseEntity.ok().body(updated);
+        return operationTypeBrowserManager.updateOperationType(toModel(operationType))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -77,8 +79,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
     @DeleteMapping(value="/opetypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteOperationType(@RequestBody OperationTypeDTO operationType) throws OHServiceException {
         logger.info(String.format("deleteOperationType [%s]", operationType.getCode()));
-        Boolean deleted = operationTypeBrowserManager.deleteOperationType(toModel(operationType));
-        return ResponseEntity.ok().body(deleted);
+        return operationTypeBrowserManager.deleteOperationType(toModel(operationType))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -91,8 +94,9 @@ public class OperationTypeController extends OHApiAbstractController<OperationTy
     @GetMapping(value="/opetypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> codeControl(@PathVariable String code) throws OHServiceException {
         logger.info(String.format("OperationType code [%s]", code));
-        Boolean alreadyUsed = operationTypeBrowserManager.codeControl(code);
-        return ResponseEntity.ok().body(alreadyUsed);
+        return operationTypeBrowserManager.codeControl(code)
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     @Override

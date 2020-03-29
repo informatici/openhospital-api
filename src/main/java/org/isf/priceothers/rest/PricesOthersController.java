@@ -52,7 +52,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	public ResponseEntity<Boolean> newOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("newOther [%s]", pricesOthersDTO.getCode()));
 		// TODO: to better follow REST conventions we need an URI to use as Location header value on created. Check: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/ResponseEntity.html
-        return manager.newOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.newOther(toModel(pricesOthersDTO))
+				? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	/**
@@ -65,7 +67,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	@DeleteMapping(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("deleteOther [%s]", pricesOthersDTO.getCode()));
-        return manager.deleteOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.deleteOther(toModel(pricesOthersDTO))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	/**
@@ -77,7 +81,9 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	 */
 	public ResponseEntity<Boolean> updateOther(PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		logger.info(String.format("updateOther [%s]", pricesOthersDTO.getCode()));
-        return manager.updateOther(toModel(pricesOthersDTO)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.updateOther(toModel(pricesOthersDTO))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	@Override

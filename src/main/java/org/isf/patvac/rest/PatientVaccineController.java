@@ -11,7 +11,9 @@ import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -36,9 +38,10 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      */
     @ApiOperation(value = "returns all PatientVaccines of today or one week ago")
     @GetMapping(value="/patvac/latest", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientVaccineDTO> getPatientVaccine(boolean minusOneWeek) throws OHServiceException {
+    public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccine(boolean minusOneWeek) throws OHServiceException {
         logger.info(String.format("getPatientVaccine minusOneWeek [%b]", minusOneWeek));
-        return  toDTOList(ioOperations.getPatientVaccine(minusOneWeek));
+        List<PatientVaccineDTO> patientVaccineDTOS = toDTOList(ioOperations.getPatientVaccine(minusOneWeek));
+        return ResponseEntity.status(HttpStatus.FOUND).body(toDTOList(patientVaccineDTOS));
     }
 
     /**
@@ -56,7 +59,7 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      * @throws OHServiceException
      */
     @GetMapping(value="/patvac", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PatientVaccineDTO> getPatientVaccine(@RequestParam String vaccineTypeCode,
+    public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccine(@RequestParam String vaccineTypeCode,
                                                      @RequestParam String vaccineCode,
                                                      @RequestParam GregorianCalendar dateFrom,
                                                      @RequestParam GregorianCalendar dateTo,
@@ -65,7 +68,8 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
                                                      @RequestParam int ageTo) throws OHServiceException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
         logger.info(String.format("getPatientVaccine vaccineTypeCode [%s] vaccineCode [%s] dateFrom [%s] dateTo [%s] sex [%c] ageFrom [%d] ageTo [%d]", vaccineTypeCode, vaccineCode, sdf.format(dateFrom.getTime()), sdf.format(dateTo.getTime()), sex, ageFrom, ageTo));
-        return toDTOList(ioOperations.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom, dateTo, sex, ageFrom, ageTo));
+        List<PatientVaccineDTO> patientVaccineDTOS = toDTOList(ioOperations.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom, dateTo, sex, ageFrom, ageTo));
+        return ResponseEntity.status(HttpStatus.FOUND).body(toDTOList(patientVaccineDTOS));
     }
 
     /**
@@ -76,9 +80,11 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      * @throws OHServiceException
      */
     @PostMapping(value = "/patvac", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean newPatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
+    public ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
         logger.info(String.format("newPatientVaccine code [%d]", patVac.getCode()));
-        return ioOperations.newPatientVaccine(toModel(patVac));
+        return ioOperations.newPatientVaccine(toModel(patVac))
+                ? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -89,9 +95,11 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      * @throws OHServiceException
      */
     @PatchMapping(value = "/patvac", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean updatePatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
+    public ResponseEntity<Boolean> updatePatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
         logger.info(String.format("updatePatientVaccine code [%d]", patVac.getCode()));
-        return ioOperations.updatePatientVaccine(toModel(patVac));
+        return ioOperations.updatePatientVaccine(toModel(patVac))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -102,9 +110,11 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/patvac", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean deletePatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
+    public ResponseEntity<Boolean> deletePatientVaccine(@RequestBody PatientVaccineDTO patVac) throws OHServiceException {
         logger.info(String.format("deletePatientVaccine code [%d]", patVac.getCode()));
-        return ioOperations.deletePatientVaccine(toModel(patVac));
+        return ioOperations.deletePatientVaccine(toModel(patVac))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -116,9 +126,9 @@ public class PatientVaccineController extends OHApiAbstractController<PatientVac
      */
     @ApiOperation(value="Returns the max progressive number within specified year or within current year if 0.")
     @GetMapping(value = "/patvac/prog-year", produces = MediaType.APPLICATION_JSON_VALUE)
-    public int getProgYear(@RequestParam int year) throws OHServiceException {
+    public ResponseEntity<Integer> getProgYear(@RequestParam int year) throws OHServiceException {
         logger.info(String.format("getProgYear year [%d]", year));
-        return ioOperations.getProgYear(year);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ioOperations.getProgYear(year));
     }
 
     @Override

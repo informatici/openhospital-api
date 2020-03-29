@@ -66,7 +66,9 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	public ResponseEntity<Boolean> updatePrices(@PathVariable String priceListCode, @RequestBody List<PriceDTO> priceDTOList) throws OHServiceException {
 		logger.info(String.format("updatePrices priceListCode [%s] priceDTOList size [%d]"), priceListCode, priceDTOList.size());
 		List<Price> prices = priceDTOList.stream().map(it -> modelMapper.map(it, Price.class)).collect(Collectors.toList());
-        return manager.updatePrices(getListById(priceListCode), new ArrayList<Price>(prices)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.updatePrices(getListById(priceListCode), new ArrayList<Price>(prices))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 
@@ -100,7 +102,9 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	@PostMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		logger.info(String.format("newList code [%s]"), priceListDTO.getCode());
-        return manager.newList(toModel(priceListDTO)) ? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.newList(toModel(priceListDTO))
+				? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	/**
@@ -113,7 +117,9 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	@PatchMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		logger.info(String.format("updateList code [%s]"), priceListDTO.getCode());
-        return manager.updateList(toModel(priceListDTO)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.updateList(toModel(priceListDTO))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	/**
@@ -126,7 +132,9 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	@DeleteMapping(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		logger.info(String.format("deleteList code [%s]"), priceListDTO.getCode());
-        return manager.deleteList(toModel(priceListDTO)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.deleteList(toModel(priceListDTO))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 	
 	/**
@@ -141,7 +149,9 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	@PostMapping(value = "/pricelist/copy/{factor}/{step}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyList(@RequestBody PriceListDTO priceListDTO, @RequestParam(value = "factor", defaultValue = "1.") double factor, @RequestParam(value = "factor", defaultValue = "0.") double step) throws OHServiceException {
 		logger.info(String.format("copyList code [%s] factor[%.,2f] step[%.,2f]"), priceListDTO.getCode(), factor, step);
-        return manager.copyList(toModel(priceListDTO), factor, step) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return manager.copyList(toModel(priceListDTO), factor, step)
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	//	TODO: is it useful in a web context?

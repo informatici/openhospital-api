@@ -90,7 +90,9 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
     public ResponseEntity<Boolean> updateOperation(@RequestBody OperationDTO operation) throws OHServiceException {
         logger.info(String.format("updateOperation code [%s]", operation.getCode()));
         // the user has confirmed he wants to overwrite the record
-        return operationBrowserManager.updateOperation(toModel(operation)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return operationBrowserManager.updateOperation(toModel(operation))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -103,7 +105,9 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
     @DeleteMapping(value="/operations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteOperation(@RequestBody OperationDTO operation) throws OHServiceException {
         logger.info(String.format("deleteOperation code [%s]", operation.getCode()));
-        return operationBrowserManager.deleteOperation(toModel(operation)) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return operationBrowserManager.deleteOperation(toModel(operation))
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -116,7 +120,9 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
     @GetMapping(value = "/operations/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> codeControl(String code) throws OHServiceException {
         logger.info(String.format("codeControl [%s]", code));
-        return operationBrowserManager.codeControl(code) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return operationBrowserManager.codeControl(code)
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     /**
@@ -130,7 +136,9 @@ public class OperationController extends OHApiAbstractController<Operation, Oper
     @GetMapping(value = "/operations/descriptionControl/{description}/{typeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> descriptionControl(String description, String typeCode) throws OHServiceException {
         logger.info(String.format("descriptionControl description [%s] typeCode [%s]", description, typeCode));
-        return operationBrowserManager.descriptionControl(description,typeCode) ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
+        return operationBrowserManager.descriptionControl(description,typeCode)
+                ? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+                : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
     }
 
     @Override

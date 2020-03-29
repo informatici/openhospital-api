@@ -10,7 +10,9 @@ import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +34,9 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PregnantTreatmentTypeDTO> getPregnantTreatmentType() throws OHServiceException {
+	public ResponseEntity<List<PregnantTreatmentTypeDTO>> getPregnantTreatmentType() throws OHServiceException {
 		logger.info(String.format("getPregnantTreatmentType"));
-        return toDTOList(manager.getPregnantTreatmentType());
+        return ResponseEntity.status(HttpStatus.FOUND).body(toDTOList(manager.getPregnantTreatmentType()));
 	}
 	
 	/**
@@ -45,9 +47,11 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+	public ResponseEntity<Boolean> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
 		logger.info(String.format("newPregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
-        return manager.newPregnantTreatmentType(toModel(pregnantTreatmentType));
+        return manager.newPregnantTreatmentType(toModel(pregnantTreatmentType))
+				? ResponseEntity.status(HttpStatus.CREATED).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	/**
@@ -58,9 +62,11 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 * @throws OHServiceException 
 	 */
 	@PatchMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean updatePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+	public ResponseEntity<Boolean> updatePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
 		logger.info(String.format("updatePregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
-        return manager.updatePregnantTreatmentType(toModel(pregnantTreatmentType));
+        return manager.updatePregnantTreatmentType(toModel(pregnantTreatmentType))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 	
 	/**
@@ -71,9 +77,11 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/pregtreattype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean deletePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
+	public ResponseEntity<Boolean> deletePregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentType) throws OHServiceException {
 		logger.info(String.format("deletePregnantTreatmentType code [%s]"), pregnantTreatmentType.getCode());
-        return manager.deletePregnantTreatmentType(toModel(pregnantTreatmentType));
+        return manager.deletePregnantTreatmentType(toModel(pregnantTreatmentType))
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 	
 	/**
@@ -84,9 +92,11 @@ public class PregnantTreatmentTypeController extends OHApiAbstractController<Pre
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/pregtreattype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public boolean codeControl(@PathVariable String code) throws OHServiceException {
+	public ResponseEntity<Boolean> codeControl(@PathVariable String code) throws OHServiceException {
 		logger.info(String.format("codeControl code [%s]"), code);
-        return manager.codeControl(code);
+        return manager.codeControl(code)
+				? ResponseEntity.status(HttpStatus.NO_CONTENT).body(Boolean.TRUE)
+				: ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Boolean.FALSE);
 	}
 
 	@Override
