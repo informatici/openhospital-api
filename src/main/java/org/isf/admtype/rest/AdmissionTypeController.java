@@ -53,24 +53,24 @@ public class AdmissionTypeController {
 			admtCreated = admtFounds.get(0);
 		if (!isCreated || admtCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
 
-	@PutMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateAdmissionTypet(@PathVariable String code,
-			@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
-		logger.info("Update admissiontypes code:" + code);
+	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
+			throws OHServiceException {
+		logger.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
 		AdmissionType admt = getObjectMapper().map(admissionTypeDTO, AdmissionType.class);
-		admt.setCode(code);
-		if(!admtManager.codeControl(code)) 
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
+		if (!admtManager.codeControl(admt.getCode()))
+			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
 		if (!isUpdated)
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+					new OHExceptionMessage(null, "Admission Type is not updated!", OHSeverityLevel.ERROR),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		return ResponseEntity.ok(admt.getCode());
 	}
 

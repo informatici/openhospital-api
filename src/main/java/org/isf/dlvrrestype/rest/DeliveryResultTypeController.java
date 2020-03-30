@@ -42,61 +42,66 @@ public class DeliveryResultTypeController {
 	}
 
 	@PostMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO admissionTypeDTO) throws OHServiceException {
-		String code = admissionTypeDTO.getCode();
+	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
+			throws OHServiceException {
+		String code = dlvrrestTypeDTO.getCode();
 		logger.info("Create Delivery result type " + code);
-		boolean isCreated = dlvrrestManager.newDeliveryResultType(getObjectMapper().map(admissionTypeDTO, DeliveryResultType.class));
-		DeliveryResultType admtCreated = null;
-		List<DeliveryResultType> admtFounds = dlvrrestManager.getDeliveryResultType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
-		if (admtFounds.size() > 0)
-			admtCreated = admtFounds.get(0);
-		if (!isCreated || admtCreated == null) {
+		boolean isCreated = dlvrrestManager
+				.newDeliveryResultType(getObjectMapper().map(dlvrrestTypeDTO, DeliveryResultType.class));
+		DeliveryResultType dlvrrestTypeCreated = null;
+		List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
+				.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
+		if (dlvrrestTypeFounds.size() > 0)
+			dlvrrestTypeCreated = dlvrrestTypeFounds.get(0);
+		if (!isCreated || dlvrrestTypeCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(dlvrrestTypeCreated.getCode());
 	}
 
-	@PutMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateDeliveryResultTypet(@PathVariable String code,
-			@RequestBody DeliveryResultTypeDTO admissionTypeDTO) throws OHServiceException {
-		logger.info("Update deliveryresulttypes code:" + code);
-		DeliveryResultType admt = getObjectMapper().map(admissionTypeDTO, DeliveryResultType.class);
-		admt.setCode(code);
-		if(!dlvrrestManager.codeControl(code)) 
+	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
+			throws OHServiceException {
+		logger.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
+		DeliveryResultType dlvrrestType = getObjectMapper().map(dlvrrestTypeDTO, DeliveryResultType.class);
+		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
-		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(admt);
+		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
 		if (!isUpdated)
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-		return ResponseEntity.ok(admt.getCode());
+					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		return ResponseEntity.ok(dlvrrestType.getCode());
 	}
 
 	@GetMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
 		logger.info("Get all Delivery result types ");
-		List<DeliveryResultType> admissionTypes = dlvrrestManager.getDeliveryResultType();
-		List<DeliveryResultTypeDTO> admissionTypeDTOs = admissionTypes.stream()
-				.map(admType -> getObjectMapper().map(admType, DeliveryResultTypeDTO.class)).collect(Collectors.toList());
-		if (admissionTypeDTOs.size() == 0) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
+		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
+		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = dlvrrestissionTypes.stream()
+				.map(dlvrrestType -> getObjectMapper().map(dlvrrestType, DeliveryResultTypeDTO.class))
+				.collect(Collectors.toList());
+		if (dlvrrestTypeDTOs.size() == 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrrestTypeDTOs);
 		} else {
-			return ResponseEntity.ok(admissionTypeDTOs);
+			return ResponseEntity.ok(dlvrrestTypeDTOs);
 		}
 	}
 
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
+			throws OHServiceException {
 		logger.info("Delete Delivery result type code:" + code);
 		boolean isDeleted = false;
 		if (dlvrrestManager.codeControl(code)) {
-			List<DeliveryResultType> admts = dlvrrestManager.getDeliveryResultType();
-			List<DeliveryResultType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
+			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
+			List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (admtFounds.size() > 0)
-				isDeleted = dlvrrestManager.deleteDeliveryResultType(admtFounds.get(0));
+			if (dlvrrestTypeFounds.size() > 0)
+				isDeleted = dlvrrestManager.deleteDeliveryResultType(dlvrrestTypeFounds.get(0));
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

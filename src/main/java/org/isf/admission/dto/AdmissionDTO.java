@@ -31,10 +31,9 @@ public class AdmissionDTO {
 	private int admitted;
 
 	@NotNull
-	@ApiModelProperty(notes = "type of admission", example = "malnutrition", position = 3)
+	@ApiModelProperty(notes = "type of admission", example = "N", position = 3)
 	private String type;
 
-	@NotNull
 	@ApiModelProperty(notes = "ward", position = 4)
 	private WardDTO ward;
 
@@ -42,7 +41,6 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "a progr. in year for each ward", example = "1", position = 5)
 	private int yProg;
 
-	@NotNull
 	@ApiModelProperty(notes = "patient", position = 6)
 	private PatientDTO patient;
 
@@ -50,26 +48,25 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "admission date", position = 7)
 	private Date admDate;
 
-	@NotNull
 	@ApiModelProperty(notes = "admission type", position = 8)
 	private AdmissionTypeDTO admType;
 
 	@ApiModelProperty(notes = "FromHealthUnit", position = 9)
 	private String FHU;
 
-	@ApiModelProperty(notes = "disease in ", example = "1", position = 10)
+	@ApiModelProperty(notes = "disease in ", position = 10)
 	private DiseaseDTO diseaseIn;
 
-	@ApiModelProperty(notes = "disease out ", example = "1", position = 11)
+	@ApiModelProperty(notes = "disease out ", position = 11)
 	private DiseaseDTO diseaseOut1;
 
-	@ApiModelProperty(notes = "disease out ", example = "1", position = 12)
+	@ApiModelProperty(notes = "disease out ", position = 12)
 	private DiseaseDTO diseaseOut2;
 
-	@ApiModelProperty(notes = "disease out ", example = "1", position = 13)
+	@ApiModelProperty(notes = "disease out ",  position = 13)
 	private DiseaseDTO diseaseOut3;
 
-	@ApiModelProperty(notes = "operation ", example = "1", position = 14)
+	@ApiModelProperty(notes = "operation ", position = 14)
 	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)

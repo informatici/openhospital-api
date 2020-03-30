@@ -42,48 +42,46 @@ public class DischargeTypeController {
 	}
 
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO admissionTypeDTO) throws OHServiceException {
-		String code = admissionTypeDTO.getCode();
+	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
+		String code = dischTypeDTO.getCode();
 		logger.info("Create discharge type " + code);
-		boolean isCreated = discTypeManager.newDischargeType(getObjectMapper().map(admissionTypeDTO, DischargeType.class));
-		DischargeType admtCreated = null;
-		List<DischargeType> admtFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
+		boolean isCreated = discTypeManager.newDischargeType(getObjectMapper().map(dischTypeDTO, DischargeType.class));
+		DischargeType dischTypeCreated = null;
+		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (admtFounds.size() > 0)
-			admtCreated = admtFounds.get(0);
-		if (!isCreated || admtCreated == null) {
+		if (dischTypeFounds.size() > 0)
+			dischTypeCreated = dischTypeFounds.get(0);
+		if (!isCreated || dischTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(dischTypeCreated.getCode());
 	}
 
-	@PutMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateDischargeTypet(@PathVariable String code,
-			@RequestBody DischargeTypeDTO admissionTypeDTO) throws OHServiceException {
-		logger.info("Update dischargetypes code:" + code);
-		DischargeType admt = getObjectMapper().map(admissionTypeDTO, DischargeType.class);
-		admt.setCode(code);
-		if(!discTypeManager.codeControl(code)) 
+	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
+		logger.info("Update dischargetypes code:" + dischTypeDTO.getCode());
+		DischargeType dischType = getObjectMapper().map(dischTypeDTO, DischargeType.class);
+		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
-		boolean isUpdated = discTypeManager.updateDischargeType(admt);
+		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
 		if (!isUpdated)
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-		return ResponseEntity.ok(admt.getCode());
+		return ResponseEntity.ok(dischType.getCode());
 	}
 
 	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
 		logger.info("Get all discharge types ");
-		List<DischargeType> admissionTypes = discTypeManager.getDischargeType();
-		List<DischargeTypeDTO> admissionTypeDTOs = admissionTypes.stream()
-				.map(admType -> getObjectMapper().map(admType, DischargeTypeDTO.class)).collect(Collectors.toList());
-		if (admissionTypeDTOs.size() == 0) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
+		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
+		List<DischargeTypeDTO> dischTypeDTOs = dischTypes.stream()
+				.map(dischType -> getObjectMapper().map(dischType, DischargeTypeDTO.class)).collect(Collectors.toList());
+		if (dischTypeDTOs.size() == 0) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
 		} else {
-			return ResponseEntity.ok(admissionTypeDTOs);
+			return ResponseEntity.ok(dischTypeDTOs);
 		}
 	}
 
@@ -92,11 +90,11 @@ public class DischargeTypeController {
 		logger.info("Delete discharge type code:" + code);
 		boolean isDeleted = false;
 		if (discTypeManager.codeControl(code)) {
-			List<DischargeType> admts = discTypeManager.getDischargeType();
-			List<DischargeType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
+			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
+			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (admtFounds.size() > 0)
-				isDeleted = discTypeManager.deleteDischargeType(admtFounds.get(0));
+			if (dischTypeFounds.size() > 0)
+				isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
