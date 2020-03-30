@@ -15,26 +15,10 @@ public class BillDTO {
 	
 	private Integer id;
 	
-	private Integer patientId; 
-
+	private PatientDTO patient; 
 	
 	private Integer listId;
 
-	public Integer getPatientId() {
-		return patientId;
-	}
-
-	public void setPatientId(Integer patientId) {
-		this.patientId = patientId;
-	}
-
-	public Integer getListId() {
-		return listId;
-	}
-
-	public void setListId(Integer listId) {
-		this.listId = listId;
-	}
 	@NotNull
 	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00.000Z", position = 1)
 	private Date date;
@@ -74,8 +58,6 @@ public class BillDTO {
 	@NotNull
 	@ApiModelProperty(notes = "user name who create the bill", example="admin", position = 10)
 	private String user;
-
-	private volatile int hashCode = 0;
 	
 	public int getId() {
 		return id;
@@ -165,16 +147,24 @@ public class BillDTO {
 		this.user = user;
 	}
 	
-
-	public int getHashCode() {
-		return hashCode;
-	}
-
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
-	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	public Integer getListId() {
+		return listId;
+	}
+
+	public void setListId(Integer listId) {
+		this.listId = listId;
+	}
+
+	public PatientDTO getPatient() {
+		return patient;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
 	}
 	
 }

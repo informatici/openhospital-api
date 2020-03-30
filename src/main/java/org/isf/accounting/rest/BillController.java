@@ -60,10 +60,6 @@ public class BillController {
 
 	private final Logger logger = LoggerFactory.getLogger(BillController.class);
 
-	public BillController(BillBrowserManager billManager) {
-		this.billManager = billManager;
-	}
-
     /**
      * Create new bill with the list of billItems and the list of billPayments
      * @param newPatient
@@ -275,7 +271,7 @@ public class BillController {
 	 */
 	@GetMapping(value = "/bills/items/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value="bill_id")Integer id) throws OHServiceException {
-        logger.info("Get getPayments for bill with id:"  + id);
+        logger.info("Get Items for bill with id:"  + id);
            
 	    ArrayList<BillItems> items = billManager.getItems(id);
 	    
@@ -431,7 +427,7 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/bills/search/by/payments", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody ArrayList<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
+	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody List<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
     
         ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(paymentsDTO.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
         
