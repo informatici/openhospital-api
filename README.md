@@ -1,4 +1,4 @@
-# Open Hospital API [![Build Status](https://travis-ci.org/informatici/openhospital-api.svg?branch=master)](https://travis-ci.org/informatici/openhospital-api)
+# Open Hospital API [![Build Status](https://travis-ci.org/informatici/openhospital-api.svg?branch=develop)](https://travis-ci.org/informatici/openhospital-api)
 
 This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
 
@@ -6,9 +6,9 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
 
 For the moment, to build this project you should 
 
- 1. fetch and build the `OP-102_master-refactoring-for-api` branch of the [core] project
+ 1. fetch and build the [core] project
     
-        git clone https://github.com/informatici/openhospital-core.git --branch OP-102_master-refactoring-for-api
+        git clone https://github.com/informatici/openhospital-core.git
         cd openhospital-core
         mvn clean install -DskipTests=true
         
@@ -17,6 +17,10 @@ For the moment, to build this project you should
         git clone https://github.com/informatici/openhospital-api
         cd openhospital-api
         mvn clean install -DskipTests=true
+        
+ 3. call services
+ URL base: localhost:8080/oh-api/patients
+ URL swagger: http://localhost:8080/oh-api/swagger-ui.html
 
  3. set rsc/database.properties
  
