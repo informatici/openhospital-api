@@ -29,26 +29,25 @@
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-tomcat</artifactId>
 				</exclusion>
-		        <!-- exclusion>
+		        <exclusion>
 		            <groupId>org.springframework.boot</groupId>
 		            <artifactId>spring-boot-starter-logging</artifactId>
-		        </exclusion-->
+		        </exclusion>
 			</exclusions>
 		</dependency>
-		<!-- dependency>
+		<!-- <dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.25</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.25</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-log4j2</artifactId>
-		</dependency-->
+		</dependency> -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-jetty</artifactId>
@@ -81,7 +80,11 @@
 					<groupId>org.hibernate.javax.persistence</groupId>
 					<artifactId>hibernate-jpa-2.0-api</artifactId>
 				</exclusion>
-            </exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>
