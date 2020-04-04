@@ -133,7 +133,7 @@ public class AdmissionController {
 	 * @return
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/admissions/admitted/patient", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
 			@RequestParam(name = "admissionrange", required = false) GregorianCalendar[] admissionRange,
