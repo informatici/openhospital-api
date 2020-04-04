@@ -36,7 +36,7 @@ import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 @Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class PatientController {
 
-	private static final String DEFAULT_PAGE_SIZE = "80";
+	protected static final String DEFAULT_PAGE_SIZE = "80";
 
 	@Autowired
 	protected PatientBrowserManager patientManager;
