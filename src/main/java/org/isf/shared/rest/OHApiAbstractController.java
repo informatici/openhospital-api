@@ -1,17 +1,17 @@
 package org.isf.shared.rest;
 
-import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
-import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+
 public abstract class OHApiAbstractController<S, T> {
 
-    @Autowired
     protected ModelMapper modelMapper;
+
+    protected OHApiAbstractController(ModelMapper modelMapper){
+        this.modelMapper = modelMapper;
+    }
 
     protected T toDTO(S model) {
         return modelMapper.map(model, getDTOClass());
@@ -28,6 +28,5 @@ public abstract class OHApiAbstractController<S, T> {
     abstract protected Class<T> getDTOClass();
 
     abstract protected Class<S> getModelClass();
-
 
 }

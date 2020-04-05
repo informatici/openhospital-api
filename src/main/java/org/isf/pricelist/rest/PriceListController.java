@@ -1,7 +1,10 @@
 package org.isf.pricelist.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.isf.pricelist.dto.PriceDTO;
 import org.isf.pricelist.dto.PriceListDTO;
 import org.isf.priceslist.manager.PriceListManager;
@@ -11,18 +14,24 @@ import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/pricelist", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -32,7 +41,15 @@ public class PriceListController extends OHApiAbstractController<PriceList, Pric
 	private PriceListManager manager;
 
 	private final Logger logger = LoggerFactory.getLogger(PriceListController.class);
-	
+
+    @Autowired
+    protected ModelMapper modelMapper;
+
+    public PriceListController(PriceListManager manager, ModelMapper modelMapper) {
+        super(modelMapper);
+        this.manager = manager;
+    }
+
 	/**
 	 * return the list of {@link List}s in the DB
 	 * @return the list of {@link List}s

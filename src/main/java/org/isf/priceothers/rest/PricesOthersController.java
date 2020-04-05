@@ -1,12 +1,13 @@
 package org.isf.priceothers.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.List;
+
 import org.isf.priceothers.dto.PricesOthersDTO;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.model.PricesOthers;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/priceothers", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -27,7 +29,15 @@ public class PricesOthersController extends OHApiAbstractController<PricesOthers
 	@Autowired
 	private PricesOthersManager manager;
 
-	private final Logger logger = LoggerFactory.getLogger(PricesOthersController.class);
+    private final Logger logger = LoggerFactory.getLogger(PricesOthersController.class);
+
+    @Autowired
+    protected ModelMapper modelMapper;
+
+    public PricesOthersController(PricesOthersManager manager, ModelMapper modelMapper) {
+        super(modelMapper);
+        this.manager = manager;
+    }
 
 	/**
 	 * return the list of {@link PricesOthersDTO}s in the DB
