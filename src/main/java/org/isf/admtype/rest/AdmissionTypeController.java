@@ -41,6 +41,12 @@ public class AdmissionTypeController {
 		this.admtManager = admtManager;
 	}
 
+	/**
+	 * create a new {@link AdmissionType}
+	 * @param admissionTypeDTO
+	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
@@ -59,6 +65,12 @@ public class AdmissionTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admtCreated.getCode());
 	}
 
+	/**
+	 * Updates the specified {@link AdmissionType}.
+	 * @param admissionTypeDTO
+	 * @return <code>true</code> if the admission type has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
@@ -74,6 +86,11 @@ public class AdmissionTypeController {
 		return ResponseEntity.ok(admt.getCode());
 	}
 
+	/**
+	 * get all the available {@link AdmissionType}s.
+	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
 		logger.info("Get all Admission Types ");
@@ -87,6 +104,12 @@ public class AdmissionTypeController {
 		}
 	}
 
+	/**
+	 * Delete {@link AdmissionType} for specified code.
+	 * @param code
+	 * @return <code>true</code> if the {@link AdmissionType} has been deleted, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete Admission Type code:" + code);

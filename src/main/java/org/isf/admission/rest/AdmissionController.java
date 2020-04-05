@@ -85,10 +85,10 @@ public class AdmissionController {
 	}
 
 	/**
-	 * Get {@link Admission} for the specified id
+	 * Get {@link Admission} for the specified id.
 	 * 
 	 * @param id
-	 * @return the {@link Admission} found or NO_CONTENT otherwise
+	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,11 +103,11 @@ public class AdmissionController {
 	}
 
 	/**
-	 * Get the only one admission without Admission date for the specified patient
+	 * Get the only one admission without Admission date for the specified patient.
 	 * 
 	 * @param patientCode
 	 * @return found {@link Admission}, N0_CONTENT if there is no {@link Admission}
-	 *         found or message error
+	 *         found or message error.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,11 +126,11 @@ public class AdmissionController {
 	}
 
 	/**
-	 * 
+	 * get all admitted {@link Patient} based on the applied filters.
 	 * @param searchTerms
 	 * @param admissionRange
 	 * @param dischargeRange
-	 * @return
+	 * @return the {@link List} of found {@link Patient} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -140,6 +140,7 @@ public class AdmissionController {
 			@RequestParam(name = "dischargerange", required = false) GregorianCalendar[] dischargeRange)
 			throws OHServiceException {
 		logger.info("Get admitted patients search terms:" + searchTerms);
+		
 		List<AdmittedPatientDTO> Amittedpatients = admissionManager
 				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms).stream()
 				.map(admPt -> getObjectMapper().map(admPt, AdmittedPatientDTO.class)).collect(Collectors.toList());
@@ -147,9 +148,16 @@ public class AdmissionController {
 		if (Amittedpatients.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		
 		return ResponseEntity.ok(Amittedpatients);
 	}
 
+	/**
+	 * get all the {@link Admission} for the specified {@link Patient} code.
+	 * @param patientCode
+	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
@@ -167,6 +175,47 @@ public class AdmissionController {
 		return ResponseEntity.ok(admissionsDTOs.get(0));
 	}
 
+	/**
+	 * get the next prog in the year for specified {@link Ward} code.
+	 * @param wardId
+	 * @return the next prog.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode)
+			throws OHServiceException {
+		logger.info("get the next prog in the year for ward code:" + wardCode);
+		
+		if (!wardCode.trim().isEmpty() && wardManager.codeControl(wardCode)) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+		}
+		
+		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
+	}
+	
+	/**
+	 * get the number of used bed for the specified {@link Ward} code.
+	 * @param wardCode
+	 * @return the number of used beds.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
+		logger.info("Counts the number of used bed for ward code:" + wardCode);
+
+		if (!wardCode.trim().isEmpty() && wardManager.codeControl(wardCode)) {
+			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+		}
+
+		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
+	}
+	
+	/**
+	 * Set an {@link Admission} record to deleted.
+	 * @param id
+	 * @return <code>true</code> if the record has been set to delete.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int id) throws OHServiceException {
 		logger.info("setting admission to deleted:" + id);
@@ -181,6 +230,12 @@ public class AdmissionController {
 		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
 	}
 
+	/**
+	 * Create a new {@link Admission}.
+	 * @param newAdmissionDTO
+	 * @return the generated id or <code>null</code> for the created {@link Admission}.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> newAdmissions(@Valid @RequestBody AdmissionDTO newAdmissionDTO)
 			throws OHServiceException {
@@ -339,10 +394,10 @@ public class AdmissionController {
 	}
 
 	/**
-	 * 
+	 * Updates the specified {@link Admission} object.
 	 * @param updAdmissionCUDTO
 	 * @param id
-	 * @return
+	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
