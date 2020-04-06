@@ -41,6 +41,12 @@ public class DischargeTypeController {
 		this.discTypeManager = discTypeManager;
 	}
 
+	/**
+	 * create a new {@link DischargeType}
+	 * @param dischTypeDTO
+	 * @return <code>true</code> if the {@link DischargeType} has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
@@ -58,6 +64,12 @@ public class DischargeTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(dischTypeCreated.getCode());
 	}
 
+	/**
+	 * update the specified {@link DischargeType}
+	 * @param dischTypeDTO
+	 * @return <code>true</code> if the {@link DischargeType} has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		logger.info("Update dischargetypes code:" + dischTypeDTO.getCode());
@@ -72,6 +84,11 @@ public class DischargeTypeController {
 		return ResponseEntity.ok(dischType.getCode());
 	}
 
+	/**
+	 * get all the available {@link DischargeType}
+	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
 		logger.info("Get all discharge types ");
@@ -85,6 +102,12 @@ public class DischargeTypeController {
 		}
 	}
 
+	/**
+	 * Delete {@link DischargeType} for specified code.
+	 * @param code
+	 * @return <code>true</code> if the {@link DischargeType} has been deleted, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete discharge type code:" + code);

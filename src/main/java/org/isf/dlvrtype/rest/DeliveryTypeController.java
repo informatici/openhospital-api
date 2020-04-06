@@ -41,6 +41,12 @@ public class DeliveryTypeController {
 		this.dlvrtypeManager = dlvrtypeManager;
 	}
 
+	/**
+	 * create a new {@link DeliveryType}
+	 * @param dlvrTypeDTO
+	 * @return <code>true</code> if the {@link DeliveryType} has been stored, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		String code = dlvrTypeDTO.getCode();
@@ -58,6 +64,12 @@ public class DeliveryTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(dlvrTypeCreated.getCode());
 	}
 
+	/**
+	 * update the specified {@link DeliveryType}
+	 * @param dlvrTypeDTO
+	 * @return <code>true</code> if the {@link DeliveryType} has been updated, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		logger.info("Update deliverytypes code:" + dlvrTypeDTO.getCode());
@@ -72,6 +84,11 @@ public class DeliveryTypeController {
 		return ResponseEntity.ok(dlvrType.getCode());
 	}
 
+	/**
+	 * get all the available {@link DeliveryType}
+	 * @return a {@link List} of {@link DeliveryType} or NO_CONTENT if there is no data found.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryTypeDTO>> getDeliveryTypes() throws OHServiceException {
 		logger.info("Get all Delivery types ");
@@ -85,6 +102,12 @@ public class DeliveryTypeController {
 		}
 	}
 
+	/**
+	 * Delete {@link DeliveryType} for specified code.
+	 * @param code
+	 * @return <code>true</code> if the {@link DeliveryType} has been deleted, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
 		logger.info("Delete Delivery type code:" + code);
