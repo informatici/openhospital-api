@@ -46,6 +46,11 @@ public class AgeTypeController {
 		this.ageTypeManager = ageTypeManager;
 	}
 	
+	/**
+	 * Get all the age types stored
+	 * @return the list of age types found
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
 		logger.info("Get age types");
@@ -59,6 +64,12 @@ public class AgeTypeController {
         }
 	}
 	
+	/**
+	 * Update an age type
+	 * @param ageTypeDTO - the age type to be updated
+	 * @return {@link AgeTypeDTO} the updated age type
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if(ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
@@ -77,6 +88,12 @@ public class AgeTypeController {
 		}
 	}
 	
+	/**
+	 * Get the code of an age type whose ages range includes a given age
+	 * @param age - the given age
+	 * @return the code of the age type matching the given age
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		logger.info("Get age type by age: " + age);
@@ -91,6 +108,12 @@ public class AgeTypeController {
         }
 	}
 	
+	/**
+	 * Gets the {@link AgeType} from the code index.
+	 * @param index the code index.
+	 * @return the retrieved element.
+	 * @throws OHServiceException 
+	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		logger.info("Get age type by index: " + index);
