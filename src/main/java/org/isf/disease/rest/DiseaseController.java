@@ -45,6 +45,11 @@ public class DiseaseController {
 		this.diseaseManager = diseaseManager;
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with ODP flag <code>true</code>.
+	 * @return the stored diseases with ODP flag true.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpd() throws OHServiceException {
         logger.info("Get opd diseases");
@@ -56,6 +61,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with the specified typecode and flag ODP true.
+	 * @param typeCode - the filter typecode.
+	 * @return the retrieved diseases.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/opd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpdByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         logger.info("Get opd diseases by type code");
@@ -67,6 +78,11 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with IPD_OUT flag <code>true</code>.
+	 * @return the stored disease with IPD flag <code>true</code>.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/ipd/out", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOut() throws OHServiceException {
         logger.info("Get ipd out diseases");
@@ -78,6 +94,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_OUT <code>true</code>.
+	 * @param typeCode - the filter typecode.
+	 * @return the retrieved diseases.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/ipd/out/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOutByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         logger.info("Get ipd out diseases by type code");
@@ -89,6 +111,11 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with IPD_IN flag <code>true</code>.
+	 * @return the stored disease with IPD flag <code>true</code>.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/ipd/in", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdIn() throws OHServiceException {
         logger.info("Get ipd-in diseases");
@@ -100,6 +127,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_IN <code>true</code>.
+	 * @param typeCode - the filter typecode.
+	 * @return the retrieved diseases.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/ipd/in/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdInByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         logger.info("Get ipd-in diseases by type code");
@@ -111,6 +144,11 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets both OPD and IPDs diseases.
+	 * @return the stored diseases.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/both", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases() throws OHServiceException {
         logger.info("Get both ipd and opd diseases");
@@ -122,6 +160,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Retrieves all OPD and IPDs {@link Disease} with the specified typecode.
+	 * @param typeCode - the filter typecode.
+	 * @return all the diseases with the specified typecode.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/both/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@PathVariable("typecode") String typeCode) throws OHServiceException {
         logger.info("Get both ipd and opd diseases by type code");
@@ -133,6 +177,11 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Returns all diseases, deleted ones also
+	 * @return the stored diseases.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getAllDiseases() throws OHServiceException {
         logger.info("Get all diseases, deleted ones too");
@@ -144,6 +193,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Gets a {@link Disease} with the specified code.
+	 * @param code - the disease code.
+	 * @return the found disease.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") int code) throws OHServiceException {
         logger.info("Get disease by code");
@@ -155,6 +210,12 @@ public class DiseaseController {
 	    }
 	}
 	
+	/**
+	 * Stores the specified {@link Disease}.
+	 * @param diseaseDTO - the disease to store.
+	 * @return the stored disease
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = getObjectMapper().map(diseaseDTO, Disease.class);
@@ -171,6 +232,12 @@ public class DiseaseController {
         }
 	}
 	
+	/**
+	 * Updates the specified {@link Disease}.
+	 * @param diseaseDTO - the disease to update.
+	 * @return the updated disease
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = getObjectMapper().map(diseaseDTO, Disease.class);
@@ -185,6 +252,12 @@ public class DiseaseController {
         }
 	}
 	
+	/**
+	 * Mark as deleted the specified {@link Disease}.
+	 * @param code - the code of the disease to mark delete.
+	 * @return <code>true</code> if the disease has been marked, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") int code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);

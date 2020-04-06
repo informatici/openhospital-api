@@ -46,6 +46,11 @@ public class DiseaseTypeController {
 		this.diseaseTypeManager = diseaseTypeManager;
 	}
 	
+	/**
+	 * Returns all the stored {@link DiseaseType}s.
+	 * @return a list of disease type.
+	 * @throws OHServiceException 
+	 */
 	@GetMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseTypeDTO>> getAllDiseaseTypes() throws OHServiceException {
 		List<DiseaseType> results = diseaseTypeManager.getDiseaseType();
@@ -84,6 +89,12 @@ public class DiseaseTypeController {
         }
 	}
 	
+	/**
+	 * Updates the specified {@link DiseaseType}.
+	 * @param diseaseTypeDTO - the disease type to update.
+	 * @return the updated disease type
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
@@ -102,6 +113,12 @@ public class DiseaseTypeController {
         }
 	}
 	
+	/**
+	 * Deletes the specified {@link DiseaseType}.
+	 * @param code - the code of the disease type to remove.
+	 * @return <code>true</code> if the disease has been removed, <code>false</code> otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/diseasetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Boolean>> deleteDiseaseType(@PathVariable String code) throws OHServiceException {
 		Optional<DiseaseType> optDiseaseType = diseaseTypeManager.getDiseaseType()
