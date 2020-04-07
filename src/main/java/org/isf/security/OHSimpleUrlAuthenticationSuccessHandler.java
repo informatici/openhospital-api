@@ -14,26 +14,26 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 
 public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-	private RequestCache requestCache = new HttpSessionRequestCache();
-	 
+    private RequestCache requestCache = new HttpSessionRequestCache();
+
     @Override
     public void onAuthenticationSuccess(
-      HttpServletRequest request,
-      HttpServletResponse response, 
-      Authentication authentication) 
-      throws ServletException, IOException {
-  
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication)
+            throws ServletException, IOException {
+
         SavedRequest savedRequest
-          = requestCache.getRequest(request, response);
- 
+                = requestCache.getRequest(request, response);
+
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);
             return;
         }
         String targetUrlParam = getTargetUrlParameter();
         if (isAlwaysUseDefaultTargetUrl()
-          || (targetUrlParam != null
-          && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
+                || (targetUrlParam != null
+                && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
             requestCache.removeRequest(request, response);
             clearAuthenticationAttributes(request);
             return;

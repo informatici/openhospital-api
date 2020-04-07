@@ -1,6 +1,5 @@
 package org.isf.security;
 
-
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,13 +12,13 @@ import io.swagger.annotations.ApiResponses;
 
 /**
  * Here only for swagger
- * @author antonio
  *
+ * @author antonio
  */
 @Api("Login")
 @RestController
 public class LoginApi {
-	/**
+    /**
      * Implemented by Spring Security
      */
     @ApiOperation(value = "Login", notes = "Login with the given credentials.")
