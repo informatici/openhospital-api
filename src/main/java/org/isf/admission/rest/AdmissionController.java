@@ -181,7 +181,7 @@ public class AdmissionController {
 	 * @return the next prog.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/getNextProgressiveIdInYear", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode)
 			throws OHServiceException {
 		logger.info("get the next prog in the year for ward code:" + wardCode);
@@ -199,7 +199,7 @@ public class AdmissionController {
 	 * @return the number of used beds.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/getBedsOccupationInWard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		logger.info("Counts the number of used bed for ward code:" + wardCode);
 
