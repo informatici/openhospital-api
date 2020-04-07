@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication
 public class OpenHospitalApiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(OpenHospitalApiApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(OpenHospitalApiApplication.class, args);
+    }
 
 }

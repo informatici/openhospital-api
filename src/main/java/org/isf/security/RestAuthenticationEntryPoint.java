@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		response.sendError( HttpServletResponse.SC_UNAUTHORIZED, "Not Authorized" );
-	}
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
+        // TODO Auto-generated method stub
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not Authorized");
+    }
 
 }
