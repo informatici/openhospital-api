@@ -186,7 +186,7 @@ public class AdmissionController {
 			throws OHServiceException {
 		logger.info("get the next prog in the year for ward code:" + wardCode);
 		
-		if (!wardCode.trim().isEmpty() && wardManager.codeControl(wardCode)) {
+		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 		
@@ -203,7 +203,7 @@ public class AdmissionController {
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		logger.info("Counts the number of used bed for ward code:" + wardCode);
 
-		if (!wardCode.trim().isEmpty() && wardManager.codeControl(wardCode)) {
+		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
 			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 
