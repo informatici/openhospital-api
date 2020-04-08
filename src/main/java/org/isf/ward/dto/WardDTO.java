@@ -130,5 +130,4 @@ public class WardDTO {
 	public void setLock(Integer lock) {
 		this.lock = lock;
 	}
-
 }
