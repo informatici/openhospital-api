@@ -53,12 +53,14 @@ public class PatientControllerTest {
     private PatientBrowserManager patientBrowserManagerMock;
 	
     private MockMvc mockMvc;
+    
+    ModelMapper modelMapper = new ModelMapper();
 
     @Before
     public void setup() {
     	MockitoAnnotations.initMocks(this);
     	this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock))
+				.standaloneSetup(new PatientController(patientBrowserManagerMock, modelMapper))
    				.setControllerAdvice(new OHResponseEntityExceptionHandler())
    				.build();
     }
@@ -116,7 +118,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients";
 		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
@@ -146,7 +148,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
@@ -176,7 +178,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
@@ -202,7 +204,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#updatePatient(int, org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_OK() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
@@ -252,7 +254,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#updatePatient(int, org.isf.patient.dto.PatientDTO)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
@@ -283,7 +285,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(java.lang.Integer, java.lang.Integer)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
 		String request = "/patients";
 		
@@ -312,7 +314,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
@@ -338,7 +340,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 456;
 		String name = "TestFirstName";
@@ -366,7 +368,7 @@ public class PatientControllerTest {
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
 	 * @throws Exception 
 	 */
-	//@Test
+	@Test
 	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 678;
 		String request = "/patients/search";

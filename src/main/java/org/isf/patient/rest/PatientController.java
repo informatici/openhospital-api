@@ -10,6 +10,7 @@ import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import java.util.List;
 @RestController
 @Api(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class PatientController extends OHApiAbstractController<Patient, PatientDTO> {
-
     protected static final String DEFAULT_PAGE_SIZE = "80";
 
     @Autowired
@@ -34,7 +34,8 @@ public class PatientController extends OHApiAbstractController<Patient, PatientD
 
     private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
-    public PatientController(PatientBrowserManager patientManager) {
+    public PatientController(PatientBrowserManager patientManager, @Autowired ModelMapper modelMapper) {
+        super(modelMapper);
         this.patientManager = patientManager;
     }
 

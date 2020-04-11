@@ -1,35 +1,46 @@
 package org.isf.opd.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class OpdController extends OHApiAbstractController<Opd, OpdDTO> {
-
     private static final String DEFAULT_PAGE_SIZE = "80";
+
+    private final Logger logger = LoggerFactory.getLogger(OpdController.class);
 
     @Autowired
     protected OpdBrowserManager opdManager;
 
-    private final Logger logger = LoggerFactory.getLogger(OpdController.class);
+    public OpdController(OpdBrowserManager opdManager, @Autowired ModelMapper modelMapper) {
+        super(modelMapper);
+        this.opdManager = opdManager;
+    }
 
     @PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO newOpd) throws OHServiceException {

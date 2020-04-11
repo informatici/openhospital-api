@@ -1,12 +1,14 @@
 package org.isf.disease.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
 import org.isf.shared.rest.OHApiAbstractController;
 import org.isf.utils.exception.OHServiceException;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -28,6 +30,14 @@ public class DiseaseController extends OHApiAbstractController<Disease, DiseaseD
     protected DiseaseBrowserManager diseaseManager;
 
     private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
+
+    @Autowired
+    protected ModelMapper modelMapper;
+
+    public DiseaseController(DiseaseBrowserManager diseaseManager, ModelMapper modelMapper) {
+        super(modelMapper);
+        this.diseaseManager = diseaseManager;
+    }
 
     @GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DiseaseDTO>> getDiseaseAll() throws OHServiceException {
