@@ -1,85 +1,84 @@
 package org.isf.disease.dto;
 
+import javax.validation.constraints.NotNull;
+
+import org.isf.distype.dto.DiseaseTypeDTO;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.isf.distype.dto.DiseaseTypeDTO;
 
 @ApiModel(description = "Class representing a disease")
 public class DiseaseDTO {
+	@NotNull
+	private Integer code;
 
-    @ApiModelProperty(notes = "Code", example="", position = 1)
-    private String code;
-
-    @ApiModelProperty(notes = "Description", example="", position = 2)
+	@NotNull
+	@ApiModelProperty(notes = "Disease description")
     private String description;
 
-    @ApiModelProperty(notes = "Disease type", position = 3)
-    private DiseaseTypeDTO diseaseType;
+	@NotNull
+	@ApiModelProperty(notes = "Disease type")
+	private DiseaseTypeDTO diseaseType; 
 
-    private int lock;
+	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an OPD disease", example="true")
+	private boolean opdInclude;
 
-    @ApiModelProperty(notes = "Opd include", position = 4)
-    private boolean opdInclude;
+	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an IPD-IN disease", example="true")
+	private boolean ipdInInclude;
 
-    @ApiModelProperty(notes = "Opd in include", position = 5)
-    private boolean ipdInInclude;
+	@NotNull
+	@ApiModelProperty(notes = "indicates whether the disease is an IPD-OUT disease", example="true")
+	private boolean ipdOutInclude;
 
-    @ApiModelProperty(notes = "Opd out include", position = 6)
-    private boolean ipdOutInclude;
+	public int getCode() {
+		return code;
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public DiseaseTypeDTO getDiseaseType() {
+		return diseaseType;
+	}
 
-    public DiseaseTypeDTO getDiseaseType() {
-        return diseaseType;
-    }
+	public void setDiseaseType(DiseaseTypeDTO diseaseType) {
+		this.diseaseType = diseaseType;
+	}
 
-    public void setDiseaseType(DiseaseTypeDTO diseaseType) {
-        this.diseaseType = diseaseType;
-    }
+	public boolean isOpdInclude() {
+		return opdInclude;
+	}
 
-    public int getLock() {
-        return lock;
-    }
+	public void setOpdInclude(boolean opdInclude) {
+		this.opdInclude = opdInclude;
+	}
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	public boolean isIpdInInclude() {
+		return ipdInInclude;
+	}
 
-    public boolean isOpdInclude() {
-        return opdInclude;
-    }
+	public void setIpdInInclude(boolean ipdInInclude) {
+		this.ipdInInclude = ipdInInclude;
+	}
 
-    public void setOpdInclude(boolean opdInclude) {
-        this.opdInclude = opdInclude;
-    }
+	public boolean isIpdOutInclude() {
+		return ipdOutInclude;
+	}
 
-    public boolean isIpdInInclude() {
-        return ipdInInclude;
-    }
-
-    public void setIpdInInclude(boolean ipdInInclude) {
-        this.ipdInInclude = ipdInInclude;
-    }
-
-    public boolean isIpdOutInclude() {
-        return ipdOutInclude;
-    }
-
-    public void setIpdOutInclude(boolean ipdOutInclude) {
-        this.ipdOutInclude = ipdOutInclude;
-    }
+	public void setIpdOutInclude(boolean ipdOutInclude) {
+		this.ipdOutInclude = ipdOutInclude;
+	}
+	
+	
 }

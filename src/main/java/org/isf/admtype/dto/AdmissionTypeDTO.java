@@ -1,30 +1,35 @@
 package org.isf.admtype.dto;
 
-import io.swagger.annotations.ApiModel;
+import javax.validation.constraints.NotNull;
+
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "Class representing an admission type")
+/**
+ * Not used anymore
+ * @author antonio
+ *
+ */
+
 public class AdmissionTypeDTO {
 
-    @ApiModelProperty(notes = "Code", example = "", position = 1)
-    private String code;
+	@NotNull
+	@ApiModelProperty(notes = "code of the admission type", example="A", position = 1)
+	private String code;
 
-    @ApiModelProperty(notes = "Description", example = "", position = 2)
+	@NotNull
+	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
     private String description;
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

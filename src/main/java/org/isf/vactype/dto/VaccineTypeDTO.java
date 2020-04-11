@@ -1,18 +1,21 @@
-package org.isf.opetype.dto;
+package org.isf.vactype.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import javax.persistence.Column;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "Class representing an operation type")
-public class OperationTypeDTO {
+@ApiModel(description = "Class representing a vaccine type")
+public class VaccineTypeDTO {
 
-    @ApiModelProperty(notes = "Code", example = "", position = 1)
+    @NotNull
+    @ApiModelProperty(notes = "Code of the vaccine type", example="C", position = 1)
     private String code;
 
     @NotNull
-    @ApiModelProperty(notes = "Description", example = "", position = 2)
+    @ApiModelProperty(notes = "Description of the vaccine type", example="Child", position = 2)
     private String description;
 
     public String getCode() {

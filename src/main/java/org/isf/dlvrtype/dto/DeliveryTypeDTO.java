@@ -1,19 +1,23 @@
-package org.isf.distype.dto;
+package org.isf.dlvrtype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(description = "Class representing a disease type")
-public class DiseaseTypeDTO {
+/**
+ * 
+ * @author gildas
+ *
+ */
+public class DeliveryTypeDTO {
+
 	@NotNull
-	@ApiModelProperty(notes = "Disease type code")
+	@ApiModelProperty(notes = "code of the delivery type", example = "N", position = 1)
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease type description")
-    private String description;
+	@ApiModelProperty(notes = "description of the delivery type", example = "ACCOUCHEMENT NORMAL", position = 2)
+	private String description;
 
 	public String getCode() {
 		return code;
@@ -30,6 +34,5 @@ public class DiseaseTypeDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
+
 }

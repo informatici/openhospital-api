@@ -4,18 +4,23 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.isf.opetype.dto.OperationTypeDTO;
 
+import javax.validation.constraints.NotNull;
+
 @ApiModel(description = "Class representing an operation")
 public class OperationDTO {
 
     @ApiModelProperty(notes = "Code", example = "", position = 1)
     private String code;
 
+    @NotNull
     @ApiModelProperty(notes = "Description", example = "", position = 2)
     private String description;
 
+    @NotNull
     @ApiModelProperty(notes = "Operation type", position = 3)
     private OperationTypeDTO type;
 
+    @NotNull
     @ApiModelProperty(notes = "Major", position = 4)
     private Integer major;
 
