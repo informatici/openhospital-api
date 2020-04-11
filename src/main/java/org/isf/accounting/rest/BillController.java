@@ -16,7 +16,6 @@ import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
@@ -60,12 +59,24 @@ public class BillController {
 
 	private final Logger logger = LoggerFactory.getLogger(BillController.class);
 
-    /**
+	public BillController(BillBrowserManager billManager, PriceListManager priceListManager,
+			PatientBrowserManager patientManager) {
+		this.billManager = billManager;
+		this.priceListManager = priceListManager;
+		this.patientManager = patientManager;
+	}
+
+	/**
      * Create new bill with the list of billItems and the list of billPayments
      * @param newPatient
      * @return {@link FullBillDTO}
      * @throws OHServiceException
      */
+	@PostMapping(value = "/billss", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<String> newBills(@RequestBody String newBillDto) throws OHServiceException {
+		logger.info("Create Bill "  + newBillDto.toString());
+		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
+	}
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
         
