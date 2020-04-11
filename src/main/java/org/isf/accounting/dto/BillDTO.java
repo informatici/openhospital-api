@@ -159,11 +159,11 @@ public class BillDTO {
 		this.listId = listId;
 	}
 
-	public PatientDTO getPatient() {
+	public PatientDTO getPatientDTO() {
 		return patient;
 	}
 
-	public void setPatient(PatientDTO patient) {
+	public void setPatientDTO(PatientDTO patient) {
 		this.patient = patient;
 	}
 	
