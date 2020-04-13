@@ -72,11 +72,6 @@ public class BillController {
      * @return {@link FullBillDTO}
      * @throws OHServiceException
      */
-	@PostMapping(value = "/billss", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<String> newBills(@RequestBody String newBillDto) throws OHServiceException {
-		logger.info("Create Bill "  + newBillDto.toString());
-		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
-	}
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
         

@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -137,12 +138,12 @@ public class BillControllerTest {
 	
 	@Test
 	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
-		String request = "/billss";
+		String request = "/bills";
 		FullBillDTO newFullBillDTO =  FullBillDTOHelper.setup();
 		Integer id = 0;
 		newFullBillDTO.getBill().setId(id);
 		Integer code = 0;
-		newFullBillDTO.getBill().getPatient().setCode(code);
+		newFullBillDTO.getBill().getPatientDTO().setCode(code);
 		
 		newFullBillDTO.getBill().setPatient(true);
 		
@@ -163,7 +164,7 @@ public class BillControllerTest {
 			.andDo(print())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-			.andExpect(content().string(containsString("Patient is not created!")))
+			.andExpect(content().string(containsString("Patient Not found!")))
 			.andReturn();
 		
 		//TODO Create OHCreateAPIException
@@ -181,6 +182,77 @@ public class BillControllerTest {
 		fail("Not yet implemented");
 	}
 
+	@Test
+	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+		Integer id = 123;
+		String request = "/bills/{id}";
+		
+		FullBillDTO newFullBillDTO =  FullBillDTOHelper.setup();
+		newFullBillDTO.getBill().setId(id);
+		Integer code = 111;
+		newFullBillDTO.getBill().getPatientDTO().setCode(code);
+		newFullBillDTO.getBill().setPatient(true);
+		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
+		System.out.println("JSON ---> " + jsonNewFullBillDTO);
+		Bill bill = BillHelper.setupBill();
+		when(patientManagerMock.getPatient(eq(bill.getPatName()))).thenReturn(null);
+		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
+		when(billManagerMock.deleteBill(eq(bill))).thenReturn(true);
+		
+		MvcResult result = this.mockMvc
+			.perform(
+				put(request, id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
+			)
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+			.andExpect(content().string(containsString("Patient Not found!")))
+			.andReturn();
+		
+		//TODO Create OHCreateAPIException
+		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
+		logger.debug("oHAPIException: {}", oHAPIException);
+		oHAPIException.ifPresent( (se) -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent( (se) -> assertThat(se, instanceOf(OHAPIException.class)));
+	}
+	
+	@Test
+	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OK() throws Exception {
+		Integer id = 123;
+		String request = "/bills/{id}";
+		FullBillDTO newFullBillDTO =  FullBillDTOHelper.setup();
+		newFullBillDTO.getBill().setId(id);
+		Integer code = 111;
+		newFullBillDTO.getBill().getPatientDTO().setCode(code);
+		newFullBillDTO.getBill().setPatient(true);
+		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
+		System.out.println("JSON ---> " + jsonNewFullBillDTO);
+		Bill bill = BillHelper.setupBill();
+		Patient patient = bill.getPatient();
+		System.out.println("patient ---> " + patient);
+		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
+		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
+		ArrayList<PriceList> list = new ArrayList<PriceList>();
+		list.add(bill.getList());
+		when(priceListManagerMock.getLists()).thenReturn(list);
+		
+		this.mockMvc
+			.perform(
+				put(request, id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
+			)
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk()) 
+			.andExpect(content().string(containsString("Patient Not found!")))
+			.andReturn();
+	}
+	
+	
 	@Test
 	public void testSearchBillsDateDateInteger() {
 		fail("Not yet implemented");
@@ -303,7 +375,7 @@ public class BillControllerTest {
 			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
 			
 			BillDTO billDTO = new BillDTO();
-			billDTO.setPatient(patientDTO);
+			billDTO.setPatientDTO(patientDTO);
 			fullBillDTO.setBill(billDTO);
 			
 			TestBillItems tbi = new TestBillItems();
@@ -348,7 +420,7 @@ public class BillControllerTest {
 			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
 			
 			BillDTO billDTO = new BillDTO();
-			billDTO.setPatient(patientDTO);
+			billDTO.setPatientDTO(patientDTO);
 			fullBillDTO.setBill(billDTO);
 			
 		

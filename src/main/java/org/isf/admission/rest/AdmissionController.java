@@ -84,6 +84,19 @@ public class AdmissionController {
 		this.admissionManager = admissionManager;
 	}
 
+	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager,
+			WardBrowserManager wardManager, DiseaseBrowserManager diseaseManager,
+			OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager,
+			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager) {
+		this.admissionManager = admissionManager;
+		this.patientManager = patientManager;
+		this.wardManager = wardManager;
+		this.operationManager = operationManager;
+		this.pregTraitTypeManager = pregTraitTypeManager;
+		this.dlvrTypeManager = dlvrTypeManager;
+		this.dlvrrestTypeManager = dlvrrestTypeManager;
+	}
+
 	/**
 	 * Get {@link Admission} for the specified id.
 	 * 
