@@ -236,6 +236,7 @@ public class BillControllerTest {
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		ArrayList<PriceList> list = new ArrayList<PriceList>();
+		System.out.println("bill.getList() ---> " + bill.getList());
 		list.add(bill.getList());
 		when(priceListManagerMock.getLists()).thenReturn(list);
 		
@@ -376,7 +377,14 @@ public class BillControllerTest {
 			
 			BillDTO billDTO = new BillDTO();
 			billDTO.setPatientDTO(patientDTO);
+			billDTO.setListName(bill.getListName());
+			billDTO.setPatName(patient.getFirstName());
+
+			//OP-205
+			//BillDTO billDTO = OHModelMapper.getObjectMapper().map(bill, BillDTO.class);
+			
 			fullBillDTO.setBill(billDTO);
+
 			
 			TestBillItems tbi = new TestBillItems();
 			BillItems billItems = tbi.setup(bill, false);
