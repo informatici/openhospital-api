@@ -124,6 +124,7 @@
     </dependencies>
 
 	<build>
+		<finalName>openhospital-api</finalName>
 		<resources>
 			<resource>
 				<directory>src/main/openhospital-ui/bundle</directory>
@@ -171,18 +172,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>3.2.3</version>
-				<configuration>
-				<webResources>
-					<resource>
-					<directory>${project.basedir}/src/main/openhospital-ui/dist/</directory>
-					</resource>
-				</webResources>
-				</configuration>
-			</plugin>-->
 		</plugins>
 	</build>
 
