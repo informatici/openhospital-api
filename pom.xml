@@ -281,9 +281,9 @@
 	                                <goal>jar</goal>
 	                            </goals>
 	                            <configuration>
-	                                <additionalparam>-Xdoclint:none</additionalparam>
-	                                <skip>true</skip>
-	                            </configuration>
+                                    <doclint>none</doclint>
+                                    <skip>true</skip>
+                                </configuration>
 	                        </execution>
 	                    </executions>
 	                </plugin>
