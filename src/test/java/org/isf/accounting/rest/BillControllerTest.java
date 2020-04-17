@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
+import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -22,8 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -270,8 +273,44 @@ public class BillControllerTest {
 	}
 
 	@Test
-	public void testGetItems() {
-		fail("Not yet implemented");
+	public void when_get_items_with_existent_id_then_getItems_returns_items_and_OK() throws Exception {
+		Integer id = 123;
+		String request = "/bills/items/{bill_id}";
+		
+		FullBillDTO newFullBillDTO =  FullBillDTOHelper.setup();
+		newFullBillDTO.getBill().setId(id);
+		
+		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<BillItems>();
+		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it-> getObjectMapper().map(it, BillItems.class)).collect(Collectors.toList()));
+				
+		when(billManagerMock.getItems(eq(id))).thenReturn(itemsDTOSExpected);
+		
+		this.mockMvc
+			.perform(
+					get(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+					)		
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
+			.andReturn();
+	}
+	
+	@Test
+	public void when_get_items_with_existent_id_then_getItems_is_empty_and_isNoContent() throws Exception {
+		Integer id = 123;
+		String request = "/bills/items/{bill_id}";
+		
+		this.mockMvc
+			.perform(
+					get(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+					)		
+			.andDo(log())
+			.andExpect(status().isNoContent());
+		
+		
 	}
 
 	@Test
