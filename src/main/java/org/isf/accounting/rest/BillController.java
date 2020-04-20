@@ -1,6 +1,7 @@
 package org.isf.accounting.rest;
 
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +17,7 @@ import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
+import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
@@ -89,13 +91,13 @@ public class BillController {
         		  .orElse(null);
         
         if(pat != null) {
-        	bill.setPatient(pat);
+        	bill.setBillPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
-        	bill.setList(plist);
+        	bill.setPriceList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
@@ -140,13 +142,13 @@ public class BillController {
         		  .orElse(null);
           
         if(pat != null) {
-        	bill.setPatient(pat);
+        	bill.setBillPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
-        	bill.setList(plist);
+        	bill.setPriceList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
@@ -301,8 +303,14 @@ public class BillController {
         logger.info("Get bill with id:"  + id);
            
 	    Bill bill = billManager.getBill(id);
-	    
 	    BillDTO billDTO = getObjectMapper().map(bill, BillDTO.class);
+	    
+	    if(bill.isPatient()) {
+	    	if(billDTO.getPatientDTO() == null) {
+	    		Patient patient = bill.getBillPatient();
+	    		billDTO.setPatientDTO(getObjectMapper().map(patient, PatientDTO.class));
+	    	}
+	    }
         
         if(billDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
