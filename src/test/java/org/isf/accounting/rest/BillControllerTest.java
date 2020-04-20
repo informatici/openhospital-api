@@ -383,6 +383,48 @@ public class BillControllerTest {
 			.andReturn();
 	}
 
+	
+	@Test
+	public void when_post_SearchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
+		String request = "/bills/search/by/payments";
+		
+		Bill bill1 = BillHelper.setupBill();
+		int id1 = 1 ;
+		bill1.setId(id1);
+		Bill bill2 = BillHelper.setupBill();
+		int id2 = 2 ;
+		bill2.setId(id2);
+		BillDTO expectedBillDTO1 = getObjectMapper().map(bill1, BillDTO.class);
+		BillDTO expectedBillDTO2 = getObjectMapper().map(bill2, BillDTO.class);
+		
+		BillPaymentsDTO billPaymentsDTO1 =  BillPaymentsDTOHelper.setup();
+		BillPaymentsDTO billPaymentsDTO2 =  BillPaymentsDTOHelper.setup();
+		ArrayList<BillPaymentsDTO> billsPaymentsDTOList = new ArrayList<BillPaymentsDTO>();
+		billsPaymentsDTOList.add(billPaymentsDTO1);
+		billsPaymentsDTOList.add(billPaymentsDTO2);
+		
+		ArrayList<BillPayments> billsPaymentsList = BillPaymentsDTOHelper.toModelList(billsPaymentsDTOList);
+
+		ArrayList<Bill> billList = new ArrayList<Bill>();
+		billList.add(bill1);
+		billList.add(bill2);
+		
+		when(billManagerMock.getBills(eq(billsPaymentsList))).thenReturn(billList);
+		
+		this.mockMvc
+			.perform(
+					post(request)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(BillPaymentsDTOHelper.asJsonString(billsPaymentsDTOList))
+					)		
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
+			.andReturn();
+	}
+
+	
 
 	static class BillHelper{
 		
@@ -509,6 +551,52 @@ public class BillControllerTest {
 	}
 
 	
+	static class BillPaymentsDTOHelper{
+		public static BillPaymentsDTO setup() throws OHException{
+			Bill bill = BillHelper.setupBill();
+
+//			FullBillDTO fullBillDTO = new  FullBillDTO();
+//			Patient patient = new TestPatient().setup(true);
+//			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
+//			BillDTO billDTO = new BillDTO();
+//			billDTO.setPatientDTO(patientDTO);
+//			fullBillDTO.setBill(billDTO);
+			
+			TestBillPayments testBillPayments =  new TestBillPayments();
+			
+			BillPayments billPayments = testBillPayments.setup(bill, true);
+		
+			BillPaymentsDTO billPaymentsDTO = OHModelMapper.getObjectMapper().map(billPayments, BillPaymentsDTO.class);
+			return billPaymentsDTO;
+		}
+		
+		public static String asJsonString(BillPaymentsDTO billPaymentsDTO){
+			try {
+				return new ObjectMapper().writeValueAsString(billPaymentsDTO);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		public static String asJsonString(List<BillPaymentsDTO> billPaymentsDTOList){
+			try {
+				return new ObjectMapper().writeValueAsString(billPaymentsDTOList);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		static ArrayList<BillPayments> toModelList(List<BillPaymentsDTO> billPaymentsDTOList){
+	        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(billPaymentsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
+	        return billPayments;
+		}
+	}
+	
+	
+	
+	
 	//TODO
 	
 	@Test
@@ -525,18 +613,11 @@ public class BillControllerTest {
 	public void zzzzz_testSearchBillsDateDateInteger() {
 		fail("Not yet implemented");
 	}
-
-	@Test
-	public void zzzzz_testSearchBillsPayments() {
-		fail("Not yet implemented");
-	}
-
+	
 	@Test
 	public void zzzzz_testGetPaymentsByBillId() {
 		fail("Not yet implemented");
 	}
-
-	
 
 	@Test
 	public void zzzzz_testGetPendingBills() {
