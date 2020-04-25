@@ -235,17 +235,33 @@ public class BillControllerTest {
 		newFullBillDTO.getBill().getPatientDTO().setCode(code);
 		newFullBillDTO.getBill().setPatient(true);
 		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
-		System.out.println("JSON ---> " + jsonNewFullBillDTO);
 		Bill bill = BillHelper.setup();
 		Patient patient = bill.getBillPatient();
-		System.out.println("patient ---> " + patient);
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		ArrayList<PriceList> list = new ArrayList<PriceList>();
-		System.out.println("bill.getList() ---> " + bill.getPriceList());
-		list.add(bill.getPriceList());
-		when(priceListManagerMock.getLists()).thenReturn(list);
+		ArrayList<PriceList> priceListList = new ArrayList<PriceList>();
+		PriceList priceList = bill.getPriceList();
+		priceList.setName("TestListNameToMatch");
+		newFullBillDTO.getBill().setListName("TestListNameToMatch");
+		priceListList.add(priceList);
+		when(priceListManagerMock.getLists()).thenReturn(priceListList);
 		
+		//TODO open a ticket for suggesting refactoring for updateBill() method in order to accept generic List instead of ArrayList  like:
+		// public boolean updateBill(Bill updateBill,
+		//		List<BillItems> billItems, 
+		//		List<BillPayments> billPayments) throws OHServiceException 
+		//ArrayList<BillItems> billItemsArrayList = new ArrayList(newFullBillDTO.getBillItems());
+		//billItemsArrayList.addAll(newFullBillDTO.getBillItems());
+		
+		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItems());
+		
+		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPayments());
+		
+		//TODO  check eq(bill) case
+		//when(billManagerMock.updateBill(eq(bill), eq(billItemsArrayList), eq(billPaymentsArrayList)))
+		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsArrayList), eq(billPaymentsArrayList)))
+		.thenReturn(true);
+
 		this.mockMvc
 			.perform(
 				put(request, id)
@@ -254,11 +270,23 @@ public class BillControllerTest {
 			)
 			.andDo(log())
 			.andDo(print())
-			.andExpect(status().isOk()) 
-			.andExpect(content().string(containsString("Patient Not found!")))
+			.andExpect(status().isCreated()) 
+			.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
 			.andReturn();
 	}
 
+	
+	
+	
+	public static <T> ArrayList<T> listToArrayList(List<T> myList) {
+        ArrayList<T> arl = new ArrayList<>();
+        for (Object object : myList) {
+            arl.add((T) object);
+        }
+        return arl;
+
+    }
+	
 	@Test
 	public void when_get_items_with_existent_id_then_getItems_returns_items_and_OK() throws Exception {
 		Integer id = 123;
@@ -794,29 +822,20 @@ public class BillControllerTest {
 			}
 			return null;
 		}
+		
+		static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList){
+	        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillItems.class)).collect(Collectors.toList()));
+	        return billItems;
+		}
 	}
 	
-	
-	
 	//TODO
-	
-
-
-	
-
-
 	
 	@Test
 	public void zzzzz_testGetPaymentsByBillId() {
 		fail("Not yet implemented");
 	}
 
-
-	
-	@Test
-	public void zzzzz_testUpdateBill() {
-		fail("Not yet implemented");
-	}
 
 	
 }
