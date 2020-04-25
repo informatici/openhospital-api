@@ -8,7 +8,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -26,14 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.isf.accounting.dto.BillDTO;
 import org.isf.accounting.dto.BillItemsDTO;
@@ -57,27 +52,18 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.OHModelMapper;
 import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.OHServiceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -277,16 +263,12 @@ public class BillControllerTest {
 			.andReturn();
 	}
 
-	
-	
-	
 	public static <T> ArrayList<T> listToArrayList(List<T> myList) {
         ArrayList<T> arl = new ArrayList<>();
         for (Object object : myList) {
             arl.add((T) object);
         }
         return arl;
-
     }
 	
 	@Test
@@ -326,8 +308,6 @@ public class BillControllerTest {
 					)		
 			.andDo(log())
 			.andExpect(status().isNoContent());
-		
-		
 	}
 
 	@Test
@@ -337,22 +317,10 @@ public class BillControllerTest {
 		
 		Bill bill = BillHelper.setup();
 		bill.setId(id);
-		
-		//BillDTO billDTO = getObjectMapper().map(bill, BillDTO.class);
-		
 		BillDTO expectedBillDTO = BillDTOHelper.setup(id);
-		
-		//expectedBillDTO.setPatientDTO(null);
-		
-		//Integer code = 111;
-		//expectedBillDTO.getBill().getPatientDTO().setCode(code);
-		//expectedBillDTO.getBill().setPatient(true);		
-				
+
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		
-		System.out.println(String.format("bill: %s", BillHelper.asJsonString(bill)));
-		System.out.println(String.format("expectedBillDTO: %s", BillDTOHelper.asJsonString(expectedBillDTO)));
-		
+				
 		MvcResult actualBillDTResponse  = this.mockMvc
 			.perform(
 					get(request, id)
@@ -362,10 +330,6 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO))))
 			.andReturn();
-		
-		String actualStringResponseContent = actualBillDTResponse.getResponse().getContentAsString();
-		
-		System.out.println(String.format("actualStringResponseContent: %s", actualStringResponseContent));
 	}
 
 	@Test
@@ -388,7 +352,6 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("true")));
 	}
-	
 	
 	@Test
 	public void when_get_bill_pending_affiliate_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
@@ -424,7 +387,7 @@ public class BillControllerTest {
 
 	
 	@Test
-	public void when_post_SearchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
+	public void when_post_searchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
 		String request = "/bills/search/by/payments";
 		
 		Bill bill1 = BillHelper.setup();
@@ -464,7 +427,7 @@ public class BillControllerTest {
 	}
 
 	@Test
-	public void when_get_PendingBills_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
+	public void when_get_pendingBills_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/bills/pending?patient_code={code}";
 		
@@ -502,12 +465,7 @@ public class BillControllerTest {
 	
 	
 	@Test
-	public void when_post_SearchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
-		//@PostMapping(value = "/bills/search/by/item", produces = MediaType.APPLICATION_JSON_VALUE)
-		//public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
-		//		@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
-		//		@RequestBody BillItemsDTO billItemDTO)
-		
+	public void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
 		String request = "/bills/search/by/item?datefrom={dateFrom}&dateto={dateTo}";
 		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
 		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
@@ -536,18 +494,10 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
 			.andReturn();
-		
 	}
 	
-	
 	@Test
-	public void when_get_SearchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
-//		@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-//		public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
-//				@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
-//				@RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
-//	        
-		
+	public void when_get_searchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
 		String request = "/bills?datefrom={dateFrom}&dateto={dateTo}&patient_code={patient_code}";
 		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
 		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
@@ -577,18 +527,12 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
 			.andReturn();
-	
 	}
-	
 	
 	@Test
 	public void when_get_getDistinctItems_BillBrowserManager_getDistinctItems_returns_BillItemsDTOList_then_OK() throws Exception {
-		 
-//			@GetMapping(value = "/bills/items", produces = MediaType.APPLICATION_JSON_VALUE)
-//			public ResponseEntity<List<BillItemsDTO>> getDistinctItems() throws OHServiceException {
-				
 		String request = "/bills/items";
-		
+
 		//TODO move to a Helper once it duplicates somewhere else
 		Bill bill = BillHelper.setup();
 		TestBillItems tbi = new TestBillItems();
@@ -613,14 +557,10 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(BillItemsDTOHelper.asJsonString(expectedBillItemsDTOList))))
 			.andReturn();
-        
 	}
 	
 	@Test
-	public void when_get_GetPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
-//		@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//		public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
-	
+	public void when_get_getPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
 		String request = "/bills/payments/{bill_id}";
 		
 		Integer billId  =123;
@@ -640,7 +580,6 @@ public class BillControllerTest {
 			.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
 			.andReturn();
 	}
-
 	
 	static class BillHelper{
 		public static Bill setup() throws OHException{
@@ -650,7 +589,6 @@ public class BillControllerTest {
 			PriceList priceList = testPriceList.setup(false);
 			TestBill testBill = new TestBill();
 			Bill bill = testBill.setup(priceList, patient, false);
-			//bill.setId(id);
 			return bill;
 		}
 		
@@ -696,12 +634,9 @@ public class BillControllerTest {
 			billDTO.setPatientDTO(patientDTO);
 			billDTO.setListName(bill.getListName());
 			billDTO.setPatName(patient.getFirstName());
-
 			//OP-205
 			//BillDTO billDTO = OHModelMapper.getObjectMapper().map(bill, BillDTO.class);
-			
 			fullBillDTO.setBill(billDTO);
-
 			
 			TestBillItems tbi = new TestBillItems();
 			BillItems billItems = tbi.setup(bill, false);
@@ -712,7 +647,6 @@ public class BillControllerTest {
 			BillPayments billPayments = tbp.setup(bill, false);
 			BillPaymentsDTO billPaymentsDTO = OHModelMapper.getObjectMapper().map(billPayments, BillPaymentsDTO.class);
 			fullBillDTO.setBillPayments(Arrays.asList(billPaymentsDTO));
-
 			
 			return fullBillDTO;
 		}
@@ -738,18 +672,12 @@ public class BillControllerTest {
 
 	static class BillDTOHelper{
 		public static BillDTO setup() throws OHException{
-			Bill bill = BillHelper.setup();
 			FullBillDTO fullBillDTO = new  FullBillDTO();
-			
 			Patient patient = new TestPatient().setup(true);
 			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
-			
 			BillDTO billDTO = new BillDTO();
 			billDTO.setPatientDTO(patientDTO);
 			fullBillDTO.setBill(billDTO);
-			
-		
-			
 			return billDTO;
 		}
 		
@@ -777,7 +705,6 @@ public class BillControllerTest {
 			return null;
 		}
 	}
-
 	
 	static class BillPaymentsDTOHelper{
 		public static BillPaymentsDTO setup() throws OHException{
@@ -824,7 +751,6 @@ public class BillControllerTest {
 		
 	}
 	
-	
 	static class BillItemsDTOHelper{
 		public static BillItemsDTO setup() throws OHException{
 			Bill bill = BillHelper.setup();
@@ -852,7 +778,7 @@ public class BillControllerTest {
 			return null;
 		}
 		
-		static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList){
+		public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList){
 	        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillItems.class)).collect(Collectors.toList()));
 	        return billItems;
 		}
