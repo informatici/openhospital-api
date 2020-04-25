@@ -555,6 +555,42 @@ public class BillControllerTest {
 			.andReturn();
 	
 	}
+	
+	
+	@Test
+	public void when_get_getDistinctItems_BillBrowserManager_getDistinctItems_returns_BillItemsDTOList_then_OK() throws Exception {
+		 
+//			@GetMapping(value = "/bills/items", produces = MediaType.APPLICATION_JSON_VALUE)
+//			public ResponseEntity<List<BillItemsDTO>> getDistinctItems() throws OHServiceException {
+				
+		String request = "/bills/items";
+		
+		//TODO move to a Helper once it duplicates somewhere else
+		Bill bill = BillHelper.setup();
+		TestBillItems tbi = new TestBillItems();
+		BillItems billItems1 = tbi.setup(bill, false);
+		BillItems billItems2 = tbi.setup(bill, false);
+		ArrayList<BillItems> billItemsList = new ArrayList<BillItems>();
+		billItemsList.add(billItems1);
+		billItemsList.add(billItems2);
+		
+        List<BillItemsDTO> expectedBillItemsDTOList = billItemsList.stream().map(it-> getObjectMapper().map(it, BillItemsDTO.class)).collect(Collectors.toList());
+        
+        //TODO emulate distinct behavior since both billItems in List are equal
+        when(billManagerMock.getDistinctItems()).thenReturn(billItemsList);
+			    
+	    this.mockMvc
+			.perform(
+					get(request)
+					.contentType(MediaType.APPLICATION_JSON)
+					)		
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillItemsDTOHelper.asJsonString(expectedBillItemsDTOList))))
+			.andReturn();
+        
+	}
 
 	static class BillHelper{
 		
@@ -772,10 +808,7 @@ public class BillControllerTest {
 	
 
 
-	@Test
-	public void zzzzz_testGetDistinctItems() {
-		fail("Not yet implemented");
-	}
+	
 
 
 	
