@@ -150,11 +150,6 @@ public class BillControllerTest {
 		
 		newFullBillDTO.getBill().setPatient(true);
 		
-		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
-		System.out.println("JSON ---> " + jsonNewFullBillDTO);
-		
-		logger.info("JSON --> " +jsonNewFullBillDTO);
-		
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(null);
 		
 		MvcResult result = this.mockMvc
@@ -164,7 +159,6 @@ public class BillControllerTest {
 				.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
 			)
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
 			.andExpect(content().string(containsString("Patient Not found!")))
@@ -187,8 +181,6 @@ public class BillControllerTest {
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatientDTO().setCode(code);
 		newFullBillDTO.getBill().setPatient(true);
-		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
-		System.out.println("JSON ---> " + jsonNewFullBillDTO);
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatient(eq(bill.getPatName()))).thenReturn(null);
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
@@ -201,7 +193,6 @@ public class BillControllerTest {
 				.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
 			)
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
 			.andExpect(content().string(containsString("Patient Not found!")))
@@ -257,7 +248,6 @@ public class BillControllerTest {
 				.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
 			)
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().isCreated()) 
 			.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
 			.andReturn();
@@ -290,7 +280,6 @@ public class BillControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
 			.andReturn();
@@ -317,18 +306,17 @@ public class BillControllerTest {
 		
 		Bill bill = BillHelper.setup();
 		bill.setId(id);
-		BillDTO expectedBillDTO = BillDTOHelper.setup(id);
 
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 				
-		MvcResult actualBillDTResponse  = this.mockMvc
+		this.mockMvc
 			.perform(
 					get(request, id)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
 			.andExpect(status().isOk())
-			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO))))
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
 			.andReturn();
 	}
 
@@ -553,7 +541,6 @@ public class BillControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(BillItemsDTOHelper.asJsonString(expectedBillItemsDTOList))))
 			.andReturn();
@@ -575,7 +562,6 @@ public class BillControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
-			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
 			.andReturn();
