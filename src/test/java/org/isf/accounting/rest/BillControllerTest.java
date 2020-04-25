@@ -433,16 +433,6 @@ public class BillControllerTest {
 			.andReturn();
 	}
 
-	
-	
-	@Test
-	public void zzzzz_testGetPendingBills() {
-		fail("Not yet implemented");
-		
-		///bills/pending
-	}
-	
-	
 	@Test
 	public void when_get_PendingBills_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
@@ -457,11 +447,14 @@ public class BillControllerTest {
 		BillDTO expectedBillDTO1 = getObjectMapper().map(bill1, BillDTO.class);
 		BillDTO expectedBillDTO2 = getObjectMapper().map(bill2, BillDTO.class);
 		
-		ArrayList<Bill> bills = new ArrayList<Bill>();
-		bills.add(bill1);
-		bills.add(bill2);
+		ArrayList<Bill> billList = new ArrayList<Bill>();
+		billList.add(bill1);
+		billList.add(bill2);
 
-		when(billManagerMock.getPendingBills(eq(code))).thenReturn(bills);
+	    List<BillDTO> billDTOS = billList.stream().map(b-> getObjectMapper().map(b, BillDTO.class)).collect(Collectors.toList());
+
+		
+		when(billManagerMock.getPendingBills(eq(code))).thenReturn(billList);
 		
 		this.mockMvc
 			.perform(
@@ -472,6 +465,7 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
 			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(billDTOS))))
 			.andReturn();
 	}
 	
