@@ -21,8 +21,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -59,12 +62,17 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -190,7 +198,7 @@ public class BillControllerTest {
 		newFullBillDTO.getBill().setPatient(true);
 		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
 		System.out.println("JSON ---> " + jsonNewFullBillDTO);
-		Bill bill = BillHelper.setupBill();
+		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatient(eq(bill.getPatName()))).thenReturn(null);
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		when(billManagerMock.deleteBill(eq(bill))).thenReturn(true);
@@ -226,7 +234,7 @@ public class BillControllerTest {
 		newFullBillDTO.getBill().setPatient(true);
 		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
 		System.out.println("JSON ---> " + jsonNewFullBillDTO);
-		Bill bill = BillHelper.setupBill();
+		Bill bill = BillHelper.setup();
 		Patient patient = bill.getBillPatient();
 		System.out.println("patient ---> " + patient);
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
@@ -295,13 +303,12 @@ public class BillControllerTest {
 		Integer id = 123;
 		String request = "/bills/{id}";
 		
-		Bill bill = BillHelper.setupBill();
+		Bill bill = BillHelper.setup();
 		bill.setId(id);
 		
 		//BillDTO billDTO = getObjectMapper().map(bill, BillDTO.class);
 		
-		BillDTO expectedBillDTO = BillDTOHelper.setup();
-		expectedBillDTO.setId(id);
+		BillDTO expectedBillDTO = BillDTOHelper.setup(id);
 		
 		//expectedBillDTO.setPatientDTO(null);
 		
@@ -321,7 +328,7 @@ public class BillControllerTest {
 					)		
 			.andDo(log())
 			.andExpect(status().isOk())
-			//TODO .andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO))))
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO))))
 			.andReturn();
 		
 		String actualStringResponseContent = actualBillDTResponse.getResponse().getContentAsString();
@@ -334,7 +341,7 @@ public class BillControllerTest {
 		Integer id = 123;
 		String request = "/bills/{id}";
 		
-		Bill bill = BillHelper.setupBill();
+		Bill bill = BillHelper.setup();
 		
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		
@@ -356,10 +363,10 @@ public class BillControllerTest {
 		Integer code = 123;
 		String request = "/bills/pending/affiliate?patient_code="+code;
 		
-		Bill bill1 = BillHelper.setupBill();
+		Bill bill1 = BillHelper.setup();
 		int id1 = 1 ;
 		bill1.setId(id1);
-		Bill bill2 = BillHelper.setupBill();
+		Bill bill2 = BillHelper.setup();
 		int id2 = 2 ;
 		bill2.setId(id2);
 		BillDTO expectedBillDTO1 = getObjectMapper().map(bill1, BillDTO.class);
@@ -388,10 +395,10 @@ public class BillControllerTest {
 	public void when_post_SearchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
 		String request = "/bills/search/by/payments";
 		
-		Bill bill1 = BillHelper.setupBill();
+		Bill bill1 = BillHelper.setup();
 		int id1 = 1 ;
 		bill1.setId(id1);
-		Bill bill2 = BillHelper.setupBill();
+		Bill bill2 = BillHelper.setup();
 		int id2 = 2 ;
 		bill2.setId(id2);
 		BillDTO expectedBillDTO1 = getObjectMapper().map(bill1, BillDTO.class);
@@ -439,10 +446,10 @@ public class BillControllerTest {
 		Integer code = 123;
 		String request = "/bills/pending?patient_code="+code;
 		
-		Bill bill1 = BillHelper.setupBill();
+		Bill bill1 = BillHelper.setup();
 		int id1 = 1 ;
 		bill1.setId(id1);
-		Bill bill2 = BillHelper.setupBill();
+		Bill bill2 = BillHelper.setup();
 		int id2 = 2 ;
 		bill2.setId(id2);
 		BillDTO expectedBillDTO1 = getObjectMapper().map(bill1, BillDTO.class);
@@ -465,10 +472,47 @@ public class BillControllerTest {
 			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
 			.andReturn();
 	}
+	
+	
+	
+	@Test
+	public void when_post_SearchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
+		//@PostMapping(value = "/bills/search/by/item", produces = MediaType.APPLICATION_JSON_VALUE)
+		//public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+		//		@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
+		//		@RequestBody BillItemsDTO billItemDTO)
+		
+		String request = "/bills/search/by/item?datefrom={dateFrom}&dateto={dateTo}";
+		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		
+		BillItemsDTO billItemsDTO = BillItemsDTOHelper.setup();
+	    BillItems billItem = getObjectMapper().map(billItemsDTO, BillItems.class);
+	             
+	    ArrayList<Bill> billList = new ArrayList<Bill>();
+	    Integer id = 0;
+	    Bill bill = BillHelper.setup(id);
+	    billList.add(bill);
+		
+	    when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(billItem))).thenReturn(billList);
+
+	    this.mockMvc
+			.perform(
+					post(request, dateFrom, dateTo)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(BillItemsDTOHelper.asJsonString(billItemsDTO))
+					)		
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
+			.andReturn();
+		
+	}
 
 	static class BillHelper{
 		
-		public static Bill setupBill() throws OHException{
+		public static Bill setup() throws OHException{
 			TestPatient testPatient =  new TestPatient();
 			Patient patient = testPatient.setup(false); 
 			TestPriceList testPriceList =  new TestPriceList();
@@ -479,11 +523,18 @@ public class BillControllerTest {
 			return bill;
 		}
 		
+		public static Bill setup(Integer id) throws OHException {
+			Bill bill = BillHelper.setup();
+			bill.setId(id);
+			return bill;
+			
+		}
+
 		public static ArrayList<Bill> setupBillList(int size) {
 			return (ArrayList<Bill>) IntStream.range(1, size+1)
 					.mapToObj(i -> {	Bill b = null;
 										try {
-											b = BillHelper.setupBill();
+											b = BillHelper.setup();
 										} catch (OHException e) {
 											e.printStackTrace();
 										}
@@ -504,7 +555,7 @@ public class BillControllerTest {
 	
 	static class FullBillDTOHelper{
 		public static FullBillDTO setup() throws OHException{
-			Bill bill = BillHelper.setupBill();
+			Bill bill = BillHelper.setup();
 			FullBillDTO fullBillDTO = new  FullBillDTO();
 			
 			Patient patient = new TestPatient().setup(true);
@@ -556,7 +607,7 @@ public class BillControllerTest {
 
 	static class BillDTOHelper{
 		public static BillDTO setup() throws OHException{
-			Bill bill = BillHelper.setupBill();
+			Bill bill = BillHelper.setup();
 			FullBillDTO fullBillDTO = new  FullBillDTO();
 			
 			Patient patient = new TestPatient().setup(true);
@@ -571,6 +622,12 @@ public class BillControllerTest {
 			return billDTO;
 		}
 		
+		public static BillDTO setup(Integer id) throws OHException {
+			BillDTO billDTO = BillDTOHelper.setup();
+			billDTO.setId(id);
+			return billDTO;
+		}
+
 		public static String asJsonString(BillDTO billDTO){
 			try {
 				return new ObjectMapper().writeValueAsString(billDTO);
@@ -593,7 +650,7 @@ public class BillControllerTest {
 	
 	static class BillPaymentsDTOHelper{
 		public static BillPaymentsDTO setup() throws OHException{
-			Bill bill = BillHelper.setupBill();
+			Bill bill = BillHelper.setup();
 
 //			FullBillDTO fullBillDTO = new  FullBillDTO();
 //			Patient patient = new TestPatient().setup(true);
@@ -635,14 +692,39 @@ public class BillControllerTest {
 	}
 	
 	
+	static class BillItemsDTOHelper{
+		public static BillItemsDTO setup() throws OHException{
+			Bill bill = BillHelper.setup();
+			TestBillItems tbi = new TestBillItems();
+			BillItems billItems = tbi.setup(bill, false);
+			BillItemsDTO billItemsDTO = OHModelMapper.getObjectMapper().map(billItems, BillItemsDTO.class);
+			return billItemsDTO;
+		}
+		
+		public static String asJsonString(BillItemsDTO billItemsDTO){
+			try {
+				return new ObjectMapper().writeValueAsString(billItemsDTO);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		public static String asJsonString(List<BillItemsDTO> billItemsDTOList){
+			try {
+				return new ObjectMapper().writeValueAsString(billItemsDTOList);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+	
 	
 	
 	//TODO
 	
-	@Test
-	public void zzzzz_testSearchBillsDateDateBillItemsDTO() {
-		fail("Not yet implemented");
-	}
+
 
 	@Test
 	public void zzzzz_testGetDistinctItems() {
