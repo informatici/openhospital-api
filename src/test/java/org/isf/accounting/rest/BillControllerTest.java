@@ -63,6 +63,7 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -70,6 +71,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -494,6 +496,9 @@ public class BillControllerTest {
 	    Bill bill = BillHelper.setup(id);
 	    billList.add(bill);
 		
+	    //TODO add test(s) with incorrect formatted dates returning an exception
+	    //TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
+	    //TODO add test(s) with different BillItem returning an empty list and asserting  HttpStatus.NO_CONTENT
 	    when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(billItem))).thenReturn(billList);
 
 	    this.mockMvc
@@ -508,6 +513,47 @@ public class BillControllerTest {
 			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
 			.andReturn();
 		
+	}
+	
+	
+	@Test
+	public void when_get_SearchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
+//		@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
+//		public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+//				@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
+//				@RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
+//	        
+		
+		String request = "/bills?datefrom={dateFrom}&dateto={dateTo}&patient_code={patient_code}";
+		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		Integer patientCode = 1;
+		
+		ArrayList<Bill> billList = new ArrayList<Bill>();
+	    Integer id = 0;
+	    Bill bill = BillHelper.setup(id);
+	    billList.add(bill);
+
+	    Patient patient = new TestPatient().setup(true);
+	    
+	    when(patientManagerMock.getPatient(eq(patientCode))).thenReturn(patient);
+	   
+	    //TODO add test(s) with incorrect formatted dates returning an exception 
+	    //TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
+	    //TODO add test(s) with a different patient returning an empty list and asserting  HttpStatus.NO_CONTENT
+	    when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(patient))).thenReturn(billList);
+	    
+	    this.mockMvc
+			.perform(
+					get(request, dateFrom, dateTo, patientCode)
+					.contentType(MediaType.APPLICATION_JSON)
+					)		
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
+			.andReturn();
+	
 	}
 
 	static class BillHelper{
@@ -731,10 +777,7 @@ public class BillControllerTest {
 		fail("Not yet implemented");
 	}
 
-	@Test
-	public void zzzzz_testSearchBillsDateDateInteger() {
-		fail("Not yet implemented");
-	}
+
 	
 	@Test
 	public void zzzzz_testGetPaymentsByBillId() {
