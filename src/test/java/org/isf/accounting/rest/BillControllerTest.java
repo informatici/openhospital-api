@@ -361,7 +361,7 @@ public class BillControllerTest {
 	@Test
 	public void when_get_bill_pending_affiliate_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
-		String request = "/bills/pending/affiliate?patient_code="+code;
+		String request = "/bills/pending/affiliate?patient_code={code}";
 		
 		Bill bill1 = BillHelper.setup();
 		int id1 = 1 ;
@@ -380,7 +380,7 @@ public class BillControllerTest {
 		
 		this.mockMvc
 			.perform(
-					get(request)
+					get(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
@@ -444,7 +444,7 @@ public class BillControllerTest {
 	@Test
 	public void when_get_PendingBills_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
-		String request = "/bills/pending?patient_code="+code;
+		String request = "/bills/pending?patient_code={code}";
 		
 		Bill bill1 = BillHelper.setup();
 		int id1 = 1 ;
@@ -463,7 +463,7 @@ public class BillControllerTest {
 		
 		this.mockMvc
 			.perform(
-					get(request)
+					get(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
 					)		
 			.andDo(log())
