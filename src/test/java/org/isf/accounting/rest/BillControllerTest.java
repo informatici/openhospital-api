@@ -29,9 +29,11 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.isf.accounting.dto.BillDTO;
 import org.isf.accounting.dto.BillItemsDTO;
@@ -72,6 +74,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -234,7 +237,6 @@ public class BillControllerTest {
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatientDTO().setCode(code);
 		newFullBillDTO.getBill().setPatient(true);
-		String jsonNewFullBillDTO = FullBillDTOHelper.asJsonString(newFullBillDTO);
 		Bill bill = BillHelper.setup();
 		Patient patient = bill.getBillPatient();
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
@@ -613,9 +615,34 @@ public class BillControllerTest {
 			.andReturn();
         
 	}
-
-	static class BillHelper{
+	
+	@Test
+	public void when_get_GetPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
+//		@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//		public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
+	
+		String request = "/bills/payments/{bill_id}";
 		
+		Integer billId  =123;
+	    
+		List<BillPaymentsDTO> billPaymentsDTOList = BillPaymentsDTOHelper.genList(3);
+		
+	    when(billManagerMock.getPayments(eq(billId))).thenReturn(BillPaymentsDTOHelper.toModelList(billPaymentsDTOList));
+			    
+	    this.mockMvc
+			.perform(
+					get(request, billId)
+					.contentType(MediaType.APPLICATION_JSON)
+					)		
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
+			.andReturn();
+	}
+
+	
+	static class BillHelper{
 		public static Bill setup() throws OHException{
 			TestPatient testPatient =  new TestPatient();
 			Patient patient = testPatient.setup(false); 
@@ -755,18 +782,8 @@ public class BillControllerTest {
 	static class BillPaymentsDTOHelper{
 		public static BillPaymentsDTO setup() throws OHException{
 			Bill bill = BillHelper.setup();
-
-//			FullBillDTO fullBillDTO = new  FullBillDTO();
-//			Patient patient = new TestPatient().setup(true);
-//			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
-//			BillDTO billDTO = new BillDTO();
-//			billDTO.setPatientDTO(patientDTO);
-//			fullBillDTO.setBill(billDTO);
-			
 			TestBillPayments testBillPayments =  new TestBillPayments();
-			
 			BillPayments billPayments = testBillPayments.setup(bill, true);
-		
 			BillPaymentsDTO billPaymentsDTO = OHModelMapper.getObjectMapper().map(billPayments, BillPaymentsDTO.class);
 			return billPaymentsDTO;
 		}
@@ -789,10 +806,22 @@ public class BillControllerTest {
 			return null;
 		}
 		
-		static ArrayList<BillPayments> toModelList(List<BillPaymentsDTO> billPaymentsDTOList){
+		public static ArrayList<BillPayments> toModelList(List<BillPaymentsDTO> billPaymentsDTOList){
 	        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(billPaymentsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
 	        return billPayments;
 		}
+		
+		public static List<BillPaymentsDTO> genList(int n) throws OHException{
+			return IntStream.range(0, n)
+				.mapToObj(i -> {	try {
+										return BillPaymentsDTOHelper.setup();
+									} catch (OHException e) {
+										e.printStackTrace();
+									}
+									return null;
+								}).collect(Collectors.toList());
+		}
+		
 	}
 	
 	
@@ -828,14 +857,5 @@ public class BillControllerTest {
 	        return billItems;
 		}
 	}
-	
-	//TODO
-	
-	@Test
-	public void zzzzz_testGetPaymentsByBillId() {
-		fail("Not yet implemented");
-	}
-
-
 	
 }
