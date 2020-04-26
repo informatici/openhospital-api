@@ -22,14 +22,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import org.isf.accounting.data.BillDTOHelper;
+import org.isf.accounting.data.BillHelper;
+import org.isf.accounting.data.BillItemsDTOHelper;
+import org.isf.accounting.data.BillPaymentsDTOHelper;
+import org.isf.accounting.data.FullBillDTOHelper;
 import org.isf.accounting.dto.BillDTO;
 import org.isf.accounting.dto.BillItemsDTO;
 import org.isf.accounting.dto.BillPaymentsDTO;
@@ -38,26 +41,19 @@ import org.isf.accounting.manager.BillBrowserManager;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.accounting.test.TestBill;
 import org.isf.accounting.test.TestBillItems;
-import org.isf.accounting.test.TestBillPayments;
-import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
-import org.isf.priceslist.test.TestPriceList;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
-import org.isf.shared.mapper.OHModelMapper;
-import org.isf.utils.exception.OHException;
+import org.isf.testing.rest.ControllerBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
@@ -65,7 +61,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -73,9 +68,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 
-public class BillControllerTest {
-	private final Logger logger = LoggerFactory.getLogger(BillControllerTest.class);
-	
+public class BillControllerTest extends ControllerBaseTest {
 	@Mock
 	protected BillBrowserManager billManagerMock;
 	
@@ -137,7 +130,6 @@ public class BillControllerTest {
 		exception.ifPresent( (se) -> assertThat(se, notNullValue()));
 		exception.ifPresent( (se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
-	
 	
 	@Test
 	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
@@ -252,14 +244,6 @@ public class BillControllerTest {
 			.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
 			.andReturn();
 	}
-
-	public static <T> ArrayList<T> listToArrayList(List<T> myList) {
-        ArrayList<T> arl = new ArrayList<>();
-        for (Object object : myList) {
-            arl.add((T) object);
-        }
-        return arl;
-    }
 	
 	@Test
 	public void when_get_items_with_existent_id_then_getItems_returns_items_and_OK() throws Exception {
@@ -342,7 +326,7 @@ public class BillControllerTest {
 	}
 	
 	@Test
-	public void when_get_bill_pending_affiliate_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
+	public void when_get_bill_pending_affiliate_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/bills/pending/affiliate?patient_code={code}";
 		
@@ -372,7 +356,6 @@ public class BillControllerTest {
 			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
 			.andReturn();
 	}
-
 	
 	@Test
 	public void when_post_searchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
@@ -415,7 +398,7 @@ public class BillControllerTest {
 	}
 
 	@Test
-	public void when_get_pendingBills_with_existent_patiend_code_then_response_List_of_BillDTO_and_OK() throws Exception {
+	public void when_get_pendingBills_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/bills/pending?patient_code={code}";
 		
@@ -449,8 +432,6 @@ public class BillControllerTest {
 			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(billDTOS))))
 			.andReturn();
 	}
-	
-	
 	
 	@Test
 	public void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
@@ -565,209 +546,6 @@ public class BillControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
 			.andReturn();
-	}
-	
-	static class BillHelper{
-		public static Bill setup() throws OHException{
-			TestPatient testPatient =  new TestPatient();
-			Patient patient = testPatient.setup(false); 
-			TestPriceList testPriceList =  new TestPriceList();
-			PriceList priceList = testPriceList.setup(false);
-			TestBill testBill = new TestBill();
-			Bill bill = testBill.setup(priceList, patient, false);
-			return bill;
-		}
-		
-		public static Bill setup(Integer id) throws OHException {
-			Bill bill = BillHelper.setup();
-			bill.setId(id);
-			return bill;
-			
-		}
-
-		public static ArrayList<Bill> setupBillList(int size) {
-			return (ArrayList<Bill>) IntStream.range(1, size+1)
-					.mapToObj(i -> {	Bill b = null;
-										try {
-											b = BillHelper.setup();
-										} catch (OHException e) {
-											e.printStackTrace();
-										}
-										return b;
-									}
-					).collect(Collectors.toList());
-		}
-		
-		public static String asJsonString(Bill bill){
-			try {
-				return new ObjectMapper().writeValueAsString(bill);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-	
-	static class FullBillDTOHelper{
-		public static FullBillDTO setup() throws OHException{
-			Bill bill = BillHelper.setup();
-			FullBillDTO fullBillDTO = new  FullBillDTO();
-			
-			Patient patient = new TestPatient().setup(true);
-			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
-			
-			BillDTO billDTO = new BillDTO();
-			billDTO.setPatientDTO(patientDTO);
-			billDTO.setListName(bill.getListName());
-			billDTO.setPatName(patient.getFirstName());
-			//OP-205
-			//BillDTO billDTO = OHModelMapper.getObjectMapper().map(bill, BillDTO.class);
-			fullBillDTO.setBill(billDTO);
-			
-			TestBillItems tbi = new TestBillItems();
-			BillItems billItems = tbi.setup(bill, false);
-			BillItemsDTO billItemsDTO = OHModelMapper.getObjectMapper().map(billItems, BillItemsDTO.class);
-			fullBillDTO.setBillItems(Arrays.asList(billItemsDTO));
-
-			TestBillPayments tbp = new TestBillPayments();
-			BillPayments billPayments = tbp.setup(bill, false);
-			BillPaymentsDTO billPaymentsDTO = OHModelMapper.getObjectMapper().map(billPayments, BillPaymentsDTO.class);
-			fullBillDTO.setBillPayments(Arrays.asList(billPaymentsDTO));
-			
-			return fullBillDTO;
-		}
-		
-		public static String asJsonString(FullBillDTO fullBillDTO){
-			try {
-				return new ObjectMapper().writeValueAsString(fullBillDTO);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static String asJsonString(List<FullBillDTO> fullBillDTOList){
-			try {
-				return new ObjectMapper().writeValueAsString(fullBillDTOList);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-
-	static class BillDTOHelper{
-		public static BillDTO setup() throws OHException{
-			FullBillDTO fullBillDTO = new  FullBillDTO();
-			Patient patient = new TestPatient().setup(true);
-			PatientDTO patientDTO = OHModelMapper.getObjectMapper().map(patient, PatientDTO.class);
-			BillDTO billDTO = new BillDTO();
-			billDTO.setPatientDTO(patientDTO);
-			fullBillDTO.setBill(billDTO);
-			return billDTO;
-		}
-		
-		public static BillDTO setup(Integer id) throws OHException {
-			BillDTO billDTO = BillDTOHelper.setup();
-			billDTO.setId(id);
-			return billDTO;
-		}
-
-		public static String asJsonString(BillDTO billDTO){
-			try {
-				return new ObjectMapper().writeValueAsString(billDTO);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static String asJsonString(List<BillDTO> billDTOList){
-			try {
-				return new ObjectMapper().writeValueAsString(billDTOList);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-	}
-	
-	static class BillPaymentsDTOHelper{
-		public static BillPaymentsDTO setup() throws OHException{
-			Bill bill = BillHelper.setup();
-			TestBillPayments testBillPayments =  new TestBillPayments();
-			BillPayments billPayments = testBillPayments.setup(bill, true);
-			BillPaymentsDTO billPaymentsDTO = OHModelMapper.getObjectMapper().map(billPayments, BillPaymentsDTO.class);
-			return billPaymentsDTO;
-		}
-		
-		public static String asJsonString(BillPaymentsDTO billPaymentsDTO){
-			try {
-				return new ObjectMapper().writeValueAsString(billPaymentsDTO);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static String asJsonString(List<BillPaymentsDTO> billPaymentsDTOList){
-			try {
-				return new ObjectMapper().writeValueAsString(billPaymentsDTOList);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static ArrayList<BillPayments> toModelList(List<BillPaymentsDTO> billPaymentsDTOList){
-	        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(billPaymentsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
-	        return billPayments;
-		}
-		
-		public static List<BillPaymentsDTO> genList(int n) throws OHException{
-			return IntStream.range(0, n)
-				.mapToObj(i -> {	try {
-										return BillPaymentsDTOHelper.setup();
-									} catch (OHException e) {
-										e.printStackTrace();
-									}
-									return null;
-								}).collect(Collectors.toList());
-		}
-		
-	}
-	
-	static class BillItemsDTOHelper{
-		public static BillItemsDTO setup() throws OHException{
-			Bill bill = BillHelper.setup();
-			TestBillItems tbi = new TestBillItems();
-			BillItems billItems = tbi.setup(bill, false);
-			BillItemsDTO billItemsDTO = OHModelMapper.getObjectMapper().map(billItems, BillItemsDTO.class);
-			return billItemsDTO;
-		}
-		
-		public static String asJsonString(BillItemsDTO billItemsDTO){
-			try {
-				return new ObjectMapper().writeValueAsString(billItemsDTO);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static String asJsonString(List<BillItemsDTO> billItemsDTOList){
-			try {
-				return new ObjectMapper().writeValueAsString(billItemsDTOList);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList){
-	        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsDTOList.stream().map(pay-> getObjectMapper().map(pay, BillItems.class)).collect(Collectors.toList()));
-	        return billItems;
-		}
 	}
 	
 }

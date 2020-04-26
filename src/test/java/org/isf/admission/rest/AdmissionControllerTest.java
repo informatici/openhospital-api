@@ -12,12 +12,14 @@ import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.ward.manager.WardBrowserManager;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+@Ignore
 public class AdmissionControllerTest {
 		
 	@Mock
