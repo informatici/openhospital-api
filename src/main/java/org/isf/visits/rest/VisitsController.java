@@ -1,13 +1,15 @@
 package org.isf.visits.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
+import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -31,6 +35,9 @@ public class VisitsController {
 
     @Autowired
     protected VisitManager visitManager;
+    
+    @Autowired
+    protected VisitMapper mapper;
 
     public VisitsController(VisitManager visitManager) {
         this.visitManager = visitManager;
@@ -47,7 +54,7 @@ public class VisitsController {
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
         logger.info("Get visit related to patId: " + patID);
         ArrayList<Visit> visit = visitManager.getVisits(patID);
-        List<VisitDTO> listVisit = visit.stream().map(it -> getObjectMapper().map(it, VisitDTO.class)).collect(Collectors.toList());
+        List<VisitDTO> listVisit = mapper.map2DTOList(visit);
         if (listVisit.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
@@ -65,7 +72,7 @@ public class VisitsController {
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
         logger.info("Create Visit: " + newVisit);
-        int visitId = visitManager.newVisit(getObjectMapper().map(newVisit, Visit.class));
+        int visitId = visitManager.newVisit(mapper.map2Model(newVisit));
         return ResponseEntity.status(HttpStatus.CREATED).body(newVisit.getVisitID());
     }
 
@@ -79,10 +86,7 @@ public class VisitsController {
     @PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
         logger.info("Create Visits");
-        ArrayList<Visit> listVisits = new ArrayList<Visit>();
-        for (VisitDTO visit : newVisits) {
-            listVisits.add(getObjectMapper().map(visit, Visit.class));
-        }
+        ArrayList<Visit> listVisits = (ArrayList<Visit>) mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));

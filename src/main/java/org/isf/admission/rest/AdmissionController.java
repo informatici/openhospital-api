@@ -1,7 +1,5 @@
 package org.isf.admission.rest;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,7 +9,10 @@ import javax.validation.Valid;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.dto.AdmittedPatientDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.mapper.AdmissionMapper;
+import org.isf.admission.mapper.AdmittedPatientMapper;
 import org.isf.admission.model.Admission;
+import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -77,6 +78,11 @@ public class AdmissionController {
 
 	@Autowired
 	private DeliveryResultTypeBrowserManager dlvrrestTypeManager;
+	
+	@Autowired
+	private AdmissionMapper admissionMapper;
+	
+	@Autowired AdmittedPatientMapper admittedMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(AdmissionController.class);
 
@@ -99,7 +105,7 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		System.out.println("admissiontype code" + admission.getAdmType().getCode());
-		return ResponseEntity.ok(getObjectMapper().map(admission, AdmissionDTO.class));
+		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
 	}
 
 	/**
@@ -122,7 +128,7 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(getObjectMapper().map(admission, AdmissionDTO.class));
+		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
 	}
 
 	/**
@@ -141,15 +147,13 @@ public class AdmissionController {
 			throws OHServiceException {
 		logger.info("Get admitted patients search terms:" + searchTerms);
 		
-		List<AdmittedPatientDTO> Amittedpatients = admissionManager
-				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms).stream()
-				.map(admPt -> getObjectMapper().map(admPt, AdmittedPatientDTO.class)).collect(Collectors.toList());
-
-		if (Amittedpatients.size() == 0) {
+		List<AdmittedPatient> amittedPatients = admissionManager
+				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
+		if (amittedPatients.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		
-		return ResponseEntity.ok(Amittedpatients);
+		return ResponseEntity.ok(admittedMapper.map2DTOList(amittedPatients));
 	}
 
 	/**
@@ -159,20 +163,19 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
+	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
 		logger.info("Get patient admissions by patient code:" + patientCode);
 		Patient patient = patientManager.getPatient(patientCode);
 		if (patient == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
-		List<AdmissionDTO> admissionsDTOs = admissionManager.getAdmissions(patient).stream()
-				.map(adm -> getObjectMapper().map(adm, AdmissionDTO.class)).collect(Collectors.toList());
+		List<Admission> admissions = admissionManager.getAdmissions(patient);
 
-		if (admissionsDTOs.size() == 0) {
+		if (admissions.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionsDTOs.get(0));
+		return ResponseEntity.ok(admissionMapper.map2DTOList(admissions));
 	}
 
 	/**
@@ -240,7 +243,7 @@ public class AdmissionController {
 	ResponseEntity<Integer> newAdmissions(@Valid @RequestBody AdmissionDTO newAdmissionDTO)
 			throws OHServiceException {
 
-		Admission newAdmission = getObjectMapper().map(newAdmissionDTO, Admission.class);
+		Admission newAdmission = admissionMapper.map2Model(newAdmissionDTO);
 
 		if (newAdmissionDTO.getWard() != null && newAdmissionDTO.getWard().getCode() != null
 				&& !newAdmissionDTO.getWard().getCode().trim().isEmpty()) {
@@ -407,7 +410,7 @@ public class AdmissionController {
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission not found!", OHSeverityLevel.ERROR));
 		}
-		Admission updAdmission = getObjectMapper().map(updAdmissionDTO, Admission.class);
+		Admission updAdmission = admissionMapper.map2Model(updAdmissionDTO);
 
 		if (updAdmissionDTO.getWard() != null && updAdmissionDTO.getWard().getCode() != null
 				&& !updAdmissionDTO.getWard().getCode().trim().isEmpty()) {

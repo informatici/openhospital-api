@@ -1,22 +1,21 @@
 package org.isf.accounting.rest;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.accounting.dto.BillDTO;
 import org.isf.accounting.dto.BillItemsDTO;
 import org.isf.accounting.dto.BillPaymentsDTO;
 import org.isf.accounting.dto.FullBillDTO;
 import org.isf.accounting.manager.BillBrowserManager;
+import org.isf.accounting.mapper.BillItemsMapper;
+import org.isf.accounting.mapper.BillMapper;
+import org.isf.accounting.mapper.BillPaymentsMapper;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
@@ -57,6 +56,15 @@ public class BillController {
 	
 	@Autowired
 	protected PatientBrowserManager patientManager;
+	
+	@Autowired
+	protected BillMapper billMapper;
+	
+	@Autowired
+	protected BillItemsMapper billItemsMapper;
+	
+	@Autowired
+	protected BillPaymentsMapper billPaymentsMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(BillController.class);
 
@@ -71,7 +79,7 @@ public class BillController {
         
 		logger.info("Create Bill "  + newBillDto.toString()); 
       
-        Bill bill = getObjectMapper().map(newBillDto.getBill(), Bill.class);
+        Bill bill = billMapper.map2Model(newBillDto.getBillDTO());
         
         Patient pat = patientManager.getPatient(bill.getPatName());
         
@@ -94,9 +102,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(newBillDto.getBillItems().stream().map(item -> getObjectMapper().map(item, BillItems.class)).collect(Collectors.toList()));
+        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(newBillDto.getBillItemsDTO()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>( newBillDto.getBillPayments().stream().map(item -> getObjectMapper().map(item, BillPayments.class)).collect(Collectors.toList()));
+        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(newBillDto.getBillPaymentsDTO()));
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
         
@@ -116,7 +124,7 @@ public class BillController {
     ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
         
 		logger.info("updated Bill "  + odBillDto.toString()); 
-        Bill bill = getObjectMapper().map(odBillDto.getBill(), Bill.class);
+        Bill bill = billMapper.map2Model(odBillDto.getBillDTO());
         
         bill.setId(id);
         
@@ -145,9 +153,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(odBillDto.getBillItems().stream().map(item -> getObjectMapper().map(item, BillItems.class)).collect(Collectors.toList()));
+        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(odBillDto.getBillItemsDTO()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>( odBillDto.getBillPayments().stream().map(item -> getObjectMapper().map(item, BillPayments.class)).collect(Collectors.toList()));
+        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(odBillDto.getBillPaymentsDTO()));
         
         boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
     
@@ -191,7 +199,7 @@ public class BillController {
      	    bills = billManager.getBills(datefrom, dateto, pat);
         }
         
-        billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        billDTOS = billMapper.map2DTOList(bills);
         
         if(billDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
@@ -233,7 +241,7 @@ public class BillController {
              payments = billManager.getPayments(datefrom, dateto, pat);
         }
         
-        paymentsDTOS = payments.stream().map(pay-> getObjectMapper().map(pay, BillPaymentsDTO.class)).collect(Collectors.toList());
+        paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
         
         if(paymentsDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -252,9 +260,9 @@ public class BillController {
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
         logger.info("Get getPayments for bill with id:"  + id);
            
-	    ArrayList<BillPayments> bills = billManager.getPayments(id);
+	    ArrayList<BillPayments> billPayments = billManager.getPayments(id);
 	    
-        List<BillPaymentsDTO> paymentsDTOS = bills.stream().map(pay-> getObjectMapper().map(pay, BillPaymentsDTO.class)).collect(Collectors.toList());
+        List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
         
         if(paymentsDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -275,7 +283,7 @@ public class BillController {
            
 	    ArrayList<BillItems> items = billManager.getItems(id);
 	    
-        List<BillItemsDTO> itemsDTOS = items.stream().map(it-> getObjectMapper().map(it, BillItemsDTO.class)).collect(Collectors.toList());
+        List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
         if(itemsDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -296,7 +304,7 @@ public class BillController {
            
 	    Bill bill = billManager.getBill(id);
 	    
-	    BillDTO billDTO = getObjectMapper().map(bill, BillDTO.class);
+	    BillDTO billDTO = billMapper.map2DTO(bill);
         
         if(billDTO == null){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -317,7 +325,7 @@ public class BillController {
            
 	    List<Bill> bills = billManager.getPendingBillsAffiliate(code);
 	    
-	    List<BillDTO> billDTOS = bills.stream().map(bill-> getObjectMapper().map(bill, BillDTO.class)).collect(Collectors.toList());
+	    List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
         if(billDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -338,7 +346,7 @@ public class BillController {
            
 	    List<Bill> bills = billManager.getPendingBills(code);
 	    
-	    List<BillDTO> billDTOS = bills.stream().map(bill-> getObjectMapper().map(bill, BillDTO.class)).collect(Collectors.toList());
+	    List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
         
         if(billDTOS.size() == 0){
@@ -367,13 +375,13 @@ public class BillController {
         GregorianCalendar dateto = new GregorianCalendar();
         dateto.setTime(dateTo);
                
-        BillItems billItem = getObjectMapper().map(billItemDTO, BillItems.class);
+        BillItems billItem = billItemsMapper.map2Model(billItemDTO);
         	
         logger.info("Get Bills datefrom:"  +  datefrom + " dateTo:" + dateto + " Bill ITEM ID: "+billItem.getId());
              
         ArrayList<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
         
-        List<BillDTO> billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
         if(billDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -395,7 +403,7 @@ public class BillController {
            
 	    ArrayList<BillItems> items = billManager.getDistinctItems();
 	    
-        List<BillItemsDTO> itemsDTOS = items.stream().map(it-> getObjectMapper().map(it, BillItemsDTO.class)).collect(Collectors.toList());
+        List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
         if(itemsDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -429,11 +437,11 @@ public class BillController {
 	@PostMapping(value = "/bills/search/by/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody List<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
     
-        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(paymentsDTO.stream().map(pay-> getObjectMapper().map(pay, BillPayments.class)).collect(Collectors.toList()));
+        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(paymentsDTO));
         
         List<Bill> bills = billManager.getBills(billPayments);
         
-        List<BillDTO>billDTOS = bills.stream().map(bil-> getObjectMapper().map(bil, BillDTO.class)).collect(Collectors.toList());
+        List<BillDTO>billDTOS = billMapper.map2DTOList(bills);
         
         if(billDTOS.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

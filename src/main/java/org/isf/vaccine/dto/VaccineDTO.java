@@ -1,14 +1,12 @@
 package org.isf.vaccine.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotNull;
+
 import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.model.VaccineType;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Class representing a vaccine")
 public class VaccineDTO {
@@ -57,10 +55,6 @@ public class VaccineDTO {
 
     public void setVaccineType(VaccineTypeDTO vaccineType) {
         this.vaccineType = vaccineType;
-    }
-
-    public VaccineType getVaccineTypeFromDTO(VaccineTypeDTO vaccineTypeDTO){
-        return getObjectMapper().map(vaccineTypeDTO, VaccineType.class);
     }
 
     public VaccineDTO vaccineType(VaccineTypeDTO vaccineType) {

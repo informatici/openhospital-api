@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.isf.distype.dto.DiseaseTypeDTO;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
+import org.isf.distype.mapper.DiseaseTypeMapper;
 import org.isf.distype.model.DiseaseType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -32,13 +32,14 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 @RestController
 @Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class DiseaseTypeController {
 	@Autowired
 	private DiseaseTypeBrowserManager diseaseTypeManager;
+	
+	@Autowired
+	protected DiseaseTypeMapper mapper;
 	
 	private final Logger logger = LoggerFactory.getLogger(DiseaseTypeController.class);
 
@@ -54,9 +55,7 @@ public class DiseaseTypeController {
 	@GetMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseTypeDTO>> getAllDiseaseTypes() throws OHServiceException {
 		List<DiseaseType> results = diseaseTypeManager.getDiseaseType();
-		List<DiseaseTypeDTO> parsedResults= results.stream()
-												.map(item -> getObjectMapper().map(item, DiseaseTypeDTO.class))
-												.collect(Collectors.toList());
+		List<DiseaseTypeDTO> parsedResults=mapper.map2DTOList(results);
 		if(parsedResults.size() > 0){
 			return ResponseEntity.ok(parsedResults);
         }else{
@@ -72,8 +71,7 @@ public class DiseaseTypeController {
 	 */
 	@PostMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
-        DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
-        logger.info("creating new disease type with code `"+ diseaseType.getCode() + "`");
+        DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if(diseaseTypeManager.codeControl(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"specified code is already used!", 
@@ -97,7 +95,7 @@ public class DiseaseTypeController {
 	 */
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
-        DiseaseType diseaseType = getObjectMapper().map(diseaseTypeDTO, DiseaseType.class);
+        DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if(!diseaseTypeManager.codeControl(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"disease type not found!", 

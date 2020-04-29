@@ -3,10 +3,9 @@ package org.isf.admtype.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
+import org.isf.admtype.mapper.AdmissionTypeMapper;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -34,6 +33,9 @@ public class AdmissionTypeController {
 
 	@Autowired
 	protected AdmissionTypeBrowserManager admtManager;
+	
+	@Autowired
+	protected AdmissionTypeMapper mapper;
 
 	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeController.class);
 
@@ -51,7 +53,7 @@ public class AdmissionTypeController {
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		logger.info("Create Admission Type " + code);
-		boolean isCreated = admtManager.newAdmissionType(getObjectMapper().map(admissionTypeDTO, AdmissionType.class));
+		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
@@ -75,7 +77,7 @@ public class AdmissionTypeController {
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
 		logger.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
-		AdmissionType admt = getObjectMapper().map(admissionTypeDTO, AdmissionType.class);
+		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.codeControl(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
@@ -95,8 +97,7 @@ public class AdmissionTypeController {
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
 		logger.info("Get all Admission Types ");
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
-		List<AdmissionTypeDTO> admissionTypeDTOs = admissionTypes.stream()
-				.map(admType -> getObjectMapper().map(admType, AdmissionTypeDTO.class)).collect(Collectors.toList());
+		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
 		if (admissionTypeDTOs.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
 		} else {

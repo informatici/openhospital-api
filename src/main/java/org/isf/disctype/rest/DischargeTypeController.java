@@ -3,10 +3,9 @@ package org.isf.disctype.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
+import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -34,6 +33,9 @@ public class DischargeTypeController {
 
 	@Autowired
 	protected DischargeTypeBrowserManager discTypeManager;
+	
+	@Autowired
+	protected DischargeTypeMapper mapper;
 
 	private final Logger logger = LoggerFactory.getLogger(DischargeTypeController.class);
 
@@ -51,7 +53,7 @@ public class DischargeTypeController {
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
 		logger.info("Create discharge type " + code);
-		boolean isCreated = discTypeManager.newDischargeType(getObjectMapper().map(dischTypeDTO, DischargeType.class));
+		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
@@ -73,7 +75,7 @@ public class DischargeTypeController {
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		logger.info("Update dischargetypes code:" + dischTypeDTO.getCode());
-		DischargeType dischType = getObjectMapper().map(dischTypeDTO, DischargeType.class);
+		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
@@ -93,8 +95,7 @@ public class DischargeTypeController {
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
 		logger.info("Get all discharge types ");
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
-		List<DischargeTypeDTO> dischTypeDTOs = dischTypes.stream()
-				.map(dischType -> getObjectMapper().map(dischType, DischargeTypeDTO.class)).collect(Collectors.toList());
+		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
 		if (dischTypeDTOs.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
 		} else {
