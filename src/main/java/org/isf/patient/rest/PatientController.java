@@ -45,8 +45,9 @@ public class PatientController {
 
 	private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
-	public PatientController(PatientBrowserManager patientManager) {
+	public PatientController(PatientBrowserManager patientManager,PatientMapper patientMapper) {
 		this.patientManager = patientManager;
+		this.patientMapper = patientMapper;
 	}
 
     /**

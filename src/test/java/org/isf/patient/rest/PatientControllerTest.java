@@ -61,8 +61,7 @@ public class PatientControllerTest {
 	@Mock
     private PatientBrowserManager patientBrowserManagerMock;
 	
-	@Autowired
-	private static PatientMapper mapper;
+	private static PatientMapper mapper = new PatientMapper();
 	
     private MockMvc mockMvc;
 
@@ -70,7 +69,7 @@ public class PatientControllerTest {
     public void setup() {
     	MockitoAnnotations.initMocks(this);
     	this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock))
+				.standaloneSetup(new PatientController(patientBrowserManagerMock, mapper))
    				.setControllerAdvice(new OHResponseEntityExceptionHandler())
    				.build();
     }
