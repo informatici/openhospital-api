@@ -8,7 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, DestType> {
-
+	
+	@Autowired 
 	protected ModelMapper modelMapper;
 	private Type sourceClass;
 	private Type destClass;
@@ -16,7 +17,8 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 	public GenericMapper(Class<SourceType> sourceClass, Class<DestType> destClass) {
 		this.sourceClass = sourceClass;
 		this.destClass = destClass;
-		modelMapper = new ModelMapper();
+		if(modelMapper == null)
+			modelMapper = new ModelMapper();
 	}
 
 	@Override
