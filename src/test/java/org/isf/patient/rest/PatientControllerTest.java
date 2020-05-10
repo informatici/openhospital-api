@@ -31,16 +31,19 @@ import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
+import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
+import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.utils.exception.OHException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -61,18 +64,21 @@ public class PatientControllerTest {
 	@Mock
     private PatientBrowserManager patientBrowserManagerMock;
 	
-	@Autowired
-	private static PatientMapper mapper;
-	
+	private static PatientMapper mapper = new PatientMapper();
+
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
     	MockitoAnnotations.initMocks(this);
     	this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock))
+				.standaloneSetup(new PatientController(patientBrowserManagerMock, mapper))
    				.setControllerAdvice(new OHResponseEntityExceptionHandler())
    				.build();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addConverter(new BlobToByteArrayConverter());
+		modelMapper.addConverter(new ByteArrayToBlobConverter());
+		ReflectionTestUtils.setField(mapper, "modelMapper", modelMapper);
     }
 	
 	/**
