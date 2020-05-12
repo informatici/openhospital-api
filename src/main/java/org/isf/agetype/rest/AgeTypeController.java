@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
+import org.isf.agetype.mapper.AgeTypeMapper;
 import org.isf.agetype.model.AgeType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -31,14 +31,15 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 @RestController
 @Api(value="/agetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class AgeTypeController {
 	
 	@Autowired
 	private AgeTypeBrowserManager ageTypeManager;
+	
+	@Autowired
+	private AgeTypeMapper mapper;
 	
 	private final Logger logger = LoggerFactory.getLogger(AgeTypeController.class);
 	
@@ -55,7 +56,7 @@ public class AgeTypeController {
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
 		logger.info("Get age types");
 		List<AgeType> results = ageTypeManager.getAgeType();
-		List<AgeTypeDTO> parsedResults = results.stream().map(item -> getObjectMapper().map(item, AgeTypeDTO.class)).collect(Collectors.toList());
+		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
 		if(parsedResults.size() > 0){
 			return ResponseEntity.ok(parsedResults);
         }else{
@@ -76,7 +77,7 @@ public class AgeTypeController {
 			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid!", OHSeverityLevel.ERROR));
 		}
 		logger.info("Update age type");
-		AgeType ageType = getObjectMapper().map(ageTypeDTO, AgeType.class);
+		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
 		ageTypes.add(ageType);
 		if(ageTypeManager.updateAgeType(ageTypes)) {

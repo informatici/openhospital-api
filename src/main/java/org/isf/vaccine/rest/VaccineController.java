@@ -1,7 +1,8 @@
 package org.isf.vaccine.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
@@ -9,6 +10,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
+import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
 @Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
@@ -32,6 +37,9 @@ public class VaccineController {
 
     @Autowired
     protected VaccineBrowserManager vaccineManager;
+    
+    @Autowired
+    protected VaccineMapper mapper;
 
     public VaccineController(VaccineBrowserManager vaccineManager) {
         this.vaccineManager = vaccineManager;
@@ -47,7 +55,7 @@ public class VaccineController {
     public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
         logger.info("Get vaccines");
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine();
-        List<VaccineDTO> listVaccines = vaccines.stream().map(it -> getObjectMapper().map(it, VaccineDTO.class)).collect(Collectors.toList());
+        List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
@@ -66,7 +74,7 @@ public class VaccineController {
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
         logger.info("Get vaccine by code:" + vaccineTypeCode);
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
-        List<VaccineDTO> listVaccines = vaccines.stream().map(it -> getObjectMapper().map(it, VaccineDTO.class)).collect(Collectors.toList());
+        List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
@@ -86,7 +94,7 @@ public class VaccineController {
         logger.info("Create vaccine: " + newVaccine.toString());
         boolean isCreated;
         try {
-             isCreated = vaccineManager.newVaccine(getObjectMapper().map(newVaccine, Vaccine.class));
+             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
         }
@@ -106,7 +114,7 @@ public class VaccineController {
     @PutMapping(value = "/vaccines/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         logger.info("Update vaccine: " + updateVaccine.toString());
-        boolean isUpdated = vaccineManager.updateVaccine(getObjectMapper().map(updateVaccine, Vaccine.class));
+        boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
         }
@@ -124,7 +132,7 @@ public class VaccineController {
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVaccine(@RequestBody VaccineDTO vaccineToDelete) throws OHServiceException {
         logger.info("Delete vaccine: " + vaccineToDelete.toString());
-        boolean isDeleted = vaccineManager.deleteVaccine(getObjectMapper().map(vaccineToDelete, Vaccine.class));
+        boolean isDeleted = vaccineManager.deleteVaccine(mapper.map2Model(vaccineToDelete));
         if (!isDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
         }

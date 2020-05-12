@@ -1,16 +1,14 @@
 package org.isf.disease.rest;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
+import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -38,6 +36,9 @@ import io.swagger.annotations.Authorization;
 public class DiseaseController {
 	@Autowired
 	protected DiseaseBrowserManager diseaseManager;
+	
+	@Autowired
+	protected DiseaseMapper mapper;
 
 	private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
 
@@ -204,7 +205,7 @@ public class DiseaseController {
         logger.info("Get disease by code");
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
 	    if(disease != null) {
-	    	return ResponseEntity.ok(getObjectMapper().map(disease, DiseaseDTO.class));
+	    	return ResponseEntity.ok(mapper.map2DTO(disease));
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "no disease found with the specified code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
@@ -218,7 +219,7 @@ public class DiseaseController {
 	 */
 	@PostMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
-		Disease disease = getObjectMapper().map(diseaseDTO, Disease.class);
+		Disease disease = mapper.map2Model(diseaseDTO);
 		if(diseaseManager.codeControl(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else if(diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
@@ -240,7 +241,7 @@ public class DiseaseController {
 	 */
 	@PutMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
-		Disease disease = getObjectMapper().map(diseaseDTO, Disease.class);
+		Disease disease = mapper.map2Model(diseaseDTO);
 		if(!diseaseManager.codeControl(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -273,10 +274,7 @@ public class DiseaseController {
 	}
 	
 	private ResponseEntity<List<DiseaseDTO>> computeResponse(List<Disease> diseases) {
-		List<DiseaseDTO> diseasesDTO = diseases
-        		.stream()
-        		.map(item -> getObjectMapper().map(item, DiseaseDTO.class))
-        		.collect(Collectors.toList());
+		List<DiseaseDTO> diseasesDTO = mapper.map2DTOList(diseases);
         if(diseasesDTO.size() == 0){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
         }else{

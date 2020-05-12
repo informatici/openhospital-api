@@ -3,10 +3,9 @@ package org.isf.dlvrrestype.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.isf.shared.mapper.OHModelMapper.getObjectMapper;
-
 import org.isf.dlvrrestype.dto.DeliveryResultTypeDTO;
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
+import org.isf.dlvrrestype.mapper.DeliveryResultTypeMapper;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -34,6 +33,9 @@ public class DeliveryResultTypeController {
 
 	@Autowired
 	protected DeliveryResultTypeBrowserManager dlvrrestManager;
+	
+	@Autowired
+	protected DeliveryResultTypeMapper mapper;
 
 	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeController.class);
 
@@ -53,7 +55,7 @@ public class DeliveryResultTypeController {
 		String code = dlvrrestTypeDTO.getCode();
 		logger.info("Create Delivery result type " + code);
 		boolean isCreated = dlvrrestManager
-				.newDeliveryResultType(getObjectMapper().map(dlvrrestTypeDTO, DeliveryResultType.class));
+				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
 		List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
 				.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
@@ -77,7 +79,7 @@ public class DeliveryResultTypeController {
 	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		logger.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
-		DeliveryResultType dlvrrestType = getObjectMapper().map(dlvrrestTypeDTO, DeliveryResultType.class);
+		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
@@ -98,9 +100,7 @@ public class DeliveryResultTypeController {
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
 		logger.info("Get all Delivery result types ");
 		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
-		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = dlvrrestissionTypes.stream()
-				.map(dlvrrestType -> getObjectMapper().map(dlvrrestType, DeliveryResultTypeDTO.class))
-				.collect(Collectors.toList());
+		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = mapper.map2DTOList(dlvrrestissionTypes);
 		if (dlvrrestTypeDTOs.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrrestTypeDTOs);
 		} else {
