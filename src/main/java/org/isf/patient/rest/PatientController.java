@@ -37,16 +37,16 @@ public class PatientController {
 
 	protected static final String DEFAULT_PAGE_SIZE = "80";
 
-	@Autowired
+    @Autowired
 	protected PatientBrowserManager patientManager;
-	
-	@Autowired
+    @Autowired
 	protected PatientMapper patientMapper;
 
 	private final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
-	public PatientController(PatientBrowserManager patientManager) {
+	public PatientController(PatientBrowserManager patientManager, PatientMapper patientMapper) {
 		this.patientManager = patientManager;
+		this.patientMapper = patientMapper;
 	}
 
     /**

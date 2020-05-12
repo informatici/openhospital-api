@@ -31,16 +31,19 @@ import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
+import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
+import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.utils.exception.OHException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -61,18 +64,21 @@ public class PatientControllerTest {
 	@Mock
     private PatientBrowserManager patientBrowserManagerMock;
 	
-	@Autowired
-	private static PatientMapper mapper;
-	
+	private PatientMapper patientMapper = new PatientMapper();
+
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
     	MockitoAnnotations.initMocks(this);
     	this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock))
+				.standaloneSetup(new PatientController(patientBrowserManagerMock, patientMapper))
    				.setControllerAdvice(new OHResponseEntityExceptionHandler())
    				.build();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addConverter(new BlobToByteArrayConverter());
+		modelMapper.addConverter(new ByteArrayToBlobConverter());
+		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
     }
 	
 	/**
@@ -131,7 +137,7 @@ public class PatientControllerTest {
 	@Test
 	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		
 		when(patientBrowserManagerMock.getPatient(any(String.class))).thenReturn(null);
 		
@@ -162,7 +168,7 @@ public class PatientControllerTest {
 	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		
 		when(patientBrowserManagerMock.newPatient(any(Patient.class))).thenReturn(false);
@@ -192,7 +198,7 @@ public class PatientControllerTest {
 	public void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -218,7 +224,7 @@ public class PatientControllerTest {
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_OK() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -268,7 +274,7 @@ public class PatientControllerTest {
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -303,7 +309,7 @@ public class PatientControllerTest {
 		
 		ArrayList<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
 		
-        List<PatientDTO> expectedPatienDTOList = mapper.map2DTOList(patientList);
+        List<PatientDTO> expectedPatienDTOList = patientMapper.map2DTOList(patientList);
 
 	
 		when(patientBrowserManagerMock.getPatient(any(Integer.class),any(Integer.class)))
@@ -328,7 +334,7 @@ public class PatientControllerTest {
 	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -355,7 +361,7 @@ public class PatientControllerTest {
 		Integer code = 456;
 		String name = "TestFirstName";
 		String request = "/patients/search";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -382,7 +388,7 @@ public class PatientControllerTest {
 	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 678;
 		String request = "/patients/search";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup();
+		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -562,9 +568,9 @@ public class PatientControllerTest {
 	
 	static class PatientDTOHelper{
 		
-		public static PatientDTO setup() throws OHException{
+		public static PatientDTO setup(PatientMapper patientMapper) throws OHException{
 			Patient patient = PatientHelper.setupPatient();
-			return mapper.map2DTO(patient);
+			return patientMapper.map2DTO(patient);
 		}
 		
 		public static String asJsonString(PatientDTO patientDTO){
