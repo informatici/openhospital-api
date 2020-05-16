@@ -102,12 +102,16 @@ public class BillController {
         		  .orElse(null);
         
         if(pat != null) {
+        	//TODO OP-205
+        	//bill.setBillPatient(pat);
         	bill.setPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
+        	//TODO OP-205
+        	//bill.setPriceList(plist);
         	bill.setList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
@@ -153,12 +157,16 @@ public class BillController {
         		  .orElse(null);
           
         if(pat != null) {
+        	//TODO OP-205
+        	//bill.setBillPatient(pat);
         	bill.setPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
+        	//TODO OP-205
+        	//bill.setPriceList(plist);
         	bill.setList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));

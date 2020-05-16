@@ -231,14 +231,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBillDTO().setPatient(true);
 		Bill bill = BillHelper.setup();
 		
-		//OP-205 Patient patient = bill.getBillPatient();
+		//TODO OP-205 
+		//Patient patient = bill.getBillPatient();
 		Patient patient = bill.getPatient();
 		
 		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		ArrayList<PriceList> priceListList = new ArrayList<PriceList>();
 		
-		//OP-205 PriceList priceList = bill.getPriceList();
+		//TODO OP-205 
+		//PriceList priceList = bill.getPriceList();
 		PriceList priceList = bill.getList();
 		
 		priceList.setName("TestListNameToMatch");
