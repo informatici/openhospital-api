@@ -68,7 +68,18 @@ public class BillController {
 
 	private final Logger logger = LoggerFactory.getLogger(BillController.class);
 
-    /**
+    public BillController(BillBrowserManager billManager, PriceListManager priceListManager,
+			PatientBrowserManager patientManager, BillMapper billMapper, BillItemsMapper billItemsMapper,
+			BillPaymentsMapper billPaymentsMapper) {
+		this.billManager = billManager;
+		this.priceListManager = priceListManager;
+		this.patientManager = patientManager;
+		this.billMapper = billMapper;
+		this.billItemsMapper = billItemsMapper;
+		this.billPaymentsMapper = billPaymentsMapper;
+	}
+
+	/**
      * Create new bill with the list of billItems and the list of billPayments
      * @param newPatient
      * @return {@link FullBillDTO}
@@ -91,12 +102,16 @@ public class BillController {
         		  .orElse(null);
         
         if(pat != null) {
+        	//TODO OP-205
+        	//bill.setBillPatient(pat);
         	bill.setPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
+        	//TODO OP-205
+        	//bill.setPriceList(plist);
         	bill.setList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
@@ -142,12 +157,16 @@ public class BillController {
         		  .orElse(null);
           
         if(pat != null) {
+        	//TODO OP-205
+        	//bill.setBillPatient(pat);
         	bill.setPatient(pat);
         } else {
         	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
         }
         
         if(plist != null) {
+        	//TODO OP-205
+        	//bill.setPriceList(plist);
         	bill.setList(plist);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
