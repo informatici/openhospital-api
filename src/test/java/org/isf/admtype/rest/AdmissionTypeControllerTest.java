@@ -1,11 +1,10 @@
 package org.isf.admtype.rest;
 
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,7 +113,6 @@ public class AdmissionTypeControllerTest {
 	@Test
 	public void testGetAdmissionTypes_200() throws Exception {
 		String request = "/admissiontypes";
-		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		
 		AdmissionType admissionType =  new AdmissionType("ZZ","aDescription");
 		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
