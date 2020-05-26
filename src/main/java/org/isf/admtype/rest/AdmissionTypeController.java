@@ -39,8 +39,9 @@ public class AdmissionTypeController {
 
 	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeController.class);
 
-	public AdmissionTypeController(AdmissionTypeBrowserManager admtManager) {
+	public AdmissionTypeController(AdmissionTypeBrowserManager admtManager, AdmissionTypeMapper admissionTypemapper) {
 		this.admtManager = admtManager;
+		this.mapper = admissionTypemapper;
 	}
 
 	/**
