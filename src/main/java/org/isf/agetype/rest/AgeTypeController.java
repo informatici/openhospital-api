@@ -43,8 +43,9 @@ public class AgeTypeController {
 	
 	private final Logger logger = LoggerFactory.getLogger(AgeTypeController.class);
 	
-	public AgeTypeController(AgeTypeBrowserManager ageTypeManager) {
+	public AgeTypeController(AgeTypeBrowserManager ageTypeManager, AgeTypeMapper ageTypeMapper) {
 		this.ageTypeManager = ageTypeManager;
+		this.mapper = ageTypeMapper;
 	}
 	
 	/**
