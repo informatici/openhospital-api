@@ -39,8 +39,9 @@ public class DischargeTypeController {
 
 	private final Logger logger = LoggerFactory.getLogger(DischargeTypeController.class);
 
-	public DischargeTypeController(DischargeTypeBrowserManager discTypeManager) {
+	public DischargeTypeController(DischargeTypeBrowserManager discTypeManager, DischargeTypeMapper dischargeTypemapper) {
 		this.discTypeManager = discTypeManager;
+		this.mapper = dischargeTypemapper;
 	}
 
 	/**
