@@ -54,7 +54,8 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "/admissions", produces = "application/vnd.ohapi.app-v1+json")
 public class AdmissionController {
-
+	private final Logger logger = LoggerFactory.getLogger(AdmissionController.class);
+	
 	@Autowired
 	private AdmissionBrowserManager admissionManager;
 
@@ -82,12 +83,24 @@ public class AdmissionController {
 	@Autowired
 	private AdmissionMapper admissionMapper;
 	
-	@Autowired AdmittedPatientMapper admittedMapper;
+	@Autowired 
+	private AdmittedPatientMapper admittedMapper;
 
-	private final Logger logger = LoggerFactory.getLogger(AdmissionController.class);
-
-	public AdmissionController(AdmissionBrowserManager admissionManager) {
+	
+	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
+			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
+			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
+			AdmittedPatientMapper admittedMapper) {
 		this.admissionManager = admissionManager;
+		this.patientManager = patientManager;
+		this.wardManager = wardManager;
+		this.diseaseManager = diseaseManager;
+		this.operationManager = operationManager;
+		this.pregTraitTypeManager = pregTraitTypeManager;
+		this.dlvrTypeManager = dlvrTypeManager;
+		this.dlvrrestTypeManager = dlvrrestTypeManager;
+		this.admissionMapper = admissionMapper;
+		this.admittedMapper = admittedMapper;
 	}
 
 	/**
