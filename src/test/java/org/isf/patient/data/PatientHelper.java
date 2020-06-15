@@ -32,15 +32,6 @@ public class PatientHelper{
 		}
 		return null;
 	}
-	
-	public static String asJsonString(List<PatientDTO> patientDTOList){
-		try {
-			return new ObjectMapper().writeValueAsString(patientDTOList);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public static Patient setupPatient() throws OHException{
 		return  new TestPatient().setup(true);
@@ -68,5 +59,14 @@ public class PatientHelper{
 				.mapToObj(i ->new AdmittedPatient(patientList.get(i),admissionList.get(i))
 								
 				).collect(Collectors.toList());
+	}
+	
+	public static String asJsonString(List<?> list){
+		try {
+			return new ObjectMapper().writeValueAsString(list);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

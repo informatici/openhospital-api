@@ -149,22 +149,11 @@ public class AdmissionControllerTest {
 	
 	@Test
 	public void testGetAdmittedPatients_200() throws Exception {
-		String request = "/admissions/admittedPatients?searchterms={}";
-		Integer patientCode = 1;
-	
-		Patient patient = new TestPatient().setup(true); // TODO refactor one PatientHelper class is a independent class
-		when(patientManagerMock.getPatient(patientCode))
-			.thenReturn(patient);
-		
-		Integer id = 0;
-		Admission admission = AdmissionHelper.setup(id);
-		when(admissionManagerMock.getCurrentAdmission(patient))
-		.thenReturn(admission);
-		
+		String request = "/admissions/admittedPatients?searchterms=searchTerms";
 		ArrayList<AdmittedPatient> amittedPatients = PatientHelper.setupAdmittedPatientList(2);
 	
-		GregorianCalendar[] admissionRange = null;
-		GregorianCalendar[] dischargeRange = null;
+		//GregorianCalendar[] admissionRange = null;
+		//GregorianCalendar[] dischargeRange = null;
 		String searchTerms = "";
 		//when(admissionManagerMock.getAdmittedPatients(admissionRange, dischargeRange, searchTerms))
 		when(admissionManagerMock.getAdmittedPatients(any(GregorianCalendar[].class), any(GregorianCalendar[].class), any(String.class)))
@@ -178,7 +167,7 @@ public class AdmissionControllerTest {
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(amittedPatients)))))
 			.andReturn();
 		
 		logger.debug("result: {}", result);
