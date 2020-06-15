@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.admission.data.AdmissionHelper;
+import org.isf.admission.model.Admission;
+import org.isf.admission.model.AdmittedPatient;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
@@ -54,6 +57,16 @@ public class PatientHelper{
 									}
 									return ep;
 								}
+				).collect(Collectors.toList());
+	}
+
+	public static ArrayList<AdmittedPatient> setupAdmittedPatientList(int size) {
+		ArrayList<Patient> patientList = setupPatientList(size);
+		ArrayList<Admission> admissionList = AdmissionHelper.setupAdmissionList(size);
+		return (ArrayList<AdmittedPatient>) IntStream.range(0, size)
+				
+				.mapToObj(i ->new AdmittedPatient(patientList.get(i),admissionList.get(i))
+								
 				).collect(Collectors.toList());
 	}
 }

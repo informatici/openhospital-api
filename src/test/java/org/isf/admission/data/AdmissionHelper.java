@@ -1,5 +1,9 @@
 package org.isf.admission.data;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.model.Admission;
 import org.isf.admission.test.TestAdmission;
@@ -55,6 +59,19 @@ public class AdmissionHelper {
 		
 		
 		return testAdmission.setup(ward, patient, admissionType, diseaseOut3, diseaseOut3, diseaseOut3, diseaseOut3, operation, dischargeType, pregTreatmentType, deliveryType, deliveryResult, false);
+	}
+	
+	public static ArrayList<Admission> setupAdmissionList(int size) {
+		return (ArrayList<Admission>) IntStream.range(1, size+1)
+				.mapToObj(i -> {	Admission ep = null;
+									try {
+										ep = AdmissionHelper.setup(i);
+									} catch (OHException e) {
+										e.printStackTrace();
+									}
+									return ep;
+								}
+				).collect(Collectors.toList());
 	}
 	
 	public static String asJsonString(AdmissionDTO admissionDTO) {
