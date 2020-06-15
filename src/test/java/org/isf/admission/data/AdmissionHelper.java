@@ -5,17 +5,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.admission.dto.AdmissionDTO;
+import org.isf.admission.mapper.AdmissionMapper;
 import org.isf.admission.model.Admission;
 import org.isf.admission.test.TestAdmission;
 import org.isf.admtype.data.AdmissionTypeDTOHelper;
-import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.admtype.test.TestAdmissionType;
 import org.isf.disctype.data.DischargeTypeHelper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.model.Disease;
 import org.isf.disease.test.TestDisease;
 import org.isf.distype.model.DiseaseType;
+import org.isf.distype.test.TestDiseaseType;
 import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.operation.model.Operation;
@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AdmissionHelper {
 
-	public static Admission setup(Integer id) throws OHException {
+	public static Admission setup() throws OHException {
 		TestAdmission testAdmission =  new TestAdmission();
 		TestWard testWard = new TestWard();
 		Ward ward = testWard.setup(false);
@@ -41,7 +41,7 @@ public class AdmissionHelper {
 		AdmissionType admissionType = AdmissionTypeDTOHelper.setup();
 
 		TestDisease testDisease = new TestDisease();
-		DiseaseType diseaseType = null;
+		DiseaseType diseaseType = (new TestDiseaseType()).setup(false);
 		Disease diseaseIn = testDisease.setup(diseaseType, false);
 		Disease diseaseOut1 = testDisease.setup(diseaseType, false);
 		Disease diseaseOut2 = testDisease.setup(diseaseType, false); 	
@@ -58,14 +58,14 @@ public class AdmissionHelper {
 		DeliveryResultType deliveryResult = null;
 		
 		
-		return testAdmission.setup(ward, patient, admissionType, diseaseOut3, diseaseOut3, diseaseOut3, diseaseOut3, operation, dischargeType, pregTreatmentType, deliveryType, deliveryResult, false);
+		return testAdmission.setup(ward, patient, admissionType, diseaseIn, diseaseOut1, diseaseOut2, diseaseOut3, operation, dischargeType, pregTreatmentType, deliveryType, deliveryResult, false);
 	}
 	
 	public static ArrayList<Admission> setupAdmissionList(int size) {
 		return (ArrayList<Admission>) IntStream.range(1, size+1)
 				.mapToObj(i -> {	Admission ep = null;
 									try {
-										ep = AdmissionHelper.setup(i);
+										ep = AdmissionHelper.setup();
 									} catch (OHException e) {
 										e.printStackTrace();
 									}
@@ -81,6 +81,10 @@ public class AdmissionHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static AdmissionDTO setup(AdmissionMapper admissionMapper) throws OHException {
+		return admissionMapper.map2DTO(AdmissionHelper.setup());
 	}
 
 }
