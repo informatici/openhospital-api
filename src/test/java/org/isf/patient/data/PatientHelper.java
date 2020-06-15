@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PatientHelper{
 	
 	public static PatientDTO setup(PatientMapper patientMapper) throws OHException{
-		Patient patient = setupPatient();
+		Patient patient = setup();
 		return patientMapper.map2DTO(patient);
 	}
 	
@@ -33,7 +33,7 @@ public class PatientHelper{
 		return null;
 	}
 
-	public static Patient setupPatient() throws OHException{
+	public static Patient setup() throws OHException{
 		return  new TestPatient().setup(true);
 	}
 	
@@ -41,7 +41,7 @@ public class PatientHelper{
 		return (ArrayList<Patient>) IntStream.range(1, size+1)
 				.mapToObj(i -> {	Patient ep = null;
 									try {
-										ep = PatientHelper.setupPatient();
+										ep = PatientHelper.setup();
 										ep.setCode(i);
 									} catch (OHException e) {
 										e.printStackTrace();

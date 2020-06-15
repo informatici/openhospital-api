@@ -11,8 +11,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.isf.admission.data.AdmissionHelper;
+import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.mapper.AdmissionMapper;
 import org.isf.admission.mapper.AdmittedPatientMapper;
@@ -27,9 +29,14 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
+import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,11 +46,15 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class AdmissionControllerTest {
 	private final Logger logger = LoggerFactory.getLogger(AdmissionControllerTest.class);
@@ -125,7 +136,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/current?patientcode={patientCode}";
 		Integer patientCode = 1;
 	
-		Patient patient = new TestPatient().setup(true); // TODO refactor one PatientHelper class is a independent class
+		Patient patient = PatientHelper.setup(); 
 		when(patientManagerMock.getPatient(patientCode))
 			.thenReturn(patient);
 		
@@ -174,9 +185,31 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetPatientAdmissions() {
-		fail("Not yet implemented");
+	public void testGetPatientAdmissions_200() throws Exception {
+		String request = "/admissions?patientcode={patientCode}";
+		Integer patientCode = 1;
+
+		Patient patient = PatientHelper.setup(); 
+		when(patientManagerMock.getPatient(patientCode))
+			.thenReturn(patient);
+		
+		ArrayList<Admission> admissions = AdmissionHelper.setupAdmissionList(2);
+		when(admissionManagerMock.getAdmissions(patient))
+		.thenReturn(admissions);
+		
+		MvcResult result = this.mockMvc
+			.perform(get(request, patientCode )
+					.contentType(MediaType.APPLICATION_JSON)
+					)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(admissionMapper.map2DTOList(admissions)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
+	
 
 	@Test
 	public void testGetNextYProg() {

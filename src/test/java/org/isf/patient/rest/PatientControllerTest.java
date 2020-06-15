@@ -194,7 +194,7 @@ public class PatientControllerTest {
 		String request = "/patients";
 		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setup();
 		newPatient.setCode(code);
 		
 		when(patientBrowserManagerMock.newPatient(any(Patient.class))).thenReturn(true);
@@ -220,7 +220,7 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setup();
 		newPatient.setCode(code);
 	
 		when(patientBrowserManagerMock.updatePatient(any(Patient.class))).thenReturn(true);
@@ -270,7 +270,7 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient	newPatient = PatientHelper.setupPatient();
+		Patient	newPatient = PatientHelper.setup();
 		newPatient.setCode(code);
 		
 		when(patientBrowserManagerMock.updatePatient(any(Patient.class))).thenReturn(false);
@@ -330,7 +330,7 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
-		Patient	patient = PatientHelper.setupPatient();
+		Patient	patient = PatientHelper.setup();
 		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
@@ -357,7 +357,7 @@ public class PatientControllerTest {
 		String request = "/patients/search";
 		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
-		Patient	patient = PatientHelper.setupPatient();
+		Patient	patient = PatientHelper.setup();
 		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(name))).thenReturn(patient);
@@ -384,7 +384,7 @@ public class PatientControllerTest {
 		String request = "/patients/search";
 		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
-		Patient	patient = PatientHelper.setupPatient();
+		Patient	patient = PatientHelper.setup();
 		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
@@ -469,7 +469,7 @@ public class PatientControllerTest {
 	public void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		Patient	patient = PatientHelper.setupPatient();
+		Patient	patient = PatientHelper.setup();
 		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
@@ -514,7 +514,7 @@ public class PatientControllerTest {
 	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		Patient	patient = PatientHelper.setupPatient();
+		Patient	patient = PatientHelper.setup();
 		patient.setCode(code);
 				
 		when(patientBrowserManagerMock.getPatient(eq(code))).thenReturn(patient);
