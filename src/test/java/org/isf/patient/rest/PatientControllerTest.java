@@ -21,19 +21,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import org.isf.patient.data.PatientHelper;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.isf.utils.exception.OHException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -48,9 +45,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -137,7 +131,7 @@ public class PatientControllerTest {
 	@Test
 	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		
 		when(patientBrowserManagerMock.getPatient(any(String.class))).thenReturn(null);
 		
@@ -145,7 +139,7 @@ public class PatientControllerTest {
 			.perform(
 				post(request)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(PatientDTOHelper.asJsonString(newPatientDTO))
+				.content(PatientHelper.asJsonString(newPatientDTO))
 			)
 			.andDo(log())
 			.andExpect(status().is4xxClientError())
@@ -168,7 +162,7 @@ public class PatientControllerTest {
 	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		
 		when(patientBrowserManagerMock.newPatient(any(Patient.class))).thenReturn(false);
@@ -176,7 +170,7 @@ public class PatientControllerTest {
 		MvcResult result = this.mockMvc
 			.perform(post(request)
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(PatientDTOHelper.asJsonString(newPatientDTO)))
+			.content(PatientHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
 			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
@@ -198,7 +192,7 @@ public class PatientControllerTest {
 	public void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -210,7 +204,7 @@ public class PatientControllerTest {
 			.perform(
 					post(request)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(PatientDTOHelper.asJsonString(newPatientDTO)))
+					.content(PatientHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
 			.andExpect(status().isCreated())
 			.andExpect(content().string(containsString(code.toString())));
@@ -224,7 +218,7 @@ public class PatientControllerTest {
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_OK() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -235,7 +229,7 @@ public class PatientControllerTest {
 			.perform(
 					put(request, code)
 					.contentType(MediaType.APPLICATION_JSON)
-					.content(PatientDTOHelper.asJsonString(newPatientDTO)))
+					.content(PatientHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(code.toString())));
@@ -274,7 +268,7 @@ public class PatientControllerTest {
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
-		PatientDTO newPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 		Patient	newPatient = PatientHelper.setupPatient();
 		newPatient.setCode(code);
@@ -283,7 +277,7 @@ public class PatientControllerTest {
 		
 		MvcResult result = this.mockMvc
 				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
-						.content(PatientDTOHelper.asJsonString(newPatientDTO)))
+						.content(PatientHelper.asJsonString(newPatientDTO)))
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
@@ -322,7 +316,7 @@ public class PatientControllerTest {
 					)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatienDTOList))))
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatienDTOList))))
 			.andReturn();
 	}
 
@@ -334,7 +328,7 @@ public class PatientControllerTest {
 	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -348,7 +342,7 @@ public class PatientControllerTest {
 					)		
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
 	}
 
@@ -361,7 +355,7 @@ public class PatientControllerTest {
 		Integer code = 456;
 		String name = "TestFirstName";
 		String request = "/patients/search";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -376,7 +370,7 @@ public class PatientControllerTest {
 					)		
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
 	}
 	
@@ -388,7 +382,7 @@ public class PatientControllerTest {
 	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 678;
 		String request = "/patients/search";
-		PatientDTO expectedPatientDTO =  PatientDTOHelper.setup(patientMapper);
+		PatientDTO expectedPatientDTO =  PatientHelper.setup(patientMapper);
 		expectedPatientDTO.setCode(code);
 		Patient	patient = PatientHelper.setupPatient();
 		patient.setCode(code);
@@ -403,7 +397,7 @@ public class PatientControllerTest {
 					)		
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientDTOHelper.asJsonString(expectedPatientDTO))))
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 			.andReturn();
 	}
 	
@@ -543,53 +537,6 @@ public class PatientControllerTest {
 		logger.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent( (se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent( (se) -> assertThat(se, instanceOf(OHAPIException.class)));
-	}
-	
-	static class PatientHelper{
-		
-		public static Patient setupPatient() throws OHException{
-			return  new TestPatient().setup(true);
-		}
-		
-		public static ArrayList<Patient> setupPatientList(int size) {
-			return (ArrayList<Patient>) IntStream.range(1, size+1)
-					.mapToObj(i -> {	Patient ep = null;
-										try {
-											ep = PatientHelper.setupPatient();
-											ep.setCode(i);
-										} catch (OHException e) {
-											e.printStackTrace();
-										}
-										return ep;
-									}
-					).collect(Collectors.toList());
-		}
-	}
-	
-	static class PatientDTOHelper{
-		
-		public static PatientDTO setup(PatientMapper patientMapper) throws OHException{
-			Patient patient = PatientHelper.setupPatient();
-			return patientMapper.map2DTO(patient);
-		}
-		
-		public static String asJsonString(PatientDTO patientDTO){
-			try {
-				return new ObjectMapper().writeValueAsString(patientDTO);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		public static String asJsonString(List<PatientDTO> patientDTOList){
-			try {
-				return new ObjectMapper().writeValueAsString(patientDTOList);
-			} catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
 	}
 
 }
