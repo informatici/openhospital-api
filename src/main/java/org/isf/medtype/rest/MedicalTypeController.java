@@ -3,6 +3,8 @@ package org.isf.medtype.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.isf.medtype.dto.MedicalTypeDTO;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.mapper.MedicalTypeMapper;
@@ -63,7 +65,7 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createMedicalType(@RequestBody MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+	public ResponseEntity<Void> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		boolean isCreated = medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(medicalTypeDTO));
 		if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not created!", OHSeverityLevel.ERROR));
@@ -78,7 +80,7 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> updateMedicalType(@RequestBody MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+	public ResponseEntity<Void> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
 		if(!medicalTypeBrowserManager.codeControl(medicalType.getCode())) 
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
