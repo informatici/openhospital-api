@@ -10,7 +10,7 @@ public class MedicalTypeDTO {
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes="Description of the medical type", example = "Medical material", position = 1)
+	@ApiModelProperty(notes="Description of the medical type", example = "Medical material", position = 2)
 	private String description;
 	
 	public MedicalTypeDTO() 

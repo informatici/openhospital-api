@@ -10,11 +10,11 @@ public class MovementTypeDTO {
 	private String code;
 	
 	@NotNull
-	@ApiModelProperty(notes="Description of the movement type", example = "Damage", position = 1)
+	@ApiModelProperty(notes="Description of the movement type", example = "Damage", position = 2)
 	private String description;
 	
 	@NotNull
-	@ApiModelProperty(notes="Type of the movement type", example = "-", position = 1)
+	@ApiModelProperty(notes="Type of the movement type", example = "-", position = 3)
 	private String type;
 	
 	public MovementTypeDTO(){}
