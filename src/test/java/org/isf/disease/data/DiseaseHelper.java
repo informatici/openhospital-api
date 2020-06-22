@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.model.Disease;
 import org.isf.disease.test.TestDisease;
 import org.isf.distype.model.DiseaseType;
 import org.isf.distype.test.TestDiseaseType;
 import org.isf.utils.exception.OHException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseHelper {
 
@@ -36,5 +40,14 @@ public class DiseaseHelper {
 	}
 
 	
+	public static String asJsonString(DiseaseDTO diseaseDTO) {
+		try {
+			return new ObjectMapper().writeValueAsString(diseaseDTO);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 }

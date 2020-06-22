@@ -1,28 +1,25 @@
 package org.isf.disease.rest;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,15 +27,11 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -269,18 +262,88 @@ public class DiseaseControllerTest {
 	}
 	
 	@Test
-	public void testNewDisease() {
-		fail("Not yet implemented");
+	public void testNewDisease_200() throws JsonProcessingException, Exception {
+		String request = "/diseases";
+		
+		Disease disease =  DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+		
+		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		.thenReturn(false);
+	
+		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
+		.thenReturn(false);
+		
+		when(diseaseBrowserManagerMock.newDisease(disease))
+			.thenReturn(true);
+			
+		MvcResult result = this.mockMvc
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DiseaseHelper.asJsonString(body))
+						)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())	
+				.andReturn();
+		
+		logger.debug("result: {}", result);
+	}
+	
+	@Test
+	public void testUpdateDisease_201() throws Exception {
+		String request = "/diseases";
+		
+		Disease disease =  DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+		
+		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		.thenReturn(true);
+
+		when(diseaseBrowserManagerMock.updateDisease(disease))
+			.thenReturn(true);
+			
+		MvcResult result = this.mockMvc
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DiseaseHelper.asJsonString(body))
+						)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())	
+				.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
 
 	@Test
-	public void testUpdateDisease() {
-		fail("Not yet implemented");
-	}
+	public void testDeleteDisease() throws Exception {
+		String request = "/diseases/{code}";
+		
+		int code  = 1;
+		
+		Disease disease =  DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+		
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+		.thenReturn(disease);
 
-	@Test
-	public void testDeleteDisease() {
-		fail("Not yet implemented");
-	}
+		when(diseaseBrowserManagerMock.deleteDisease(disease))
+			.thenReturn(true);
+			
+		MvcResult result = this.mockMvc
+				.perform(delete(request, code)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DiseaseHelper.asJsonString(body))
+						)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())	
+				.andExpect(content().string(containsString("true")))
 
+				.andReturn();
+		
+		logger.debug("result: {}", result);
+	}
+	
 }
