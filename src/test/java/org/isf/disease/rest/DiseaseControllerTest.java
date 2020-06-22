@@ -1,26 +1,28 @@
 package org.isf.disease.rest;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.admtype.manager.AdmissionTypeBrowserManager;
-import org.isf.admtype.mapper.AdmissionTypeMapper;
-import org.isf.admtype.model.AdmissionType;
-import org.isf.admtype.rest.AdmissionTypeController;
-import org.isf.admtype.rest.AdmissionTypeControllerTest;
+import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
+import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -28,10 +30,18 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseControllerTest {
 	private final Logger logger = LoggerFactory.getLogger(DiseaseControllerTest.class);
@@ -57,15 +67,10 @@ public class DiseaseControllerTest {
     }
 
 	@Test
-	public void testGetDiseasesOpd() {
+	public void testGetDiseasesOpd_200() throws Exception {
 		String request = "/diseases/opd";
 		
-		List<Disease> diseases = new ArrayList<Disease>();
-		
-		
-		AdmissionType admissionType =  new AdmissionType("ZZ","aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
-		admtFounds.add(admissionType);
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
 			.thenReturn(diseases);
 		
@@ -80,50 +85,189 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesOpdByCode() {
-		fail("Not yet implemented");
+	public void testGetDiseasesOpdByCode_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/opd/{typecode}";
+		
+		String typeCode = "1";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdOut() {
-		fail("Not yet implemented");
+	public void testGetDiseasesIpdOut_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/ipd/out";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
+	}
+	
+	@Test
+	public void testGetDiseasesIpdOutByCode_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/ipd/out/{typecode}";
+		
+		String typeCode = "1";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
+	}
+	
+	@Test
+	public void testGetDiseasesIpdIn_200() throws JsonProcessingException, Exception {
+		
+		String request = "/diseases/ipd/in";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdOutByCode() {
-		fail("Not yet implemented");
+	public void testGetDiseasesIpdInByCode_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/ipd/out/{typecode}";
+		
+		String typeCode = "1";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdIn() {
-		fail("Not yet implemented");
+	public void testGetDiseases_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/both";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDisease())
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
+	}
+	
+	@Test
+	public void testGetDiseasesString_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/both/{typecode}";
+		
+		String typeCode = "1";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDisease(typeCode))
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
+		
+		
 	}
 
 	@Test
-	public void testGetDiseasesIpdInByCode() {
-		fail("Not yet implemented");
+	public void testGetAllDiseases_200() throws JsonProcessingException, Exception {
+		String request = "/diseases/all";
+		
+		ArrayList<Disease> diseases =  DiseaseHelper.setupDiseaseList(3);
+		when(diseaseBrowserManagerMock.getDiseaseAll())
+			.thenReturn(diseases);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
-
+	
 	@Test
-	public void testGetDiseases() {
-		fail("Not yet implemented");
+	public void testGetDiseaseByCode() throws JsonProcessingException, Exception {	
+		String request = "/diseases/{code}";
+		
+		int code = 1;
+		
+		Disease disease =  DiseaseHelper.setup();
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(disease);
+			
+		MvcResult result = this.mockMvc
+			.perform(get(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
+			.andReturn();
+		
+		logger.debug("result: {}", result);
 	}
-
-	@Test
-	public void testGetDiseasesString() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetAllDiseases() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetDiseaseByCode() {
-		fail("Not yet implemented");
-	}
-
+	
 	@Test
 	public void testNewDisease() {
 		fail("Not yet implemented");
