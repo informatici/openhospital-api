@@ -70,11 +70,14 @@ public class MalnutritionController {
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
 		logger.info("Looking for malnutrition controls. Admission ID is " + admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
-		if(malnutritions == null || malnutritions.isEmpty()) {
+		if(malnutritions == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
+		}
+		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
+		if(mappedMalnutritions.isEmpty()) {
 			logger.info("No malnutrition control found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
-			List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 			logger.info("Found " + mappedMalnutritions.size() + " malnutrition controls");
 			return ResponseEntity.ok(mappedMalnutritions);
 		}
