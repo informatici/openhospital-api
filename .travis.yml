@@ -3,7 +3,7 @@ jdk:
  - openjdk8
 
 before_install:
- - git clone https://github.com/informatici/openhospital-core.git
+ - git clone -b OP-6-implement-the-new-rest-api https://github.com/informatici/openhospital-core.git
  - cd openhospital-core
  - mvn clean install -DskipTests=true
  - cd -
