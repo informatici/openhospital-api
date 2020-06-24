@@ -49,5 +49,4 @@ public class DiseaseHelper {
 		return null;
 	}
 
-
 }
