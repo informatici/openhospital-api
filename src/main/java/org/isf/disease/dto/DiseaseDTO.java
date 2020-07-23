@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Class representing a disease")
 public class DiseaseDTO {
 	@NotNull
-	private Integer code;
+	private String code;
 
 	@NotNull
 	@ApiModelProperty(notes = "Disease description")
@@ -32,11 +32,11 @@ public class DiseaseDTO {
 	@ApiModelProperty(notes = "indicates whether the disease is an IPD-OUT disease", example="true")
 	private boolean ipdOutInclude;
 
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(int code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

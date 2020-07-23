@@ -145,6 +145,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("admin", "guest")
+            	//operation types
+            	.antMatchers(HttpMethod.POST, "/operationtypes/**").permitAll()
+            	.antMatchers(HttpMethod.PUT, "/operationtypes/**").permitAll()
+            	.antMatchers(HttpMethod.DELETE, "/operationtypes/**").permitAll()
+            	.antMatchers(HttpMethod.GET, "/operationtypes/**").permitAll()
             	//diseases
             	.antMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("admin")
