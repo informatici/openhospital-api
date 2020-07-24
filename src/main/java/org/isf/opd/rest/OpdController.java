@@ -71,9 +71,7 @@ public class OpdController {
 		if(opdDTO.getDisease3() != null) opd.setDisease3(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease3().getCode())));
 		boolean isCreated = opdManager.newOpd(opd);
 		if (!isCreated) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(code);
 	}
@@ -171,8 +169,7 @@ public class OpdController {
 		toDelete.setCode(code);
 		boolean isDeleted = opdManager.deleteOpd(toDelete);
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted!", OHSeverityLevel.ERROR));
 		}
 		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
 	}

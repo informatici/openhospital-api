@@ -72,28 +72,10 @@ public class OpdDTO {
 	@ApiModelProperty(notes = "user id", position = 16)
 	private String userID;
 
-	@Version
 	private int lock;
 
-	@Transient
-	private volatile int hashCode = 0;
+	private int hashCode = 0;
 
-	public OpdDTO() {
-	}
-
-	/**
-	 * @param aYear
-	 * @param aSex
-	 * @param aDate
-	 * @param aAge
-	 * @param aDisease
-	 */
-	public OpdDTO(int aProgYear, char aSex, int aAge, DiseaseDTO aDisease) {
-		prog_year = aProgYear;
-		sex = aSex;
-		age = aAge;
-		disease = aDisease;
-	}
 
 	public String getNote() {
 		return note;
@@ -198,13 +180,22 @@ public class OpdDTO {
 	public void setDisease3(DiseaseDTO disease) {
 		this.disease3 = disease;
 	}
-
+	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
 	}
 
 	public void setLock(int lock) {
 		this.lock = lock;
+	}
+
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
 	}
 
 	public Date getDate() {
@@ -255,31 +246,4 @@ public class OpdDTO {
 		this.nextVisitDate = nextVisitDate;
 	}
 
-	@Override
-	public int hashCode() {
-		if (this.hashCode == 0) {
-			final int m = 23;
-			int c = 133;
-
-			c = m * c + code;
-
-			this.hashCode = c;
-		}
-
-		return this.hashCode;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof OpdDTO)) {
-			return false;
-		}
-
-		OpdDTO opd = (OpdDTO) obj;
-		return (code == opd.getCode());
-	}
 }
