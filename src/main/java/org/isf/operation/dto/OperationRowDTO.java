@@ -43,12 +43,8 @@ public class OperationRowDTO {
     @NotNull
     private OpdDTO opd;
 
-    @ManyToOne
-    @JoinColumn(name = "OPER_BILL_ID")
     private BillDTO bill;
 
-    @NotNull
-    @Column(name = "OPER_TRANS_UNIT")
     private Float transUnit;
     
     private int hashCode = 0;

@@ -181,7 +181,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/ProgYear/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
-		logger.info("Get opd within specified dates");
+		logger.info("Get progressive number within specified year");
 		int yProg = opdManager.getProgYear(year);
 		return ResponseEntity.ok(yProg);
 	}
