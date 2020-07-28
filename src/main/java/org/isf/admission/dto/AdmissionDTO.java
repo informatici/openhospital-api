@@ -114,8 +114,9 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
 
-	@ApiModelProperty(notes = "lock", example = "0", position = 31)
 	private int lock;
+	
+	private int hashCode = 0;
 
 	@NotNull
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
@@ -361,6 +362,15 @@ public class AdmissionDTO {
 		this.userID = userID;
 	}
 
+	public String getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
+	}
+	
+	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
 	}
@@ -369,12 +379,13 @@ public class AdmissionDTO {
 		this.lock = lock;
 	}
 
-	public String getDeleted() {
-		return deleted;
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
 	}
 
-	public void setDeleted(String deleted) {
-		this.deleted = deleted;
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
 	}
 
 }

@@ -3,7 +3,6 @@ package org.isf.patvac.rest;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.patvac.dto.PatientVaccineDTO;
 import org.isf.patvac.manager.PatVacManager;
@@ -14,7 +13,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.vaccine.manager.VaccineBrowserManager;
-import org.isf.vaccine.model.Vaccine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,7 +3,6 @@ package org.isf.opd.rest;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.mapper.DiseaseMapper;
@@ -65,11 +64,7 @@ public class OpdController {
 	ResponseEntity<Integer> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		logger.info("store Out patient " + code);
-		Opd opd = mapper.map2Model(opdDTO);
-		opd.setDisease(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease().getCode())));
-		if(opdDTO.getDisease2() != null) opd.setDisease2(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease2().getCode())));
-		if(opdDTO.getDisease3() != null) opd.setDisease3(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease3().getCode())));
-		boolean isCreated = opdManager.newOpd(opd);
+		boolean isCreated = opdManager.newOpd(mapper.map2Model(opdDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
@@ -86,11 +81,9 @@ public class OpdController {
 	ResponseEntity<Integer> updateOpd(@RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		logger.info("Update opds code:" + opdDTO.getCode());
-		Opd opd = mapper.map2Model(opdDTO);
-		opd.setDisease(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease().getCode())));
-		if(opdDTO.getDisease2() != null) opd.setDisease2(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease2().getCode())));
-		if(opdDTO.getDisease3() != null) opd.setDisease3(diseaseManager.getDiseaseByCode(Integer.parseInt(opdDTO.getDisease3().getCode())));
-		Opd updatedOpd = opdManager.updateOpd(opd);
+		Opd updatedOpd = opdManager.updateOpd(mapper.map2Model(opdDTO));
+		if(updatedOpd == null)
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
 		return ResponseEntity.ok(updatedOpd.getCode());
 	}
 
