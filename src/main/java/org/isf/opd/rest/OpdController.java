@@ -99,7 +99,7 @@ public class OpdController {
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/opds/toDayOrWeek", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/opds/weekly", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdToDayOrWeek(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
 		logger.info("Get all today or since one week opd");
 		if(oneWeek == null) {
@@ -119,7 +119,7 @@ public class OpdController {
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/opds/filterBy", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
 			@RequestParam Date dateFrom, @RequestParam Date dateTo, @RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
 			@RequestParam char newPatient) throws OHServiceException {

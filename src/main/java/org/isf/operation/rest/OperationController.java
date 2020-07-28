@@ -147,7 +147,7 @@ public class OperationController {
 	 * @return {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/operations/filter/type", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/operations/search/type", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationDTO>> getOperationsByDescription(@RequestParam String description) throws OHServiceException {
 		logger.info("Get operations for provided type description");
 		List<Operation> operations = operationManager.getOperation(description);
@@ -227,7 +227,7 @@ public class OperationController {
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/operations/rows/filterby/admission", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/operations/rows/search/admission", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByAdmt(@RequestParam("admissionId") int id) throws OHServiceException {
 		logger.info("Get operations row for provided admission");
 		Admission adm = admissionManager.getAdmission(id);
@@ -245,7 +245,7 @@ public class OperationController {
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value = "/operations/rows/filterby/opd", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/operations/rows/search/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		logger.info("Get operations row for provided opd");
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
