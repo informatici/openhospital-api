@@ -61,9 +61,7 @@ public class OperationTypeController {
 		if (opeTypeFounds.size() > 0)
 			opeTypeCreated = opeTypeFounds.get(0);
 		if (!isCreated || opeTypeCreated == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(opeTypeCreated.getCode());
 	}
@@ -83,9 +81,7 @@ public class OperationTypeController {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = opeTypeManager.updateOperationType(opeType);
 		if (!isUpdated)
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "operation Type is not updated!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not updated!", OHSeverityLevel.ERROR));
 		return ResponseEntity.ok(opeType.getCode());
 	}
 

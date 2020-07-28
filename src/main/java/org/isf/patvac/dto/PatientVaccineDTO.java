@@ -73,7 +73,7 @@ public class PatientVaccineDTO
 		this.vaccine = vaccine;
 	}
 	
-
+	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
 	}
