@@ -43,8 +43,9 @@ public class DiseaseTypeController {
 	
 	private final Logger logger = LoggerFactory.getLogger(DiseaseTypeController.class);
 
-	public DiseaseTypeController(DiseaseTypeBrowserManager diseaseTypeManager) {
+	public DiseaseTypeController(DiseaseTypeBrowserManager diseaseTypeManager, DiseaseTypeMapper diseaseTypeMapper) {
 		this.diseaseTypeManager = diseaseTypeManager;
+		this.mapper = diseaseTypeMapper;
 	}
 	
 	/**
