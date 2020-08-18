@@ -39,8 +39,9 @@ public class DeliveryTypeController {
 
 	private final Logger logger = LoggerFactory.getLogger(DeliveryTypeController.class);
 
-	public DeliveryTypeController(DeliveryTypeBrowserManager dlvrtypeManager) {
+	public DeliveryTypeController(DeliveryTypeBrowserManager dlvrtypeManager, DeliveryTypeMapper deliveryTypeMapper) {
 		this.dlvrtypeManager = dlvrtypeManager;
+		this.deliveryTypeMapper = deliveryTypeMapper;
 	}
 
 	/**
