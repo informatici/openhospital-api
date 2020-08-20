@@ -41,8 +41,9 @@ public class VaccineController {
     @Autowired
     protected VaccineMapper mapper;
 
-    public VaccineController(VaccineBrowserManager vaccineManager) {
+    public VaccineController(VaccineBrowserManager vaccineManager, VaccineMapper vaccineMapper) {
         this.vaccineManager = vaccineManager;
+        this.mapper = vaccineMapper;
     }
 
     /**
@@ -111,7 +112,7 @@ public class VaccineController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @PutMapping(value = "/vaccines/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         logger.info("Update vaccine: " + updateVaccine.toString());
         boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
@@ -130,8 +131,11 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteVaccine(@RequestBody VaccineDTO vaccineToDelete) throws OHServiceException {
-        logger.info("Delete vaccine: " + vaccineToDelete.toString());
+    public ResponseEntity deleteVaccine(@PathVariable String code) throws OHServiceException {
+        logger.info("Delete vaccine: " + code);
+        
+        ArrayList<Vaccine> vaccineToDelete = vaccineManager.getVaccine(code);
+        
         boolean isDeleted = vaccineManager.deleteVaccine(mapper.map2Model(vaccineToDelete));
         if (!isDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
