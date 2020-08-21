@@ -2,6 +2,7 @@ package org.isf.vaccine.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
@@ -131,18 +132,24 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteVaccine(@PathVariable String code) throws OHServiceException {
-        logger.info("Delete vaccine: " + code);
-        
-        ArrayList<Vaccine> vaccineToDelete = vaccineManager.getVaccine(code);
-        
-        boolean isDeleted = vaccineManager.deleteVaccine(mapper.map2Model(vaccineToDelete));
-        if (!isDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
-        }
-        return (ResponseEntity) ResponseEntity.ok(null);
-    }
 
+    public ResponseEntity deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
+        logger.info("Delete vaccine code: {}", code);
+        boolean isDeleted = false;
+        if (vaccineManager.codeControl(code)) {
+            List<Vaccine> vaccines = vaccineManager.getVaccine();
+            List<Vaccine> vaccineFounds = vaccines.stream().filter(vc -> vc.getCode().equals(code)).collect(Collectors.toList());
+			if (vaccineFounds.size() > 0)
+                isDeleted = vaccineManager.deleteVaccine(vaccineFounds.get(0));
+            if (!isDeleted) {
+                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
+            }
+            return ResponseEntity.ok(isDeleted);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    
     /**
      * Check if code is already use by other vaccine
      *

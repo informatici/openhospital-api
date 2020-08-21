@@ -1,7 +1,6 @@
 package org.isf.vaccine.rest;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,9 +13,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.disctype.data.DischargeTypeHelper;
-import org.isf.disctype.dto.DischargeTypeDTO;
-import org.isf.disctype.model.DischargeType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
@@ -88,8 +84,24 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccinesByVaccineTypeCode() {
-		fail("Not yet implemented");
+	public void testGetVaccinesByVaccineTypeCode_200() throws JsonProcessingException, Exception {
+		String request = "/vaccines/{vaccineTypeCode}";
+				
+		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
+		String vaccineTypeCode = vaccinesList.get(0).getVaccineType().getCode();
+		
+		when(vaccineBrowserManagerMock.getVaccine(vaccineTypeCode))
+			.thenReturn(vaccinesList);
+		
+		MvcResult result = this.mockMvc
+			.perform(get(request, vaccineTypeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string(new ObjectMapper().writeValueAsString(vaccinesList)))
+			.andReturn();
+		
+		logger.debug("result: {}", result);	
 	}
 
 	@Test
@@ -142,11 +154,20 @@ public class VaccineControllerTest {
 	@Test
 	public void testDeleteVaccine_200() throws Exception {
 		String request = "/vaccines/{code}";
-		String code = "ZZ";
-		VaccineDTO  body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		String basecode = "0";
+		VaccineDTO  body = vaccineMapper.map2DTO(VaccineHelper.setup(basecode));
+		String code = body.getCode();
+		
+		ArrayList<Vaccine> vaccinesList =  VaccineHelper.setupVaccineList(3);
+		
+		when(vaccineBrowserManagerMock.codeControl(code))
+			.thenReturn(true);
+		
+		when(vaccineBrowserManagerMock.getVaccine())
+			.thenReturn(vaccinesList);
 		
 		when(vaccineBrowserManagerMock.deleteVaccine(vaccineMapper.map2Model(body)))
-		.thenReturn(true);
+			.thenReturn(true);
 		
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
@@ -161,8 +182,23 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testCheckVaccineCode() {
-		fail("Not yet implemented");
-	}
+	public void testCheckVaccineCode_200() throws JsonProcessingException, Exception {
+		String request = "/vaccines/check/{code}";
+		
+		String code = "AA";
+		Vaccine vaccine = VaccineHelper.setup(code);
+
+		when(vaccineBrowserManagerMock.codeControl(vaccine.getCode()))
+			.thenReturn(true);
+		
+		MvcResult result = this.mockMvc
+			.perform(get(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())	
+			.andExpect(content().string("true"))
+			.andReturn();
+		
+		logger.debug("result: {}", result);	}
 
 }
