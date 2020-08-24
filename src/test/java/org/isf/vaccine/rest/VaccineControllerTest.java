@@ -98,7 +98,7 @@ public class VaccineControllerTest {
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())	
-			.andExpect(content().string(new ObjectMapper().writeValueAsString(vaccinesList)))
+			.andExpect(content().string(new ObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))))
 			.andReturn();
 		
 		logger.debug("result: {}", result);	
