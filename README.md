@@ -1,4 +1,6 @@
-# Open Hospital API [![Build Status](https://travis-ci.org/informatici/openhospital-api.svg?branch=develop)](https://travis-ci.org/informatici/openhospital-api)
+# Open Hospital API
+
+[![Java CI with Maven](https://github.com/informatici/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/informatici/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
 This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
 
