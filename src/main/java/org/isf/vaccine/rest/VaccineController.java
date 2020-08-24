@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
@@ -127,12 +128,11 @@ public class VaccineController {
     /**
      * Delete vaccine
      *
-     * @param vaccineToDelete
+     * @param code of the vaccine to delete
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-
     public ResponseEntity deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
         logger.info("Delete vaccine code: {}", code);
         boolean isDeleted = false;
