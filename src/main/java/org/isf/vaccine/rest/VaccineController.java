@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
@@ -136,11 +135,9 @@ public class VaccineController {
     public ResponseEntity deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
         logger.info("Delete vaccine code: {}", code);
         boolean isDeleted = false;
-        if (vaccineManager.codeControl(code)) {
-            List<Vaccine> vaccines = vaccineManager.getVaccine();
-            List<Vaccine> vaccineFounds = vaccines.stream().filter(vc -> vc.getCode().equals(code)).collect(Collectors.toList());
-			if (vaccineFounds.size() > 0)
-                isDeleted = vaccineManager.deleteVaccine(vaccineFounds.get(0));
+        Vaccine vaccine = vaccineManager.findVaccine(code);
+        if (vaccine!=null){
+            isDeleted = vaccineManager.deleteVaccine(vaccine);
             if (!isDeleted) {
                 throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
             }

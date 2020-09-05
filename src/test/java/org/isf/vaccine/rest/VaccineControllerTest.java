@@ -155,17 +155,14 @@ public class VaccineControllerTest {
 	public void testDeleteVaccine_200() throws Exception {
 		String request = "/vaccines/{code}";
 		String basecode = "0";
-		VaccineDTO  body = vaccineMapper.map2DTO(VaccineHelper.setup(basecode));
+		
+		Vaccine vaccine = VaccineHelper.setup(basecode);
+		VaccineDTO  body = vaccineMapper.map2DTO(vaccine);
 		String code = body.getCode();
 		
-		ArrayList<Vaccine> vaccinesList =  VaccineHelper.setupVaccineList(3);
-		
-		when(vaccineBrowserManagerMock.codeControl(code))
-			.thenReturn(true);
-		
-		when(vaccineBrowserManagerMock.getVaccine())
-			.thenReturn(vaccinesList);
-		
+		when(vaccineBrowserManagerMock.findVaccine(code))
+			.thenReturn(vaccine);
+
 		when(vaccineBrowserManagerMock.deleteVaccine(vaccineMapper.map2Model(body)))
 			.thenReturn(true);
 		
