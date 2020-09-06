@@ -1,7 +1,6 @@
 package org.isf.examination.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import org.isf.patient.dto.PatientDTO;
 
 import java.sql.Date;
 
@@ -13,8 +12,8 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
     private Date pex_date;
 
-    @ApiModelProperty(notes = "Patient Examination", position = 3)
-    private PatientDTO patient;
+    @ApiModelProperty(notes = "Patient Examination Code", position = 3)
+    private Integer patientCode;
 
     @ApiModelProperty(notes = "Patient Height", position = 4)
     private Integer pex_height;
@@ -53,12 +52,12 @@ public class PatientExaminationDTO {
         this.pex_date = pex_date;
     }
 
-    public PatientDTO getPatient() {
-        return patient;
+    public Integer getPatientCode() {
+        return patientCode;
     }
 
-    public void setPatient(PatientDTO patient) {
-        this.patient = patient;
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
     }
 
     public Integer getPex_height() {

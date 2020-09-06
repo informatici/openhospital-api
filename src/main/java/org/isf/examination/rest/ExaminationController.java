@@ -44,8 +44,7 @@ public class ExaminationController {
 
     @PostMapping(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
-        String patName = newPatientExamination.getPatient().getFirstName() + " " + newPatientExamination.getPatient().getSecondName();
-        Patient patient = patientBrowserManager.getPatient(patName);
+        Patient patient = patientBrowserManager.getPatient(newPatientExamination.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -68,8 +67,7 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not Found!", OHSeverityLevel.WARNING));
         }
 
-        String patName = dto.getPatient().getFirstName() + " " + dto.getPatient().getSecondName();
-        Patient patient = patientBrowserManager.getPatient(patName);
+        Patient patient = patientBrowserManager.getPatient(dto.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -96,15 +94,10 @@ public class ExaminationController {
         }
     }
 
-    @GetMapping(value = "/examinations/fromLastPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientExaminationDTO> getFromLastPatientExamination(@RequestBody PatientExaminationDTO dto) throws OHServiceException {
+    @GetMapping(value = "/examinations/fromLastPatientExamination/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PatientExaminationDTO> getFromLastPatientExamination(@PathVariable Integer id) throws OHServiceException {
 
-        String patName = dto.getPatient().getFirstName() + " " + dto.getPatient().getSecondName();
-        Patient patient = patientBrowserManager.getPatient(patName);
-        if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
-        }
-        PatientExamination lastPatientExamination = patientExaminationMapper.map2Model(dto);
+        PatientExamination lastPatientExamination = examinationBrowserManager.getByID(id);
         PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(examinationBrowserManager.getFromLastPatientExamination(lastPatientExamination));
         if (patientExaminationDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
