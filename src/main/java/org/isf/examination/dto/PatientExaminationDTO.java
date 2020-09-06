@@ -22,30 +22,20 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Patient Weight", position = 5)
     private Double pex_weight;
 
-    private Integer pex_ap_min;
+    private Integer pex_pa_min;
 
-    private Integer pex_ap_max;
+    private Integer pex_pa_max;
 
-    private Integer pex_hr;
+    private Integer pex_fc;
 
+    @ApiModelProperty(notes = "Patient Temperature", position = 10)
     private Double pex_temp;
 
+    @ApiModelProperty(notes = "Patient Saturation", position = 11)
     private Double pex_sat;
 
-    private Integer pex_rr;
-
-    private String pex_auscultation;
-
-    private Integer pex_hgt;
-
-    private Integer pex_diuresis;
-
-    private String pex_diuresis_desc;
-
-    private String pex_bowel_desc;
-
+    @ApiModelProperty(notes = "Examination Note", position = 12)
     private String pex_note;
-
 
     public int getPex_ID() {
         return pex_ID;
@@ -87,28 +77,28 @@ public class PatientExaminationDTO {
         this.pex_weight = pex_weight;
     }
 
-    public Integer getPex_ap_min() {
-        return pex_ap_min;
+    public Integer getPex_pa_min() {
+        return pex_pa_min;
     }
 
-    public void setPex_ap_min(Integer pex_ap_min) {
-        this.pex_ap_min = pex_ap_min;
+    public void setPex_pa_min(Integer pex_pa_min) {
+        this.pex_pa_min = pex_pa_min;
     }
 
-    public Integer getPex_ap_max() {
-        return pex_ap_max;
+    public Integer getPex_pa_max() {
+        return pex_pa_max;
     }
 
-    public void setPex_ap_max(Integer pex_ap_max) {
-        this.pex_ap_max = pex_ap_max;
+    public void setPex_pa_max(Integer pex_pa_max) {
+        this.pex_pa_max = pex_pa_max;
     }
 
-    public Integer getPex_hr() {
-        return pex_hr;
+    public Integer getPex_fc() {
+        return pex_fc;
     }
 
-    public void setPex_hr(Integer pex_hr) {
-        this.pex_hr = pex_hr;
+    public void setPex_fc(Integer pex_fc) {
+        this.pex_fc = pex_fc;
     }
 
     public Double getPex_temp() {
@@ -125,54 +115,6 @@ public class PatientExaminationDTO {
 
     public void setPex_sat(Double pex_sat) {
         this.pex_sat = pex_sat;
-    }
-
-    public Integer getPex_rr() {
-        return pex_rr;
-    }
-
-    public void setPex_rr(Integer pex_rr) {
-        this.pex_rr = pex_rr;
-    }
-
-    public String getPex_auscultation() {
-        return pex_auscultation;
-    }
-
-    public void setPex_auscultation(String pex_auscultation) {
-        this.pex_auscultation = pex_auscultation;
-    }
-
-    public Integer getPex_hgt() {
-        return pex_hgt;
-    }
-
-    public void setPex_hgt(Integer pex_hgt) {
-        this.pex_hgt = pex_hgt;
-    }
-
-    public Integer getPex_diuresis() {
-        return pex_diuresis;
-    }
-
-    public void setPex_diuresis(Integer pex_diuresis) {
-        this.pex_diuresis = pex_diuresis;
-    }
-
-    public String getPex_diuresis_desc() {
-        return pex_diuresis_desc;
-    }
-
-    public void setPex_diuresis_desc(String pex_diuresis_desc) {
-        this.pex_diuresis_desc = pex_diuresis_desc;
-    }
-
-    public String getPex_bowel_desc() {
-        return pex_bowel_desc;
-    }
-
-    public void setPex_bowel_desc(String pex_bowel_desc) {
-        this.pex_bowel_desc = pex_bowel_desc;
     }
 
     public String getPex_note() {

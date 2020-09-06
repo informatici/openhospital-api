@@ -43,7 +43,7 @@ public class ExaminationController {
     }
 
     @PostMapping(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
+    public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
         String patName = newPatientExamination.getPatient().getFirstName() + " " + newPatientExamination.getPatient().getSecondName();
         Patient patient = patientBrowserManager.getPatient(patName);
         if (patient == null) {
@@ -55,7 +55,7 @@ public class ExaminationController {
 
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(patientExamination.getPex_ID());
+        return ResponseEntity.status(HttpStatus.CREATED).body(true);
     }
 
     @PutMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,7 +81,7 @@ public class ExaminationController {
         return ResponseEntity.ok(true);
     }
 
-    @GetMapping(value = "/examinations/defaultPatientExamination/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/examinations/defaultPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientExaminationDTO> getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
 
         Patient patient = patientBrowserManager.getPatient(patId);
@@ -96,7 +96,7 @@ public class ExaminationController {
         }
     }
 
-    @GetMapping(value = "/examinations/fromLastPatientExamination/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/examinations/fromLastPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientExaminationDTO> getFromLastPatientExamination(@RequestBody PatientExaminationDTO dto) throws OHServiceException {
 
         String patName = dto.getPatient().getFirstName() + " " + dto.getPatient().getSecondName();
@@ -137,7 +137,7 @@ public class ExaminationController {
         }
     }
 
-    @GetMapping(value = "/examinations/lastNByPatId/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
 
         List<PatientExamination> patientExaminationList = examinationBrowserManager.getLastNByPatID(patId, limit);

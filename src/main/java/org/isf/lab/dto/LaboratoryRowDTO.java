@@ -1,12 +1,18 @@
 package org.isf.lab.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
 public class LaboratoryRowDTO {
 
     private Integer code;
     private LaboratoryDTO laboratory;
     private String description;
+
+    public LaboratoryRowDTO() {
+    }
+
+    public LaboratoryRowDTO(String description, LaboratoryDTO labDTO) {
+        this.description = description;
+        this.laboratory = labDTO;
+    }
 
     public Integer getCode() {
         return code;

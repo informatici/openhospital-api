@@ -95,7 +95,7 @@ public class ExamController {
         }
     }
 
-    @GetMapping(value = "/exams/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ExamDTO>> getExams() throws OHServiceException {
         List<ExamDTO> exams = examMapper.map2DTOList(examManager.getExams());
 

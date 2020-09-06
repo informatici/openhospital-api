@@ -25,7 +25,7 @@ public class HospitalController {
     private final Logger logger = LoggerFactory.getLogger(HospitalController.class);
 
     @Autowired
-    protected HospitalBrowsingManager hospitalBrowsingManager;
+    private HospitalBrowsingManager hospitalBrowsingManager;
     @Autowired
     private HospitalMapper hospitalMapper;
 
