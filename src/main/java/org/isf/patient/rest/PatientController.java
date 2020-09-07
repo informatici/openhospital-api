@@ -54,11 +54,7 @@ public class PatientController {
     ResponseEntity<Integer> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
         String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
         log.info("Create patient " + name);
-        boolean isCreated = patientManager.newPatient(getObjectMapper().map(newPatient, Patient.class));
-        Patient patient = patientManager.getPatient(name);
-        if (!isCreated || patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
-        }
+        Patient patient = patientManager.savePatient(getObjectMapper().map(newPatient, Patient.class));
         return ResponseEntity.status(HttpStatus.CREATED).body(patient.getCode());
     }
 
@@ -67,10 +63,7 @@ public class PatientController {
         log.info("Update patient code:" + code);
         Patient patient = getObjectMapper().map(updatePatient, Patient.class);
         patient.setCode(code);
-        boolean isUpdated = patientManager.updatePatient(patient);
-        if (!isUpdated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
-        }
+        patient = patientManager.savePatient(patient);
         return ResponseEntity.ok(patient.getCode());
     }
 
@@ -91,7 +84,7 @@ public class PatientController {
     @GetMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientDTO> getPatient(@PathVariable Integer code) throws OHServiceException {
         log.info("Get patient code:" + code);
-        Patient patient = patientManager.getPatient(code);
+        Patient patient = patientManager.getPatientById(code);
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
@@ -106,9 +99,9 @@ public class PatientController {
         log.info("Search patient name:" + name + " code:" + code);
         Patient patient = null;
         if (code != null) {
-            patient = patientManager.getPatient(code);
+            patient = patientManager.getPatientById(code);
         } else if (!name.equals("")) {
-            patient = patientManager.getPatient(name);
+            patient = patientManager.getPatientByName(name);
         }
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -119,7 +112,7 @@ public class PatientController {
     @DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deletePatient(@PathVariable int code) throws OHServiceException {
         log.info("Delete patient code:" + code);
-        Patient patient = patientManager.getPatient(code);
+        Patient patient = patientManager.getPatientById(code);
         boolean isDeleted = false;
         if (patient != null) {
             isDeleted = patientManager.deletePatient(patient);
