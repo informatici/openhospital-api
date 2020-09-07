@@ -64,13 +64,12 @@ public class LaboratoryController {
     }
 
     @PostMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
+    public ResponseEntity<Boolean> newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 
         LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
         List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
-        String patName = laboratoryDTO.getPatient().getFirstName() + " " + laboratoryDTO.getPatient().getSecondName();
-        Patient patient = patientBrowserManager.getPatient(patName);
+        Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
         }
@@ -95,7 +94,7 @@ public class LaboratoryController {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(labToInsert.getCode());
+        return ResponseEntity.status(HttpStatus.CREATED).body(true);
     }
 
     @PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -106,8 +105,7 @@ public class LaboratoryController {
 
         for (LabWithRowsDTO labWithRowsDTO : labsWithRows) {
             LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
-            String patName = laboratoryDTO.getPatient().getFirstName() + " " + laboratoryDTO.getPatient().getSecondName();
-            Patient patient = patientBrowserManager.getPatient(patName);
+            Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
             if (patient == null) {
                 throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
             }
@@ -143,7 +141,10 @@ public class LaboratoryController {
     }
 
     @PutMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateLaboratory(@PathVariable Integer code, @RequestBody LaboratoryDTO laboratoryDTO, @RequestBody(required = false) List<String> labRow) throws OHServiceException {
+    public ResponseEntity updateLaboratory(@PathVariable Integer code, @RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
+
+        LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
+        List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
         if (code != laboratoryDTO.getCode()) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch!", OHSeverityLevel.ERROR));
@@ -152,8 +153,7 @@ public class LaboratoryController {
         if (laboratoryManager.getLaboratory().stream().noneMatch(l -> l.getCode() == code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
         }
-        String patName = laboratoryDTO.getPatient().getFirstName() + " " + laboratoryDTO.getPatient().getSecondName();
-        Patient patient = patientBrowserManager.getPatient(patName);
+        Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
         }

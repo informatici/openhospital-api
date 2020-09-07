@@ -32,8 +32,8 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Note", position = 7)
     private String note;
 
-    @ApiModelProperty(notes = "Laboratory Patient", position = 8)
-    private PatientDTO patient;
+    @ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
+    private Integer patientCode;
 
     @ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
     private String patName;
@@ -111,12 +111,12 @@ public class LaboratoryDTO {
         this.note = note;
     }
 
-    public PatientDTO getPatient() {
-        return patient;
+    public Integer getPatientCode() {
+        return patientCode;
     }
 
-    public void setPatient(PatientDTO patient) {
-        this.patient = patient;
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
     }
 
     public String getPatName() {
