@@ -15,22 +15,25 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Patient Examination Code", position = 3)
     private Integer patientCode;
 
-    @ApiModelProperty(notes = "Patient Height", position = 4)
+    @ApiModelProperty(notes = "Patient Height in cm", position = 4)
     private Integer pex_height;
 
-    @ApiModelProperty(notes = "Patient Weight", position = 5)
+    @ApiModelProperty(notes = "Patient Weight in Kg", position = 5)
     private Double pex_weight;
 
+    @ApiModelProperty(notes = "Blood Pressure MIN in mmHg", position = 6)
     private Integer pex_pa_min;
 
+    @ApiModelProperty(notes = "Blood Pressure MAX in mmHg", position = 7)
     private Integer pex_pa_max;
 
+    @ApiModelProperty(notes = "Heart Rate in APm", position = 8)
     private Integer pex_fc;
 
-    @ApiModelProperty(notes = "Patient Temperature", position = 10)
+    @ApiModelProperty(notes = "Patient Temperature in °C", position = 10)
     private Double pex_temp;
 
-    @ApiModelProperty(notes = "Patient Saturation", position = 11)
+    @ApiModelProperty(notes = "Patient Saturation in %", position = 11)
     private Double pex_sat;
 
     @ApiModelProperty(notes = "Examination Note", position = 12)
