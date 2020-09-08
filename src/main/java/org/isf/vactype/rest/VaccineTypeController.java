@@ -8,6 +8,7 @@ import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
@@ -111,13 +112,19 @@ public class VaccineTypeController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccinetype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteVaccineType(@RequestBody VaccineTypeDTO vaccineTypeToDelete) throws OHServiceException {
-        logger.info("Delete vaccine type: " + vaccineTypeToDelete.toString());
-        boolean isDeleted = vaccineTypeManager.deleteVaccineType(mapper.map2Model(vaccineTypeToDelete));
-        if (!isDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not deleted!", OHSeverityLevel.ERROR));
+    public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
+        logger.info("Delete vaccine type code: {}", code);
+        boolean isDeleted = false;
+        VaccineType vaccineType = vaccineTypeManager.findVaccine(code);
+        if (vaccineType!=null){
+            isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
+            if (!isDeleted) {
+                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not deleted!", OHSeverityLevel.ERROR));
+            }
+            return ResponseEntity.ok(isDeleted);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(null);
     }
 
     /**
