@@ -141,14 +141,20 @@ public class WardController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @DeleteMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteWard(@RequestBody WardDTO wardToDelete) throws OHServiceException {
-        logger.info("Delete Ward with code: " + wardToDelete.getCode());
-        boolean isDeleted = wardManager.deleteWard(mapper.map2Model(wardToDelete));
-        if (!isDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Wards is not deleted!", OHSeverityLevel.ERROR));
+    @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteWard(@PathVariable String code) throws OHServiceException {
+        logger.info("Delete Ward with code: {}", code);
+        boolean isDeleted = false;
+        Ward ward = wardManager.findWard(code);
+        if (ward!=null){
+            isDeleted = wardManager.deleteWard(ward);
+            if (!isDeleted) {
+                throw new OHAPIException(new OHExceptionMessage(null, "Wards is not deleted!", OHSeverityLevel.ERROR));
+            }
+            return ResponseEntity.ok(isDeleted);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return ResponseEntity.ok(null);
     }
 
     /**
