@@ -93,7 +93,7 @@ public class VaccineTypeController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @PutMapping(value = "/vaccinetype/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
         logger.info("Update vaccine type: " + updateVaccineType.toString());
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
@@ -115,7 +115,7 @@ public class VaccineTypeController {
     public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
         logger.info("Delete vaccine type code: {}", code);
         boolean isDeleted = false;
-        VaccineType vaccineType = vaccineTypeManager.findVaccine(code);
+        VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
         if (vaccineType!=null){
             isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
             if (!isDeleted) {
