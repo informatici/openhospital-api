@@ -7,7 +7,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.isf.vaccine.model.Vaccine;
 import org.isf.ward.dto.WardDTO;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
