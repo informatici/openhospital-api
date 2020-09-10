@@ -8,7 +8,6 @@ import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
@@ -42,8 +41,9 @@ public class VaccineTypeController {
     @Autowired
     protected VaccineTypeMapper mapper;
 
-    public VaccineTypeController(VaccineTypeBrowserManager vaccineTypeManager) {
+    public VaccineTypeController(VaccineTypeBrowserManager vaccineTypeManager, VaccineTypeMapper vaccineTypeMapper) {
         this.vaccineTypeManager = vaccineTypeManager;
+        this.mapper = vaccineTypeMapper;
     }
 
     /**
