@@ -8,7 +8,6 @@ import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.isf.vaccine.model.Vaccine;
 import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
@@ -42,8 +41,9 @@ public class VaccineTypeController {
     @Autowired
     protected VaccineTypeMapper mapper;
 
-    public VaccineTypeController(VaccineTypeBrowserManager vaccineTypeManager) {
+    public VaccineTypeController(VaccineTypeBrowserManager vaccineTypeManager, VaccineTypeMapper vaccineTypeMapper) {
         this.vaccineTypeManager = vaccineTypeManager;
+        this.mapper = vaccineTypeMapper;
     }
 
     /**
@@ -93,7 +93,7 @@ public class VaccineTypeController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @PutMapping(value = "/vaccinetype/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
         logger.info("Update vaccine type: " + updateVaccineType.toString());
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
@@ -115,7 +115,7 @@ public class VaccineTypeController {
     public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
         logger.info("Delete vaccine type code: {}", code);
         boolean isDeleted = false;
-        VaccineType vaccineType = vaccineTypeManager.findVaccine(code);
+        VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
         if (vaccineType!=null){
             isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
             if (!isDeleted) {
