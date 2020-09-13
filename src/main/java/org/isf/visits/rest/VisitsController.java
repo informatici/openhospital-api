@@ -39,8 +39,9 @@ public class VisitsController {
     @Autowired
     protected VisitMapper mapper;
 
-    public VisitsController(VisitManager visitManager) {
+    public VisitsController(VisitManager visitManager, VisitMapper visitMapper) {
         this.visitManager = visitManager;
+        this.mapper = visitMapper;
     }
 
     /**
@@ -91,7 +92,7 @@ public class VisitsController {
         if (!areCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
 
     /**
@@ -101,14 +102,14 @@ public class VisitsController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @DeleteMapping(value = "/visit/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
         logger.info("Delete Visit related to patId: " + patID);
-        boolean areDeleted = visitManager.deleteAllVisits(patID);
+        Boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(areDeleted.toString());
     }
 
 }
