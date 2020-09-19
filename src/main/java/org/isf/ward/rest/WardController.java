@@ -40,8 +40,9 @@ public class WardController {
     @Autowired
     protected WardMapper mapper;
 
-    public WardController(WardBrowserManager wardManager) {
+    public WardController(WardBrowserManager wardManager, WardMapper wardMapper) {
         this.wardManager = wardManager;
+        this.mapper =  wardMapper;
     }
 
     /**
@@ -87,10 +88,10 @@ public class WardController {
      * @return BAD_REQUEST if there are some problem, integer otherwise
      * @throws OHServiceException
      */
-    @GetMapping(value = "/wards/occupation", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> getCurrentOccupation(@RequestBody WardDTO wardDto) throws OHServiceException {
-        logger.info("Get current occupation ward code: " + wardDto.getCode());
-        Ward ward = mapper.map2Model(wardDto);
+    @GetMapping(value = "/wards/occupation/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Integer> getCurrentOccupation(@PathVariable String code) throws OHServiceException {
+    	logger.info("Get current occupation ward code: {}", code);
+        Ward ward = wardManager.findWard(code);
         Integer numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
