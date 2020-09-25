@@ -1,7 +1,9 @@
 package org.isf.patient.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -122,12 +124,25 @@ public class PatientController {
 	}
 
     @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PatientDTO>> searchPatient(@RequestParam(value="name", defaultValue="") String name) throws OHServiceException {
+    public ResponseEntity<List<PatientDTO>> searchPatient(
+            @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
+            @RequestParam(value="secondName", defaultValue="", required = false) String secondName
+    ) throws OHServiceException {
 
-        logger.info("Search patient name:" + name);
+
         List<Patient> patientList = null;
-        if (!name.equals("")) {
-            patientList = patientManager.getPatients(name);
+
+        Map<String, String> params = new HashMap<String, String>();
+        if (firstName != null && !firstName.isEmpty()) {
+            params.put("firstName", firstName);
+        }
+        if (secondName != null && !secondName.isEmpty()) {
+            params.put("secondName", secondName);
+        }
+
+
+        if (params.entrySet().size() > 0) {
+            patientList = patientManager.getPatients(params);
         }
         if (patientList == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
