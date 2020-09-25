@@ -154,6 +154,21 @@ public class PatientController {
         return ResponseEntity.ok(nextCode);
 	}
 
+    @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PatientDTO>> searchPatient(@RequestParam(value="name", defaultValue="") String name) throws OHServiceException {
+
+        logger.info("Search patient name:" + name);
+        List<Patient> patientList = null;
+        if (!name.equals("")) {
+            patientList = patientManager.getPatients(name);
+        }
+        if (patientList == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
+    }
+
+
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Delete patient code: {}", code);
