@@ -120,9 +120,26 @@ public class PatientController {
         }
         return ResponseEntity.ok(patientMapper.map2DTO(patient));
 	}
+	
+	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam Integer code) throws OHServiceException {
+        logger.info("get patient for provided code even if logically deleted: " + code);
+        Patient patient = patientManager.getPatientAll(code);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        return ResponseEntity.ok(patientMapper.map2DTO(patient));
+	}
+	
+	@GetMapping(value = "/patients/nextcode", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Integer> getPatientNextCode() throws OHServiceException {
+        logger.info("get patient next code");
+        int nextCode = patientManager.getNextPatientCode();
+        return ResponseEntity.ok(nextCode);
+	}
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity deletePatient(@PathVariable int code) throws OHServiceException {
+	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {
         logger.info("Delete patient code:"  +  code);
         Patient patient = patientManager.getPatient(code);
         boolean isDeleted = false;
@@ -134,6 +151,21 @@ public class PatientController {
         if (!isDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
         }
-        return (ResponseEntity) ResponseEntity.ok(isDeleted);
+        return ResponseEntity.ok(isDeleted);
     }
+	
+	@GetMapping(value = "/patients/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> mergePatients(@RequestParam Integer mergedcode, @RequestParam Integer code2) throws OHServiceException {
+        logger.info("merge patient for code " + code2 + " in patient for code " + mergedcode);
+        Patient mergedPatient = patientManager.getPatient(mergedcode);
+        Patient patient2 = patientManager.getPatient(code2);
+        if(mergedPatient == null || patient2 == null) {
+        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        boolean merged = patientManager.mergePatient(mergedPatient, patient2);
+        if(!merged) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged!", OHSeverityLevel.ERROR));
+        }
+        return ResponseEntity.ok(merged);
+	}
 }
