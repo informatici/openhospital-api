@@ -10,6 +10,8 @@ import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -42,11 +44,8 @@ public class OpdController {
 	protected OpdMapper mapper;
 	
 	@Autowired
-	protected DiseaseBrowserManager diseaseManager;
+	protected PatientBrowserManager patientBrowserManager;
 
-	@Autowired
-	protected DiseaseMapper dmapper;
-	
 	private final Logger logger = LoggerFactory.getLogger(OpdController.class);
 
 	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper) {
@@ -61,14 +60,21 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
+	ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		logger.info("store Out patient " + code);
-		boolean isCreated = opdManager.newOpd(mapper.map2Model(opdDTO));
+		Patient patient = patientBrowserManager.getPatient(opdDTO.getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		Opd opdToInsert = mapper.map2Model(opdDTO);
+		opdToInsert.setPatient(patient);
+		boolean isCreated = opdManager.newOpd(opdToInsert);
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(code);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**
@@ -77,11 +83,23 @@ public class OpdController {
 	 * @return the code of updated {@link Opd}
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOpd(@RequestBody OpdDTO opdDTO)
+	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Integer> updateOpd(@PathVariable Integer code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		logger.info("Update opds code:" + opdDTO.getCode());
-		Opd updatedOpd = opdManager.updateOpd(mapper.map2Model(opdDTO));
+		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
+		}
+
+		Patient patient = patientBrowserManager.getPatient(opdDTO.getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		Opd opdToUpdate = mapper.map2Model(opdDTO);
+		opdToUpdate.setPatient(patient);
+
+		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if(updatedOpd == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
 		return ResponseEntity.ok(updatedOpd.getCode());

@@ -66,8 +66,8 @@ public class PricesOthersController {
 	 * @return <code>true</code> if the prices others has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updatePricesOtherst(@RequestBody PricesOthersDTO pricesOthersDTO)
+	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
 			throws OHServiceException {
 		logger.info("Update pricesothers code:" + pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);

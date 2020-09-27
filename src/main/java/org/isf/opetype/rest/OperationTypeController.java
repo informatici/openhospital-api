@@ -55,11 +55,8 @@ public class OperationTypeController {
 		String code = operationTypeDTO.getCode();
 		logger.info("Create operation Type " + code);
 		boolean isCreated = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
-		OperationType opeTypeCreated = null;
-		List<OperationType> opeTypeFounds = opeTypeManager.getOperationType().stream().filter(opetype -> opetype.getCode().equals(code))
-				.collect(Collectors.toList());
-		if (opeTypeFounds.size() > 0)
-			opeTypeCreated = opeTypeFounds.get(0);
+		OperationType opeTypeCreated = opeTypeManager.getOperationType().stream().filter(opetype -> opetype.getCode().equals(code))
+				.findFirst().orElse(null);
 		if (!isCreated || opeTypeCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR));
 		}
@@ -72,12 +69,12 @@ public class OperationTypeController {
 	 * @return <code>true</code> if the operation type has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateOperationTypet(@RequestBody OperationTypeDTO operationTypeDTO)
+	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateOperationTypet(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
 			throws OHServiceException {
 		logger.info("Update operationtypes code:" + operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
-		if (!opeTypeManager.codeControl(opeType.getCode()))
+		if (!opeTypeManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = opeTypeManager.updateOperationType(opeType);
 		if (!isUpdated)
@@ -122,7 +119,7 @@ public class OperationTypeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

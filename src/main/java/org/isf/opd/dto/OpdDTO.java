@@ -1,249 +1,218 @@
 package org.isf.opd.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+import org.isf.disease.dto.DiseaseDTO;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-
-import org.isf.disease.dto.DiseaseDTO;
-import org.isf.patient.dto.PatientDTO;
-
-import io.swagger.annotations.ApiModelProperty;
-
 /**
- * 
  * @author gildas
- *
  */
 public class OpdDTO {
 
-	private int code;
+    private int code;
 
-	@ApiModelProperty(notes = "the date of the admission", position = 2)
-	private Date date;
+    @ApiModelProperty(notes = "the date of the admission", position = 2)
+    private Date date;
 
-	@NotNull
-	@ApiModelProperty(notes = "the visite date", position = 3)
-	private Date visitDate;
+    @NotNull
+    @ApiModelProperty(notes = "the visite date", position = 3)
+    private Date visitDate;
 
-	@ApiModelProperty(notes = "the next visite date", position = 4)
-	private Date nextVisitDate;
+    @ApiModelProperty(notes = "the next visite date", position = 4)
+    private Date nextVisitDate;
 
-	@ApiModelProperty(notes = "the admited patient", position = 5)
-	private PatientDTO patient;
+    @ApiModelProperty(notes = "the admited patient code", position = 5)
+    private Integer patientCode;
 
-	@NotNull
-	@ApiModelProperty(notes = "the patient age", example = "18", position = 6)
-	private int age;
+    @NotNull
+    @ApiModelProperty(notes = "the patient age", example = "18", position = 6)
+    private int age;
 
-	@NotNull
-	@ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
-	private char sex;
+    @NotNull
+    @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
+    private char sex;
 
-	@NotNull
-	@ApiModelProperty(notes = "the admission note", example = "", position = 8)
-	private String note; // ADDED: Alex
+    @NotNull
+    @ApiModelProperty(notes = "the admission note", example = "", position = 8)
+    private String note; // ADDED: Alex
 
-	@NotNull
-	@ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 9)
-	private int prog_year;
+    @NotNull
+    @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 9)
+    private int prog_year;
 
-	@ApiModelProperty(notes = "disease", position = 10)
-	private DiseaseDTO disease;
+    @ApiModelProperty(notes = "disease", position = 10)
+    private DiseaseDTO disease;
 
-	@ApiModelProperty(notes = "disease 2", position = 11)
-	private DiseaseDTO disease2;
+    @ApiModelProperty(notes = "disease 2", position = 11)
+    private DiseaseDTO disease2;
 
-	@ApiModelProperty(notes = "disease 3", position = 12)
-	private DiseaseDTO disease3;
+    @ApiModelProperty(notes = "disease 3", position = 12)
+    private DiseaseDTO disease3;
 
-	@NotNull
-	@ApiModelProperty(notes = "new(N) or reattendance(R) patient", example = "N", position = 13)
-	private char newPatient; // n=NEW R=REATTENDANCE
+    @NotNull
+    @ApiModelProperty(notes = "new(N) or reattendance(R) patient", example = "N", position = 13)
+    private char newPatient; // n=NEW R=REATTENDANCE
 
-	@ApiModelProperty(notes = "referral from another unit", example = "R", position = 14)
-	private String referralFrom; // R=referral from another unit; null=no referral from
+    @ApiModelProperty(notes = "referral from another unit", example = "R", position = 14)
+    private String referralFrom; // R=referral from another unit; null=no referral from
 
-	@ApiModelProperty(notes = "referral to another unit", example = "R", position = 15)
-	private String referralTo; // R=referral to another unit; null=no referral to
+    @ApiModelProperty(notes = "referral to another unit", example = "R", position = 15)
+    private String referralTo; // R=referral to another unit; null=no referral to
 
-	@ApiModelProperty(notes = "user id", position = 16)
-	private String userID;
+    @ApiModelProperty(notes = "user id", position = 16)
+    private String userID;
 
-	private int lock;
+    @ApiModelProperty(notes = "opd lock column", position = 16)
+    private int lock;
 
-	private int hashCode = 0;
+    private int hashCode = 0;
 
 
-	public String getNote() {
-		return note;
-	}
+    public String getNote() {
+        return note;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-	public String getFullName() {
-		return patient.getName();
-	}
+    public int getAge() {
+        return age;
+    }
 
-	public PatientDTO getPatient() {
-		return patient;
-	}
+    public void setAge(int age) {
+        this.age = age;
+    }
 
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
-	}
+    public Integer getPatientCode() {
+        return patientCode;
+    }
 
-	public int getAge() {
-		return age;
-	}
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public char getNewPatient() {
+        return newPatient;
+    }
 
-	public String getfirstName() {
-		return patient == null ? "" : patient.getFirstName();
-	}
+    public void setNewPatient(char newPatient) {
+        this.newPatient = newPatient;
+    }
 
-	public String getsecondName() {
-		return patient == null ? "" : patient.getSecondName();
-	}
+    public String getReferralTo() {
+        return referralTo;
+    }
 
-	public String getnextKin() {
-		return patient == null ? "" : patient.getNextKin();
-	}
+    public void setReferralTo(String referralTo) {
+        this.referralTo = referralTo;
+    }
 
-	public String getcity() {
-		return patient == null ? "" : patient.getCity();
-	}
+    public String getReferralFrom() {
+        return referralFrom;
+    }
 
-	public String getaddress() {
-		return patient == null ? "" : patient.getAddress();
-	}
+    public void setReferralFrom(String referralFrom) {
+        this.referralFrom = referralFrom;
+    }
 
-	public char getNewPatient() {
-		return newPatient;
-	}
+    public int getCode() {
+        return code;
+    }
 
-	public void setNewPatient(char newPatient) {
-		this.newPatient = newPatient;
-	}
+    public void setCode(int code) {
+        this.code = code;
+    }
 
-	public String getReferralTo() {
-		return referralTo;
-	}
+    public DiseaseDTO getDisease() {
+        return disease;
+    }
 
-	public void setReferralTo(String referralTo) {
-		this.referralTo = referralTo;
-	}
+    public DiseaseDTO getDisease2() {
+        return disease2;
+    }
 
-	public String getReferralFrom() {
-		return referralFrom;
-	}
+    public DiseaseDTO getDisease3() {
+        return disease3;
+    }
 
-	public void setReferralFrom(String referralFrom) {
-		this.referralFrom = referralFrom;
-	}
+    public void setDisease(DiseaseDTO disease) {
+        this.disease = disease;
+    }
 
-	public int getCode() {
-		return code;
-	}
+    public void setDisease2(DiseaseDTO disease) {
+        this.disease2 = disease;
+    }
 
-	public void setCode(int code) {
-		this.code = code;
-	}
+    public void setDisease3(DiseaseDTO disease) {
+        this.disease3 = disease;
+    }
 
-	public DiseaseDTO getDisease() {
-		return disease;
-	}
+    public int getLock() {
+        return lock;
+    }
 
-	public DiseaseDTO getDisease2() {
-		return disease2;
-	}
+    public void setLock(int lock) {
+        this.lock = lock;
+    }
 
-	public DiseaseDTO getDisease3() {
-		return disease3;
-	}
+    @ApiModelProperty(hidden = true)
+    public int getHashCode() {
+        return hashCode;
+    }
 
-	public void setDisease(DiseaseDTO disease) {
-		this.disease = disease;
-	}
+    public void setHashCode(int hashCode) {
+        this.hashCode = hashCode;
+    }
 
-	public void setDisease2(DiseaseDTO disease) {
-		this.disease2 = disease;
-	}
+    public Date getDate() {
+        return date;
+    }
 
-	public void setDisease3(DiseaseDTO disease) {
-		this.disease3 = disease;
-	}
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
+    public Date getVisitDate() {
+        return visitDate;
+    }
 
-	@ApiModelProperty(hidden= true)
-	public int getHashCode() {
-		return hashCode;
-	}
+    public void setVisitDate(Date visDate) {
+        this.visitDate = visDate;
+    }
 
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
-	}
+    public char getSex() {
+        return sex;
+    }
 
-	public Date getDate() {
-		return date;
-	}
+    public void setSex(char sex) {
+        this.sex = sex;
+    }
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    public int getProgYear() {
+        return prog_year;
+    }
 
-	public Date getVisitDate() {
-		return visitDate;
-	}
+    public void setProgYear(int prog_year) {
+        this.prog_year = prog_year;
+    }
 
-	public void setVisitDate(Date visDate) {
-		this.visitDate = visDate;
-	}
+    public String getUserID() {
+        return userID;
+    }
 
-	public char getSex() {
-		return sex;
-	}
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
-	public void setSex(char sex) {
-		this.sex = sex;
-	}
+    public Date getNextVisitDate() {
+        return nextVisitDate;
+    }
 
-	public int getProgYear() {
-		return prog_year;
-	}
-
-	public void setProgYear(int prog_year) {
-		this.prog_year = prog_year;
-	}
-
-	public String getUserID() {
-		return userID;
-	}
-
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
-
-	public Date getNextVisitDate() {
-		return nextVisitDate;
-	}
-
-	public void setNextVisitDate(Date nextVisitDate) {
-		this.nextVisitDate = nextVisitDate;
-	}
+    public void setNextVisitDate(Date nextVisitDate) {
+        this.nextVisitDate = nextVisitDate;
+    }
 
 }

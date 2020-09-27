@@ -145,11 +145,48 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("admin", "guest")
-            	//operation types
+				//opd
+				.antMatchers(HttpMethod.POST, "/opds/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/opds/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/opds/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/opds/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/opds/**").hasAnyAuthority("admin", "guest")
+				//operations
+				.antMatchers(HttpMethod.POST, "/operations/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/operations/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/operations/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/operations/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("admin", "guest")
+				//patientvaccines
+				.antMatchers(HttpMethod.POST, "/patientvaccines/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/patientvaccines/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/patientvaccines/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/patientvaccines/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/patientvaccines/**").hasAnyAuthority("admin", "guest")
+				//pregnanttreatmenttypes
+				.antMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/pregnanttreatmenttypes/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("admin", "guest")
+				//pricelists
+				.antMatchers(HttpMethod.POST, "/pricelists/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/pricelists/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/pricelists/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/pricelists/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/pricelists/**").hasAnyAuthority("admin", "guest")
+				//pricesothers
+				.antMatchers(HttpMethod.POST, "/pricesothers/**").permitAll()
+				.antMatchers(HttpMethod.PUT, "/pricesothers/**").permitAll()
+				.antMatchers(HttpMethod.DELETE, "/pricesothers/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/pricesothers/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/pricesothers/**").hasAnyAuthority("admin", "guest")
+				//operation types
             	.antMatchers(HttpMethod.POST, "/operationtypes/**").permitAll()
             	.antMatchers(HttpMethod.PUT, "/operationtypes/**").permitAll()
             	.antMatchers(HttpMethod.DELETE, "/operationtypes/**").permitAll()
-            	.antMatchers(HttpMethod.GET, "/operationtypes/**").permitAll()
+				.antMatchers(HttpMethod.PATCH, "/operationtypes/**").permitAll()
+            	.antMatchers(HttpMethod.GET, "/operationtypes/**").hasAnyAuthority("admin", "guest")
             	//diseases
             	.antMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("admin")

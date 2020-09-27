@@ -51,9 +51,6 @@ public class OperationController {
 	protected OperationRowBrowserManager operationRowManager;
 	
 	@Autowired
-	protected OpdBrowserManager opdManager;
-	
-	@Autowired
 	protected OperationMapper mapper;
 	
 	@Autowired
@@ -96,12 +93,12 @@ public class OperationController {
 	 * @return <code>true</code> if the operation has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateOperation(@RequestBody OperationDTO operationDTO)
+	@PutMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
 			throws OHServiceException {
 		logger.info("Update operations code:" + operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
-		if (!operationManager.codeControl(operation.getCode()))
+		if (!operationManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = operationManager.updateOperation(operation);
 		if (!isUpdated)

@@ -73,8 +73,8 @@ public class PriceListController {
 	 * @return <code>true</code> if the price list has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updatePriceListt(@RequestBody PriceListDTO priceListDTO)
+	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updatePriceListt(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
 			throws OHServiceException {
 		logger.info("Update pricelists code:" + priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);

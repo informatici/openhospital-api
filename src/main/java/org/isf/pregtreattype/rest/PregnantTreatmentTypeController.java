@@ -55,11 +55,8 @@ public class PregnantTreatmentTypeController {
 		String code = pregnantTreatmentTypeDTO.getCode();
 		logger.info("Create pregnant treatment Type " + code);
 		boolean isCreated = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
-		PregnantTreatmentType pregTreatTypeCreated = null;
-		List<PregnantTreatmentType> pregTreatTypeFounds = pregTreatTypeManager.getPregnantTreatmentType().stream().filter(pregtreattype -> pregtreattype.getCode().equals(code))
-				.collect(Collectors.toList());
-		if (pregTreatTypeFounds.size() > 0)
-			pregTreatTypeCreated = pregTreatTypeFounds.get(0);
+		PregnantTreatmentType pregTreatTypeCreated = pregTreatTypeManager.getPregnantTreatmentType().stream().filter(pregtreattype -> pregtreattype.getCode().equals(code))
+				.findFirst().orElse(null);
 		if (!isCreated || pregTreatTypeCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "pregnant treatment Type is not created!", OHSeverityLevel.ERROR));
 		}
@@ -72,12 +69,12 @@ public class PregnantTreatmentTypeController {
 	 * @return <code>true</code> if the pregnant treatment type has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updatePregnantTreatmentTypet(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
+	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<String> updatePregnantTreatmentTypet(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
 			throws OHServiceException {
 		logger.info("Update pregnanttreatmenttypes code:" + pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
-		if (!pregTreatTypeManager.codeControl(pregTreatType.getCode()))
+		if (!pregTreatTypeManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
 		if (!isUpdated)

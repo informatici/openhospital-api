@@ -38,9 +38,6 @@ public class PatVacController {
 	protected PatVacManager patVacManager;
 	
 	@Autowired
-	protected VaccineBrowserManager vaccineManager;
-	
-	@Autowired
 	protected PatVacMapper mapper;
 
 	private final Logger logger = LoggerFactory.getLogger(PatVacController.class);
@@ -57,14 +54,14 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
+	ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		logger.info("Create patient vaccine " + code);
 		boolean isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(code);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**
@@ -73,8 +70,8 @@ public class PatVacController {
 	 * @return <code>true</code> if the operation type has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updatePatientVaccinet(@RequestBody PatientVaccineDTO patientVaccineDTO)
+	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<Integer> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
 		logger.info("Update patientvaccines code:" + patientVaccineDTO.getCode());
 		boolean isUpdated = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
