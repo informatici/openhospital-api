@@ -1,15 +1,20 @@
 package org.isf.patient.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.eclipse.jdt.core.dom.NullLiteral;
-
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 @ApiModel(description = "Class representing a patient")
+@Getter
+@Setter
 public class PatientDTO {
 
+	@ApiModelProperty(hidden= true)
 	private Integer code;
 
 	@NotNull
@@ -91,216 +96,28 @@ public class PatientDTO {
 
 	private int hashCode = 0;
 
-	@ApiModelProperty(hidden= true)
-	public Integer getCode() {
-		return code;
-	}
-
-	public void setCode(Integer code) {
-		this.code = code;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getSecondName() {
-		return secondName;
-	}
-
-	public void setSecondName(String secondName) {
-		this.secondName = secondName;
-	}
-
-	@ApiModelProperty(hidden= true)
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public int getAge() {
-		return age;
-	}
-
-	public void setAge(int age) {
-		this.age = age;
-	}
-
-	public String getAgetype() {
-		return agetype;
-	}
-
-	public void setAgetype(String agetype) {
-		this.agetype = agetype;
-	}
-
-	public char getSex() {
-		return sex;
-	}
-
-	public void setSex(char sex) {
-		this.sex = sex;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	@ApiModelProperty(hidden= true)
-	public String getNextKin() {
-		return nextKin;
-	}
-
-	public void setNextKin(String nextKin) {
-		this.nextKin = nextKin;
-	}
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	public String getMother_name() {
-		return mother_name;
-	}
-
-	public void setMother_name(String mother_name) {
-		this.mother_name = mother_name;
-	}
-
-	public char getMother() {
-		return mother;
-	}
-
-	public void setMother(char mother) {
-		this.mother = mother;
-	}
-
-	public String getFather_name() {
-		return father_name;
-	}
-
-	public void setFather_name(String father_name) {
-		this.father_name = father_name;
-	}
-
-	public char getFather() {
-		return father;
-	}
-
-	public void setFather(char father) {
-		this.father = father;
-	}
-
-	public String getBloodType() {
-		return bloodType;
-	}
-
-	public void setBloodType(String bloodType) {
-		this.bloodType = bloodType;
-	}
-
-	public char getHasInsurance() {
-		return hasInsurance;
-	}
-
-	public void setHasInsurance(char hasInsurance) {
-		this.hasInsurance = hasInsurance;
-	}
-
-	public char getParentTogether() {
-		return parentTogether;
-	}
-
-	public void setParentTogether(char parentTogether) {
-		this.parentTogether = parentTogether;
-	}
-
-	public String getTaxCode() {
-		return taxCode;
-	}
-
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public void setHeight(float height) {
-		this.height = height;
-	}
-
-	public float getWeight() {
-		return weight;
-	}
-
-	public void setWeight(float weight) {
-		this.weight = weight;
-	}
-
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
-
-	@ApiModelProperty(hidden= true)
-	public int getHashCode() {
-		return hashCode;
-	}
-
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
-	}
-
-    public byte[] getBlobPhoto() {
-        return blobPhoto;
+    @ApiModelProperty(hidden = true)
+    public Integer getCode() {
+        return code;
     }
 
-    public void setBlobPhoto(byte[] photo) {
-        this.blobPhoto = photo;
+    @ApiModelProperty(hidden = true)
+    public String getName() {
+        return name;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public String getNextKin() {
+        return nextKin;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public int getLock() {
+        return lock;
+    }
+
+    @ApiModelProperty(hidden = true)
+    public int getHashCode() {
+        return hashCode;
     }
 }

@@ -28,47 +28,47 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
+    @Autowired
     private UserDetailsService userDetailsService;
-	
-	@Autowired
+
+    @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-	  throws Exception {
-	    auth.authenticationProvider(authenticationProvider());
-	}
-	
-	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider
-	      = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(encoder());
-	    return authProvider;
-	}
-	
-	@Bean
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth)
+            throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider
+                = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    }
+
+    @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
 
-	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedHeader("*");
-		// config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
-		config.setAllowedMethods(Arrays.asList("*"));
-		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		config.setAllowCredentials(true);
-		config.setAllowedOrigins(Arrays.asList("*"));
-		config.setMaxAge(3600L);
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
-	}
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedHeader("*");
+        // config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
+        config.setAllowedMethods(Arrays.asList("*"));
+        // config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setMaxAge(3600L);
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
@@ -234,15 +234,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/auth/logout")
           			.permitAll();
     }
-    
-    
+
     @Bean
-	public SimpleUrlAuthenticationFailureHandler failureHandler() {
-    	return new SimpleUrlAuthenticationFailureHandler();
+    public SimpleUrlAuthenticationFailureHandler failureHandler() {
+        return new SimpleUrlAuthenticationFailureHandler();
     }
-    
+
     @Bean
-	public SimpleUrlAuthenticationSuccessHandler successHandler() {
-    	return new OHSimpleUrlAuthenticationSuccessHandler();
+    public SimpleUrlAuthenticationSuccessHandler successHandler() {
+        return new OHSimpleUrlAuthenticationSuccessHandler();
     }
 }

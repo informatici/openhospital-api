@@ -1,21 +1,18 @@
 package org.isf.shared.mapper.converter;
 
-import org.modelmapper.AbstractConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.sql.Blob;
 import java.sql.SQLException;
+
+import org.modelmapper.AbstractConverter;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author akashytsa
  *
  */
-@Component
+@Slf4j
 public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
-
-    private final Logger logger = LoggerFactory.getLogger(BlobToByteArrayConverter.class);
 
 	@Override
 	protected byte[] convert(Blob data){
@@ -27,7 +24,7 @@ public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
                 data.free();
             }
         } catch (SQLException e) {
-            logger.error("", e);
+            log.error("", e);
         }
         return blobAsBytes;
 	}
