@@ -1,15 +1,16 @@
 package org.isf.ward.data;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.accounting.data.BillHelper;
-import org.isf.accounting.model.Bill;
 import org.isf.utils.exception.OHException;
+import org.isf.ward.dto.WardDTO;
 import org.isf.ward.model.Ward;
 import org.isf.ward.test.TestWard;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WardHelper {
 	
@@ -30,6 +31,15 @@ public class WardHelper {
 										return null;
 									}).collect(Collectors.toList());
 			
+	}
+	
+	public static String asJsonString(WardDTO wardDTO) {
+		try {
+			return new ObjectMapper().writeValueAsString(wardDTO);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
