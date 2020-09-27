@@ -180,10 +180,10 @@ public class WardController {
      * @return <code>true</code> if the Maternity {@link Ward} exists, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/wards/check/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExits) throws OHServiceException {
+    @GetMapping(value = "/wards/check/maternity/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExist) throws OHServiceException {
         logger.info("Check ward maternity code");
-        boolean check = wardManager.maternityControl(createIfNotExits);
+        boolean check = wardManager.maternityControl(createIfNotExist);
         return ResponseEntity.ok(check);
     }
 
