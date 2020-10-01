@@ -1,9 +1,8 @@
 package org.isf.patient.rest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -105,39 +104,39 @@ public class PatientController {
 		return ResponseEntity.ok(patientMapper.map2DTO(patient));
 	}
 
-
-	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> searchPatient(
-			@RequestParam(value="name", defaultValue="") String name,
-			@RequestParam(value="code", required=false) Integer code) throws OHServiceException {
-        logger.info("Search patient name:" + name + " code:"  +  code);
-		Patient patient = null;
-		if(code != null) {
-            patient = patientManager.getPatient(code);
-		}else if (!name.equals("")) {
-            patient = patientManager.getPatient(name);
-		}
-        if (patient == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.ok(patientMapper.map2DTO(patient));
-	}
-
     @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PatientDTO>> searchPatient(
             @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
-            @RequestParam(value="secondName", defaultValue="", required = false) String secondName
+            @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+            @RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+            @RequestParam(value="address", defaultValue="", required = false) String address
     ) throws OHServiceException {
 
 
         List<Patient> patientList = null;
 
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, Object> params = new HashMap<String, Object>();
         if (firstName != null && !firstName.isEmpty()) {
             params.put("firstName", firstName);
         }
         if (secondName != null && !secondName.isEmpty()) {
             params.put("secondName", secondName);
+        }
+        if (birthDate != null && !birthDate.isEmpty()) {
+
+            try {
+
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                Date birthDateDate = df.parse(birthDate);
+
+                params.put("birthDate", birthDateDate);
+
+            } catch (Exception e) {
+                // TODO: fixme
+            }
+        }
+        if (address != null && !address.isEmpty()) {
+            params.put("address", address);
         }
 
 
