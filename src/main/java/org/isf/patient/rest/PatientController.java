@@ -24,6 +24,9 @@ package org.isf.patient.rest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -121,7 +124,6 @@ public class PatientController {
 		return ResponseEntity.ok(patientMapper.map2DTO(patient));
 	}
 
-
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PatientDTO> searchPatient(
 			@RequestParam(value="name", defaultValue="") String name,
@@ -159,7 +161,9 @@ public class PatientController {
     @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PatientDTO>> searchPatient(
             @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
-            @RequestParam(value="secondName", defaultValue="", required = false) String secondName
+            @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+            @RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+            @RequestParam(value="address", defaultValue="", required = false) String address
     ) throws OHServiceException {
 
 
@@ -171,6 +175,22 @@ public class PatientController {
         }
         if (secondName != null && !secondName.isEmpty()) {
             params.put("secondName", secondName);
+        }
+        if (birthDate != null && !birthDate.isEmpty()) {
+
+            try {
+
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                Date birthDateDate = df.parse(birthDate);
+
+                params.put("birthDate", birthDateDate);
+
+            } catch (Exception e) {
+                // TODO: fixme
+            }
+        }
+        if (address != null && !address.isEmpty()) {
+            params.put("address", address);
         }
 
 
