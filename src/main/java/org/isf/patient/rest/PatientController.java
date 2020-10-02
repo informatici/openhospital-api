@@ -38,6 +38,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -158,50 +159,48 @@ public class PatientController {
         return ResponseEntity.ok(nextCode);
 	}
 
-    @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PatientDTO>> searchPatient(
-            @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
-            @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-            @RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
-            @RequestParam(value="address", defaultValue="", required = false) String address
-    ) throws OHServiceException {
-
-
-        List<Patient> patientList = null;
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        if (firstName != null && !firstName.isEmpty()) {
-            params.put("firstName", firstName);
-        }
-        if (secondName != null && !secondName.isEmpty()) {
-            params.put("secondName", secondName);
-        }
-        if (birthDate != null && !birthDate.isEmpty()) {
-
-            try {
-
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                Date birthDateDate = df.parse(birthDate);
-
-                params.put("birthDate", birthDateDate);
-
-            } catch (Exception e) {
-                // TODO: fixme
-            }
-        }
-        if (address != null && !address.isEmpty()) {
-            params.put("address", address);
-        }
-
-
-        if (params.entrySet().size() > 0) {
-            patientList = patientManager.getPatients(params);
-        }
-        if (patientList == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
-    }
+//    @GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<List<PatientDTO>> searchPatient(
+//            @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
+//            @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+//            @RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+//            @RequestParam(value="address", defaultValue="", required = false) String address
+//    ) throws OHServiceException {
+//
+//
+//        List<Patient> patientList = null;
+//
+//        Map<String, Object> params = new HashMap<String, Object>();
+//        if (firstName != null && !firstName.isEmpty()) {
+//            params.put("firstName", firstName);
+//        }
+//        if (secondName != null && !secondName.isEmpty()) {
+//            params.put("secondName", secondName);
+//        }
+//        if (birthDate != null && !birthDate.isEmpty()) {
+//            try {
+//
+//                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+//                Date birthDateDate = df.parse(birthDate);
+//                params.put("birthDate", birthDateDate);
+//
+//            } catch (Exception e) {
+//                // TODO: fixme
+//            }
+//        }
+//        if (address != null && !address.isEmpty()) {
+//            params.put("address", address);
+//        }
+//
+//
+//        if (params.entrySet().size() > 0) {
+//            patientList = patientManager.getPatients(params);
+//        }
+//        if (patientList == null) {
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+//        }
+//        return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
+//    }
 
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
