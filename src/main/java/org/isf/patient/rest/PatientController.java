@@ -15,6 +15,7 @@ import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +105,7 @@ public class PatientController {
 		return ResponseEntity.ok(patientMapper.map2DTO(patient));
 	}
 
-    @PostMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<PatientDTO>> searchPatient(
             @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
             @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
@@ -123,12 +124,10 @@ public class PatientController {
             params.put("secondName", secondName);
         }
         if (birthDate != null && !birthDate.isEmpty()) {
-
             try {
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                 Date birthDateDate = df.parse(birthDate);
-
                 params.put("birthDate", birthDateDate);
 
             } catch (Exception e) {
