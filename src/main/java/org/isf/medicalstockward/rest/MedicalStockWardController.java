@@ -67,7 +67,7 @@ public class MedicalStockWardController {
 	 */
 	@GetMapping(value = "/medicalstockward/{ward_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWardDTO>> getMedicalsWard(@PathVariable("ward_code") char wardId) throws OHServiceException {
-		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId);
+		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId, true); //FIXME: provide provision for boolean ,false?
 		List<MedicalWardDTO> mappedMedWards = medicalWardMapper.map2DTOList(medWards);
 		if(mappedMedWards.isEmpty()) {
 			logger.info("No medical found");

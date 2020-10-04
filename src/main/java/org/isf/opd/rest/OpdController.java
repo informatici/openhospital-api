@@ -63,7 +63,7 @@ public class OpdController {
 	ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		logger.info("store Out patient " + code);
-		Patient patient = patientBrowserManager.getPatient(opdDTO.getPatientCode());
+		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
@@ -91,7 +91,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 
-		Patient patient = patientBrowserManager.getPatient(opdDTO.getPatientCode());
+		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}

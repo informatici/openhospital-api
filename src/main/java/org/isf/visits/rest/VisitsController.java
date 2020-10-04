@@ -73,8 +73,8 @@ public class VisitsController {
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
         logger.info("Create Visit: " + newVisit);
-        int visitId = visitManager.newVisit(mapper.map2Model(newVisit));
-        return ResponseEntity.status(HttpStatus.CREATED).body(newVisit.getVisitID());
+        Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
+        return ResponseEntity.status(HttpStatus.CREATED).body(visit.getVisitID()); //TODO: verify if it's correct
     }
 
     /**

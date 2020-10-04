@@ -165,7 +165,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		
 		newFullBillDTO.getBillDTO().setPatient(true);
 		
-		when(patientManagerMock.getPatient(any(String.class))).thenReturn(null);
+		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
 		
 		MvcResult result = this.mockMvc
 			.perform(
@@ -197,7 +197,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
 		newFullBillDTO.getBillDTO().setPatient(true);
 		Bill bill = BillHelper.setup();
-		when(patientManagerMock.getPatient(eq(bill.getPatName()))).thenReturn(null);
+		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		when(billManagerMock.deleteBill(eq(bill))).thenReturn(true);
 		
@@ -234,7 +234,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Patient patient = bill.getBillPatient();
 		//Patient patient = bill.getPatient();
 		
-		when(patientManagerMock.getPatient(any(String.class))).thenReturn(patient);
+		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
 		ArrayList<PriceList> priceListList = new ArrayList<PriceList>();
 		
@@ -471,7 +471,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	    Patient patient = new TestPatient().setup(true);
 	    
-	    when(patientManagerMock.getPatient(eq(patientCode))).thenReturn(patient);
+	    when(patientManagerMock.getPatientById(eq(patientCode))).thenReturn(patient);
 	   
 	    //TODO add test(s) with incorrect formatted dates returning an exception 
 	    //TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT

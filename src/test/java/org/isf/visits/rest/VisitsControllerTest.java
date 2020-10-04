@@ -89,7 +89,7 @@ private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class
 		VisitDTO  body = visitMapper.map2DTO(VisitHelper.setup(id));
 
 		when(visitManagerMock.newVisit(visitMapper.map2Model(body)))
-			.thenReturn(id);
+			.thenReturn(visitMapper.map2Model(body));
 		
 		MvcResult result = this.mockMvc
 			.perform(post(request)

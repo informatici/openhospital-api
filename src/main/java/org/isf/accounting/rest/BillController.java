@@ -92,7 +92,7 @@ public class BillController {
       
         Bill bill = billMapper.map2Model(newBillDto.getBillDTO());
         
-        Patient pat = patientManager.getPatient(bill.getPatName());
+        Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
         
         ArrayList<PriceList> list = priceListManager.getLists();
         
@@ -143,7 +143,7 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found!", OHSeverityLevel.ERROR));
         }
         
-        Patient pat = patientManager.getPatient(bill.getPatName());
+        Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
         
         ArrayList<PriceList> list = priceListManager.getLists();
         
@@ -203,7 +203,7 @@ public class BillController {
         	logger.info("Get payments datefrom:"  +  datefrom + " dateTo:" + dateto);
         	bills = billManager.getBills(datefrom, dateto);
         } else {
-        	Patient pat = patientManager.getPatient(code);
+        	Patient pat = patientManager.getPatientById(code);
              
             logger.info("Get Bills datefrom:"  +  datefrom + " dateTo:" + dateto +"patient: "+pat);
              
@@ -248,7 +248,7 @@ public class BillController {
         if(code == null) {
         	payments = billManager.getPayments(datefrom, dateto);
         } else {
-        	 Patient pat = patientManager.getPatient(code);             
+        	 Patient pat = patientManager.getPatientById(code);             
              payments = billManager.getPayments(datefrom, dateto, pat);
         }
         
@@ -412,7 +412,7 @@ public class BillController {
 		
 		logger.info("get all the distinct stored BillItems");
            
-	    ArrayList<BillItems> items = billManager.getDistinctItems();
+	    ArrayList<BillItems> items = (ArrayList<BillItems>) billManager.getDistinctItems(); //TODO: verify if it's correct
 	    
         List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         

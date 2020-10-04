@@ -69,7 +69,7 @@ public class LaboratoryController {
         LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
         List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
-        Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
         }
@@ -105,7 +105,7 @@ public class LaboratoryController {
 
         for (LabWithRowsDTO labWithRowsDTO : labsWithRows) {
             LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
-            Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
+            Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
             if (patient == null) {
                 throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
             }
@@ -153,7 +153,7 @@ public class LaboratoryController {
         if (laboratoryManager.getLaboratory().stream().noneMatch(l -> l.getCode() == code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
         }
-        Patient patient = patientBrowserManager.getPatient(laboratoryDTO.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
         }
@@ -204,7 +204,7 @@ public class LaboratoryController {
 
     @GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<LaboratoryDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
-        Patient patient = patientBrowserManager.getPatient(patId);
+        Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
         }

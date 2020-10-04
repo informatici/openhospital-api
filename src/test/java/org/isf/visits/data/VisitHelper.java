@@ -10,6 +10,8 @@ import org.isf.utils.exception.OHException;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.model.Visit;
 import org.isf.visits.test.TestVisit;
+import org.isf.ward.data.WardHelper;
+import org.isf.ward.test.TestWard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +20,7 @@ public class VisitHelper {
 
 	public static Visit setup(int id) throws OHException {
 		TestVisit testVisits = new TestVisit();
-		Visit visit = testVisits.setup(PatientHelper.setup(),false);
+		Visit visit = testVisits.setup(PatientHelper.setup(),false, WardHelper.setup());
 		visit.setVisitID(id);
 		return visit;
 	}

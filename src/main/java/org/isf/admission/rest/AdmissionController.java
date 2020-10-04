@@ -133,7 +133,7 @@ public class AdmissionController {
 	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
 		logger.info("Get admission by patient code:" + patientCode);
-		Patient patient = patientManager.getPatient(patientCode);
+		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -179,7 +179,7 @@ public class AdmissionController {
 	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
 		logger.info("Get patient admissions by patient code:" + patientCode);
-		Patient patient = patientManager.getPatient(patientCode);
+		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
@@ -286,7 +286,7 @@ public class AdmissionController {
 		}
 
 		if (newAdmissionDTO.getPatient() != null && newAdmissionDTO.getPatient().getCode() != null) {
-			Patient patient = patientManager.getPatient(newAdmissionDTO.getPatient().getCode());
+			Patient patient = patientManager.getPatientById(newAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 			}
@@ -453,7 +453,7 @@ public class AdmissionController {
 		}
 
 		if (updAdmissionDTO.getPatient() != null && updAdmissionDTO.getPatient().getCode() != null) {
-			Patient patient = patientManager.getPatient(updAdmissionDTO.getPatient().getCode());
+			Patient patient = patientManager.getPatientById(updAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 			}

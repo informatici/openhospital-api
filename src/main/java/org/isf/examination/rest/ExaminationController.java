@@ -44,7 +44,7 @@ public class ExaminationController {
 
     @PostMapping(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
-        Patient patient = patientBrowserManager.getPatient(newPatientExamination.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(newPatientExamination.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -67,7 +67,7 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not Found!", OHSeverityLevel.WARNING));
         }
 
-        Patient patient = patientBrowserManager.getPatient(dto.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(dto.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -82,7 +82,7 @@ public class ExaminationController {
     @GetMapping(value = "/examinations/defaultPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientExaminationDTO> getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
 
-        Patient patient = patientBrowserManager.getPatient(patId);
+        Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }

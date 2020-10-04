@@ -16,6 +16,7 @@ import org.isf.operation.mapper.OperationMapper;
 import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.operation.model.Operation;
 import org.isf.operation.model.OperationRow;
+import org.isf.opetype.model.OperationType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -140,14 +141,14 @@ public class OperationController {
 	}
 	
 	/**
-	 * get {@link Operation}s whose type matches specified string description
+	 * get {@link Operation}s whose {@link OperationType}'s description matches specified string
 	 * @return {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/operations/search/type", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationDTO>> getOperationsByDescription(@RequestParam String description) throws OHServiceException {
+	public ResponseEntity<List<OperationDTO>> getOperationByTypeDescription(@RequestParam String typeDescription) throws OHServiceException {
 		logger.info("Get operations for provided type description");
-		List<Operation> operations = operationManager.getOperation(description);
+		List<Operation> operations = operationManager.getOperationByTypeDescription(typeDescription);
 		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
 		if (operationDTOs.size() == 0) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationDTOs);

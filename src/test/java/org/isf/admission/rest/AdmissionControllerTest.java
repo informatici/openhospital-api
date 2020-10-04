@@ -140,7 +140,7 @@ public class AdmissionControllerTest {
 		Integer patientCode = 1;
 	
 		Patient patient = PatientHelper.setup(); 
-		when(patientManagerMock.getPatient(patientCode))
+		when(patientManagerMock.getPatientById(patientCode))
 			.thenReturn(patient);
 		
 		Integer id = 0;
@@ -193,7 +193,7 @@ public class AdmissionControllerTest {
 		Integer patientCode = 1;
 
 		Patient patient = PatientHelper.setup(); 
-		when(patientManagerMock.getPatient(patientCode))
+		when(patientManagerMock.getPatientById(patientCode))
 			.thenReturn(patient);
 		
 		ArrayList<Admission> admissions = AdmissionHelper.setupAdmissionList(2);
@@ -315,10 +315,10 @@ public class AdmissionControllerTest {
 
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
-		when(patientManagerMock.getPatient(body.getPatient().getCode()))
+		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
 		.thenReturn(patient);
 		
-		when(patientManagerMock.getPatient(body.getPatient().getCode()))
+		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
 		.thenReturn(patient);
 		
 		ArrayList<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);
@@ -374,10 +374,10 @@ public class AdmissionControllerTest {
 
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
-		when(patientManagerMock.getPatient(body.getPatient().getCode()))
+		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
 		.thenReturn(patient);
 		
-		when(patientManagerMock.getPatient(body.getPatient().getCode()))
+		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
 		.thenReturn(patient);
 		
 		ArrayList<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);

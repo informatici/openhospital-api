@@ -14,6 +14,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WardHelper {
 	
+	public static Ward setup() throws OHException {
+		TestWard testWard = new TestWard();
+		Ward ward = testWard.setup(false);
+		return ward;
+	}
+	
 	public static Ward setup(int id) throws OHException {
 		TestWard testWard = new TestWard();
 		Ward ward = testWard.setup(false);
