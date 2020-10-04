@@ -11,7 +11,6 @@ import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.model.Visit;
 import org.isf.visits.test.TestVisit;
 import org.isf.ward.data.WardHelper;
-import org.isf.ward.test.TestWard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

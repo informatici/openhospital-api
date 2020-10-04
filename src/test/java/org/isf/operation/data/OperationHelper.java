@@ -1,15 +1,9 @@
 package org.isf.operation.data;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.disease.data.DiseaseHelper;
-import org.isf.disease.model.Disease;
-import org.isf.disease.test.TestDisease;
-import org.isf.distype.model.DiseaseType;
-import org.isf.distype.test.TestDiseaseType;
 import org.isf.operation.model.Operation;
 import org.isf.operation.test.TestOperation;
 import org.isf.opetype.model.OperationType;

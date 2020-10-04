@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.accounting.model.Bill;
-import org.isf.accounting.model.BillPayments;
 import org.isf.accounting.test.TestBill;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;

@@ -5,18 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.accounting.data.BillHelper;
-import org.isf.accounting.model.Bill;
-import org.isf.accounting.test.TestBill;
-import org.isf.admtype.dto.AdmissionTypeDTO;
-import org.isf.admtype.test.TestAdmissionType;
 import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.model.AgeType;
 import org.isf.agetype.test.TestAgeType;
-import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
-import org.isf.priceslist.model.PriceList;
-import org.isf.priceslist.test.TestPriceList;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

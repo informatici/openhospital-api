@@ -9,8 +9,6 @@ import org.isf.admtype.mapper.AdmissionTypeMapper;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.admtype.test.TestAdmissionType;
 import org.isf.utils.exception.OHException;
-import org.isf.ward.data.WardHelper;
-import org.isf.ward.model.Ward;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

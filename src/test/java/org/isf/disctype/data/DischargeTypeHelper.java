@@ -7,8 +7,6 @@ import java.util.stream.IntStream;
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disctype.test.TestDischargeType;
-import org.isf.operation.data.OperationHelper;
-import org.isf.operation.model.Operation;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
