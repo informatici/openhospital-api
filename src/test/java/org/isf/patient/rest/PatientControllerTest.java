@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +160,7 @@ public class PatientControllerTest {
 	 * @throws Exception 
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_OHAPIException_BadRequest() throws Exception {
+	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
 		Integer code= 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
@@ -172,9 +173,8 @@ public class PatientControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(PatientHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
-			.andExpect(status().is4xxClientError())
-			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-			.andExpect(content().string(containsString("Patient is not created!")))
+			.andExpect(status().isCreated())
+			.andExpect(content().string(containsString(code.toString())))
 			.andReturn();
 		
 		//TODO Create OHCreateAPIException
@@ -215,7 +215,7 @@ public class PatientControllerTest {
 	 * @throws Exception 
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_existent_code_then_OK() throws Exception {
+	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
 		Integer code= 12345;
 		String request = "/patients/{code}";
 		PatientDTO newPatientDTO =  PatientHelper.setup(patientMapper);
@@ -231,8 +231,11 @@ public class PatientControllerTest {
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(PatientHelper.asJsonString(newPatientDTO)))
 			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(code.toString())));
+			.andDo(print())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isBadRequest()) 
+			.andExpect(content().string(containsString("Patient is not updated!")));
+			
 	}
 
 	/**
