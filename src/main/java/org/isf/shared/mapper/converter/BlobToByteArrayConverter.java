@@ -4,6 +4,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 import org.modelmapper.AbstractConverter;
+import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  */
 @Slf4j
+@Component
 public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
 
 	@Override
