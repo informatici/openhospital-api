@@ -22,12 +22,16 @@
 package org.isf.security;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.isf.security.jwt.TokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -45,6 +49,8 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 		this.tokenProvider = tokenProvider;
 	}
 
+	private final Logger logger = LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
+
     @Override
     public void onAuthenticationSuccess(
       HttpServletRequest request,
@@ -55,7 +61,8 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
         SavedRequest savedRequest
           = requestCache.getRequest(request, response);
 
-        response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
+        addSameSiteCookieAttribute(response);
+        // response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
         response.setStatus(200);
 
         if (savedRequest == null) {
@@ -76,4 +83,13 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 
     }
+
+    private HttpServletResponse addSameSiteCookieAttribute(HttpServletResponse response) {
+        Collection<String> header = response.getHeaders(HttpHeaders.SET_COOKIE);
+        logger.info(String.format("%s; %s", header, "SameSite=None; Secure"));
+        response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=None; Secure"));
+
+        return response;
+    }
+
 }
