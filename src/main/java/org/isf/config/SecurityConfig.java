@@ -84,26 +84,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	@Bean
+	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedHeader("*");
-        // config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
-        config.setAllowedMethods(Arrays.asList("*"));
-        // config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("*"));
-        config.setMaxAge(3600L);
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
+		CorsConfiguration config = new CorsConfiguration();
+		config.addAllowedHeader("*");
+		// config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
+		config.setAllowedMethods(Arrays.asList("*"));
+		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+		config.setAllowCredentials(true);
+		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setMaxAge(3600L);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+
+		return source;
+	}
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.sessionManagement()
-		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        http
 			.cors()
 			.and()
 			.csrf()
