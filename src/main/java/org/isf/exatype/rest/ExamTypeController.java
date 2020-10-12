@@ -68,9 +68,8 @@ public class ExamTypeController {
     public ResponseEntity newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
 
         ExamType examType = examTypeMapper.map2Model(newExamType);
-        boolean created = examTypeBrowserManager.newExamType(examType);
-
-        if (!created) {
+        ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
+        if (createdExamType == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
         }
 
@@ -88,7 +87,7 @@ public class ExamTypeController {
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
-        if (!examTypeBrowserManager.updateExamType(examType)) {
+        if (examTypeBrowserManager.updateExamType(examType) == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType is not updated!", OHSeverityLevel.ERROR));
         }
 

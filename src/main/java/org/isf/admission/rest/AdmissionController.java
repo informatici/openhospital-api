@@ -619,8 +619,8 @@ public class AdmissionController {
 				? updAdmission.getPatient().getFirstName() + ' ' + updAdmission.getPatient().getSecondName()
 				: updAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
-		boolean isUpdated = admissionManager.updateAdmission(updAdmission);
-		if (isUpdated) {
+		Admission isUpdatedAdmission = admissionManager.updateAdmission(updAdmission);
+		if (isUpdatedAdmission != null) {
 			return ResponseEntity.ok(updAdmission.getId());
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "Admission is not updated!", OHSeverityLevel.ERROR));

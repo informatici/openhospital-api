@@ -1,4 +1,4 @@
-/*
+ /*
  * Open Hospital (www.open-hospital.org)
  * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
@@ -69,7 +69,7 @@ public class SupplierController {
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
-		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO)) != null;
 		if (!isCreated) {
 			LOGGER.error("Supplier is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
@@ -90,7 +90,7 @@ public class SupplierController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Updating supplier...");
-		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO)) != null;
 		if (!isUpdated) {
 			LOGGER.error("Supplier is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));

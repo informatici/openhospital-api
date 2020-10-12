@@ -439,10 +439,8 @@ public class AdmissionControllerTest {
 		when(pregTraitTypeManagerMock.getPregnantTreatmentType())
 				.thenReturn(pregTTypes);
 
-		boolean isUpdated = true;
-
 		when(admissionManagerMock.updateAdmission(update))
-				.thenReturn(isUpdated);
+				.thenReturn(update);
 
         MvcResult result = this.mockMvc
 				.perform(put(request)

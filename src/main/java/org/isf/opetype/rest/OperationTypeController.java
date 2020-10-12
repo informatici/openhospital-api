@@ -74,13 +74,11 @@ public class OperationTypeController {
 	ResponseEntity<String> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
 		String code = operationTypeDTO.getCode();
 		LOGGER.info("Create operation Type {}", code);
-		boolean isCreated = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
-		OperationType opeTypeCreated = opeTypeManager.getOperationType().stream().filter(opetype -> opetype.getCode().equals(code))
-				.findFirst().orElse(null);
-		if (!isCreated || opeTypeCreated == null) {
+		OperationType isCreatedOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
+		if (isCreatedOperationType == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(opeTypeCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(isCreatedOperationType.getCode());
 	}
 
 	/**
@@ -97,8 +95,8 @@ public class OperationTypeController {
 		if (!opeTypeManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
 		}
-		boolean isUpdated = opeTypeManager.updateOperationType(opeType);
-		if (!isUpdated) {
+		OperationType isUpdatedOperationType = opeTypeManager.updateOperationType(opeType);
+		if (isUpdatedOperationType == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not updated!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(opeType.getCode());

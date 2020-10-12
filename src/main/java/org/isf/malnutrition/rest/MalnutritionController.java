@@ -71,8 +71,8 @@ public class MalnutritionController {
 	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> newMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
 		LOGGER.info("Creating a new malnutrition ...");
-		boolean isCreated = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
-		if (!isCreated) {
+		Malnutrition isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
+		if (isCreatedMalnutrition == null) {
 			LOGGER.info("Malnutrition is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created!", OHSeverityLevel.ERROR));
         }

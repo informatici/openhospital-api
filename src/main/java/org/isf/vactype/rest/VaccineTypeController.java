@@ -94,7 +94,7 @@ public class VaccineTypeController {
         LOGGER.info("Create vaccine type: {}", newVaccineType);
         boolean isCreated;
         try {
-            isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
+            isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType)) != null;
         }catch(OHDataIntegrityViolationException e){
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
         }
@@ -114,7 +114,7 @@ public class VaccineTypeController {
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
         LOGGER.info("Update vaccine type: {}", updateVaccineType);
-        boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
+        boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType)) != null;
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
         }

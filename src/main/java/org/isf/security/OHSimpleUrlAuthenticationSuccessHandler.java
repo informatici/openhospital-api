@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.isf.security.jwt.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -37,7 +38,13 @@ import org.springframework.util.StringUtils;
 public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
 	private RequestCache requestCache = new HttpSessionRequestCache();
-	 
+
+	private TokenProvider tokenProvider;
+
+	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
+		this.tokenProvider = tokenProvider;
+	}
+
     @Override
     public void onAuthenticationSuccess(
       HttpServletRequest request,

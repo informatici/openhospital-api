@@ -99,12 +99,11 @@ public class OperationController {
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "another operation has already been created with provided description and types!", OHSeverityLevel.ERROR));
 		}
-		boolean isCreated = operationManager.newOperation(mapper.map2Model(operationDTO));
-		Operation operationCreated = operationManager.getOperationByCode(code);
-		if (!isCreated || operationCreated == null) {
+		Operation isCreatedOperation = operationManager.newOperation(mapper.map2Model(operationDTO));
+		if (isCreatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(operationCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(isCreatedOperation.getCode());
 	}
 
 	/**
@@ -121,8 +120,8 @@ public class OperationController {
 		if (!operationManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		}
-		boolean isUpdated = operationManager.updateOperation(operation);
-		if (!isUpdated) {
+		Operation isUpdatedOperation = operationManager.updateOperation(operation);
+		if (isUpdatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(operation.getCode());

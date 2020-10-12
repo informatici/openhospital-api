@@ -104,7 +104,7 @@ public class ExamController {
 
         Exam exam = examMapper.map2Model(updateExam);
         exam.setExamtype(examType);
-        if (!examManager.updateExam(exam)) {
+        if (examManager.updateExam(exam) == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam is not updated!", OHSeverityLevel.ERROR));
         }
 

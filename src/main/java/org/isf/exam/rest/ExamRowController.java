@@ -81,8 +81,8 @@ public class ExamRowController {
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
         examRow.setExamCode(exam);
 
-        boolean isCreated = examRowBrowsingManager.newExamRow(examRow);
-        if (!isCreated) {
+        ExamRow isCreatedExamRow = examRowBrowsingManager.newExamRow(examRow);
+        if (isCreatedExamRow == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not created!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(true);
