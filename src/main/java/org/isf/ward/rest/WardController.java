@@ -175,15 +175,15 @@ public class WardController {
     /**
      * Check if the Maternity Ward with code "M" exists or not.
      *
-     * @param createIfNotExits if {@code true} it will create the missing {@link Ward} (with default values)
+     * @param createIfNotExist if {@code true} it will create the missing {@link Ward} (with default values)
      *                         and will return {@link true}
      * @return <code>true</code> if the Maternity {@link Ward} exists, <code>false</code> otherwise.
      * @throws OHServiceException
      */
-    @GetMapping(value = "/wards/check/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExits) throws OHServiceException {
+    @GetMapping(value = "/wards/check-or-create/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExist) throws OHServiceException {
         logger.info("Check ward maternity code");
-        boolean check = wardManager.maternityControl(createIfNotExits);
+        boolean check = wardManager.maternityControl(createIfNotExist);
         return ResponseEntity.ok(check);
     }
 

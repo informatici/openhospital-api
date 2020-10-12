@@ -72,7 +72,7 @@ public class VaccineController {
      * @return NO_CONTENT if there aren't vaccines related to code, List<VaccineDTO> otherwise
      * @throws OHServiceException
      */
-    @GetMapping(value = "/vaccines/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
         logger.info("Get vaccine by code:" + vaccineTypeCode);
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
