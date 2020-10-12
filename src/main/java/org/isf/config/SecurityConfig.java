@@ -55,8 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 
 		CorsConfiguration config = new CorsConfiguration();
 		config.addAllowedHeader("*");
@@ -66,13 +65,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		config.setAllowCredentials(true);
 		config.setAllowedOrigins(Arrays.asList("*"));
 		config.setMaxAge(3600L);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
+
+		return source;
 	}
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.cors()
+        http
+			.cors()
 			.and()
 			.csrf()
 				.disable()
@@ -190,7 +193,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
           	.logout()
 				.logoutUrl("/auth/logout")
-          			.permitAll();
+				.permitAll();
     }
     
     
