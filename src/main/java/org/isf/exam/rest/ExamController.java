@@ -113,7 +113,7 @@ public class ExamController {
     }
 
 
-    @GetMapping(value = "/exams/{description:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/exams/description/{description:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ExamDTO>> getExams(@PathVariable String description) throws OHServiceException {
         List<ExamDTO> exams = examMapper.map2DTOList(examManager.getExams(description));
 
