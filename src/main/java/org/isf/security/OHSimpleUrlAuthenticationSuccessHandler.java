@@ -58,8 +58,8 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
     private HttpServletResponse addSameSiteCookieAttribute(HttpServletResponse response) {
         Collection<String> header = response.getHeaders(HttpHeaders.SET_COOKIE);
-        logger.info(String.format("%s; %s", header, "SameSite=None; Secure"));
-        response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=None; Secure"));
+        logger.info(String.format("%s; %s", header, "SameSite=None; Secure; HttpOnly"));
+        response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=None; Secure; HttpOnly"));
 
         return response;
     }
