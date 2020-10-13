@@ -33,8 +33,6 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
         SavedRequest savedRequest
           = requestCache.getRequest(request, response);
 
-        addSameSiteCookieAttribute(response);
-        // response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
         response.setStatus(200);
 
         if (savedRequest == null) {
@@ -54,14 +52,6 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
         authentication.getDetails();
 
 
-    }
-
-    private HttpServletResponse addSameSiteCookieAttribute(HttpServletResponse response) {
-        Collection<String> header = response.getHeaders(HttpHeaders.SET_COOKIE);
-        logger.info(String.format("%s; %s", header, "SameSite=None; Secure; HttpOnly"));
-        response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=None; Secure; HttpOnly"));
-
-        return response;
     }
 
 }
