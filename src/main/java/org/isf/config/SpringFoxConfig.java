@@ -30,7 +30,9 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 
+import io.swagger.models.auth.In;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -77,7 +79,7 @@ public class SpringFoxConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(Arrays.asList(jwtSecurityContext()))
-                .securitySchemes(securitySchemes);
+                .securitySchemes(Arrays.asList(apiKey()));
     }
 
     private SecurityContext jwtSecurityContext() {
@@ -90,6 +92,15 @@ public class SpringFoxConfig {
 
     List<SecurityReference> defaultAuth() {
         return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
+    }
+
+
+    private SecurityReference apiKeyReference() {
+        return new SecurityReference("Authorization", new AuthorizationScope[0]);
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("Authorization", HttpHeaders.AUTHORIZATION, In.HEADER.name());
     }
 
 }
