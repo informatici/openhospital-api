@@ -23,7 +23,7 @@ public class LoginApi {
      * Implemented by Spring Security
      */
     @ApiOperation(value = "Login", notes = "Login with the given credentials.")
-    @ApiResponses({@ApiResponse(code = 200, message = "")})
+    @ApiResponses({@ApiResponse(code = 200, message = "", response = LoginResponse.class)})
     @PostMapping(value = "/auth/login")
     void login(
         @RequestParam("username") String username,

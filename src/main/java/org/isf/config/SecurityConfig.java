@@ -2,6 +2,8 @@ package org.isf.config;
 
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
+import org.isf.security.jwt.JWTConfigurer;
+import org.isf.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +21,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
@@ -30,10 +31,16 @@ import java.util.Arrays;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
     private UserDetailsService userDetailsService;
+
+	private final TokenProvider tokenProvider;
 	
 	@Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-	
+
+	public SecurityConfig(TokenProvider tokenProvider) {
+		this.tokenProvider = tokenProvider;
+	}
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth)
 	  throws Exception {
@@ -189,13 +196,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             		.successHandler(successHandler())
             		.failureHandler(failureHandler())
             .and()
+			.apply(securityConfigurerAdapter())
+			.and()
             .httpBasic()
             .and()
           	.logout()
 				.logoutUrl("/auth/logout")
 				.permitAll();
     }
-    
+
+	private JWTConfigurer securityConfigurerAdapter() {
+		return new JWTConfigurer(tokenProvider);
+	}
     
     @Bean
 	public SimpleUrlAuthenticationFailureHandler failureHandler() {
@@ -204,6 +216,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Bean
 	public SimpleUrlAuthenticationSuccessHandler successHandler() {
-    	return new OHSimpleUrlAuthenticationSuccessHandler();
+    	return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
     }
 }
