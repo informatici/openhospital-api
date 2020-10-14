@@ -1,7 +1,9 @@
 package org.isf.config;
 
+import io.swagger.models.auth.In;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
@@ -18,8 +20,6 @@ import java.util.List;
 public class SpringFoxConfig {
     @Bean
     public Docket apiDocket() {
-        List<SecurityScheme> securitySchemes = Arrays.asList(basicAuthScheme());
-        securitySchemes.add(new ApiKey("jwt", "Authorization", "header"));
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.isf"))
@@ -27,12 +27,12 @@ public class SpringFoxConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(Arrays.asList(actuatorSecurityContext()))
-                .securitySchemes(securitySchemes);
+                .securitySchemes(Arrays.asList(apiKey()));
     }
 
     private SecurityContext actuatorSecurityContext() {
         return SecurityContext.builder()
-                .securityReferences(Arrays.asList(basicAuthReference()))
+                .securityReferences(Arrays.asList(apiKeyReference()))
                 .forPaths(PathSelectors.ant("/patients/**"))
                 .build();
     }
@@ -44,4 +44,13 @@ public class SpringFoxConfig {
     private SecurityReference basicAuthReference() {
         return new SecurityReference("basicAuth", new AuthorizationScope[0]);
     }
+
+    private SecurityReference apiKeyReference() {
+        return new SecurityReference("Authorization", new AuthorizationScope[0]);
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("Authorization", HttpHeaders.AUTHORIZATION, In.HEADER.name());
+    }
+
 }
