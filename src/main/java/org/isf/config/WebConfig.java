@@ -1,13 +1,14 @@
 package org.isf.config;
 
-import org.springframework.boot.web.servlet.ServletContextInitializer;
-import org.springframework.context.annotation.Configuration;
+import java.util.Collections;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
-import java.util.Collections;
+
+import org.springframework.boot.web.servlet.ServletContextInitializer;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class WebConfig implements ServletContextInitializer {

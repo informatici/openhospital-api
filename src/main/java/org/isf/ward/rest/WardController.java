@@ -45,9 +45,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class WardController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(WardController.class);
@@ -183,7 +184,7 @@ public class WardController {
      * @throws OHServiceException
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<Boolean> checkWardCode(@PathVariable(value = "code") String code) throws OHServiceException {
 	    LOGGER.info("Check ward code: {}", code);
         boolean check = wardManager.isCodePresent(code);
         return ResponseEntity.ok(check);

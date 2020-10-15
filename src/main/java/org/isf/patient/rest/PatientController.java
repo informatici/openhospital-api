@@ -21,12 +21,7 @@
  */
 package org.isf.patient.rest;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -38,7 +33,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,9 +47,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class PatientController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientController.class);

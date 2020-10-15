@@ -60,6 +60,9 @@ public class SpringFoxConfig {
 
         ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
 
+        String host = System.getProperty("api.host", "localhost:8080");
+        String protocol = System.getProperty("api.protocol", "http");
+
         Set<String> protocols = new HashSet<>();
         protocols.add(protocol);
 
