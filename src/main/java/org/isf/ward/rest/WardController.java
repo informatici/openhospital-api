@@ -29,7 +29,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class WardController {
 
     private final Logger logger = LoggerFactory.getLogger(WardController.class);
@@ -166,7 +166,7 @@ public class WardController {
      * @throws OHServiceException
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<Boolean> checkWardCode(@PathVariable(value = "code") String code) throws OHServiceException {
         logger.info("Check ward code: " + code);
         boolean check = wardManager.codeControl(code);
         return ResponseEntity.ok(check);

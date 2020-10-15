@@ -32,7 +32,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class SmsController {
 	private final Logger logger = LoggerFactory.getLogger(SmsController.class);
 	@Autowired

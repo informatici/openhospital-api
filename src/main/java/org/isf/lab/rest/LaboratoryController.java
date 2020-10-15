@@ -36,7 +36,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 @RestController
-@Api(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class LaboratoryController {
 
     private final Logger logger = LoggerFactory.getLogger(LaboratoryController.class);

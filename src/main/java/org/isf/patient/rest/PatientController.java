@@ -34,7 +34,7 @@ import io.swagger.annotations.Authorization;
 
 
 @RestController
-@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class PatientController {
 
 	protected static final String DEFAULT_PAGE_SIZE = "80";

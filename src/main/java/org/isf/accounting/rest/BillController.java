@@ -45,7 +45,7 @@ import io.swagger.annotations.Authorization;
 
 
 @RestController
-@Api(value="/bills",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/bills",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class BillController {
 	
 	@Autowired

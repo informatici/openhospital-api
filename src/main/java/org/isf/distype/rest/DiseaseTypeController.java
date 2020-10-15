@@ -33,7 +33,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class DiseaseTypeController {
 	@Autowired
 	private DiseaseTypeBrowserManager diseaseTypeManager;
