@@ -30,12 +30,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.isf.security.jwt.TokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -59,6 +63,15 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
         SavedRequest savedRequest
           = requestCache.getRequest(request, response);
 
+
+        //response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
+        loginResponse.setDisplayName(authentication.getName());
+        ObjectMapper mapper = new ObjectMapper();
+
+        response.getWriter().append(mapper.writeValueAsString(loginResponse));
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(200);
 
         if (savedRequest == null) {
