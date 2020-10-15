@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.isf.security.jwt.TokenProvider;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -42,6 +44,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
         ObjectMapper mapper = new ObjectMapper();
 
         response.getWriter().append(mapper.writeValueAsString(loginResponse));
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(200);
 
         if (savedRequest == null) {
