@@ -1,9 +1,10 @@
 package org.isf.admtype.dto;
 
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Not used anymore
@@ -13,7 +14,12 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class AdmissionTypeDTO {
-    private String code;
-    @NotNull
+	
+	@NotNull
+	@ApiModelProperty(notes = "code of the admission type", example="A", position = 1)
+	private String code;
+	
+	@NotNull
+	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
     private String description;
 }
