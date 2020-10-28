@@ -10,6 +10,7 @@ import java.util.Date;
 @ApiModel(description = "Class representing a patient")
 public class PatientDTO {
 
+	@ApiModelProperty(notes = "Patient type code")
 	private Integer code;
 
 	@NotNull

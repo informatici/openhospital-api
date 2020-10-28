@@ -61,6 +61,7 @@ public class PatientController {
     ResponseEntity<Integer> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
         String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
         logger.info("Create patient "  + name);
+        newPatient.setCode(null);
         boolean isCreated = patientManager.newPatient(patientMapper.map2Model(newPatient));
         Patient patient = patientManager.getPatient(name);
         if(!isCreated || patient == null){
