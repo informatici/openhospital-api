@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.vactype.rest;
 
 import static org.hamcrest.Matchers.containsString;
@@ -38,47 +59,48 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VaccineTypeControllerTest {
+
 	private final Logger logger = LoggerFactory.getLogger(VaccineTypeControllerTest.class);
-	
+
 	@Mock
 	protected VaccineTypeBrowserManager vaccineTypeBrowserManagerMock;
-	
+
 	protected VaccineTypeMapper vaccineTypeMapper = new VaccineTypeMapper();
-	
+
 	private MockMvc mockMvc;
-		
+
 	@Before
-    public void setup() {
-    	MockitoAnnotations.initMocks(this);
-    	this.mockMvc = MockMvcBuilders
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineTypeController(vaccineTypeBrowserManagerMock, vaccineTypeMapper))
-   				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-   				.build();
-    	ModelMapper modelMapper = new ModelMapper();
+				.setControllerAdvice(new OHResponseEntityExceptionHandler())
+				.build();
+		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(vaccineTypeMapper, "modelMapper", modelMapper);
-    }
+	}
 
 	@Test
 	public void testGetVaccineType_200() throws JsonProcessingException, Exception {
 		String request = "/vaccinetype";
-		
+
 		ArrayList<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
 
 		when(vaccineTypeBrowserManagerMock.getVaccineType())
-			.thenReturn(vaccinesTypeList);
-		
+				.thenReturn(vaccinesTypeList);
+
 		List<VaccineTypeDTO> expectedVaccineTypeDTOs = vaccineTypeMapper.map2DTOList(vaccinesTypeList);
-		
+
 		MvcResult result = this.mockMvc
-			.perform(get(request))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVaccineTypeDTOs))))
-			.andReturn();
-		
+				.perform(get(request))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVaccineTypeDTOs))))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -86,22 +108,22 @@ public class VaccineTypeControllerTest {
 	public void testNewVaccineType_200() throws Exception {
 		String request = "/vaccinetype";
 		String code = "ZZ";
-		VaccineTypeDTO  body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
-		
+		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
+
 		boolean isCreated = true;
 		when(vaccineTypeBrowserManagerMock.newVaccineType(vaccineTypeMapper.map2Model(body)))
-			.thenReturn(isCreated);
-		
+				.thenReturn(isCreated);
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(VaccineTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())	
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(VaccineTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -109,22 +131,22 @@ public class VaccineTypeControllerTest {
 	public void testUpdateVaccineType_200() throws Exception {
 		String request = "/vaccinetype";
 		String code = "ZZ";
-		VaccineTypeDTO  body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
+		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
 
 		boolean isUpdated = true;
 		when(vaccineTypeBrowserManagerMock.updateVaccineType(vaccineTypeMapper.map2Model(body)))
-			.thenReturn(isUpdated);
-		
+				.thenReturn(isUpdated);
+
 		MvcResult result = this.mockMvc
-			.perform(put(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(VaccineTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andReturn();
-		
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(VaccineTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -132,48 +154,48 @@ public class VaccineTypeControllerTest {
 	public void testDeleteVaccineType_200() throws Exception {
 		String request = "/vaccinetype/{code}";
 		String basecode = "0";
-		
+
 		VaccineType vaccineType = VaccineTypeHelper.setup(basecode);
-		VaccineTypeDTO  body = vaccineTypeMapper.map2DTO(vaccineType);
+		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(vaccineType);
 		String code = body.getCode();
-		
+
 		when(vaccineTypeBrowserManagerMock.findVaccineType(code))
-			.thenReturn(vaccineType);
+				.thenReturn(vaccineType);
 
 		when(vaccineTypeBrowserManagerMock.deleteVaccineType(vaccineTypeMapper.map2Model(body)))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-		
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(isDeleted)))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testCheckVaccineTypeCode_200() throws Exception {
-	String request = "/vaccinetype/check/{code}";
-		
+		String request = "/vaccinetype/check/{code}";
+
 		String code = "AA";
 		VaccineType vaccineType = VaccineTypeHelper.setup(code);
 
 		when(vaccineTypeBrowserManagerMock.codeControl(vaccineType.getCode()))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string("true"))
-			.andReturn();
-		
-		logger.debug("result: {}", result);	
+				.perform(get(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string("true"))
+				.andReturn();
+
+		logger.debug("result: {}", result);
 	}
 
 }

@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.distype.rest;
 
 import static org.hamcrest.Matchers.containsString;
@@ -38,77 +59,74 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseTypeControllerTest {
+
 	private final Logger logger = LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
-	
+
 	@Mock
 	protected DiseaseTypeBrowserManager diseaseTypeBrowserManager;
-	
+
 	protected DiseaseTypeMapper diseaseTypeMapper = new DiseaseTypeMapper();
 
 	private MockMvc mockMvc;
-	
-	
+
 	@Before
-    public void setup() {
-    	MockitoAnnotations.initMocks(this);
-    	this.mockMvc = MockMvcBuilders
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DiseaseTypeController(diseaseTypeBrowserManager, diseaseTypeMapper))
-   				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-   				.build();
-    	ModelMapper modelMapper = new ModelMapper();
+				.setControllerAdvice(new OHResponseEntityExceptionHandler())
+				.build();
+		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(diseaseTypeMapper, "modelMapper", modelMapper);
-    }
-	
+	}
 
 	@Test
 	public void testGetAllDiseaseTypes_200() throws JsonProcessingException, Exception {
 		String request = "/diseasetypes";
-		
+
 		ArrayList<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
-		
-		List<DiseaseTypeDTO> parsedResults=diseaseTypeMapper.map2DTOList(results);
-		
+
+		List<DiseaseTypeDTO> parsedResults = diseaseTypeMapper.map2DTOList(results);
+
 		when(diseaseTypeBrowserManager.getDiseaseType())
-			.thenReturn(results);
-				
+				.thenReturn(results);
+
 		MvcResult result = this.mockMvc
 				.perform(get(request))
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())	
+				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(parsedResults))))
 				.andReturn();
-			
-			logger.debug("result: {}", result);
+
+		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testNewDiseaseType_201() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
-		DiseaseTypeDTO  body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
-		
-		
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
+
 		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
 				.thenReturn(false);
-				
+
 		boolean isCreated = true;
 		when(diseaseTypeBrowserManager.newDiseaseType(diseaseTypeMapper.map2Model(body)))
-			.thenReturn(isCreated);
-		
-	
+				.thenReturn(isCreated);
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(DiseaseTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())	
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DiseaseTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -116,54 +134,52 @@ public class DiseaseTypeControllerTest {
 	public void testUpdateDiseaseType_200() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
-		
-		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
-		DiseaseTypeDTO  body = diseaseTypeMapper.map2DTO(diseaseType);
 
-		
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
+
 		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		boolean isUpdated = true;
 		when(diseaseTypeBrowserManager.updateDiseaseType(diseaseTypeMapper.map2Model(body)))
-			.thenReturn(isUpdated);
-		
+				.thenReturn(isUpdated);
+
 		MvcResult result = this.mockMvc
-			.perform(put(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(DiseaseTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andReturn();
-		
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DiseaseTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testDeleteDiseaseType_200() throws Exception {
 		String request = "/diseasetypes/{code}";
-		
-		DiseaseTypeDTO  body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
+
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
 		String code = body.getCode();
-		
+
 		when(diseaseTypeBrowserManager.getDiseaseType())
-		.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1));
-		
-	
+				.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1));
+
 		when(diseaseTypeBrowserManager.deleteDiseaseType(diseaseTypeMapper.map2Model(body)))
-		.thenReturn(true);
-		
+				.thenReturn(true);
+
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-		
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(isDeleted)))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 

@@ -21,6 +21,8 @@
  */
 package org.isf.config;
 
+import java.util.Arrays;
+
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +43,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.Arrays;
 
 
 @Configuration

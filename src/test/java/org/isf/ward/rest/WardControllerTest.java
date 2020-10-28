@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.ward.rest;
 
 import static org.hamcrest.Matchers.containsString;
@@ -38,28 +59,29 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WardControllerTest {
-private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
-	
+
+	private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
+
 	@Mock
 	protected WardBrowserManager wardBrowserManagerMock;
-	
+
 	protected WardMapper wardMapper = new WardMapper();
-	
+
 	private MockMvc mockMvc;
-		
+
 	@Before
-    public void setup() {
-    	MockitoAnnotations.initMocks(this);
-    	this.mockMvc = MockMvcBuilders
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new WardController(wardBrowserManagerMock, wardMapper))
-   				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-   				.build();
-    	ModelMapper modelMapper = new ModelMapper();
+				.setControllerAdvice(new OHResponseEntityExceptionHandler())
+				.build();
+		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(wardMapper, "modelMapper", modelMapper);
-    }
-	
+	}
+
 	@Test
 	public void testGetWards_200() throws JsonProcessingException, Exception {
 		String request = "/wards";
@@ -67,18 +89,18 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
 
 		when(wardBrowserManagerMock.getWards())
-			.thenReturn(wardList);
-		
+				.thenReturn(wardList);
+
 		List<WardDTO> expectedWardDTOs = wardMapper.map2DTOList(wardList);
-		
+
 		MvcResult result = this.mockMvc
-			.perform(get(request))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
-			.andReturn();
-		
+				.perform(get(request))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -89,19 +111,19 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
 
 		when(wardBrowserManagerMock.getWardsNoMaternity()) //TODO OP-6 BUG (CORE) on WardIoOperationRepository.java line 15 about method name
-			.thenReturn(wardList);
-		
+				.thenReturn(wardList);
+
 		List<WardDTO> expectedWardDTOs = wardMapper.map2DTOList(wardList);
-		
+
 		MvcResult result = this.mockMvc
-			.perform(get(request))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
-			// TODO assert that all wards on list are WRD_ID_A <> M 
-			.andReturn();
-		
+				.perform(get(request))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
+				// TODO assert that all wards on list are WRD_ID_A <> M
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -110,25 +132,25 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 		String request = "/wards/occupation/{code}";
 
 		Integer code = 4;
-		
+
 		Ward ward = WardHelper.setup(code);
 
 		Integer numberOfPatients = 6;
 
 		when(wardBrowserManagerMock.findWard(ward.getCode()))
-		.thenReturn(ward);
-		
+				.thenReturn(ward);
+
 		when(wardBrowserManagerMock.getCurrentOccupation(ward))
-			.thenReturn(numberOfPatients);
-		
+				.thenReturn(numberOfPatients);
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, ward.getCode()))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(numberOfPatients.toString())))
-			.andReturn();
-		
+				.perform(get(request, ward.getCode()))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(numberOfPatients.toString())))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -136,22 +158,22 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 	public void testNewWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO  body = wardMapper.map2DTO(WardHelper.setup(code));
-		
+		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
+
 		boolean isCreated = true;
 		when(wardBrowserManagerMock.newWard(wardMapper.map2Model(body)))
-			.thenReturn(isCreated);
-		
+				.thenReturn(isCreated);
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(WardHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(WardHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -159,22 +181,22 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 	public void testUpdateWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO  body = wardMapper.map2DTO(WardHelper.setup(code));
+		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
 
 		boolean isUpdated = true;
 		when(wardBrowserManagerMock.updateWard(wardMapper.map2Model(body)))
-			.thenReturn(isUpdated);
-		
+				.thenReturn(isUpdated);
+
 		MvcResult result = this.mockMvc
-			.perform(put(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(WardHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-		
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(WardHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -182,89 +204,90 @@ private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
 	public void testDeleteWard() throws Exception {
 		String request = "/wards/{code}";
 		int basecode = 1;
-		
+
 		Ward ward = WardHelper.setup(basecode);
-		WardDTO  body = wardMapper.map2DTO(ward);
+		WardDTO body = wardMapper.map2DTO(ward);
 		String code = body.getCode();
-		
+
 		when(wardBrowserManagerMock.findWard(code))
-			.thenReturn(ward);
+				.thenReturn(ward);
 
 		when(wardBrowserManagerMock.deleteWard(wardMapper.map2Model(body)))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-		
-		logger.debug("result: {}", result);	}
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(isDeleted)))
+				.andReturn();
+
+		logger.debug("result: {}", result);
+	}
 
 	@Test
 	public void testCheckWardCode() throws Exception {
 		String request = "/wards/check/{code}";
-		
+
 		int basecode = 1;
-		
+
 		Ward ward = WardHelper.setup(basecode);
-		
+
 		String code = ward.getCode();
 
 		when(wardBrowserManagerMock.codeControl(ward.getCode()))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string("true"))
-			.andReturn();
-		
+				.perform(get(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string("true"))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testCheckWardMaternityCode_true_200() throws Exception {
 		String request = "/wards/check/maternity/{createIfNotExist}";
-		
+
 		Boolean createIfNotExist = true;
-	
+
 		when(wardBrowserManagerMock.maternityControl(createIfNotExist))
-			.thenReturn(createIfNotExist);
-		
+				.thenReturn(createIfNotExist);
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, createIfNotExist))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(createIfNotExist.toString()))
-			.andReturn();
-		
+				.perform(get(request, createIfNotExist))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(createIfNotExist.toString()))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
-	
+
 	@Test
 	public void testCheckWardMaternityCode_false_200() throws Exception {
 		String request = "/wards/check/maternity/{createIfNotExist}";
-		
+
 		Boolean createIfNotExist = false;
-	
+
 		when(wardBrowserManagerMock.maternityControl(createIfNotExist))
-			.thenReturn(createIfNotExist);
-		
+				.thenReturn(createIfNotExist);
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, createIfNotExist))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andExpect(content().string(createIfNotExist.toString()))
-			.andReturn();
-		
+				.perform(get(request, createIfNotExist))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(createIfNotExist.toString()))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 

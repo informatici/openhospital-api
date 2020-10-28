@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.visits.rest;
 
 import static org.hamcrest.Matchers.containsString;
@@ -37,27 +58,28 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VisitsControllerTest {
-private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class);
-	
+
+	private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class);
+
 	@Mock
 	protected VisitManager visitManagerMock;
-	
+
 	protected VisitMapper visitMapper = new VisitMapper();
-	
+
 	private MockMvc mockMvc;
-		
+
 	@Before
-    public void setup() {
-    	MockitoAnnotations.initMocks(this);
-    	this.mockMvc = MockMvcBuilders
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VisitsController(visitManagerMock, visitMapper))
-   				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-   				.build();
-    	ModelMapper modelMapper = new ModelMapper();
+				.setControllerAdvice(new OHResponseEntityExceptionHandler())
+				.build();
+		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(visitMapper, "modelMapper", modelMapper);
-    }
+	}
 
 	@Test
 	public void testGetVisit_200() throws JsonProcessingException, Exception {
@@ -67,18 +89,18 @@ private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class
 		ArrayList<Visit> visitsList = VisitHelper.setupVisitList(4);
 
 		when(visitManagerMock.getVisits(patID))
-			.thenReturn(visitsList);
-		
+				.thenReturn(visitsList);
+
 		List<VisitDTO> expectedVisitsDTOs = visitMapper.map2DTOList(visitsList);
-		
+
 		MvcResult result = this.mockMvc
-			.perform(get(request, patID))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVisitsDTOs))))
-			.andReturn();
-		
+				.perform(get(request, patID))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVisitsDTOs))))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -86,68 +108,68 @@ private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class
 	public void testNewVisit_201() throws Exception {
 		String request = "/visit";
 		int id = 1;
-		VisitDTO  body = visitMapper.map2DTO(VisitHelper.setup(id));
+		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(id));
 
 		when(visitManagerMock.newVisit(visitMapper.map2Model(body)))
-			.thenReturn(visitMapper.map2Model(body));
-		
+				.thenReturn(visitMapper.map2Model(body));
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(VisitHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())	
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(VisitHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testNewVisits_201() throws Exception {
 		String request = "/visits";
-		
+
 		ArrayList<Visit> visitsList = VisitHelper.setupVisitList(4);
 
 		List<VisitDTO> body = visitMapper.map2DTOList(visitsList);
-	
+
 		Boolean isCreated = true;
 		when(visitManagerMock.newVisits(visitsList))
-			.thenReturn(isCreated);
-		
+				.thenReturn(isCreated);
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(VisitHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString(isCreated.toString())))
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(VisitHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andExpect(content().string(containsString(isCreated.toString())))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testDeleteVisitsRelatedToPatient_200() throws Exception {
 		String request = "/visit/{patId}";
-	
+
 		int id = 1;
-		
+
 		Boolean isDeleted = true;
 		when(visitManagerMock.deleteAllVisits(id))
-			.thenReturn(isDeleted);
-		
+				.thenReturn(isDeleted);
+
 		MvcResult result = this.mockMvc
-			.perform(delete(request, id))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(isDeleted.toString())))
-			.andReturn();
-		
+				.perform(delete(request, id))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(isDeleted.toString())))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
