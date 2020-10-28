@@ -31,7 +31,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Class representing a patient")
 public class PatientDTO {
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(notes = "Patient type code")
 	private Integer code;
 
 	@NotNull
