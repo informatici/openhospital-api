@@ -32,8 +32,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,7 +45,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/deliveryresulttype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryResultTypeController {
@@ -57,8 +57,6 @@ public class DeliveryResultTypeController {
 	
 	@Autowired
 	protected DeliveryResultTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeController.class);
 
 	public DeliveryResultTypeController(DeliveryResultTypeBrowserManager dlvrrestManager, DeliveryResultTypeMapper deliveryResultTypeMapper) {
 		this.dlvrrestManager = dlvrrestManager;
@@ -75,7 +73,7 @@ public class DeliveryResultTypeController {
 	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
-		logger.info("Create Delivery result type " + code);
+		log.info("Create Delivery result type " + code);
 		boolean isCreated = dlvrrestManager
 				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
@@ -100,7 +98,7 @@ public class DeliveryResultTypeController {
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
-		logger.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
+		log.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
 			throw new OHAPIException(
@@ -120,7 +118,7 @@ public class DeliveryResultTypeController {
 	 */
 	@GetMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
-		logger.info("Get all Delivery result types ");
+		log.info("Get all Delivery result types ");
 		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
 		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = mapper.map2DTOList(dlvrrestissionTypes);
 		if (dlvrrestTypeDTOs.size() == 0) {
@@ -139,7 +137,7 @@ public class DeliveryResultTypeController {
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
 			throws OHServiceException {
-		logger.info("Delete Delivery result type code:" + code);
+		log.info("Delete Delivery result type code:" + code);
 		boolean isDeleted = false;
 		if (dlvrrestManager.codeControl(code)) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();

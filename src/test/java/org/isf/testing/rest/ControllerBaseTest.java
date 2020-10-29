@@ -22,12 +22,11 @@
 package org.isf.testing.rest;
 
 import org.isf.accounting.rest.BillControllerTest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ControllerBaseTest {
-
-	protected final Logger logger = LoggerFactory.getLogger(BillControllerTest.class);
 
 	public ControllerBaseTest() {
 		super();

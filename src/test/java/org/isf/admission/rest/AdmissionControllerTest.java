@@ -71,8 +71,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -80,9 +78,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class AdmissionControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(AdmissionControllerTest.class);
+@Slf4j
+public class AdmissionControllerTest {
 
 	@Mock
 	private AdmissionBrowserManager admissionManagerMock;
@@ -152,7 +151,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -179,7 +178,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -204,7 +203,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(amittedPatients)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -230,7 +229,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(admissionMapper.map2DTOList(admissions)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -255,7 +254,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(nextYProg.toString())))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -280,7 +279,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(bed.toString())))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -357,7 +356,7 @@ public class AdmissionControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -421,7 +420,7 @@ public class AdmissionControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

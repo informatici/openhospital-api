@@ -32,8 +32,6 @@ import org.isf.ward.dto.WardDTO;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
 import org.isf.ward.model.Ward;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,12 +46,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class WardController {
-
-    private final Logger logger = LoggerFactory.getLogger(WardController.class);
 
     @Autowired
     protected WardBrowserManager wardManager;
@@ -74,7 +72,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWards() throws OHServiceException {
-        logger.info("Get wards");
+        log.info("Get wards");
         ArrayList<Ward> wards = wardManager.getWards();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.size() == 0) {
@@ -92,7 +90,7 @@ public class WardController {
      */
     @GetMapping(value = "/wardsNoMaternity", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWardsNoMaternity() throws OHServiceException {
-        logger.info("Get wards no maternity");
+        log.info("Get wards no maternity");
         ArrayList<Ward> wards = wardManager.getWardsNoMaternity();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.size() == 0) {
@@ -111,7 +109,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards/occupation/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> getCurrentOccupation(@PathVariable String code) throws OHServiceException {
-    	logger.info("Get current occupation ward code: {}", code);
+    	log.info("Get current occupation ward code: {}", code);
         Ward ward = wardManager.findWard(code);
         Integer numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
@@ -130,7 +128,7 @@ public class WardController {
      */
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newWard(@RequestBody WardDTO newWard) throws OHServiceException {
-        logger.info("Create Ward: " + newWard);
+        log.info("Create Ward: " + newWard);
         boolean isCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
@@ -147,7 +145,7 @@ public class WardController {
      */
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
-        logger.info("Update ward with code: " + updateWard.getCode());
+        log.info("Update ward with code: " + updateWard.getCode());
         boolean isUpdated = wardManager.updateWard(mapper.map2Model(updateWard));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
@@ -165,7 +163,7 @@ public class WardController {
      */
     @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteWard(@PathVariable String code) throws OHServiceException {
-        logger.info("Delete Ward with code: {}", code);
+        log.info("Delete Ward with code: {}", code);
         boolean isDeleted = false;
         Ward ward = wardManager.findWard(code);
         if (ward!=null){
@@ -188,7 +186,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
-        logger.info("Check ward code: " + code);
+        log.info("Check ward code: " + code);
         boolean check = wardManager.codeControl(code);
         return ResponseEntity.ok(check);
     }
@@ -203,7 +201,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards/check/maternity/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExist) throws OHServiceException {
-        logger.info("Check ward maternity code");
+        log.info("Check ward maternity code");
         boolean check = wardManager.maternityControl(createIfNotExist);
         return ResponseEntity.ok(check);
     }

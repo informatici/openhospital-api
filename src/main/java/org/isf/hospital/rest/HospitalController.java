@@ -29,8 +29,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,12 +41,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class HospitalController {
-
-    private final Logger logger = LoggerFactory.getLogger(HospitalController.class);
 
     @Autowired
     private HospitalBrowsingManager hospitalBrowsingManager;

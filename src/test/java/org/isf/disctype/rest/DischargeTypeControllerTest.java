@@ -47,8 +47,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,9 +55,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DischargeTypeControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(DischargeTypeControllerTest.class);
+@Slf4j
+public class DischargeTypeControllerTest {
 
 	@Mock
 	protected DischargeTypeBrowserManager discTypeManagerMock;
@@ -107,7 +106,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -136,7 +135,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -159,7 +158,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedDischTypeDTOs))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -189,7 +188,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

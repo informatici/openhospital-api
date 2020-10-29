@@ -32,8 +32,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,7 +45,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/dischargetype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DischargeTypeController {
@@ -57,8 +57,6 @@ public class DischargeTypeController {
 	
 	@Autowired
 	protected DischargeTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(DischargeTypeController.class);
 
 	public DischargeTypeController(DischargeTypeBrowserManager discTypeManager, DischargeTypeMapper dischargeTypemapper) {
 		this.discTypeManager = discTypeManager;
@@ -74,7 +72,7 @@ public class DischargeTypeController {
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
-		logger.info("Create discharge type " + code);
+		log.info("Create discharge type " + code);
 		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
@@ -96,7 +94,7 @@ public class DischargeTypeController {
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
-		logger.info("Update dischargetypes code:" + dischTypeDTO.getCode());
+		log.info("Update dischargetypes code:" + dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
 			throw new OHAPIException(
@@ -115,7 +113,7 @@ public class DischargeTypeController {
 	 */
 	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
-		logger.info("Get all discharge types ");
+		log.info("Get all discharge types ");
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
 		if (dischTypeDTOs.size() == 0) {
@@ -133,7 +131,7 @@ public class DischargeTypeController {
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
-		logger.info("Delete discharge type code:" + code);
+		log.info("Delete discharge type code:" + code);
 		boolean isDeleted = false;
 		if (discTypeManager.codeControl(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();

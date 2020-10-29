@@ -46,8 +46,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,9 +55,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class VisitsControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(VisitsControllerTest.class);
+@Slf4j
+public class VisitsControllerTest {
 
 	@Mock
 	protected VisitManager visitManagerMock;
@@ -101,7 +100,7 @@ public class VisitsControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVisitsDTOs))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -123,7 +122,7 @@ public class VisitsControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class VisitsControllerTest {
 				.andExpect(content().string(containsString(isCreated.toString())))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -170,7 +169,7 @@ public class VisitsControllerTest {
 				.andExpect(content().string(containsString(isDeleted.toString())))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

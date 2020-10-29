@@ -32,8 +32,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,7 +45,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OperationTypeController {
@@ -57,8 +57,6 @@ public class OperationTypeController {
 	
 	@Autowired
 	protected OperationTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(OperationTypeController.class);
 
 	public OperationTypeController(OperationTypeBrowserManager opeTypeManager, OperationTypeMapper operationTypemapper) {
 		this.opeTypeManager = opeTypeManager;
@@ -74,7 +72,7 @@ public class OperationTypeController {
 	@PostMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
 		String code = operationTypeDTO.getCode();
-		logger.info("Create operation Type " + code);
+		log.info("Create operation Type " + code);
 		boolean isCreated = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
 		OperationType opeTypeCreated = opeTypeManager.getOperationType().stream().filter(opetype -> opetype.getCode().equals(code))
 				.findFirst().orElse(null);
@@ -93,7 +91,7 @@ public class OperationTypeController {
 	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateOperationTypet(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
 			throws OHServiceException {
-		logger.info("Update operationtypes code:" + operationTypeDTO.getCode());
+		log.info("Update operationtypes code:" + operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
@@ -110,7 +108,7 @@ public class OperationTypeController {
 	 */
 	@GetMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationTypeDTO>> getOperationTypes() throws OHServiceException {
-		logger.info("Get all operation Types ");
+		log.info("Get all operation Types ");
 		List<OperationType> operationTypes = opeTypeManager.getOperationType();
 		List<OperationTypeDTO> operationTypeDTOs = mapper.map2DTOList(operationTypes);
 		if (operationTypeDTOs.size() == 0) {
@@ -128,7 +126,7 @@ public class OperationTypeController {
 	 */
 	@DeleteMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
-		logger.info("Delete operation Type code:" + code);
+		log.info("Delete operation Type code:" + code);
 		boolean isDeleted = false;
 		if (opeTypeManager.codeControl(code)) {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();

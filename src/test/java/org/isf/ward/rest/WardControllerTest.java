@@ -47,8 +47,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -58,9 +56,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class WardControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(WardControllerTest.class);
+@Slf4j
+public class WardControllerTest {
 
 	@Mock
 	protected WardBrowserManager wardBrowserManagerMock;
@@ -101,7 +100,7 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -124,7 +123,7 @@ public class WardControllerTest {
 				// TODO assert that all wards on list are WRD_ID_A <> M
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -151,7 +150,7 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(numberOfPatients.toString())))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -174,7 +173,7 @@ public class WardControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -197,7 +196,7 @@ public class WardControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -224,7 +223,7 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -248,7 +247,7 @@ public class WardControllerTest {
 				.andExpect(content().string("true"))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -268,7 +267,7 @@ public class WardControllerTest {
 				.andExpect(content().string(createIfNotExist.toString()))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -288,7 +287,7 @@ public class WardControllerTest {
 				.andExpect(content().string(createIfNotExist.toString()))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

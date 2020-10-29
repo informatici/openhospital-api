@@ -36,8 +36,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,7 +49,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value="/agetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class AgeTypeController {
@@ -61,8 +61,6 @@ public class AgeTypeController {
 	
 	@Autowired
 	private AgeTypeMapper mapper;
-	
-	private final Logger logger = LoggerFactory.getLogger(AgeTypeController.class);
 	
 	public AgeTypeController(AgeTypeBrowserManager ageTypeManager, AgeTypeMapper ageTypeMapper) {
 		this.ageTypeManager = ageTypeManager;
@@ -76,13 +74,13 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
-		logger.info("Get age types");
+		log.info("Get age types");
 		List<AgeType> results = ageTypeManager.getAgeType();
 		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
 		if(parsedResults.size() > 0){
 			return ResponseEntity.ok(parsedResults);
         }else{
-        	logger.info("Empty age types list");
+        	log.info("Empty age types list");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
         }
 	}
@@ -98,7 +96,7 @@ public class AgeTypeController {
 		if(ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid!", OHSeverityLevel.ERROR));
 		}
-		logger.info("Update age type");
+		log.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
 		ageTypes.add(ageType);
@@ -119,14 +117,14 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
-		logger.info("Get age type by age: " + age);
+		log.info("Get age type by age: " + age);
 		String result = ageTypeManager.getTypeByAge(age);
 		Map<String, String> responseBody = new HashMap<String, String>();
 		if(result != null){
 			responseBody.put("code", result);
 			return ResponseEntity.ok(responseBody);
         }else{
-        	logger.info("No corresponding age code for the given age");
+        	log.info("No corresponding age code for the given age");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
         }
 	}
@@ -139,12 +137,12 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
-		logger.info("Get age type by index: " + index);
+		log.info("Get age type by index: " + index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
 		if(result != null){
 			return ResponseEntity.ok(result);
         }else{
-        	logger.info("No corresponding age code for the given index");
+        	log.info("No corresponding age code for the given index");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(result);
         }
 	}

@@ -35,8 +35,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,7 +49,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
 public class OpdController {
@@ -64,8 +64,6 @@ public class OpdController {
 	
 	@Autowired
 	protected PatientBrowserManager patientBrowserManager;
-
-	private final Logger logger = LoggerFactory.getLogger(OpdController.class);
 
 	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper) {
 		this.opdManager = opdManager;
@@ -81,7 +79,7 @@ public class OpdController {
 	@PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
-		logger.info("store Out patient " + code);
+		log.info("store Out patient " + code);
 		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
@@ -105,7 +103,7 @@ public class OpdController {
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updateOpd(@PathVariable Integer code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
-		logger.info("Update opds code:" + opdDTO.getCode());
+		log.info("Update opds code:" + opdDTO.getCode());
 		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
@@ -131,7 +129,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/weekly", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdToDayOrWeek(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
-		logger.info("Get all today or since one week opd");
+		log.info("Get all today or since one week opd");
 		if(oneWeek == null) {
 			oneWeek = false;
 		}		
@@ -153,7 +151,7 @@ public class OpdController {
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
 			@RequestParam Date dateFrom, @RequestParam Date dateTo, @RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
 			@RequestParam char newPatient) throws OHServiceException {
-		logger.info("Get opd within specified dates");
+		log.info("Get opd within specified dates");
 		
 		GregorianCalendar datefrom = new GregorianCalendar();
 		GregorianCalendar dateto = new GregorianCalendar();
@@ -176,7 +174,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/patient/{pcode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByPatient(@PathVariable("pcode") int patientcode) throws OHServiceException {
-		logger.info("Get opd associated to specified patient CODE:" + patientcode);
+		log.info("Get opd associated to specified patient CODE:" + patientcode);
 		List<Opd> opds = opdManager.getOpdList(patientcode);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.size() == 0) {
@@ -194,7 +192,7 @@ public class OpdController {
 	 */
 	@DeleteMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOpd(@PathVariable int code) throws OHServiceException {
-		logger.info("Delete Opd code:" + code);
+		log.info("Delete Opd code:" + code);
 		Opd toDelete = new Opd();
 		toDelete.setCode(code);
 		boolean isDeleted = opdManager.deleteOpd(toDelete);
@@ -211,7 +209,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/ProgYear/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
-		logger.info("Get progressive number within specified year");
+		log.info("Get progressive number within specified year");
 		int yProg = opdManager.getProgYear(year);
 		return ResponseEntity.ok(yProg);
 	}
@@ -223,7 +221,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/last/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable int code) throws OHServiceException {
-		logger.info("Get the last opp for patien code:" + code);
+		log.info("Get the last opp for patien code:" + code);
 		Opd lastOpd = opdManager.getLastOpd(code);
 		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
 	}
@@ -235,7 +233,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/check/progyear", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isExistOpdNum(@RequestParam int opdNum, @RequestParam int year) throws OHServiceException {
-		logger.info("check if progYear:" + opdNum + " already exist for year :" + year);
+		log.info("check if progYear:" + opdNum + " already exist for year :" + year);
 		Boolean isExist = opdManager.isExistOpdNum(opdNum, year);
 		return ResponseEntity.ok(isExist);
 	}
