@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.dlvrtype.rest;
 
 import static org.hamcrest.Matchers.containsString;
@@ -38,58 +59,56 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DeliveryTypeControllerTest {
-	
+
 	private final Logger logger = LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
-	
+
 	@Mock
 	protected DeliveryTypeBrowserManager deliveryTypeBrowserManagerMock;
-	
+
 	protected DeliveryTypeMapper deliveryTypeMapper = new DeliveryTypeMapper();
 
 	private MockMvc mockMvc;
-	
-	
+
 	@Before
-    public void setup() {
-    	MockitoAnnotations.initMocks(this);
-    	this.mockMvc = MockMvcBuilders
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DeliveryTypeController(deliveryTypeBrowserManagerMock, deliveryTypeMapper))
-   				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-   				.build();
-    	ModelMapper modelMapper = new ModelMapper();
+				.setControllerAdvice(new OHResponseEntityExceptionHandler())
+				.build();
+		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(deliveryTypeMapper, "modelMapper", modelMapper);
-    }
+	}
 
 	@Test
 	public void testNewDeliveryType_201() throws Exception {
 		String request = "/deliverytypes";
 		int code = 123;
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
-		DeliveryTypeDTO  body = deliveryTypeMapper.map2DTO(deliveryType);
-		
-		
+		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
+
 		ArrayList<DeliveryType> results = new ArrayList<DeliveryType>();
 		results.add(deliveryType);
-		
+
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
 				.thenReturn(results);
-				
+
 		boolean isCreated = true;
 		when(deliveryTypeBrowserManagerMock.newDeliveryType(deliveryTypeMapper.map2Model(body)))
-			.thenReturn(isCreated);
-		
+				.thenReturn(isCreated);
+
 		MvcResult result = this.mockMvc
-			.perform(post(request)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(DeliveryTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())	
-			.andReturn();
-		
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DeliveryTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isCreated())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
@@ -97,78 +116,77 @@ public class DeliveryTypeControllerTest {
 	public void testUpdateDeliveryTypet_200() throws Exception {
 		String request = "/deliverytypes/{code}";
 		int code = 456;
-		
-		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
-		DeliveryTypeDTO  body = deliveryTypeMapper.map2DTO(deliveryType);
 
-		
+		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
+		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
+
 		when(deliveryTypeBrowserManagerMock.codeControl(body.getCode()))
-			.thenReturn(true);
-		
+				.thenReturn(true);
+
 		boolean isUpdated = true;
 		when(deliveryTypeBrowserManagerMock.updateDeliveryType(deliveryTypeMapper.map2Model(body)))
-			.thenReturn(isUpdated);
-		
+				.thenReturn(isUpdated);
+
 		MvcResult result = this.mockMvc
-			.perform(put(request,"ZZ"+code)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(DeliveryTypeHelper.asJsonString(body))
-					)
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andReturn();
-		
+				.perform(put(request, "ZZ" + code)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(DeliveryTypeHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testGetDeliveryTypes_200() throws JsonProcessingException, Exception {
 		String request = "/deliverytypes";
-		
+
 		ArrayList<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
-		
+
 		List<DeliveryTypeDTO> dlvrrestTypeDTOs = deliveryTypeMapper.map2DTOList(results);
-		
+
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
-			.thenReturn(results);
-				
+				.thenReturn(results);
+
 		MvcResult result = this.mockMvc
 				.perform(get(request))
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())	
+				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
 				.andReturn();
-			
-			logger.debug("result: {}", result);
+
+		logger.debug("result: {}", result);
 	}
 
 	@Test
 	public void testDeleteDeliveryType_200() throws Exception {
-	String request = "/deliverytypes/{code}";
-		
-		DeliveryTypeDTO  body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));
+		String request = "/deliverytypes/{code}";
+
+		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));
 		String code = body.getCode();
-		
+
 		when(deliveryTypeBrowserManagerMock.codeControl(code))
-		.thenReturn(true);
-		
+				.thenReturn(true);
+
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
-		.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
-			
+				.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
+
 		when(deliveryTypeBrowserManagerMock.deleteDeliveryType(deliveryTypeMapper.map2Model(body)))
-		.thenReturn(true);
-		
+				.thenReturn(true);
+
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
-			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())	
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-		
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(isDeleted)))
+				.andReturn();
+
 		logger.debug("result: {}", result);
 	}
 
