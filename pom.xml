@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>3.0.1-b08</version>
+            <version>3.0.1-b12</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
