@@ -46,8 +46,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,9 +55,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DiseaseControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(DiseaseControllerTest.class);
+@Slf4j
+public class DiseaseControllerTest {
 
 	@Mock
 	private DiseaseBrowserManager diseaseBrowserManagerMock;
@@ -96,7 +95,7 @@ public class DiseaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -117,7 +116,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -136,7 +135,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -157,7 +156,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -177,7 +176,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -198,7 +197,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -217,7 +216,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -238,7 +237,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 
 	}
 
@@ -258,7 +257,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -279,7 +278,7 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -308,7 +307,7 @@ public class DiseaseControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -334,7 +333,7 @@ public class DiseaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -364,7 +363,7 @@ public class DiseaseControllerTest {
 
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

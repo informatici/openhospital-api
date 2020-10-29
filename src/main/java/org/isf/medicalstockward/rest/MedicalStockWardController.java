@@ -44,8 +44,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -59,11 +57,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/medicalstockward", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedicalStockWardController {
-	private final Logger logger = LoggerFactory.getLogger(MedicalStockWardController.class);
 	
 	@Autowired
 	private MedicalWardMapper medicalWardMapper;
@@ -91,10 +90,10 @@ public class MedicalStockWardController {
 		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId, true); //FIXME: provide provision for boolean ,false?
 		List<MedicalWardDTO> mappedMedWards = medicalWardMapper.map2DTOList(medWards);
 		if(mappedMedWards.isEmpty()) {
-			logger.info("No medical found");
+			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedWards);
 		} else {
-			logger.info("Found " + mappedMedWards.size() + " medicals");
+			log.info("Found " + mappedMedWards.size() + " medicals");
 			return ResponseEntity.ok(mappedMedWards);
 		}
 	}

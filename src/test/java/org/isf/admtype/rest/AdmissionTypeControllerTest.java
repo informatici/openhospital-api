@@ -44,17 +44,16 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class AdmissionTypeControllerTest {
+import lombok.extern.slf4j.Slf4j;
 
-	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
+@Slf4j
+public class AdmissionTypeControllerTest {
 
 	@Mock
 	protected AdmissionTypeBrowserManager admtManagerMock;
@@ -101,7 +100,7 @@ public class AdmissionTypeControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -129,7 +128,7 @@ public class AdmissionTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -149,7 +148,7 @@ public class AdmissionTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 	@Test
@@ -177,7 +176,7 @@ public class AdmissionTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		logger.debug("result: {}", result);
+		log.debug("result: {}", result);
 	}
 
 }

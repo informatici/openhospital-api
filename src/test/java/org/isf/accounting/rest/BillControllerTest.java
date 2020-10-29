@@ -91,10 +91,12 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Emerson Castaneda
  */
-
+@Slf4j
 public class BillControllerTest extends ControllerBaseTest {
 
 	@Mock
@@ -146,7 +148,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
-		logger.debug("exception: {}", exception);
+		log.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
 
@@ -170,7 +172,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
-		logger.debug("exception: {}", exception);
+		log.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
@@ -202,7 +204,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		logger.debug("oHAPIException: {}", oHAPIException);
+		log.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
@@ -236,7 +238,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		logger.debug("oHAPIException: {}", oHAPIException);
+		log.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}

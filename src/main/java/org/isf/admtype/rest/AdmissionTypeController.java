@@ -32,8 +32,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,7 +45,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdmissionTypeController {
@@ -57,8 +57,6 @@ public class AdmissionTypeController {
 	
 	@Autowired
 	protected AdmissionTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeController.class);
 
 	public AdmissionTypeController(AdmissionTypeBrowserManager admtManager, AdmissionTypeMapper admissionTypemapper) {
 		this.admtManager = admtManager;
@@ -74,7 +72,7 @@ public class AdmissionTypeController {
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
-		logger.info("Create Admission Type " + code);
+		log.info("Create Admission Type " + code);
 		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
@@ -98,7 +96,7 @@ public class AdmissionTypeController {
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
-		logger.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
+		log.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.codeControl(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
@@ -117,7 +115,7 @@ public class AdmissionTypeController {
 	 */
 	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
-		logger.info("Get all Admission Types ");
+		log.info("Get all Admission Types ");
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
 		if (admissionTypeDTOs.size() == 0) {
@@ -135,7 +133,7 @@ public class AdmissionTypeController {
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
-		logger.info("Delete Admission Type code:" + code);
+		log.info("Delete Admission Type code:" + code);
 		boolean isDeleted = false;
 		if (admtManager.codeControl(code)) {
 			List<AdmissionType> admts = admtManager.getAdmissionType();

@@ -40,8 +40,6 @@ import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,11 +53,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class TherapyController {
-	private final Logger logger = LoggerFactory.getLogger(TherapyController.class);
+
 	@Autowired
 	private TherapyManager manager;
 	@Autowired
@@ -129,7 +129,7 @@ public class TherapyController {
 		if(mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
 		} else {
-			logger.info("Found " + mappedMeds.size() + " medicals");
+			log.info("Found " + mappedMeds.size() + " medicals");
 			return ResponseEntity.ok(mappedMeds);
 		}
 	}
@@ -147,7 +147,7 @@ public class TherapyController {
 		if(mappedThRows.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
 		} else {
-			logger.info("Found " + mappedThRows.size() + " therapies");
+			log.info("Found " + mappedThRows.size() + " therapies");
 			return ResponseEntity.ok(mappedThRows);
 		}
 	}
@@ -166,7 +166,7 @@ public class TherapyController {
 		if(mappedTherapies == null || mappedTherapies.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
 		} else {
-			logger.info("Found " + mappedTherapies.size() + " therapies");
+			log.info("Found " + mappedTherapies.size() + " therapies");
 			return ResponseEntity.ok(mappedTherapies);
 		}
 	}

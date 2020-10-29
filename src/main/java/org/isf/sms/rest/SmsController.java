@@ -36,8 +36,6 @@ import org.isf.sms.model.Sms;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,11 +48,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class SmsController {
-	private final Logger logger = LoggerFactory.getLogger(SmsController.class);
+	
 	@Autowired
 	private SmsManager smsManager;
 	@Autowired
@@ -71,7 +71,7 @@ public class SmsController {
 	public ResponseEntity<List<SmsDTO>> getAll(
 			@RequestParam(required=true) String dateFrom, 
 			@RequestParam(required=true) String dateTo) throws OHServiceException {
-		logger.info("Fetching the list of sms");
+		log.info("Fetching the list of sms");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date from, to;
 		try {
@@ -83,10 +83,10 @@ public class SmsController {
 		List<Sms> smsList = smsManager.getAll(from, to);
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);
 		if(mappedSmsList.isEmpty()){
-			logger.info("No sms found");
+			log.info("No sms found");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSmsList);
         }else{
-        	logger.info("Found " + mappedSmsList.size() + " sms");
+        	log.info("Found " + mappedSmsList.size() + " sms");
             return ResponseEntity.ok(mappedSmsList);
         }
 	}
