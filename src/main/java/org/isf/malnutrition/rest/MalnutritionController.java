@@ -31,7 +31,6 @@ import org.isf.malnutrition.dto.MalnutritionDTO;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.mapper.MalnutritionMapper;
 import org.isf.malnutrition.model.Malnutrition;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
