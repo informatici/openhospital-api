@@ -93,7 +93,7 @@ public class MedicalStockWardController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedWards);
 		} else {
-			log.info("Found " + mappedMedWards.size() + " medicals");
+			log.info("Found {} medicals", mappedMedWards.size());
 			return ResponseEntity.ok(mappedMedWards);
 		}
 	}

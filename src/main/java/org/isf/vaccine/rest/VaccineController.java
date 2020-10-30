@@ -92,7 +92,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
-        log.info("Get vaccine by code:" + vaccineTypeCode);
+	    log.info("Get vaccine by code: {}", vaccineTypeCode);
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.size() == 0) {
@@ -111,7 +111,7 @@ public class VaccineController {
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
-        log.info("Create vaccine: " + newVaccine.toString());
+	    log.info("Create vaccine: {}", newVaccine.toString());
         boolean isCreated;
         try {
              isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
@@ -133,7 +133,7 @@ public class VaccineController {
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
-        log.info("Update vaccine: " + updateVaccine.toString());
+	    log.info("Update vaccine: {}", updateVaccine.toString());
         boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
@@ -174,7 +174,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineCode(@PathVariable String code) throws OHServiceException {
-        log.info("Check vaccine code: " + code);
+	    log.info("Check vaccine code: {}", code);
         boolean check = vaccineManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

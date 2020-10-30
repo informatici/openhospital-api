@@ -72,7 +72,7 @@ public class DischargeTypeController {
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
-		log.info("Create discharge type " + code);
+		log.info("Create discharge type {}", code);
 		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
@@ -94,7 +94,7 @@ public class DischargeTypeController {
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
-		log.info("Update dischargetypes code:" + dischTypeDTO.getCode());
+		log.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
 			throw new OHAPIException(
@@ -131,7 +131,7 @@ public class DischargeTypeController {
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete discharge type code:" + code);
+		log.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
 		if (discTypeManager.codeControl(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();

@@ -128,7 +128,7 @@ public class WardController {
      */
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newWard(@RequestBody WardDTO newWard) throws OHServiceException {
-        log.info("Create Ward: " + newWard);
+	    log.info("Create Ward: {}", newWard);
         boolean isCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
@@ -145,7 +145,7 @@ public class WardController {
      */
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
-        log.info("Update ward with code: " + updateWard.getCode());
+	    log.info("Update ward with code: {}", updateWard.getCode());
         boolean isUpdated = wardManager.updateWard(mapper.map2Model(updateWard));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
@@ -186,7 +186,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
-        log.info("Check ward code: " + code);
+	    log.info("Check ward code: {}", code);
         boolean check = wardManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

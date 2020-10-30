@@ -114,7 +114,7 @@ public class SupplierController {
 			log.info("No supplier found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
-			log.info("Found " + mappedSuppliers.size() + " suppliers");
+			log.info("Found {} suppliers", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
 		}
 	}
@@ -127,7 +127,7 @@ public class SupplierController {
 	 */
 	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
-		log.info("Loading supplier with ID " + id);
+		log.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if(supplier == null) {
 			log.info("Supplier not found");

@@ -129,7 +129,7 @@ public class TherapyController {
 		if(mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
 		} else {
-			log.info("Found " + mappedMeds.size() + " medicals");
+			log.info("Found {} medicals", mappedMeds.size());
 			return ResponseEntity.ok(mappedMeds);
 		}
 	}
@@ -147,7 +147,7 @@ public class TherapyController {
 		if(mappedThRows.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
 		} else {
-			log.info("Found " + mappedThRows.size() + " therapies");
+			log.info("Found {} therapies", mappedThRows.size());
 			return ResponseEntity.ok(mappedThRows);
 		}
 	}
@@ -166,7 +166,7 @@ public class TherapyController {
 		if(mappedTherapies == null || mappedTherapies.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
 		} else {
-			log.info("Found " + mappedTherapies.size() + " therapies");
+			log.info("Found {} therapies", mappedTherapies.size());
 			return ResponseEntity.ok(mappedTherapies);
 		}
 	}

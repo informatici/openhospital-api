@@ -72,7 +72,7 @@ public class PregnantTreatmentTypeController {
 	@PostMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO) throws OHServiceException {
 		String code = pregnantTreatmentTypeDTO.getCode();
-		log.info("Create pregnant treatment Type " + code);
+		log.info("Create pregnant treatment Type {}", code);
 		boolean isCreated = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
 		PregnantTreatmentType pregTreatTypeCreated = pregTreatTypeManager.getPregnantTreatmentType().stream().filter(pregtreattype -> pregtreattype.getCode().equals(code))
 				.findFirst().orElse(null);
@@ -91,7 +91,7 @@ public class PregnantTreatmentTypeController {
 	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updatePregnantTreatmentTypet(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
 			throws OHServiceException {
-		log.info("Update pregnanttreatmenttypes code:" + pregnantTreatmentTypeDTO.getCode());
+		log.info("Update pregnanttreatmenttypes code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type not found!", OHSeverityLevel.ERROR));
@@ -126,7 +126,7 @@ public class PregnantTreatmentTypeController {
 	 */
 	@DeleteMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePregnantTreatmentType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete pregnantTreatment Type code:" + code);
+		log.info("Delete pregnantTreatment Type code: {}", code);
 		boolean isDeleted = false;
 		if (pregTreatTypeManager.codeControl(code)) {
 			List<PregnantTreatmentType> pregTreatTypes = pregTreatTypeManager.getPregnantTreatmentType();

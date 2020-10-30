@@ -73,7 +73,7 @@ public class MedicalTypeController {
 			log.info("No medical type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicalTypes);
 		} else {
-			log.info("Found " + mappedMedicalTypes.size() + " medical types");
+			log.info("Found {} medical types", mappedMedicalTypes.size());
 			return ResponseEntity.ok(mappedMedicalTypes);
 		}
 	}

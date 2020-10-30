@@ -72,7 +72,7 @@ public class VisitsController {
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
-        log.info("Get visit related to patId: " + patID);
+	    log.info("Get visit related to patId: {}", patID);
         ArrayList<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
         if (listVisit.size() == 0) {
@@ -91,7 +91,7 @@ public class VisitsController {
      */
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
-        log.info("Create Visit: " + newVisit);
+	    log.info("Create Visit: {}", newVisit);
         Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
         return ResponseEntity.status(HttpStatus.CREATED).body(visit.getVisitID()); //TODO: verify if it's correct
     }
@@ -123,7 +123,7 @@ public class VisitsController {
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
-        log.info("Delete Visit related to patId: " + patID);
+	    log.info("Delete Visit related to patId: {}", patID);
         Boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));

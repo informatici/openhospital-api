@@ -108,7 +108,7 @@ public class ExamTypeController {
 
     @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteExamType(@PathVariable String code) throws OHServiceException {
-        log.info("Delete exams code:" + code);
+	    log.info("Delete exams code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!examType.isPresent()) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam type not Found!", OHSeverityLevel.WARNING));
