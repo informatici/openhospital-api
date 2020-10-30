@@ -71,7 +71,7 @@ public class PricesOthersController {
 	 */
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
-		log.info("Create prices others " + pricesOthersDTO.getCode());
+		log.info("Create prices others {}", pricesOthersDTO.getCode());
 		boolean isCreated = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not created!", OHSeverityLevel.ERROR));
@@ -88,7 +88,7 @@ public class PricesOthersController {
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
 			throws OHServiceException {
-		log.info("Update pricesothers code:" + pricesOthersDTO.getCode());
+		log.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
 		if (pricesOthersFounds.size() == 0)
@@ -125,7 +125,7 @@ public class PricesOthersController {
 	 */
 	@DeleteMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
-		log.info("Delete prices others id:" + id);
+		log.info("Delete prices others id: {}", id);
 		boolean isDeleted = false;
 		List<PricesOthers> pricesOtherss = pricesOthersManager.getOthers();
 		List<PricesOthers> pricesOthersFounds = pricesOtherss.stream().filter(po -> po.getId() == id).collect(Collectors.toList());

@@ -75,7 +75,7 @@ public class MedStockMovementTypeController {
 			log.info("No movement type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMvments);
 		} else {
-			log.info("Found " + mappedMvments.size() + " movement types");
+			log.info("Found {} movement types", mappedMvments.size());
 			return ResponseEntity.ok(mappedMvments);
 		}
 	}

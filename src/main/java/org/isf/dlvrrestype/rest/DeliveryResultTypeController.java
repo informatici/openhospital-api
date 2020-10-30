@@ -73,7 +73,7 @@ public class DeliveryResultTypeController {
 	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
-		log.info("Create Delivery result type " + code);
+		log.info("Create Delivery result type {}", code);
 		boolean isCreated = dlvrrestManager
 				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
@@ -98,7 +98,7 @@ public class DeliveryResultTypeController {
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
-		log.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
+		log.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
 			throw new OHAPIException(
@@ -137,7 +137,7 @@ public class DeliveryResultTypeController {
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
 			throws OHServiceException {
-		log.info("Delete Delivery result type code:" + code);
+		log.info("Delete Delivery result type code: {}", code);
 		boolean isDeleted = false;
 		if (dlvrrestManager.codeControl(code)) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();

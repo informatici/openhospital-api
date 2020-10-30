@@ -117,7 +117,7 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
-		log.info("Get age type by age: " + age);
+		log.info("Get age type by age: {}", age);
 		String result = ageTypeManager.getTypeByAge(age);
 		Map<String, String> responseBody = new HashMap<String, String>();
 		if(result != null){
@@ -137,7 +137,7 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
-		log.info("Get age type by index: " + index);
+		log.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
 		if(result != null){
 			return ResponseEntity.ok(result);

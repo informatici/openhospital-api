@@ -92,7 +92,7 @@ public class VaccineTypeController {
      */
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
-        log.info("Create vaccine type: " + newVaccineType.toString());
+	    log.info("Create vaccine type: {}", newVaccineType.toString());
         boolean isCreated;
         try {
             isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
@@ -114,7 +114,7 @@ public class VaccineTypeController {
      */
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
-        log.info("Update vaccine type: " + updateVaccineType.toString());
+	    log.info("Update vaccine type: {}", updateVaccineType.toString());
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
@@ -155,7 +155,7 @@ public class VaccineTypeController {
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
-        log.info("Check vaccine type code: " + code);
+	    log.info("Check vaccine type code: {}", code);
         boolean check = vaccineTypeManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

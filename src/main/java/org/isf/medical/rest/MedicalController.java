@@ -70,7 +70,7 @@ public class MedicalController {
 	 */
 	@GetMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalDTO> getMedical(@PathVariable int code) throws OHServiceException {
-		log.info("Retrieving medical with code "+ code + " ...");
+		log.info("Retrieving medical with code {} ...", code);
 		Medical medical = medicalManager.getMedical(code);
 		if(medical == null) {
 			log.info("Medical not found");
@@ -108,7 +108,7 @@ public class MedicalController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			log.info("Found " + mappedMedicals.size() + " medicals");
+			log.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
@@ -154,7 +154,7 @@ public class MedicalController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			log.info("Found " + mappedMedicals.size() + " medicals");
+			log.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}

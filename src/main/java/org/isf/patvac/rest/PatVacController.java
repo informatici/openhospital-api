@@ -74,7 +74,7 @@ public class PatVacController {
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
-		log.info("Create patient vaccine " + code);
+		log.info("Create patient vaccine {}", code);
 		boolean isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
@@ -91,7 +91,7 @@ public class PatVacController {
 	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
-		log.info("Update patientvaccines code:" + patientVaccineDTO.getCode());
+		log.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		boolean isUpdated = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isUpdated)
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not updated!", OHSeverityLevel.ERROR));
@@ -161,7 +161,7 @@ public class PatVacController {
 	 */
 	@DeleteMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
-		log.info("Delete patient vaccine code:" + code);
+		log.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
 		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);

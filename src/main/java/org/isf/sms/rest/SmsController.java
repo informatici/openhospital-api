@@ -86,7 +86,7 @@ public class SmsController {
 			log.info("No sms found");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSmsList);
         }else{
-        	log.info("Found " + mappedSmsList.size() + " sms");
+			log.info("Found {} sms", mappedSmsList.size());
             return ResponseEntity.ok(mappedSmsList);
         }
 	}

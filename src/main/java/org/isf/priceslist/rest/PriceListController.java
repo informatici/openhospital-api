@@ -78,7 +78,7 @@ public class PriceListController {
 	 */
 	@PostMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
-		log.info("Create price list " + priceListDTO.getCode());
+		log.info("Create price list {}", priceListDTO.getCode());
 		boolean isCreated = priceListManager.newList(mapper.map2Model(priceListDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "price list is not created!", OHSeverityLevel.ERROR));
@@ -95,7 +95,7 @@ public class PriceListController {
 	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updatePriceListt(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
 			throws OHServiceException {
-		log.info("Update pricelists code:" + priceListDTO.getCode());
+		log.info("Update pricelists code: {}", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);
 		boolean isUpdated = priceListManager.updateList(priceList);
 		if (!isUpdated)
@@ -145,7 +145,7 @@ public class PriceListController {
 	 */
 	@DeleteMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePriceList(@PathVariable int id) throws OHServiceException {
-		log.info("Delete price list id:" + id);
+		log.info("Delete price list id: {}", id);
 		boolean isDeleted = false;
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
@@ -164,7 +164,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists/duplicate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyList(@PathVariable Long id) throws OHServiceException {
-		log.info("duplicate list for price liste id : " + id);
+		log.info("duplicate list for price liste id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;
@@ -185,7 +185,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists/duplicate/byfactor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyByFactorAndStep(@PathVariable Long id, @RequestParam double factor, @RequestParam double step) throws OHServiceException {
-		log.info("duplicate list for price liste id : " + id);
+		log.info("duplicate list for price liste id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;

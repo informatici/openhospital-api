@@ -92,7 +92,7 @@ public class UserController {
 			log.info("No user found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
-			log.info("Found " + mappedUsers.size() + " users");
+			log.info("Found {} users", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
 		}
 	}
@@ -190,7 +190,7 @@ public class UserController {
 			log.info("No group found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
-			log.info("Found " + mappedGroups.size() + " groups");
+	        log.info("Found {} groups", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
 	}

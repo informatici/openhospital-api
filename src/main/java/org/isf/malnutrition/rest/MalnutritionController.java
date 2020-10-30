@@ -88,7 +88,7 @@ public class MalnutritionController {
 	 */
 	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
-		log.info("Looking for malnutrition controls. Admission ID is " + admissionID);
+		log.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if(malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
@@ -98,7 +98,7 @@ public class MalnutritionController {
 			log.info("No malnutrition control found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
-			log.info("Found " + mappedMalnutritions.size() + " malnutrition controls");
+			log.info("Found {} malnutrition controls", mappedMalnutritions.size());
 			return ResponseEntity.ok(mappedMalnutritions);
 		}
 	}

@@ -72,7 +72,7 @@ public class AdmissionTypeController {
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
-		log.info("Create Admission Type " + code);
+		log.info("Create Admission Type {}", code);
 		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
@@ -96,7 +96,7 @@ public class AdmissionTypeController {
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
-		log.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
+		log.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.codeControl(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
@@ -133,7 +133,7 @@ public class AdmissionTypeController {
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete Admission Type code:" + code);
+		log.info("Delete Admission Type code: {}", code);
 		boolean isDeleted = false;
 		if (admtManager.codeControl(code)) {
 			List<AdmissionType> admts = admtManager.getAdmissionType();
