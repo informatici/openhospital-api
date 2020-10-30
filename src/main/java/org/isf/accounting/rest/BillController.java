@@ -131,9 +131,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(newBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(newBillDto.getBillItemsDTO()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(newBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(newBillDto.getBillPaymentsDTO()));
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
         
@@ -182,9 +182,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(odBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(odBillDto.getBillItemsDTO()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(odBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(odBillDto.getBillPaymentsDTO()));
         
         boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
     
@@ -213,9 +213,9 @@ public class BillController {
         GregorianCalendar dateto = new GregorianCalendar();
         dateto.setTime(dateTo);
         
-        ArrayList<Bill> bills = new ArrayList<Bill>();
+        ArrayList<Bill> bills = new ArrayList<>();
         
-        List<BillDTO> billDTOS = new ArrayList<BillDTO>();
+        List<BillDTO> billDTOS = new ArrayList<>();
         
         if(code == null) {
         	log.info("Get payments datefrom:"  +  datefrom + " dateTo:" + dateto);
@@ -251,9 +251,9 @@ public class BillController {
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
         log.info("Get Payments datefrom:"  +  dateFrom + " dateTo:" + dateTo +"patient: "+code);
         
-        ArrayList<BillPayments> payments = new ArrayList<BillPayments>();
+        ArrayList<BillPayments> payments = new ArrayList<>();
         
-        List<BillPaymentsDTO> paymentsDTOS = new ArrayList<BillPaymentsDTO>();
+        List<BillPaymentsDTO> paymentsDTOS = new ArrayList<>();
         
         GregorianCalendar datefrom = new GregorianCalendar();
         datefrom.setTime(dateFrom);
@@ -466,7 +466,7 @@ public class BillController {
 	@PostMapping(value = "/bills/search/by/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody List<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
     
-        ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(paymentsDTO));
+        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(paymentsDTO));
         
         List<Bill> bills = billManager.getBills(billPayments);
         

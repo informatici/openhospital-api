@@ -85,7 +85,7 @@ public class AdmissionTypeControllerTest {
 				.thenReturn(isCreated);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
+		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);
@@ -112,7 +112,7 @@ public class AdmissionTypeControllerTest {
 				.thenReturn(true);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
+		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		boolean isUpdated = true;
 		when(admtManagerMock.updateAdmissionType(admissionTypemapper.map2Model(body)))
@@ -136,7 +136,7 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
+		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);
@@ -161,7 +161,7 @@ public class AdmissionTypeControllerTest {
 				.thenReturn(true);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
+		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);

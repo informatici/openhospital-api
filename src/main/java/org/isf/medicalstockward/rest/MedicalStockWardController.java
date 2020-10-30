@@ -227,7 +227,7 @@ public class MedicalStockWardController {
 	 */
 	@PostMapping(value = "/medicalstockward/movements/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody List<MovementWardDTO> newMovementDTOs) throws OHServiceException {
-		ArrayList<MovementWard> newMovements = new ArrayList<MovementWard>();
+		ArrayList<MovementWard> newMovements = new ArrayList<>();
 		movementWardMapper.map2ModelList(newMovementDTOs).forEach(mov -> {
 			newMovements.add(mov);
 		});

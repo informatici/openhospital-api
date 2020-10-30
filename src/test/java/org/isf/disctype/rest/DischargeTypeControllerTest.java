@@ -91,7 +91,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(isCreated);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
@@ -119,7 +119,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> admtFounds = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> admtFounds = new ArrayList<>();
 		admtFounds.add(dischargeType);
 		boolean isUpdated = true;
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
@@ -143,7 +143,7 @@ public class DischargeTypeControllerTest {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypes = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypes = new ArrayList<>();
 		dischTypes.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypes);
@@ -171,7 +171,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
