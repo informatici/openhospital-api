@@ -21,8 +21,6 @@
  */
 package org.isf.testing.rest;
 
-import org.isf.accounting.rest.BillControllerTest;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

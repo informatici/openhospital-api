@@ -32,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.admtype.rest.AdmissionTypeControllerTest;
 import org.isf.agetype.data.AgeTypeHelper;
 import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.manager.AgeTypeBrowserManager;

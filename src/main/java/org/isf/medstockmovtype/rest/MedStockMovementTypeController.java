@@ -30,7 +30,6 @@ import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.mapper.MovementTypeMapper;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
