@@ -81,7 +81,7 @@ public class MedStockMovementTypeController {
 	}
 	
 	/**
-	 * Get the  {@link MovementType} by its code
+	 * Get the {@link MovementType} by its code.
 	 * @param code - the code of the movement type.
 	 * @return {@link MovementType}.
 	 */

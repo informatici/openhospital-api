@@ -66,7 +66,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Get all the vaccines types
+     * Get all the vaccines types.
      *
      * @return
      * @throws OHServiceException
@@ -84,7 +84,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Create new vaccine type
+     * Create a new vaccine type.
      *
      * @param newVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -106,7 +106,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Update vaccineType
+     * Update a vaccine type.
      *
      * @param updateVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -124,9 +124,9 @@ public class VaccineTypeController {
     }
 
     /**
-     * Delete vaccine type
+     * Delete a vaccine type.
      *
-     * @param vaccineTypeToDelete
+     * @param code the vaccineType to delete
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
@@ -147,7 +147,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Check if code is already use by other vaccine type
+     * Check if the code is already used by other vaccine type.
      *
      * @param code
      * @return true if it is already use, false otherwise

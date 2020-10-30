@@ -64,7 +64,7 @@ public class PricesOthersController {
 	}
 
 	/**
-	 * create a new {@link PricesOthers}
+	 * Create a new {@link PricesOthers}.
 	 * @param pricesOthersDTO
 	 * @return <code>true</code> if the prices others has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -100,7 +100,7 @@ public class PricesOthersController {
 	}
 
 	/**
-	 * get all the available {@link PricesOthers}s.
+	 * Get all the available {@link PricesOthers}s.
 	 * @return a {@link List} of {@link PricesOthers} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -119,7 +119,7 @@ public class PricesOthersController {
 	
 	/**
 	 * Delete {@link PricesOthers} for specified code.
-	 * @param code
+	 * @param id
 	 * @return <code>true</code> if the {@link PricesOthers} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */

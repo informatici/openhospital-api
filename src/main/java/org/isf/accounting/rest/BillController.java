@@ -99,7 +99,7 @@ public class BillController {
 
 	/**
      * Create new bill with the list of billItems and the list of billPayments
-     * @param newPatient
+     * @param newBillDto
      * @return {@link FullBillDTO}
      * @throws OHServiceException
      */
@@ -144,7 +144,7 @@ public class BillController {
 	}
 
 	 /**
-     * update bill with the list of billItems and the list of billPayments
+     * Update bill with the list of billItems and the list of billPayments
      * @param odBillDto
      * @return {@link FullBillDTO}
      * @throws OHServiceException
@@ -281,7 +281,7 @@ public class BillController {
 	
 	/**
 	 * Gets all the {@link BillPayments} for the specified {@link Bill}.
-	 * @param billID the bill id.
+	 * @param id the bill id.
 	 * @return a list of {@link BillPayments} or <code>null</code> if an error occurred.
 	 * @throws OHServiceException 
 	 */
@@ -389,7 +389,7 @@ public class BillController {
 	 * Search all the {@link Bill}s for the specified parameters
 	 * @param dateFrom the low date range endpoint, inclusive. 
 	 * @param dateTo the high date range endpoint, inclusive.
-	 * @param bill item the bill item object.
+	 * @param billItemDTO the bill item object.
 	 * @return a list of retrieved {@link Bill}s or <code>null</code> if an error occurred.
 	 * @throws OHServiceException
 	 */
@@ -458,8 +458,8 @@ public class BillController {
     }
 	
 	/**
-	 * search all the {@link Bill}s associated to the passed {@link BillPayments}.
-	 * @param payments the {@link BillPayments} associated to the bill to retrieve.
+	 * Search all the {@link Bill}s associated to the passed {@link BillPayments}.
+	 * @param paymentsDTO the {@link BillPaymentsDTO} associated to the bill to retrieve.
 	 * @return a list of {@link Bill} associated to the passed {@link BillPayments} or <code>null</code> if an error occurred.
 	 * @throws OHServiceException
 	 */

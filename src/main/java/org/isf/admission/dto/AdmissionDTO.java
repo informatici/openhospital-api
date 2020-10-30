@@ -108,7 +108,7 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "transfusional unit", position = 20)
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visite date", position = 21)
+	@ApiModelProperty(notes = "visit date", position = 21)
 	private Date visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)

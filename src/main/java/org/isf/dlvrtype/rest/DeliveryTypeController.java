@@ -64,7 +64,7 @@ public class DeliveryTypeController {
 	}
 
 	/**
-	 * create a new {@link DeliveryType}
+	 * Create a new {@link DeliveryType}.
 	 * @param dlvrTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -87,7 +87,7 @@ public class DeliveryTypeController {
 	}
 
 	/**
-	 * update the specified {@link DeliveryType}
+	 * Update the specified {@link DeliveryType}.
 	 * @param dlvrTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -107,7 +107,7 @@ public class DeliveryTypeController {
 	}
 
 	/**
-	 * get all the available {@link DeliveryType}
+	 * Get all the available {@link DeliveryType}.
 	 * @return a {@link List} of {@link DeliveryType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */

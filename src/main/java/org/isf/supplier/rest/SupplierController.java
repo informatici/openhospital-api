@@ -60,7 +60,7 @@ public class SupplierController {
 	private SupplierMapper mapper;
 	
 	/**
-	 * Saves the specified {@link SupplierDTO}
+	 * Saves the specified {@link SupplierDTO}.
 	 * @param suplierDTO
 	 * @return <code>true</code> if the supplier was saved
 	 * @throws OHServiceException
@@ -78,7 +78,7 @@ public class SupplierController {
 	}
 	
 	/**
-	 * Updates the specified {@link SupplierDTO}
+	 * Updates the specified {@link SupplierDTO}.
 	 * @param suplierDTO
 	 * @return <code>true</code> if the supplier was updated
 	 * @throws OHServiceException
@@ -99,7 +99,7 @@ public class SupplierController {
 	}
 	
 	/**
-	 * Loads the stored suppliers
+	 * Get the suppliers.
 	 * @param excludeDeleted
 	 * @return the list of suppliers found
 	 * @throws OHServiceException
@@ -120,7 +120,7 @@ public class SupplierController {
 	}
 	
 	/**
-	 * Load a supplier by its ID
+	 * Get a supplier by its ID.
 	 * @param id
 	 * @return the found supplier
 	 * @throws OHServiceException

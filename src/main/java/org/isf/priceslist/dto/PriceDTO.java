@@ -39,7 +39,7 @@ public class PriceDTO
     private PriceList list;
 
 	@NotNull
-	@ApiModelProperty(notes = "the groupe", position = 2)
+	@ApiModelProperty(notes = "the group", position = 2)
     private String group;
 
 	@NotNull

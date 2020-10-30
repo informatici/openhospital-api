@@ -165,7 +165,7 @@ public class AdmissionController {
 	}
 
 	/**
-	 * get all admitted {@link Patient} based on the applied filters.
+	 * Get all admitted {@link Patient}s based on the applied filters.
 	 * @param searchTerms
 	 * @param admissionRange
 	 * @param dischargeRange
@@ -190,7 +190,7 @@ public class AdmissionController {
 	}
 
 	/**
-	 * get all the {@link Admission} for the specified {@link Patient} code.
+	 * Get all the {@link Admission}s for the specified {@link Patient} code.
 	 * @param patientCode
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
@@ -212,8 +212,8 @@ public class AdmissionController {
 	}
 
 	/**
-	 * get the next prog in the year for specified {@link Ward} code.
-	 * @param wardId
+	 * Get the next prog in the year for specified {@link Ward} code.
+	 * @param wardCode
 	 * @return the next prog.
 	 * @throws OHServiceException
 	 */
@@ -230,7 +230,7 @@ public class AdmissionController {
 	}
 	
 	/**
-	 * get the number of used bed for the specified {@link Ward} code.
+	 * Get the number of used beds for the specified {@link Ward} code.
 	 * @param wardCode
 	 * @return the number of used beds.
 	 * @throws OHServiceException
@@ -302,7 +302,7 @@ public class AdmissionController {
 			newAdmission.setAdmType(types.get(0));
 		} else {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admition type field is required!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Admission type field is required!", OHSeverityLevel.ERROR));
 		}
 
 		if (newAdmissionDTO.getPatient() != null && newAdmissionDTO.getPatient().getCode() != null) {
@@ -431,8 +431,7 @@ public class AdmissionController {
 
 	/**
 	 * Updates the specified {@link Admission} object.
-	 * @param updAdmissionCUDTO
-	 * @param id
+	 * @param updAdmissionDTO
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
@@ -469,7 +468,7 @@ public class AdmissionController {
 			updAdmission.setAdmType(types.get(0));
 		} else {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admition type field is required!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Admission type field is required!", OHSeverityLevel.ERROR));
 		}
 
 		if (updAdmissionDTO.getPatient() != null && updAdmissionDTO.getPatient().getCode() != null) {

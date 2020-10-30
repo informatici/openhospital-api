@@ -64,7 +64,7 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * create a new {@link AdmissionType}
+	 * Create a new {@link AdmissionType}
 	 * @param admissionTypeDTO
 	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -109,7 +109,7 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * get all the available {@link AdmissionType}s.
+	 * Get all the available {@link AdmissionType}s.
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */

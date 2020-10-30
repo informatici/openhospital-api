@@ -66,7 +66,7 @@ public class PatVacController {
 	}
 
 	/**
-	 * create a new {@link PatientVaccine}
+	 * Create a new {@link PatientVaccine}.
 	 * @param patientVaccineDTO
 	 * @return <code>true</code> if the operation type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -99,7 +99,7 @@ public class PatVacController {
 	}
 
 	/**
-	 * get all {@link PatientVaccine}s of today or one week ago
+	 * Get all the {@link PatientVaccine}s for today or in the last week.
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHServiceException
 	 */
@@ -117,8 +117,7 @@ public class PatVacController {
 	}
 	
 	/**
-	 * get all {@link PatientVaccine}s within <code>dateFrom</code> and
-	 * <code>dateTo</code>
+	 * Get all {@link PatientVaccine}s within <code>dateFrom</code> and <code>dateTo</code>.
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHServiceException
 	 */
@@ -142,7 +141,7 @@ public class PatVacController {
 	}
 	
 	/**
-	 * get the max progressive number within specified year or within current year if <code>0</code>.
+	 * Get the maximum progressive number within specified year or within current year if <code>0</code>.
 	 * @return <code>int</code> - the progressive number in the year
 	 * @throws OHServiceException
 	 */
