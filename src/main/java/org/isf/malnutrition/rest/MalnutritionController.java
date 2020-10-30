@@ -64,7 +64,7 @@ public class MalnutritionController {
 	
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
-	 * @param malnutrition the malnutrition to store.
+	 * @param malnutritionDTO the malnutrition to store.
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the malnutrition has been stored
 	 * @throws OHServiceException 
 	 */
@@ -104,7 +104,7 @@ public class MalnutritionController {
 	}
 	
 	/**
-	 * returns the last {@link Malnutrition} entry for specified patient ID
+	 * Returns the last {@link Malnutrition} entry for specified patient ID.
 	 * @param patientID - the patient ID
 	 * @return the last {@link Malnutrition} for specified patient ID.
 	 * @throws OHServiceException 
@@ -120,8 +120,8 @@ public class MalnutritionController {
 	}
 	
 	/**
-	 * Updates the specified malnutrition
-	 * @param the {@link Malnutrition} to update
+	 * Updates the specified {@link Malnutrition}.
+	 * @param malnutritionDTO the {@link Malnutrition} to update
 	 * @return the updated {@link Malnutrition}
 	 * @throws OHServiceException
 	 */

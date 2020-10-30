@@ -71,7 +71,7 @@ public class OpdController {
 	}
 
 	/**
-	 * create a new {@link Opd}
+	 * Create a new {@link Opd}.
 	 * @param opdDTO
 	 * @return the code of {@link Opd} stored
 	 * @throws OHServiceException
@@ -123,7 +123,7 @@ public class OpdController {
 	}
 
 	/**
-	 * get all {@link Opd}s of today or since one week
+	 * Get all {@link Opd}s for today or for the last week.
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -143,7 +143,7 @@ public class OpdController {
 	}
 	
 	/**
-	 * get all Opds within specified dates
+	 * Get all {@link Opd}s within specified date range.
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -168,7 +168,7 @@ public class OpdController {
 	}
 	
 	/**
-	 * get all {@link Opd}s associated to specified patient CODE
+	 * Get all {@link Opd}s associated to specified patient CODE.
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -203,7 +203,7 @@ public class OpdController {
 	}
 	
 	/**
-	 * get the max progressive number within specified year or within current year if <code>0</code>.
+	 * Get the maximum progressive number within specified year or within current year if <code>0</code>.
 	 * @return the max progressive number
 	 * @throws OHServiceException
 	 */
@@ -215,7 +215,7 @@ public class OpdController {
 	}
 	
 	/**
-	 * get the last {@link Opd} in time associated with specified patient ID. 
+	 * Get the last {@link Opd} in time associated with specified patient ID.
 	 * @return last Opd associated with specified patient ID or <code>null</code>
 	 * @throws OHServiceException
 	 */
@@ -227,8 +227,8 @@ public class OpdController {
 	}
 	
 	/**
-	 * Check if the given <param>opdNum<param> does already exist for the give <param>year<param>
-	 * @return <code>true<code> if the given number exists in year, <code>false</code> otherwise
+	 * Check if the given <code>opdNum</code> does already exist for the given <code>year</code>.
+	 * @return <code>true</code> if the given number exists in year, <code>false</code> otherwise
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/check/progyear", produces = MediaType.APPLICATION_JSON_VALUE)

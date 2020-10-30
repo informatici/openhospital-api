@@ -68,7 +68,7 @@ public class PatientController {
 	}
 
     /**
-     * Create new Patient
+     * Create new {@link Patient}.
      * @param newPatient
      * @return
      * @throws OHServiceException

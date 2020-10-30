@@ -64,7 +64,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * create a new {@link DeliveryResultType}
+	 * Create a new {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -90,7 +90,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * update the specified {@link DeliveryResultType}
+	 * Update the specified {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -112,7 +112,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * get all the available {@link DeliveryResultType}
+	 * Get all the available {@link DeliveryResultType}s.
 	 * @return a {@link List} of {@link DeliveryResultType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -129,7 +129,7 @@ public class DeliveryResultTypeController {
 	}
 	
 	/**
-	 * Delete {@link DeliveryResultType} for specified code.
+	 * Delete {@link DeliveryResultType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException

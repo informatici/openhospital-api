@@ -57,12 +57,12 @@ public class TherapyRowDTO {
 	@ApiModelProperty(notes="The unit's ID", example = "1", position = 7)
 	private Integer unitID;
 
-	@NotNull(message="the frequence in day is required")
-	@ApiModelProperty(notes="The frequence in day", example = "2", position = 8)	
+	@NotNull(message="the frequency in day is required")
+	@ApiModelProperty(notes="The frequency in day", example = "2", position = 8)
 	private Integer freqInDay;
 
-	@NotNull(message="the frequence in period is required")
-	@ApiModelProperty(notes="The frequence in period", example = "1", position = 9)	
+	@NotNull(message="the frequency in period is required")
+	@ApiModelProperty(notes="The frequency in period", example = "1", position = 9)
 	private Integer freqInPeriod;
 	
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 10)		

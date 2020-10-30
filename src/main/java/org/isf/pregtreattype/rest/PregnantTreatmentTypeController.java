@@ -64,7 +64,7 @@ public class PregnantTreatmentTypeController {
 	}
 
 	/**
-	 * create a new {@link PregnantTreatmentType}
+	 * Create a new {@link PregnantTreatmentType}.
 	 * @param pregnantTreatmentTypeDTO
 	 * @return <code>true</code> if the pregnant treatment type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -102,7 +102,7 @@ public class PregnantTreatmentTypeController {
 	}
 
 	/**
-	 * get all the available {@link PregnantTreatmentType}s.
+	 * Get all the available {@link PregnantTreatmentType}s.
 	 * @return a {@link List} of {@link PregnantTreatmentType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -119,7 +119,7 @@ public class PregnantTreatmentTypeController {
 	}
 
 	/**
-	 * Delete {@link PregnantTreatmentType} for specified code.
+	 * Delete {@link PregnantTreatmentType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link PregnantTreatmentType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException

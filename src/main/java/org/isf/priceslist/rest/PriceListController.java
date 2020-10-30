@@ -71,7 +71,7 @@ public class PriceListController {
 	}
 
 	/**
-	 * create a new {@link PriceList}
+	 * Create a new {@link PriceList}.
 	 * @param priceListDTO
 	 * @return <code>true</code> if the price list has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -104,7 +104,7 @@ public class PriceListController {
 	}
 
 	/**
-	 * get all the available {@link PriceList}s.
+	 * Get all the available {@link PriceList}s.
 	 * @return a {@link List} of {@link PriceList} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -121,7 +121,7 @@ public class PriceListController {
 	}
 	
 	/**
-	 * get all the available {@link Price}s.
+	 * Get all the available {@link Price}s.
 	 * @return a {@link List} of {@link PriceList} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -139,7 +139,7 @@ public class PriceListController {
 
 	/**
 	 * Delete {@link PriceList} for specified code.
-	 * @param code
+	 * @param id
 	 * @return <code>true</code> if the {@link PriceList} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
@@ -158,7 +158,7 @@ public class PriceListController {
 	}
 	
 	/**
-	 * duplicate specified {@link PriceList}.
+	 * Duplicate specified {@link PriceList}.
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
 	 * @throws OHServiceException
 	 */
@@ -174,12 +174,12 @@ public class PriceListController {
 		    isCopied = priceListManager.copyList(priceListFounds.get(0));
 		}
 		if (!isCopied)
-			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been diplicated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been duplicated!", OHSeverityLevel.ERROR));
 		return ResponseEntity.ok(isCopied);
 	}
 	
 	/**
-	 * duplicate {@link list} multiplying by <code>factor</code> and rounding by <code>step</code>
+	 * Duplicate {@link PriceList} multiplying by <code>factor</code> and rounding by <code>step</code>.
 	 * @return <code>true</code> if the list has been duplicated, <code>false</code> otherwise
 	 * @throws OHServiceException
 	 */

@@ -64,7 +64,7 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * create a new {@link OperationType}
+	 * Create a new {@link OperationType}.
 	 * @param operationTypeDTO
 	 * @return <code>true</code> if the operation type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -102,7 +102,7 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * get all the available {@link OperationType}s.
+	 * Get all the available {@link OperationType}s.
 	 * @return a {@link List} of {@link OperationType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -119,7 +119,7 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * Delete {@link OperationType} for specified code.
+	 * Delete {@link OperationType} with the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link OperationType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException

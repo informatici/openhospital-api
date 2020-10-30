@@ -86,7 +86,7 @@ public class OperationController {
 	}
 
 	/**
-	 * create a new {@link Operation}
+	 * Create a new {@link Operation}.
 	 * @param operationDTO
 	 * @return <code>true</code> if the operation has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -126,7 +126,7 @@ public class OperationController {
 	}
 
 	/**
-	 * get all the available {@link Operation}s.
+	 * Get all the available {@link Operation}s.
 	 * @return a {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -143,7 +143,7 @@ public class OperationController {
 	}
 	
 	/**
-	 * get the {@link Operation} with the specified code
+	 * Get the {@link Operation} with the specified code.
 	 * @return found operation
 	 * @throws OHServiceException
 	 */
@@ -159,7 +159,7 @@ public class OperationController {
 	}
 	
 	/**
-	 * get {@link Operation}s whose {@link OperationType}'s description matches specified string
+	 * Get all {@link Operation}s whose {@link OperationType}'s description matches specified string.
 	 * @return {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -196,7 +196,7 @@ public class OperationController {
 	}
 	
 	/**
-	 * create a new {@link OperationRow}
+	 * Create a new {@link OperationRow}.
 	 * @param operationRowDTO
 	 * @return <code>true</code> if the operation has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -239,7 +239,7 @@ public class OperationController {
 	}
 	
 	/**
-	 * get {@link OperationRow}s for provided admission
+	 * Get {@link OperationRow}s for specified admission.
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -257,7 +257,7 @@ public class OperationController {
 	}
 
 	/**
-	 * get {@link OperationRow}s for provided opd
+	 * Get {@link OperationRow}s for specified {@link OpdDTO}.
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -274,7 +274,7 @@ public class OperationController {
 	}
 	
 	/**
-	 * Delete {@link OperationRow} for specified code.
+	 * Delete the {@link OperationRow} with the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link OperationRow} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException

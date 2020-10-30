@@ -64,7 +64,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * create a new {@link DischargeType}
+	 * Create a new {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -87,7 +87,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * update the specified {@link DischargeType}
+	 * Update the specified {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -107,7 +107,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * get all the available {@link DischargeType}
+	 * Get all the available {@link DischargeType}s
 	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -124,7 +124,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * Delete {@link DischargeType} for specified code.
+	 * Delete {@link DischargeType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DischargeType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException

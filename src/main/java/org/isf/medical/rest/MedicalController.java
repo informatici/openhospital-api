@@ -76,7 +76,7 @@ public class MedicalController {
 			log.info("Medical not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
 		} else {
-			log.info("Medical retrieved sucessfully");
+			log.info("Medical retrieved successfully");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
 		}
 	}
@@ -160,7 +160,7 @@ public class MedicalController {
 	}
 	
 	/**
-	 * Saves the specified {@link Medical}
+	 * Saves the specified {@link Medical}.
 	 * @param medicalDTO - the medical to save
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the medical was created
@@ -181,7 +181,7 @@ public class MedicalController {
 	}
 	
 	/**
-	 * Updates the specified {@link Medical}
+	 * Updates the specified {@link Medical}.
 	 * @param medicalDTO - the medical to update
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.OK</code> if the medical was updated
@@ -202,8 +202,8 @@ public class MedicalController {
 	}
 	
 	/**
-	 * Deletes the specified medical.
-	 * @param medical the medical to delete.
+	 * Deletes the specified {@link Medical}.
+	 * @param code the medical to delete.
 	 * @return <code>true</code> if the medical has been deleted.
 	 * @throws OHServiceException
 	 */
