@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Not used anymore
  *
  * @author antonio
  */
@@ -43,4 +42,5 @@ public class AdmissionTypeDTO {
 	@NotNull
 	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
     private String description;
+
 }

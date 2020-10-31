@@ -182,11 +182,11 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		Integer id = 0;
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 0;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
+		newFullBillDTO.getBill().getPatient().setCode(code);
 
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().setPatientBill(true);
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
 
@@ -215,10 +215,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills/{id}";
 
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().getPatient().setCode(code);
+		newFullBillDTO.getBill().setPatientBill(true);
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
@@ -248,10 +248,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer id = 123;
 		String request = "/bills/{id}";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().getPatient().setCode(code);
+		newFullBillDTO.getBill().setPatientBill(true);
 		Bill bill = BillHelper.setup();
 
 		Patient patient = bill.getBillPatient();
@@ -264,7 +264,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		PriceList priceList = bill.getPriceList();
 
 		priceList.setName("TestListNameToMatch");
-		newFullBillDTO.getBillDTO().setListName("TestListNameToMatch");
+		newFullBillDTO.getBill().setListName("TestListNameToMatch");
 		priceListList.add(priceList);
 		when(priceListManagerMock.getLists()).thenReturn(priceListList);
 
@@ -275,9 +275,9 @@ public class BillControllerTest extends ControllerBaseTest {
 		//ArrayList<BillItems> billItemsArrayList = new ArrayList(newFullBillDTO.getBillItems());
 		//billItemsArrayList.addAll(newFullBillDTO.getBillItems());
 
-		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItemsDTO(), billItemsMapper);
+		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItems(), billItemsMapper);
 
-		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPaymentsDTO(), billPaymentsMapper);
+		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPayments(), billPaymentsMapper);
 
 		//TODO  check eq(bill) case
 		//when(billManagerMock.updateBill(eq(bill), eq(billItemsArrayList), eq(billPaymentsArrayList)))
@@ -302,10 +302,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills/items/{bill_id}";
 
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 
 		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<BillItems>();
-		itemsDTOSExpected.addAll(newFullBillDTO.getBillItemsDTO().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
 		when(billManagerMock.getItems(eq(id))).thenReturn(itemsDTOSExpected);
 
@@ -316,7 +316,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItemsDTO()))))
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
 				.andReturn();
 	}
 

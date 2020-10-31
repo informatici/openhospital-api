@@ -25,7 +25,11 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @ApiModel(description = "Class representing a pregnant treatment type")
 public class PregnantTreatmentTypeDTO {
 
@@ -37,29 +41,9 @@ public class PregnantTreatmentTypeDTO {
 	
 	private int hashCode = 0;
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
-	}
-
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
 	}
 
 }

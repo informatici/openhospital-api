@@ -29,11 +29,11 @@ import lombok.Getter;
 
 @Getter
 public class OHAPIException extends OHServiceException {
+
     private HttpStatus status = HttpStatus.BAD_REQUEST;
 
     public OHAPIException(OHExceptionMessage message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     public OHAPIException(OHExceptionMessage message, HttpStatus status) {

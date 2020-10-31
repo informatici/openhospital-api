@@ -54,22 +54,22 @@ public class FullBillDTOHelper {
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 
 		BillDTO billDTO = new BillDTO();
-		billDTO.setPatientDTO(patientDTO);
+		billDTO.setPatient(patientDTO);
 		billDTO.setListName(bill.getListName());
 		billDTO.setPatName(patient.getFirstName());
 		//OP-205
 		//BillDTO billDTO = OHModelMapper.getObjectMapper().map(bill, BillDTO.class);
-		fullBillDTO.setBillDTO(billDTO);
+		fullBillDTO.setBill(billDTO);
 
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems = tbi.setup(bill, false);
 		BillItemsDTO billItemsDTO = billItemsMapper.map2DTO(billItems);
-		fullBillDTO.setBillItemsDTO(Arrays.asList(billItemsDTO));
+		fullBillDTO.setBillItems(Arrays.asList(billItemsDTO));
 
 		TestBillPayments tbp = new TestBillPayments();
 		BillPayments billPayments = tbp.setup(bill, false);
 		BillPaymentsDTO billPaymentsDTO = billPaymentsMapper.map2DTO(billPayments);
-		fullBillDTO.setBillPaymentsDTO(Arrays.asList(billPaymentsDTO));
+		fullBillDTO.setBillPayments(Arrays.asList(billPaymentsDTO));
 
 		return fullBillDTO;
 	}

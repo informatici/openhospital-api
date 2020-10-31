@@ -29,7 +29,11 @@ import org.isf.patient.dto.PatientDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @ApiModel(description = "Class representing a bill")
 public class BillDTO {
 	
@@ -57,7 +61,7 @@ public class BillDTO {
 	
 	@NotNull
 	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
-	private boolean isPatient;
+	private boolean patientBill;
 	
 	@NotNull
 	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
@@ -78,113 +82,5 @@ public class BillDTO {
 	@NotNull
 	@ApiModelProperty(notes = "user name who create the bill", example="admin", position = 10)
 	private String user;
-	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Date getUpdate() {
-		return update;
-	}
-
-	public void setUpdate(Date update) {
-		this.update = update;
-	}
-
-	public boolean isList() {
-		return isList;
-	}
-
-	public void setList(boolean isList) {
-		this.isList = isList;
-	}
-
-	public String getListName() {
-		return listName;
-	}
-
-	public void setListName(String listName) {
-		this.listName = listName;
-	}
-
-	public boolean isPatient() {
-		return isPatient;
-	}
-
-	public void setPatient(boolean isPatient) {
-		this.isPatient = isPatient;
-	}
-
-	public String getPatName() {
-		return patName;
-	}
-
-	public void setPatName(String patName) {
-		this.patName = patName;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
-
-	public Double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(Double balance) {
-		this.balance = balance;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	public Integer getListId() {
-		return listId;
-	}
-
-	public void setListId(Integer listId) {
-		this.listId = listId;
-	}
-
-	public PatientDTO getPatientDTO() {
-		return patient;
-	}
-
-	public void setPatientDTO(PatientDTO patient) {
-		this.patient = patient;
-	}
 	
 }

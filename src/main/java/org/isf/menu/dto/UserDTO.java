@@ -24,8 +24,13 @@ package org.isf.menu.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="the username (must be unique)", example = "John Doe", position = 1)	
 	private String userName;
@@ -42,47 +47,13 @@ public class UserDTO {
 	private String desc;
 	
 	public UserDTO() {
-		super();
 	}
 
 	public UserDTO(String userName, UserGroupDTO userGroupName, String passwd, String desc) {
-		super();
 		this.userName = userName;
 		this.userGroupName = userGroupName;
 		this.passwd = passwd;
 		this.desc = desc;
 	}
 
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public UserGroupDTO getUserGroupName() {
-		return userGroupName;
-	}
-
-	public void setUserGroupName(UserGroupDTO userGroupName) {
-		this.userGroupName = userGroupName;
-	}
-
-	public String getPasswd() {
-		return passwd;
-	}
-
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
-	}
-
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-	
 }

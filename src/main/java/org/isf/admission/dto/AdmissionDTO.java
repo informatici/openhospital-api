@@ -36,12 +36,16 @@ import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
 import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 
  * @author gildas
  *
  */
+@Getter
+@Setter
 public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "admission key", example = "12", position = 1)
@@ -143,270 +147,14 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
 	private String deleted;
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getAdmitted() {
-		return admitted;
-	}
-
-	public void setAdmitted(int admitted) {
-		this.admitted = admitted;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public WardDTO getWard() {
-		return ward;
-	}
-
-	public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
-
-	public int getyProg() {
-		return yProg;
-	}
-
-	public void setyProg(int yProg) {
-		this.yProg = yProg;
-	}
-
-	public PatientDTO getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
-	}
-
-	public Date getAdmDate() {
-		return admDate;
-	}
-
-	public void setAdmDate(Date admDate) {
-		this.admDate = admDate;
-	}
-
-	public AdmissionTypeDTO getAdmType() {
-		return admType;
-	}
-
-	public void setAdmType(AdmissionTypeDTO admType) {
-		this.admType = admType;
-	}
-
-	public String getFHU() {
-		return FHU;
-	}
-
-	public void setFHU(String fHU) {
-		FHU = fHU;
-	}
-
-	public DiseaseDTO getDiseaseIn() {
-		return diseaseIn;
-	}
-
-	public void setDiseaseIn(DiseaseDTO diseaseIn) {
-		this.diseaseIn = diseaseIn;
-	}
-
-	public DiseaseDTO getDiseaseOut1() {
-		return diseaseOut1;
-	}
-
-	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
-		this.diseaseOut1 = diseaseOut1;
-	}
-
-	public DiseaseDTO getDiseaseOut2() {
-		return diseaseOut2;
-	}
-
-	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
-		this.diseaseOut2 = diseaseOut2;
-	}
-
-	public DiseaseDTO getDiseaseOut3() {
-		return diseaseOut3;
-	}
-
-	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
-		this.diseaseOut3 = diseaseOut3;
-	}
-
-	public OperationDTO getOperation() {
-		return operation;
-	}
-
-	public void setOperation(OperationDTO operation) {
-		this.operation = operation;
-	}
-
-	public Date getOpDate() {
-		return opDate;
-	}
-
-	public void setOpDate(Date opDate) {
-		this.opDate = opDate;
-	}
-
-	public String getOpResult() {
-		return opResult;
-	}
-
-	public void setOpResult(String opResult) {
-		this.opResult = opResult;
-	}
-
-	public Date getDisDate() {
-		return disDate;
-	}
-
-	public void setDisDate(Date disDate) {
-		this.disDate = disDate;
-	}
-
-	public DischargeTypeDTO getDisType() {
-		return disType;
-	}
-
-	public void setDisType(DischargeTypeDTO disType) {
-		this.disType = disType;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	public Float getTransUnit() {
-		return transUnit;
-	}
-
-	public void setTransUnit(Float transUnit) {
-		this.transUnit = transUnit;
-	}
-
-	public Date getVisitDate() {
-		return visitDate;
-	}
-
-	public void setVisitDate(Date visitDate) {
-		this.visitDate = visitDate;
-	}
-
-	public PregnantTreatmentTypeDTO getPregTreatmentType() {
-		return pregTreatmentType;
-	}
-
-	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
-		this.pregTreatmentType = pregTreatmentType;
-	}
-
-	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
-	}
-
-	public DeliveryTypeDTO getDeliveryType() {
-		return deliveryType;
-	}
-
-	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
-		this.deliveryType = deliveryType;
-	}
-
-	public DeliveryResultTypeDTO getDeliveryResult() {
-		return deliveryResult;
-	}
-
-	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
-		this.deliveryResult = deliveryResult;
-	}
-
-	public Float getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Float weight) {
-		this.weight = weight;
-	}
-
-	public Date getCtrlDate1() {
-		return ctrlDate1;
-	}
-
-	public void setCtrlDate1(Date ctrlDate1) {
-		this.ctrlDate1 = ctrlDate1;
-	}
-
-	public Date getCtrlDate2() {
-		return ctrlDate2;
-	}
-
-	public void setCtrlDate2(Date ctrlDate2) {
-		this.ctrlDate2 = ctrlDate2;
-	}
-
-	public Date getAbortDate() {
-		return abortDate;
-	}
-
-	public void setAbortDate(Date abortDate) {
-		this.abortDate = abortDate;
-	}
-
-	public String getUserID() {
-		return userID;
-	}
-
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
-
-	public String getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(String deleted) {
-		this.deleted = deleted;
-	}
-	
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
-
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
-	}
-
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
 	}
 
 }

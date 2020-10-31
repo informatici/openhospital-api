@@ -28,7 +28,11 @@ import javax.validation.constraints.NotNull;
 import org.isf.admission.dto.AdmissionDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MalnutritionDTO {
 	
 	@ApiModelProperty(notes="The code malnutrition control", example = "1", position = 1)
@@ -66,51 +70,4 @@ public class MalnutritionDTO {
 		weight = aWeight;
 	}
 
-	public void setCode(int aCode) {
-		code = aCode;
-	}
-
-	public int getCode() {
-		return code;
-	}
-	
-	public AdmissionDTO getAdmission() {
-		return admission;
-	}
-
-	public void setAdmission(AdmissionDTO admission) {
-		this.admission = admission;
-	}
-
-	public void setDateSupp(Date aDateSupp) {
-		dateSupp = aDateSupp;
-	}
-
-	public void setDateConf(Date aDateConf) {
-		dateConf = aDateConf;
-	}
-	
-	public void setHeight(float aHeight) {
-		height = aHeight;
-	}
-
-	public void setWeight(float aWeight) {
-		weight = aWeight;
-	}
-
-	public Date getDateSupp() {
-		return dateSupp;
-	}
-
-	public Date getDateConf() {
-		return dateConf;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public float getWeight() {
-		return weight;
-	}
 }

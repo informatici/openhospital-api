@@ -26,7 +26,11 @@ import java.util.Date;
 import org.isf.exam.dto.ExamDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class LaboratoryDTO {
 
     @ApiModelProperty(notes = "Laboratory Code", position = 1)
@@ -67,107 +71,9 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
 
-    public Integer getCode() {
-        return code;
-    }
+	@ApiModelProperty(hidden= true)
+	public int getLock() {
+		return lock;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public ExamDTO getExam() {
-        return exam;
-    }
-
-    public void setExam(ExamDTO exam) {
-        this.exam = exam;
-    }
-
-    public Date getDate() {
-        return registrationDate;
-    }
-
-    public void setDate(Date registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public Date getExamDate() {
-        return examDate;
-    }
-
-    public void setExamDate(Date examDate) {
-        this.examDate = examDate;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public int getLock() {
-        return lock;
-    }
-
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public Integer getPatientCode() {
-        return patientCode;
-    }
-
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
-
-    public String getPatName() {
-        return patName;
-    }
-
-    public void setPatName(String patName) {
-        this.patName = patName;
-    }
-
-    public String getInOutPatient() {
-        return inOutPatient;
-    }
-
-    public void setInOutPatient(String inOutPatient) {
-        this.inOutPatient = inOutPatient;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
 }

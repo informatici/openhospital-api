@@ -30,9 +30,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description = "Class representing a patient")
 @Getter
 @Setter
+@ApiModel(description = "Class representing a patient")
 public class PatientDTO {
 
 	@ApiModelProperty(hidden= true)

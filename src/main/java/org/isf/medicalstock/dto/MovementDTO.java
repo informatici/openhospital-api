@@ -31,8 +31,13 @@ import org.isf.supplier.dto.SupplierDTO;
 import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class MovementDTO {
+
 	@ApiModelProperty(notes="The movement code", example = "1", position = 1)
 	private int code;
 
@@ -66,12 +71,10 @@ public class MovementDTO {
 	private String refNo;
 	
 	public MovementDTO() {
-		super();
 	}
 	
 	public MovementDTO(int code, MedicalDTO medical, MovementTypeDTO type, WardDTO ward, LotDTO lot, Date date,
 			int quantity, SupplierDTO supplier, String refNo) {
-		super();
 		this.code = code;
 		this.medical = medical;
 		this.type = type;
@@ -80,78 +83,6 @@ public class MovementDTO {
 		this.date = date;
 		this.quantity = quantity;
 		this.supplier = supplier;
-		this.refNo = refNo;
-	}
-
-	public int getCode() {
-		return code;
-	}
-
-	public void setCode(int code) {
-		this.code = code;
-	}
-
-	public MedicalDTO getMedical() {
-		return medical;
-	}
-
-	public void setMedical(MedicalDTO medical) {
-		this.medical = medical;
-	}
-
-	public MovementTypeDTO getType() {
-		return type;
-	}
-
-	public void setType(MovementTypeDTO type) {
-		this.type = type;
-	}
-
-	public WardDTO getWard() {
-		return ward;
-	}
-
-	public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
-
-	public LotDTO getLot() {
-		return lot;
-	}
-
-	public void setLot(LotDTO lot) {
-		this.lot = lot;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public SupplierDTO getSupplier() {
-		return supplier;
-	}
-
-	public void setSupplier(SupplierDTO supplier) {
-		this.supplier = supplier;
-	}
-
-	public String getRefNo() {
-		return refNo;
-	}
-
-	public void setRefNo(String refNo) {
 		this.refNo = refNo;
 	}
 	

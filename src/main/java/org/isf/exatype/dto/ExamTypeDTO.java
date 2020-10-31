@@ -22,7 +22,11 @@
 package org.isf.exatype.dto;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ExamTypeDTO {
 
     @ApiModelProperty(notes = "Exam Type Code", example = "HB", position = 1)
@@ -39,22 +43,6 @@ public class ExamTypeDTO {
         this.description = description;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public String toString() {
         return "ExamTypeDTO{" +
@@ -62,4 +50,5 @@ public class ExamTypeDTO {
                 ", description='" + description + '\'' +
                 '}';
     }
+
 }

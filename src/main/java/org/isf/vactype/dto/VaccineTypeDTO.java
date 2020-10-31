@@ -25,7 +25,11 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @ApiModel(description = "Class representing a vaccine type")
 public class VaccineTypeDTO {
 
@@ -37,19 +41,4 @@ public class VaccineTypeDTO {
     @ApiModelProperty(notes = "Description of the vaccine type", example="Child", position = 2)
     private String description;
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

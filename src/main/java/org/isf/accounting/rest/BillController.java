@@ -108,7 +108,7 @@ public class BillController {
 
 		log.info("Create Bill {}", newBillDto.toString());
       
-        Bill bill = billMapper.map2Model(newBillDto.getBillDTO());
+        Bill bill = billMapper.map2Model(newBillDto.getBill());
         
         Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
         
@@ -131,9 +131,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(newBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(newBillDto.getBillItems()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(newBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(newBillDto.getBillPayments()));
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
         
@@ -153,7 +153,7 @@ public class BillController {
     ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
 		log.info("updated Bill {}", odBillDto.toString());
-        Bill bill = billMapper.map2Model(odBillDto.getBillDTO());
+        Bill bill = billMapper.map2Model(odBillDto.getBill());
         
         bill.setId(id);
         
@@ -182,9 +182,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(odBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsMapper.map2ModelList(odBillDto.getBillItems()));
         
-        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(odBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments =  new ArrayList<BillPayments>(billPaymentsMapper.map2ModelList(odBillDto.getBillPayments()));
         
         boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
     

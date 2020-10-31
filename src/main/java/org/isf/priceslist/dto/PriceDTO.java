@@ -27,7 +27,11 @@ import org.isf.priceslist.model.PriceList;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @ApiModel(description = "Class representing a prices")
 public class PriceDTO
 {
@@ -57,67 +61,10 @@ public class PriceDTO
     private boolean editable;
 	
 	private int hashCode = 0;
-    
-
-	public int getId() {
-		return id;
-	}
-	
-    public void setId(int id) {
-		this.id = id;
-	}
-	
-    public PriceList getList() {
-		return list;
-	}
-	
-    public void setList(PriceList list) {
-		this.list = list;
-	}
-	
-    public String getGroup() {
-		return group;
-	}
-	
-    public void setGroup(String group) {
-		this.group = group;
-	}
-	
-    public String getItem() {
-		return item;
-	}
-	
-    public void setItem(String item) {
-		this.item = item;
-	}
-	
-    public String getDesc() {
-		return description;
-	}
-
-	public void setDesc(String desc) {
-		this.description = desc;
-	}
-
-	public Double getPrice() {
-		return price;
-	}
-	
-    public void setPrice(Double price) {
-		this.price = price;
-	}
-
-	public boolean isPrice() {
-		return item.compareTo("") != 0;
-	}
 
 	@ApiModelProperty(hidden= true)
 	public boolean isEditable() {
 		return editable;
-	}
-
-	public void setEditable(boolean editable) {
-		this.editable = editable;
 	}
 
 	@Override
@@ -130,8 +77,4 @@ public class PriceDTO
 		return hashCode;
 	}
 
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
-	}
-	
 }

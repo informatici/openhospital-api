@@ -24,7 +24,11 @@ package org.isf.exam.dto;
 import org.isf.exatype.dto.ExamTypeDTO;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ExamDTO {
 
     @ApiModelProperty(notes = "Exam Code", example = "99.99", position = 1)
@@ -56,52 +60,9 @@ public class ExamDTO {
         this.lock = lock;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getProcedure() {
-        return procedure;
-    }
-
-    public void setProcedure(Integer procedure) {
-        this.procedure = procedure;
-    }
-
-    public String getDefaultResult() {
-        return defaultResult;
-    }
-
-    public void setDefaultResult(String defaultResult) {
-        this.defaultResult = defaultResult;
-    }
-
-    public ExamTypeDTO getExamtype() {
-        return examtype;
-    }
-
-    public void setExamtype(ExamTypeDTO examtype) {
-        this.examtype = examtype;
-    }
-
+	@ApiModelProperty(hidden= true)
     public Integer getLock() {
         return lock;
-    }
-
-    public void setLock(Integer lock) {
-        this.lock = lock;
     }
 
     @Override

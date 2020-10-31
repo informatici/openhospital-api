@@ -24,8 +24,13 @@ package org.isf.menu.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class UserMenuItemDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="code of the menu item (must be unique)", example = "admtype", position = 1)
 	private String 	code;
@@ -60,13 +65,11 @@ public class UserMenuItemDTO {
 	@ApiModelProperty(notes="position of the menu item", example = "5", position = 9)
 	private int position;
 	
-	public UserMenuItemDTO() {
-		super();
+	public UserMenuItemDTO(){
 	}
 
 	public UserMenuItemDTO(String code, String buttonLabel, String altLabel, String tooltip, char shortcut,
 			String mySubmenu, String myClass, boolean isASubMenu, int position) {
-		super();
 		this.code = code;
 		this.buttonLabel = buttonLabel;
 		this.altLabel = altLabel;
@@ -78,76 +81,4 @@ public class UserMenuItemDTO {
 		this.position = position;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getButtonLabel() {
-		return buttonLabel;
-	}
-
-	public void setButtonLabel(String buttonLabel) {
-		this.buttonLabel = buttonLabel;
-	}
-
-	public String getAltLabel() {
-		return altLabel;
-	}
-
-	public void setAltLabel(String altLabel) {
-		this.altLabel = altLabel;
-	}
-
-	public String getTooltip() {
-		return tooltip;
-	}
-
-	public void setTooltip(String tooltip) {
-		this.tooltip = tooltip;
-	}
-
-	public char getShortcut() {
-		return shortcut;
-	}
-
-	public void setShortcut(char shortcut) {
-		this.shortcut = shortcut;
-	}
-
-	public String getMySubmenu() {
-		return mySubmenu;
-	}
-
-	public void setMySubmenu(String mySubmenu) {
-		this.mySubmenu = mySubmenu;
-	}
-
-	public String getMyClass() {
-		return myClass;
-	}
-
-	public void setMyClass(String myClass) {
-		this.myClass = myClass;
-	}
-
-	public boolean isASubMenu() {
-		return isASubMenu;
-	}
-
-	public void setASubMenu(boolean isASubMenu) {
-		this.isASubMenu = isASubMenu;
-	}
-
-	public int getPosition() {
-		return position;
-	}
-
-	public void setPosition(int position) {
-		this.position = position;
-	}
-	
 }
