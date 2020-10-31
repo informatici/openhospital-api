@@ -49,4 +49,9 @@ public class OperationDTO {
 
 	private Integer lock;
 
+	@ApiModelProperty(hidden= true)
+	public Integer getLock() {
+		return lock;
+	}
+
 }
