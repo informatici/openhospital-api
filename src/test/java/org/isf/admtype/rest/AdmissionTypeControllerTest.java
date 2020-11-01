@@ -112,8 +112,6 @@ public class AdmissionTypeControllerTest {
 				.thenReturn(true);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<AdmissionType>();
-		admtFounds.add(admissionType);
 		boolean isUpdated = true;
 		when(admtManagerMock.updateAdmissionType(admissionTypemapper.map2Model(body)))
 				.thenReturn(isUpdated);
