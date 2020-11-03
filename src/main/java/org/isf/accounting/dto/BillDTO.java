@@ -61,7 +61,7 @@ public class BillDTO {
 	
 	@NotNull
 	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
-	private boolean patientBill;
+	private boolean isPatientBill;
 	
 	@NotNull
 	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
