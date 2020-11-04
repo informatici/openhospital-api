@@ -99,7 +99,7 @@ public class AgeTypeController {
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
-		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
+		ArrayList<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
 		if(ageTypeManager.updateAgeType(ageTypes)) {
 			return ResponseEntity.ok(ageTypeDTO);
@@ -120,7 +120,7 @@ public class AgeTypeController {
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		LOGGER.info("Get age type by age: {}", age);
 		String result = ageTypeManager.getTypeByAge(age);
-		Map<String, String> responseBody = new HashMap<String, String>();
+		Map<String, String> responseBody = new HashMap<>();
 		if(result != null){
 			responseBody.put("code", result);
 			return ResponseEntity.ok(responseBody);

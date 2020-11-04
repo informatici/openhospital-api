@@ -259,7 +259,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		ArrayList<PriceList> priceListList = new ArrayList<PriceList>();
+		ArrayList<PriceList> priceListList = new ArrayList<>();
 
 		PriceList priceList = bill.getPriceList();
 
@@ -304,8 +304,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<BillItems>();
-		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<>();
+		itemsDTOSExpected.addAll(newFullBillDTO.getBillItemsDTO().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
 		when(billManagerMock.getItems(eq(id))).thenReturn(itemsDTOSExpected);
 
@@ -461,7 +461,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		BillItemsDTO billItemsDTO = BillItemsDTOHelper.setup(billItemsMapper);
 		BillItems billItem = billItemsMapper.map2Model(billItemsDTO);
 
-		ArrayList<Bill> billList = new ArrayList<Bill>();
+		ArrayList<Bill> billList = new ArrayList<>();
 		Integer id = 0;
 		Bill bill = BillHelper.setup(id);
 		billList.add(bill);
@@ -523,7 +523,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems1 = tbi.setup(bill, false);
 		BillItems billItems2 = tbi.setup(bill, false);
-		ArrayList<BillItems> billItemsList = new ArrayList<BillItems>();
+		ArrayList<BillItems> billItemsList = new ArrayList<>();
 		billItemsList.add(billItems1);
 		billItemsList.add(billItems2);
 

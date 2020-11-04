@@ -147,7 +147,7 @@ public class DiseaseTypeController {
 				.findFirst();
 		if(optDiseaseType.isPresent()) {
 			boolean deleted = diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
-			Map<String, Boolean> result = new HashMap<String, Boolean>();
+			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", deleted);
 			return ResponseEntity.ok(result);
 		} else {

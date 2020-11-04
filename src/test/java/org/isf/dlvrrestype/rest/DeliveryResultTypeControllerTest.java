@@ -88,7 +88,7 @@ public class DeliveryResultTypeControllerTest {
 		DeliveryResultType deliveryResultType = DeliveryResultTypeHelper.setup(code);
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(deliveryResultType);
 
-		ArrayList<DeliveryResultType> results = new ArrayList<DeliveryResultType>();
+		ArrayList<DeliveryResultType> results = new ArrayList<>();
 		results.add(deliveryResultType);
 
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())

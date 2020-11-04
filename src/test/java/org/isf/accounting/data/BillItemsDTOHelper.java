@@ -64,7 +64,7 @@ public class BillItemsDTOHelper {
 	}
 
 	public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList, BillItemsMapper billItemsMapper) {
-		ArrayList<BillItems> billItems = new ArrayList<BillItems>(
+		ArrayList<BillItems> billItems = new ArrayList<>(
 				billItemsDTOList.stream().map(pay -> billItemsMapper.map2Model(pay)).collect(Collectors.toList()));
 		return billItems;
 	}

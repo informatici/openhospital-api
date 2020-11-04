@@ -79,6 +79,6 @@ public class BillHelper {
 	}
 
 	public static ArrayList<Bill> genArrayList(int n) {
-		return new ArrayList<Bill>(BillHelper.genList(n));
+		return new ArrayList<>(BillHelper.genList(n));
 	}
 }

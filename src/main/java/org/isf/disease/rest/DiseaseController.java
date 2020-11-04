@@ -285,7 +285,7 @@ public class DiseaseController {
 	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") int code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if(disease != null) {
-			Map<String, Boolean> result = new HashMap<String, Boolean>();
+			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", diseaseManager.deleteDisease(disease));
 			return ResponseEntity.ok(result);
 		} else {

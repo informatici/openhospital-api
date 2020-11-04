@@ -105,7 +105,7 @@ public class AgeTypeControllerTest {
 		String request = "/agetypes";
 		AgeTypeDTO body = ageTypeMapper.map2DTO(AgeTypeHelper.setup());
 
-		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
+		ArrayList<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(AgeTypeHelper.setup());
 
 		when(ageTypeManagerMock.updateAgeType(ageTypes))
