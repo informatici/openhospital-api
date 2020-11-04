@@ -61,7 +61,7 @@ public class AgeTypeHelper {
 	}
 
 	public static ArrayList<AgeType> genArrayList(int n) {
-		return new ArrayList<AgeType>(AgeTypeHelper.genList(n));
+		return new ArrayList<>(AgeTypeHelper.genList(n));
 	}
 
 	public static String asJsonString(AgeTypeDTO ageTypeDTO) {
