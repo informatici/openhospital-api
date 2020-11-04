@@ -66,51 +66,51 @@ public class MalnutritionDTO {
 		weight = aWeight;
 	}
 
-	public void setCode(int aCode) {
-		code = aCode;
+	public int getCode() {
+		return this.code;
 	}
 
-	public int getCode() {
-		return code;
+	public Date getDateSupp() {
+		return this.dateSupp;
 	}
-	
+
+	public Date getDateConf() {
+		return this.dateConf;
+	}
+
 	public AdmissionDTO getAdmission() {
-		return admission;
+		return this.admission;
+	}
+
+	public float getHeight() {
+		return this.height;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setDateSupp(Date dateSupp) {
+		this.dateSupp = dateSupp;
+	}
+
+	public void setDateConf(Date dateConf) {
+		this.dateConf = dateConf;
 	}
 
 	public void setAdmission(AdmissionDTO admission) {
 		this.admission = admission;
 	}
 
-	public void setDateSupp(Date aDateSupp) {
-		dateSupp = aDateSupp;
+	public void setHeight(float height) {
+		this.height = height;
 	}
 
-	public void setDateConf(Date aDateConf) {
-		dateConf = aDateConf;
-	}
-	
-	public void setHeight(float aHeight) {
-		height = aHeight;
-	}
-
-	public void setWeight(float aWeight) {
-		weight = aWeight;
-	}
-
-	public Date getDateSupp() {
-		return dateSupp;
-	}
-
-	public Date getDateConf() {
-		return dateConf;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public float getWeight() {
-		return weight;
+	public void setWeight(float weight) {
+		this.weight = weight;
 	}
 }

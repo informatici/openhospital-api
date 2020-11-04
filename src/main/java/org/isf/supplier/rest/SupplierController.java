@@ -33,6 +33,7 @@ import org.isf.supplier.model.Supplier;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,15 +48,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class SupplierController {
 
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SupplierController.class);
+
 	@Autowired
 	private SupplierBrowserManager manager;
+
 	@Autowired
 	private SupplierMapper mapper;
 	
@@ -67,13 +69,13 @@ public class SupplierController {
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO suplierDTO) throws OHServiceException {
-		log.info("Saving a new supplier...");
+		LOGGER.info("Saving a new supplier...");
 		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
 		if (!isCreated) {
-			log.error("Supplier is not created!");
+			LOGGER.error("Supplier is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
         }
-		log.info("Supplier saved successfully");
+		LOGGER.info("Supplier saved successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 	
@@ -88,13 +90,13 @@ public class SupplierController {
 		if(suplierDTO.getSupId() == null || manager.getByID(suplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
-		log.info("Updating supplier...");
+		LOGGER.info("Updating supplier...");
 		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
 		if (!isUpdated) {
-			log.error("Supplier is not updated!");
+			LOGGER.error("Supplier is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));
         }
-		log.info("Supplier updated successfully");
+		LOGGER.info("Supplier updated successfully");
         return ResponseEntity.ok(isUpdated);
 	}
 	
@@ -107,14 +109,14 @@ public class SupplierController {
 	@GetMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<SupplierDTO>> getSuppliers(
 			@RequestParam(name="exclude_deleted", defaultValue="true") boolean excludeDeleted) throws OHServiceException {
-		log.info("Loading suppliers...");
+		LOGGER.info("Loading suppliers...");
 		List<Supplier> suppliers = excludeDeleted? manager.getList() : manager.getAll();
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
 		if(mappedSuppliers.isEmpty()) {
-			log.info("No supplier found");
+			LOGGER.info("No supplier found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
-			log.info("Found {} suppliers", mappedSuppliers.size());
+			LOGGER.info("Found {} suppliers", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
 		}
 	}
@@ -127,13 +129,13 @@ public class SupplierController {
 	 */
 	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
-		log.info("Loading supplier with ID {}", id);
+		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if(supplier == null) {
-			log.info("Supplier not found");
+			LOGGER.info("Supplier not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		} else {
-			log.info("Found supplier!");
+			LOGGER.info("Found supplier!");
 			return ResponseEntity.ok(mapper.map2DTO(supplier));
 		}
 	}

@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class LotDTO {
+
 	@NotNull(message="The code is required")
 	@ApiModelProperty(notes="The lot's code", example = "LT001", position = 1)
 	private String code;
@@ -45,11 +46,9 @@ public class LotDTO {
 	private BigDecimal cost;
 	
 	public LotDTO() {
-		super();
 	}
 	
 	public LotDTO(String code, Date preparationDate, Date dueDate, BigDecimal cost) {
-		super();
 		this.code = code;
 		this.preparationDate = preparationDate;
 		this.dueDate = dueDate;
@@ -57,35 +56,34 @@ public class LotDTO {
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	public Date getPreparationDate() {
+		return this.preparationDate;
+	}
+
+	public Date getDueDate() {
+		return this.dueDate;
+	}
+
+	public BigDecimal getCost() {
+		return this.cost;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public Date getPreparationDate() {
-		return preparationDate;
-	}
-
 	public void setPreparationDate(Date preparationDate) {
 		this.preparationDate = preparationDate;
-	}
-
-	public Date getDueDate() {
-		return dueDate;
 	}
 
 	public void setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 	}
 
-	public BigDecimal getCost() {
-		return cost;
-	}
-
 	public void setCost(BigDecimal cost) {
 		this.cost = cost;
 	}
-	
 }

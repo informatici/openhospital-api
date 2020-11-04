@@ -54,53 +54,9 @@ public class PatientVaccineDTO
 	
 	private int hashCode = 0;
 
-	public int getCode() {
-		return code;
-	}
-
-	public void setCode(int code) {
-		this.code = code;
-	}
-
-	public int getProgr() {
-		return progr;
-	}
-
-	public void setProgr(int progr) {
-		this.progr = progr;
-	}
-
-	public Date getVaccineDate() {
-		return vaccineDate;
-	}
-
-	public void setVaccineDate(Date vaccineDate) {
-		this.vaccineDate = vaccineDate;
-	}
-
-	public PatientDTO getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
-	}
-
-	public VaccineDTO getVaccine() {
-		return vaccine;
-	}
-
-	public void setVaccine(VaccineDTO vaccine) {
-		this.vaccine = vaccine;
-	}
-	
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	@ApiModelProperty(hidden= true)
@@ -108,8 +64,51 @@ public class PatientVaccineDTO
 		return hashCode;
 	}
 
+	public int getCode() {
+		return this.code;
+	}
+
+	public int getProgr() {
+		return this.progr;
+	}
+
+	public Date getVaccineDate() {
+		return this.vaccineDate;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public VaccineDTO getVaccine() {
+		return this.vaccine;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setProgr(int progr) {
+		this.progr = progr;
+	}
+
+	public void setVaccineDate(Date vaccineDate) {
+		this.vaccineDate = vaccineDate;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setVaccine(VaccineDTO vaccine) {
+		this.vaccine = vaccine;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-
 }

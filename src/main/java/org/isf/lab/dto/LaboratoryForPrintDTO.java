@@ -24,39 +24,42 @@ package org.isf.lab.dto;
 public class LaboratoryForPrintDTO {
 
     private String exam;
+
     private String date;
+
     private String result;
+
     private Integer code;
 
-    public String getExam() {
-        return exam;
-    }
+	public String getExam() {
+		return this.exam;
+	}
 
-    public void setExam(String exam) {
-        this.exam = exam;
-    }
+	public String getDate() {
+		return this.date;
+	}
 
-    public String getDate() {
-        return date;
-    }
+	public String getResult() {
+		return this.result;
+	}
 
-    public void setDate(String date) {
-        this.date = date;
-    }
+	public Integer getCode() {
+		return this.code;
+	}
 
-    public String getResult() {
-        return result;
-    }
+	public void setExam(String exam) {
+		this.exam = exam;
+	}
 
-    public void setResult(String result) {
-        this.result = result;
-    }
+	public void setDate(String date) {
+		this.date = date;
+	}
 
-    public Integer getCode() {
-        return code;
-    }
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 }

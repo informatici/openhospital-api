@@ -56,52 +56,9 @@ public class ExamDTO {
         this.lock = lock;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getProcedure() {
-        return procedure;
-    }
-
-    public void setProcedure(Integer procedure) {
-        this.procedure = procedure;
-    }
-
-    public String getDefaultResult() {
-        return defaultResult;
-    }
-
-    public void setDefaultResult(String defaultResult) {
-        this.defaultResult = defaultResult;
-    }
-
-    public ExamTypeDTO getExamtype() {
-        return examtype;
-    }
-
-    public void setExamtype(ExamTypeDTO examtype) {
-        this.examtype = examtype;
-    }
-
+	@ApiModelProperty(hidden= true)
     public Integer getLock() {
         return lock;
-    }
-
-    public void setLock(Integer lock) {
-        this.lock = lock;
     }
 
     @Override
@@ -115,4 +72,48 @@ public class ExamDTO {
                 ", lock=" + lock +
                 '}';
     }
+
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public Integer getProcedure() {
+		return this.procedure;
+	}
+
+	public String getDefaultResult() {
+		return this.defaultResult;
+	}
+
+	public ExamTypeDTO getExamtype() {
+		return this.examtype;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setProcedure(Integer procedure) {
+		this.procedure = procedure;
+	}
+
+	public void setDefaultResult(String defaultResult) {
+		this.defaultResult = defaultResult;
+	}
+
+	public void setExamtype(ExamTypeDTO examtype) {
+		this.examtype = examtype;
+	}
+
+	public void setLock(Integer lock) {
+		this.lock = lock;
+	}
 }

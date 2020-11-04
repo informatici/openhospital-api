@@ -30,6 +30,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Class representing a disease")
 public class DiseaseDTO {
+
 	@NotNull
 	@ApiModelProperty(notes = "Disease code", example = "99")
 	private String code;
@@ -58,61 +59,9 @@ public class DiseaseDTO {
 
 	private int lock;
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public DiseaseTypeDTO getDiseaseType() {
-		return diseaseType;
-	}
-
-	public void setDiseaseType(DiseaseTypeDTO diseaseType) {
-		this.diseaseType = diseaseType;
-	}
-
-	public boolean isOpdInclude() {
-		return opdInclude;
-	}
-
-	public void setOpdInclude(boolean opdInclude) {
-		this.opdInclude = opdInclude;
-	}
-
-	public boolean isIpdInInclude() {
-		return ipdInInclude;
-	}
-
-	public void setIpdInInclude(boolean ipdInInclude) {
-		this.ipdInInclude = ipdInInclude;
-	}
-
-	public boolean isIpdOutInclude() {
-		return ipdOutInclude;
-	}
-
-	public void setIpdOutInclude(boolean ipdOutInclude) {
-		this.ipdOutInclude = ipdOutInclude;
-	}
-	
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	@ApiModelProperty(hidden= true)
@@ -120,8 +69,59 @@ public class DiseaseDTO {
 		return hashCode;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public DiseaseTypeDTO getDiseaseType() {
+		return this.diseaseType;
+	}
+
+	public boolean isOpdInclude() {
+		return this.opdInclude;
+	}
+
+	public boolean isIpdInInclude() {
+		return this.ipdInInclude;
+	}
+
+	public boolean isIpdOutInclude() {
+		return this.ipdOutInclude;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setDiseaseType(DiseaseTypeDTO diseaseType) {
+		this.diseaseType = diseaseType;
+	}
+
+	public void setOpdInclude(boolean opdInclude) {
+		this.opdInclude = opdInclude;
+	}
+
+	public void setIpdInInclude(boolean ipdInInclude) {
+		this.ipdInInclude = ipdInInclude;
+	}
+
+	public void setIpdOutInclude(boolean ipdOutInclude) {
+		this.ipdOutInclude = ipdOutInclude;
+	}
+
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
 
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 }

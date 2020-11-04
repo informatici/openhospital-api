@@ -29,6 +29,7 @@ import org.isf.medtype.dto.MedicalTypeDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class MedicalDTO {
+
 	@ApiModelProperty(notes="The id of the medical", example = "1", position = 1)
 	private Integer code;
 	
@@ -71,7 +72,6 @@ public class MedicalDTO {
 	 */
 	public MedicalDTO(Integer code, MedicalTypeDTO type, String prod_code, String description,
 			double initialqty, Integer pcsperpck, double minqty, double inqty, double outqty) {
-		super();
 		this.code = code;
 		this.type = type;
 		this.prod_code = prod_code;
@@ -84,75 +84,74 @@ public class MedicalDTO {
 	}
 
 	public Integer getCode() {
-		return code;
+		return this.code;
+	}
+
+	public String getProd_code() {
+		return this.prod_code;
+	}
+
+	public MedicalTypeDTO getType() {
+		return this.type;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public double getInitialqty() {
+		return this.initialqty;
+	}
+
+	public Integer getPcsperpck() {
+		return this.pcsperpck;
+	}
+
+	public double getInqty() {
+		return this.inqty;
+	}
+
+	public double getOutqty() {
+		return this.outqty;
+	}
+
+	public double getMinqty() {
+		return this.minqty;
 	}
 
 	public void setCode(Integer code) {
 		this.code = code;
 	}
 
-	public String getProd_code() {
-		return prod_code;
-	}
-
 	public void setProd_code(String prod_code) {
 		this.prod_code = prod_code;
-	}
-
-	public MedicalTypeDTO getType() {
-		return type;
 	}
 
 	public void setType(MedicalTypeDTO type) {
 		this.type = type;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public double getInitialqty() {
-		return initialqty;
 	}
 
 	public void setInitialqty(double initialqty) {
 		this.initialqty = initialqty;
 	}
 
-	public Integer getPcsperpck() {
-		return pcsperpck;
-	}
-
 	public void setPcsperpck(Integer pcsperpck) {
 		this.pcsperpck = pcsperpck;
-	}
-
-	public double getInqty() {
-		return inqty;
 	}
 
 	public void setInqty(double inqty) {
 		this.inqty = inqty;
 	}
 
-	public double getOutqty() {
-		return outqty;
-	}
-
 	public void setOutqty(double outqty) {
 		this.outqty = outqty;
-	}
-
-	public double getMinqty() {
-		return minqty;
 	}
 
 	public void setMinqty(double minqty) {
 		this.minqty = minqty;
 	}
-	
 }

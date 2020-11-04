@@ -28,6 +28,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class SmsDTO {
+
 	@ApiModelProperty(notes = "SMS Id", example="1", position = 1)
 	private Integer smsId;
 	
@@ -62,13 +63,10 @@ public class SmsDTO {
 	private String moduleID;
 
 	public SmsDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public SmsDTO(Integer smsId, Date smsDate, Date smsDateSched, String smsNumber, String smsText, Date smsDateSent,
 			String smsUser, String module, String moduleID) {
-		super();
 		this.smsId = smsId;
 		this.smsDate = smsDate;
 		this.smsDateSched = smsDateSched;
@@ -81,75 +79,74 @@ public class SmsDTO {
 	}
 
 	public Integer getSmsId() {
-		return smsId;
+		return this.smsId;
+	}
+
+	public Date getSmsDate() {
+		return this.smsDate;
+	}
+
+	public Date getSmsDateSched() {
+		return this.smsDateSched;
+	}
+
+	public String getSmsNumber() {
+		return this.smsNumber;
+	}
+
+	public String getSmsText() {
+		return this.smsText;
+	}
+
+	public Date getSmsDateSent() {
+		return this.smsDateSent;
+	}
+
+	public String getSmsUser() {
+		return this.smsUser;
+	}
+
+	public String getModule() {
+		return this.module;
+	}
+
+	public String getModuleID() {
+		return this.moduleID;
 	}
 
 	public void setSmsId(Integer smsId) {
 		this.smsId = smsId;
 	}
 
-	public Date getSmsDate() {
-		return smsDate;
-	}
-
 	public void setSmsDate(Date smsDate) {
 		this.smsDate = smsDate;
-	}
-
-	public Date getSmsDateSched() {
-		return smsDateSched;
 	}
 
 	public void setSmsDateSched(Date smsDateSched) {
 		this.smsDateSched = smsDateSched;
 	}
 
-	public String getSmsNumber() {
-		return smsNumber;
-	}
-
 	public void setSmsNumber(String smsNumber) {
 		this.smsNumber = smsNumber;
-	}
-
-	public String getSmsText() {
-		return smsText;
 	}
 
 	public void setSmsText(String smsText) {
 		this.smsText = smsText;
 	}
 
-	public Date getSmsDateSent() {
-		return smsDateSent;
-	}
-
 	public void setSmsDateSent(Date smsDateSent) {
 		this.smsDateSent = smsDateSent;
-	}
-
-	public String getSmsUser() {
-		return smsUser;
 	}
 
 	public void setSmsUser(String smsUser) {
 		this.smsUser = smsUser;
 	}
 
-	public String getModule() {
-		return module;
-	}
-
 	public void setModule(String module) {
 		this.module = module;
-	}
-
-	public String getModuleID() {
-		return moduleID;
 	}
 
 	public void setModuleID(String moduleID) {
 		this.moduleID = moduleID;
 	}
-	
 }

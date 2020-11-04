@@ -57,7 +57,7 @@ public class BillDTO {
 	
 	@NotNull
 	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
-	private boolean isPatient;
+	private boolean patientTrue;
 	
 	@NotNull
 	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
@@ -78,113 +78,108 @@ public class BillDTO {
 	@NotNull
 	@ApiModelProperty(notes = "user name who create the bill", example="admin", position = 10)
 	private String user;
-	
-	public int getId() {
-		return id;
+
+	public Integer getId() {
+		return this.id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public Integer getListId() {
+		return this.listId;
 	}
 
 	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
+		return this.date;
 	}
 
 	public Date getUpdate() {
-		return update;
-	}
-
-	public void setUpdate(Date update) {
-		this.update = update;
+		return this.update;
 	}
 
 	public boolean isList() {
-		return isList;
-	}
-
-	public void setList(boolean isList) {
-		this.isList = isList;
+		return this.isList;
 	}
 
 	public String getListName() {
-		return listName;
+		return this.listName;
 	}
 
-	public void setListName(String listName) {
-		this.listName = listName;
-	}
-
-	public boolean isPatient() {
-		return isPatient;
-	}
-
-	public void setPatient(boolean isPatient) {
-		this.isPatient = isPatient;
+	public boolean isPatientTrue() {
+		return this.patientTrue;
 	}
 
 	public String getPatName() {
-		return patName;
-	}
-
-	public void setPatName(String patName) {
-		this.patName = patName;
+		return this.patName;
 	}
 
 	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+		return this.status;
 	}
 
 	public Double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
+		return this.amount;
 	}
 
 	public Double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(Double balance) {
-		this.balance = balance;
+		return this.balance;
 	}
 
 	public String getUser() {
-		return user;
+		return this.user;
 	}
 
-	public void setUser(String user) {
-		this.user = user;
-	}
-	
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	public Integer getListId() {
-		return listId;
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
 	}
 
 	public void setListId(Integer listId) {
 		this.listId = listId;
 	}
 
-	public PatientDTO getPatientDTO() {
-		return patient;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
-	public void setPatientDTO(PatientDTO patient) {
-		this.patient = patient;
+	public void setUpdate(Date update) {
+		this.update = update;
 	}
-	
+
+	public void setList(boolean isList) {
+		this.isList = isList;
+	}
+
+	public void setListName(String listName) {
+		this.listName = listName;
+	}
+
+	public void setPatientTrue(boolean isPatientBill) {
+		this.patientTrue = isPatientBill;
+	}
+
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
 }

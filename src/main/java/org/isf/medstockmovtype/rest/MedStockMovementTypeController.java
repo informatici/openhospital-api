@@ -34,6 +34,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,13 +48,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedStockMovementTypeController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedStockMovementTypeController.class);
+
 	@Autowired
 	private MovementTypeMapper mapper;
 	
@@ -67,14 +68,14 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementTypeDTO>> getMedicaldsrstockmovType() throws OHServiceException {
-		log.info("Retrieving all the movement types ...");
+		LOGGER.info("Retrieving all the movement types ...");
 		List<MovementType> movementTypes = manager.getMedicaldsrstockmovType();
 		List<MovementTypeDTO> mappedMvments = mapper.map2DTOList(movementTypes);
 		if(mappedMvments.isEmpty()) {
-			log.info("No movement type found");
+			LOGGER.info("No movement type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMvments);
 		} else {
-			log.info("Found {} movement types", mappedMvments.size());
+			LOGGER.info("Found {} movement types", mappedMvments.size());
 			return ResponseEntity.ok(mappedMvments);
 		}
 	}

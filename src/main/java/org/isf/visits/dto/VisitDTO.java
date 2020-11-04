@@ -54,49 +54,49 @@ public class VisitDTO {
         return visitID;
     }
 
-    public void setVisitID(int visitID) {
-        this.visitID = visitID;
-    }
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
 
-    public PatientDTO getPatient() {
-        return patient;
-    }
+	public GregorianCalendar getDate() {
+		return this.date;
+	}
 
-    public void setPatient(PatientDTO patient) {
-        this.patient = patient;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public GregorianCalendar getDate() {
-        return date;
-    }
+	public boolean isSms() {
+		return this.sms;
+	}
 
-    public void setDate(GregorianCalendar date) {
-        this.date = date;
-    }
+	public void setVisitID(int visitID) {
+		this.visitID = visitID;
+	}
 
-    public String getNote() {
-        return note;
-    }
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+	public void setDate(GregorianCalendar date) {
+		this.date = date;
+	}
 
-    public boolean isSms() {
-        return sms;
-    }
+	public void setNote(String note) {
+		this.note = note;
+	}
 
-    public void setSms(boolean sms) {
-        this.sms = sms;
-    }
+	public void setSms(boolean sms) {
+		this.sms = sms;
+	}
 
-    @Override
-    public String toString() {
-        return "VisitDTO{" +
+  @Override
+	public String toString() {
+		return "VisitDTO{" +
                 ", patient=" + patient +
                 ", date=" + date +
                 ", note='" + note + '\'' +
                 ", sms=" + sms +
                 '}';
-    }
+  }
 }

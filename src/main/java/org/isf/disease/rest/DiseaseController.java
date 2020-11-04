@@ -35,6 +35,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,12 +50,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
 public class DiseaseController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseController.class);
+
 	@Autowired
 	protected DiseaseBrowserManager diseaseManager;
 	
@@ -73,7 +75,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpd() throws OHServiceException {
-        log.info("Get opd diseases");
+        LOGGER.info("Get opd diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -90,7 +92,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/opd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpdByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        log.info("Get opd diseases by type code");
+        LOGGER.info("Get opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -106,7 +108,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/out", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOut() throws OHServiceException {
-        log.info("Get ipd out diseases");
+        LOGGER.info("Get ipd out diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -123,7 +125,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/out/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOutByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        log.info("Get ipd out diseases by type code");
+        LOGGER.info("Get ipd out diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -139,7 +141,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/in", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdIn() throws OHServiceException {
-        log.info("Get ipd-in diseases");
+        LOGGER.info("Get ipd-in diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -156,7 +158,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/in/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdInByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        log.info("Get ipd-in diseases by type code");
+        LOGGER.info("Get ipd-in diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -172,7 +174,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/both", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases() throws OHServiceException {
-        log.info("Get both ipd and opd diseases");
+        LOGGER.info("Get both ipd and opd diseases");
 	    List<Disease> diseases = diseaseManager.getDisease();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -189,7 +191,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/both/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        log.info("Get both ipd and opd diseases by type code");
+        LOGGER.info("Get both ipd and opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDisease(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -205,7 +207,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getAllDiseases() throws OHServiceException {
-        log.info("Get all diseases, deleted ones too");
+        LOGGER.info("Get all diseases, deleted ones too");
 	    List<Disease> diseases = diseaseManager.getDiseaseAll();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -222,7 +224,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") int code) throws OHServiceException {
-        log.info("Get disease by code");
+        LOGGER.info("Get disease by code");
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
 	    if(disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));

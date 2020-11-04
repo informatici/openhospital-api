@@ -28,6 +28,7 @@ import org.isf.medical.dto.MedicalDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class TherapyDTO {
+
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
 	private Integer therapyID;
 	
@@ -59,13 +60,10 @@ public class TherapyDTO {
 	private boolean sms;
 
 	public TherapyDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public TherapyDTO(Integer therapyID, Integer patID, Date[] dates, MedicalDTO medical, Double qty, String units,
 			Integer freqInDay, String note, boolean notify, boolean sms) {
-		super();
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.dates = dates;
@@ -79,83 +77,82 @@ public class TherapyDTO {
 	}
 
 	public Integer getTherapyID() {
-		return therapyID;
+		return this.therapyID;
+	}
+
+	public Integer getPatID() {
+		return this.patID;
+	}
+
+	public Date[] getDates() {
+		return this.dates;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public Double getQty() {
+		return this.qty;
+	}
+
+	public String getUnits() {
+		return this.units;
+	}
+
+	public Integer getFreqInDay() {
+		return this.freqInDay;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public boolean isNotify() {
+		return this.notify;
+	}
+
+	public boolean isSms() {
+		return this.sms;
 	}
 
 	public void setTherapyID(Integer therapyID) {
 		this.therapyID = therapyID;
 	}
 
-	public Integer getPatID() {
-		return patID;
-	}
-
 	public void setPatID(Integer patID) {
 		this.patID = patID;
-	}
-
-	public Date[] getDates() {
-		return dates;
 	}
 
 	public void setDates(Date[] dates) {
 		this.dates = dates;
 	}
 
-	public MedicalDTO getMedical() {
-		return medical;
-	}
-
 	public void setMedical(MedicalDTO medical) {
 		this.medical = medical;
-	}
-
-	public Double getQty() {
-		return qty;
 	}
 
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
 
-	public String getUnits() {
-		return units;
-	}
-
 	public void setUnits(String units) {
 		this.units = units;
-	}
-
-	public Integer getFreqInDay() {
-		return freqInDay;
 	}
 
 	public void setFreqInDay(Integer freqInDay) {
 		this.freqInDay = freqInDay;
 	}
 
-	public String getNote() {
-		return note;
-	}
-
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	public boolean isNotify() {
-		return notify;
 	}
 
 	public void setNotify(boolean notify) {
 		this.notify = notify;
 	}
 
-	public boolean isSms() {
-		return sms;
-	}
-
 	public void setSms(boolean sms) {
 		this.sms = sms;
 	}
-	
 }

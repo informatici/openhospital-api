@@ -33,27 +33,27 @@ public class ExamRowDTO {
 
     private ExamDTO exam;
 
-    public int getCode() {
-        return code;
-    }
+	public int getCode() {
+		return this.code;
+	}
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public ExamDTO getExam() {
+		return this.exam;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 
-    public ExamDTO getExam() {
-        return exam;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setExam(ExamDTO exam) {
-        this.exam = exam;
-    }
+	public void setExam(ExamDTO exam) {
+		this.exam = exam;
+	}
 }

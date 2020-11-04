@@ -38,9 +38,7 @@ import org.isf.ward.dto.WardDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 
  * @author gildas
- *
  */
 public class AdmissionDTO {
 
@@ -144,260 +142,132 @@ public class AdmissionDTO {
 	private String deleted;
 
 	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+		return this.id;
 	}
 
 	public int getAdmitted() {
-		return admitted;
-	}
-
-	public void setAdmitted(int admitted) {
-		this.admitted = admitted;
+		return this.admitted;
 	}
 
 	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
+		return this.type;
 	}
 
 	public WardDTO getWard() {
-		return ward;
+		return this.ward;
 	}
 
-	public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
-
-	public int getyProg() {
-		return yProg;
-	}
-
-	public void setyProg(int yProg) {
-		this.yProg = yProg;
+	public int getYProg() {
+		return this.yProg;
 	}
 
 	public PatientDTO getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientDTO patient) {
-		this.patient = patient;
+		return this.patient;
 	}
 
 	public Date getAdmDate() {
-		return admDate;
-	}
-
-	public void setAdmDate(Date admDate) {
-		this.admDate = admDate;
+		return this.admDate;
 	}
 
 	public AdmissionTypeDTO getAdmType() {
-		return admType;
-	}
-
-	public void setAdmType(AdmissionTypeDTO admType) {
-		this.admType = admType;
+		return this.admType;
 	}
 
 	public String getFHU() {
-		return FHU;
-	}
-
-	public void setFHU(String fHU) {
-		FHU = fHU;
+		return this.FHU;
 	}
 
 	public DiseaseDTO getDiseaseIn() {
-		return diseaseIn;
-	}
-
-	public void setDiseaseIn(DiseaseDTO diseaseIn) {
-		this.diseaseIn = diseaseIn;
+		return this.diseaseIn;
 	}
 
 	public DiseaseDTO getDiseaseOut1() {
-		return diseaseOut1;
-	}
-
-	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
-		this.diseaseOut1 = diseaseOut1;
+		return this.diseaseOut1;
 	}
 
 	public DiseaseDTO getDiseaseOut2() {
-		return diseaseOut2;
-	}
-
-	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
-		this.diseaseOut2 = diseaseOut2;
+		return this.diseaseOut2;
 	}
 
 	public DiseaseDTO getDiseaseOut3() {
-		return diseaseOut3;
-	}
-
-	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
-		this.diseaseOut3 = diseaseOut3;
+		return this.diseaseOut3;
 	}
 
 	public OperationDTO getOperation() {
-		return operation;
-	}
-
-	public void setOperation(OperationDTO operation) {
-		this.operation = operation;
+		return this.operation;
 	}
 
 	public Date getOpDate() {
-		return opDate;
-	}
-
-	public void setOpDate(Date opDate) {
-		this.opDate = opDate;
+		return this.opDate;
 	}
 
 	public String getOpResult() {
-		return opResult;
-	}
-
-	public void setOpResult(String opResult) {
-		this.opResult = opResult;
+		return this.opResult;
 	}
 
 	public Date getDisDate() {
-		return disDate;
-	}
-
-	public void setDisDate(Date disDate) {
-		this.disDate = disDate;
+		return this.disDate;
 	}
 
 	public DischargeTypeDTO getDisType() {
-		return disType;
-	}
-
-	public void setDisType(DischargeTypeDTO disType) {
-		this.disType = disType;
+		return this.disType;
 	}
 
 	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
+		return this.note;
 	}
 
 	public Float getTransUnit() {
-		return transUnit;
-	}
-
-	public void setTransUnit(Float transUnit) {
-		this.transUnit = transUnit;
+		return this.transUnit;
 	}
 
 	public Date getVisitDate() {
-		return visitDate;
-	}
-
-	public void setVisitDate(Date visitDate) {
-		this.visitDate = visitDate;
+		return this.visitDate;
 	}
 
 	public PregnantTreatmentTypeDTO getPregTreatmentType() {
-		return pregTreatmentType;
-	}
-
-	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
-		this.pregTreatmentType = pregTreatmentType;
+		return this.pregTreatmentType;
 	}
 
 	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
-
-	public void setDeliveryDate(Date deliveryDate) {
-		this.deliveryDate = deliveryDate;
+		return this.deliveryDate;
 	}
 
 	public DeliveryTypeDTO getDeliveryType() {
-		return deliveryType;
-	}
-
-	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
-		this.deliveryType = deliveryType;
+		return this.deliveryType;
 	}
 
 	public DeliveryResultTypeDTO getDeliveryResult() {
-		return deliveryResult;
-	}
-
-	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
-		this.deliveryResult = deliveryResult;
+		return this.deliveryResult;
 	}
 
 	public Float getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Float weight) {
-		this.weight = weight;
+		return this.weight;
 	}
 
 	public Date getCtrlDate1() {
-		return ctrlDate1;
-	}
-
-	public void setCtrlDate1(Date ctrlDate1) {
-		this.ctrlDate1 = ctrlDate1;
+		return this.ctrlDate1;
 	}
 
 	public Date getCtrlDate2() {
-		return ctrlDate2;
-	}
-
-	public void setCtrlDate2(Date ctrlDate2) {
-		this.ctrlDate2 = ctrlDate2;
+		return this.ctrlDate2;
 	}
 
 	public Date getAbortDate() {
-		return abortDate;
-	}
-
-	public void setAbortDate(Date abortDate) {
-		this.abortDate = abortDate;
+		return this.abortDate;
 	}
 
 	public String getUserID() {
-		return userID;
-	}
-
-	public void setUserID(String userID) {
-		this.userID = userID;
+		return this.userID;
 	}
 
 	public String getDeleted() {
-		return deleted;
+		return this.deleted;
 	}
 
-	public void setDeleted(String deleted) {
-		this.deleted = deleted;
-	}
-	
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	@ApiModelProperty(hidden= true)
@@ -405,8 +275,135 @@ public class AdmissionDTO {
 		return hashCode;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setAdmitted(int admitted) {
+		this.admitted = admitted;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
+	public void setYProg(int yProg) {
+		this.yProg = yProg;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setAdmDate(Date admDate) {
+		this.admDate = admDate;
+	}
+
+	public void setAdmType(AdmissionTypeDTO admType) {
+		this.admType = admType;
+	}
+
+	public void setFHU(String FHU) {
+		this.FHU = FHU;
+	}
+
+	public void setDiseaseIn(DiseaseDTO diseaseIn) {
+		this.diseaseIn = diseaseIn;
+	}
+
+	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
+		this.diseaseOut1 = diseaseOut1;
+	}
+
+	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
+		this.diseaseOut2 = diseaseOut2;
+	}
+
+	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
+		this.diseaseOut3 = diseaseOut3;
+	}
+
+	public void setOperation(OperationDTO operation) {
+		this.operation = operation;
+	}
+
+	public void setOpDate(Date opDate) {
+		this.opDate = opDate;
+	}
+
+	public void setOpResult(String opResult) {
+		this.opResult = opResult;
+	}
+
+	public void setDisDate(Date disDate) {
+		this.disDate = disDate;
+	}
+
+	public void setDisType(DischargeTypeDTO disType) {
+		this.disType = disType;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setTransUnit(Float transUnit) {
+		this.transUnit = transUnit;
+	}
+
+	public void setVisitDate(Date visitDate) {
+		this.visitDate = visitDate;
+	}
+
+	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
+		this.pregTreatmentType = pregTreatmentType;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
+		this.deliveryType = deliveryType;
+	}
+
+	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
+		this.deliveryResult = deliveryResult;
+	}
+
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+
+	public void setCtrlDate1(Date ctrlDate1) {
+		this.ctrlDate1 = ctrlDate1;
+	}
+
+	public void setCtrlDate2(Date ctrlDate2) {
+		this.ctrlDate2 = ctrlDate2;
+	}
+
+	public void setAbortDate(Date abortDate) {
+		this.abortDate = abortDate;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
 
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
+	}
 }

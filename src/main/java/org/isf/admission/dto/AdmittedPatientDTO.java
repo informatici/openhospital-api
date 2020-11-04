@@ -26,20 +26,22 @@ import org.isf.patient.dto.PatientDTO;
 public class AdmittedPatientDTO {
 
 	private PatientDTO patient;
+
 	private AdmissionDTO admission;
+
 	public PatientDTO getPatient() {
-		return patient;
+		return this.patient;
 	}
+
+	public AdmissionDTO getAdmission() {
+		return this.admission;
+	}
+
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
-	public AdmissionDTO getAdmission() {
-		return admission;
-	}
+
 	public void setAdmission(AdmissionDTO admission) {
 		this.admission = admission;
 	}
-	
-	
-	
 }

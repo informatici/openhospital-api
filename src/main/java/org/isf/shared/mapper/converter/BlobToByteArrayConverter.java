@@ -25,17 +25,16 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 import org.modelmapper.AbstractConverter;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author akashytsa
- *
  */
-@Slf4j
 @Component
 public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BlobToByteArrayConverter.class);
 
 	@Override
 	protected byte[] convert(Blob data){
@@ -47,7 +46,7 @@ public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
                 data.free();
             }
         } catch (SQLException e) {
-            log.error("", e);
+            LOGGER.error("", e);
         }
         return blobAsBytes;
 	}

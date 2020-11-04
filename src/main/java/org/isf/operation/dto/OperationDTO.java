@@ -45,44 +45,44 @@ public class OperationDTO {
 
 	private Integer lock;
 
+	@ApiModelProperty(hidden= true)
+	public Integer getLock() {
+		return lock;
+	}
+
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public OperationTypeDTO getType() {
+		return this.type;
+	}
+
+	public Integer getMajor() {
+		return this.major;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public OperationTypeDTO getType() {
-		return type;
 	}
 
 	public void setType(OperationTypeDTO type) {
 		this.type = type;
 	}
 
-	public Integer getMajor() {
-		return major;
-	}
-
 	public void setMajor(Integer major) {
 		this.major = major;
-	}
-
-	public Integer getLock() {
-		return lock;
 	}
 
 	public void setLock(Integer lock) {
 		this.lock = lock;
 	}
-
 }
