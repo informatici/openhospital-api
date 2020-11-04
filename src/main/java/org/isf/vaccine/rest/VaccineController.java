@@ -112,7 +112,7 @@ public class VaccineController {
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
-	    LOGGER.info("Create vaccine: {}", newVaccine.toString());
+        LOGGER.info("Create vaccine: {}", newVaccine.toString());
         boolean isCreated;
         try {
              isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
@@ -134,7 +134,7 @@ public class VaccineController {
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
-	    LOGGER.info("Update vaccine: {}", updateVaccine.toString());
+        LOGGER.info("Update vaccine: {}", updateVaccine.toString());
         boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));

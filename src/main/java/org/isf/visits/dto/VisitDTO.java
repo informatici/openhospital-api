@@ -99,4 +99,14 @@ public class VisitDTO {
 	public void setSms(boolean sms) {
 		this.sms = sms;
 	}
+
+  @Override
+	public String toString() {
+		return "VisitDTO{" +
+                ", patient=" + patient +
+                ", date=" + date +
+                ", note='" + note + '\'' +
+                ", sms=" + sms +
+                '}';
+  }
 }

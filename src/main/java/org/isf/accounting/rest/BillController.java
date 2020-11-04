@@ -153,7 +153,7 @@ public class BillController {
 	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
-		LOGGER.info("updated Bill {}", odBillDto.toString());
+        LOGGER.info("updated Bill {}", odBillDto.toString());
         Bill bill = billMapper.map2Model(odBillDto.getBill());
         
         bill.setId(id);
