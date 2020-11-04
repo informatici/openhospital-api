@@ -46,7 +46,7 @@ public class TherapyDTO {
 	@ApiModelProperty(notes="The units", position = 6)
 	private String units;
 	
-	@ApiModelProperty(notes="The frequence in day", example = "2", position = 7)
+	@ApiModelProperty(notes="The frequency in day", example = "2", position = 7)
 	private Integer freqInDay;
 	
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 8)

@@ -64,7 +64,7 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * create a new {@link OperationType}
+	 * Create a new {@link OperationType}.
 	 * @param operationTypeDTO
 	 * @return <code>true</code> if the operation type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -72,7 +72,7 @@ public class OperationTypeController {
 	@PostMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
 		String code = operationTypeDTO.getCode();
-		log.info("Create operation Type " + code);
+		log.info("Create operation Type {}", code);
 		boolean isCreated = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
 		OperationType opeTypeCreated = opeTypeManager.getOperationType().stream().filter(opetype -> opetype.getCode().equals(code))
 				.findFirst().orElse(null);
@@ -91,7 +91,7 @@ public class OperationTypeController {
 	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateOperationTypet(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
 			throws OHServiceException {
-		log.info("Update operationtypes code:" + operationTypeDTO.getCode());
+		log.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.codeControl(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
@@ -102,7 +102,7 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * get all the available {@link OperationType}s.
+	 * Get all the available {@link OperationType}s.
 	 * @return a {@link List} of {@link OperationType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -119,14 +119,14 @@ public class OperationTypeController {
 	}
 
 	/**
-	 * Delete {@link OperationType} for specified code.
+	 * Delete {@link OperationType} with the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link OperationType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete operation Type code:" + code);
+		log.info("Delete operation Type code: {}", code);
 		boolean isDeleted = false;
 		if (opeTypeManager.codeControl(code)) {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();

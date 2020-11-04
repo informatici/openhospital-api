@@ -30,7 +30,6 @@ import org.isf.medical.dto.MedicalSortBy;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -70,13 +69,13 @@ public class MedicalController {
 	 */
 	@GetMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalDTO> getMedical(@PathVariable int code) throws OHServiceException {
-		log.info("Retrieving medical with code "+ code + " ...");
+		log.info("Retrieving medical with code {} ...", code);
 		Medical medical = medicalManager.getMedical(code);
 		if(medical == null) {
 			log.info("Medical not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
 		} else {
-			log.info("Medical retrieved sucessfully");
+			log.info("Medical retrieved successfully");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
 		}
 	}
@@ -108,7 +107,7 @@ public class MedicalController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			log.info("Found " + mappedMedicals.size() + " medicals");
+			log.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
@@ -154,13 +153,13 @@ public class MedicalController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			log.info("Found " + mappedMedicals.size() + " medicals");
+			log.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
 	
 	/**
-	 * Saves the specified {@link Medical}
+	 * Saves the specified {@link Medical}.
 	 * @param medicalDTO - the medical to save
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the medical was created
@@ -181,7 +180,7 @@ public class MedicalController {
 	}
 	
 	/**
-	 * Updates the specified {@link Medical}
+	 * Updates the specified {@link Medical}.
 	 * @param medicalDTO - the medical to update
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.OK</code> if the medical was updated
@@ -202,8 +201,8 @@ public class MedicalController {
 	}
 	
 	/**
-	 * Deletes the specified medical.
-	 * @param medical the medical to delete.
+	 * Deletes the specified {@link Medical}.
+	 * @param code the medical to delete.
 	 * @return <code>true</code> if the medical has been deleted.
 	 * @throws OHServiceException
 	 */

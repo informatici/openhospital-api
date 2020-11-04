@@ -119,8 +119,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> admtFounds = new ArrayList<>();
-		admtFounds.add(dischargeType);
+    
 		boolean isUpdated = true;
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
 				.thenReturn(isUpdated);

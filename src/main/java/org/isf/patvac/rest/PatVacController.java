@@ -66,7 +66,7 @@ public class PatVacController {
 	}
 
 	/**
-	 * create a new {@link PatientVaccine}
+	 * Create a new {@link PatientVaccine}.
 	 * @param patientVaccineDTO
 	 * @return <code>true</code> if the operation type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -74,7 +74,7 @@ public class PatVacController {
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
-		log.info("Create patient vaccine " + code);
+		log.info("Create patient vaccine {}", code);
 		boolean isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
@@ -91,7 +91,7 @@ public class PatVacController {
 	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
-		log.info("Update patientvaccines code:" + patientVaccineDTO.getCode());
+		log.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		boolean isUpdated = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isUpdated)
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not updated!", OHSeverityLevel.ERROR));
@@ -99,7 +99,7 @@ public class PatVacController {
 	}
 
 	/**
-	 * get all {@link PatientVaccine}s of today or one week ago
+	 * Get all the {@link PatientVaccine}s for today or in the last week.
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHServiceException
 	 */
@@ -117,8 +117,7 @@ public class PatVacController {
 	}
 	
 	/**
-	 * get all {@link PatientVaccine}s within <code>dateFrom</code> and
-	 * <code>dateTo</code>
+	 * Get all {@link PatientVaccine}s within <code>dateFrom</code> and <code>dateTo</code>.
 	 * @return the list of {@link PatientVaccine}s
 	 * @throws OHServiceException
 	 */
@@ -142,7 +141,7 @@ public class PatVacController {
 	}
 	
 	/**
-	 * get the max progressive number within specified year or within current year if <code>0</code>.
+	 * Get the maximum progressive number within specified year or within current year if <code>0</code>.
 	 * @return <code>int</code> - the progressive number in the year
 	 * @throws OHServiceException
 	 */
@@ -161,14 +160,14 @@ public class PatVacController {
 	 */
 	@DeleteMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
-		log.info("Delete patient vaccine code:" + code);
+		log.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
 		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
 		if (!isDeleted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted!", OHSeverityLevel.ERROR));
 		}
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

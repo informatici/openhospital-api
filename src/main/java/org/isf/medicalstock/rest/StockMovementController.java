@@ -73,7 +73,7 @@ public class StockMovementController {
 	private MedicalBrowsingManager medicalManager;
 	
 	/**
-	 * Insert a list of charging {@link Movement}s and related {@link Lot}s
+	 * Insert a list of charging {@link Movement}s and related {@link Lot}s.
 	 * 
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
@@ -93,7 +93,7 @@ public class StockMovementController {
 	}
 	
 	/**
-	 * Insert a list of discharging {@link Movement}s
+	 * Insert a list of discharging {@link Movement}s.
 	 * 
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
@@ -219,7 +219,7 @@ public class StockMovementController {
 	}
 	
 	/**
-	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}
+	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}.
 	 * @param medCode
 	 * @return the retrieved lots.
 	 * @throws OHServiceException

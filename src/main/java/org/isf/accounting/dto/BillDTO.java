@@ -48,7 +48,7 @@ public class BillDTO {
 	private Date update;
 	
 	@NotNull
-	@ApiModelProperty(notes = "boolean wich tells if a price list is applied", example="true", position = 3)
+	@ApiModelProperty(notes = "boolean which tells if a price list is applied", example="true", position = 3)
 	private boolean isList;
 	
 	@NotNull

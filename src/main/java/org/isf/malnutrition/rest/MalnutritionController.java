@@ -31,7 +31,6 @@ import org.isf.malnutrition.dto.MalnutritionDTO;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.mapper.MalnutritionMapper;
 import org.isf.malnutrition.model.Malnutrition;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -64,7 +63,7 @@ public class MalnutritionController {
 	
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
-	 * @param malnutrition the malnutrition to store.
+	 * @param malnutritionDTO the malnutrition to store.
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the malnutrition has been stored
 	 * @throws OHServiceException 
 	 */
@@ -88,7 +87,7 @@ public class MalnutritionController {
 	 */
 	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
-		log.info("Looking for malnutrition controls. Admission ID is " + admissionID);
+		log.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if(malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
@@ -98,13 +97,13 @@ public class MalnutritionController {
 			log.info("No malnutrition control found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
-			log.info("Found " + mappedMalnutritions.size() + " malnutrition controls");
+			log.info("Found {} malnutrition controls", mappedMalnutritions.size());
 			return ResponseEntity.ok(mappedMalnutritions);
 		}
 	}
 	
 	/**
-	 * returns the last {@link Malnutrition} entry for specified patient ID
+	 * Returns the last {@link Malnutrition} entry for specified patient ID.
 	 * @param patientID - the patient ID
 	 * @return the last {@link Malnutrition} for specified patient ID.
 	 * @throws OHServiceException 
@@ -120,8 +119,8 @@ public class MalnutritionController {
 	}
 	
 	/**
-	 * Updates the specified malnutrition
-	 * @param the {@link Malnutrition} to update
+	 * Updates the specified {@link Malnutrition}.
+	 * @param malnutritionDTO the {@link Malnutrition} to update
 	 * @return the updated {@link Malnutrition}
 	 * @throws OHServiceException
 	 */

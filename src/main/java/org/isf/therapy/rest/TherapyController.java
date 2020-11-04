@@ -70,7 +70,7 @@ public class TherapyController {
 	private MedicalMapper medicalMapper;
 	
 	/**
-	 * Creates a new therapy for related Patient
+	 * Creates a new therapy for related Patient.
 	 * @param thRowDTO - the therapy
 	 * @return the created therapy
 	 * @throws OHServiceException 
@@ -83,7 +83,7 @@ public class TherapyController {
 	}
 	
 	/**
-	 * Replaces all therapies for related Patient
+	 * Replaces all therapies for related Patient.
 	 * @param thRowDTOs - the list of therapies
 	 * @return <code>true</code> if the rows has been inserted, <code>false</code> otherwise
 	 * @throws OHServiceException 
@@ -100,7 +100,7 @@ public class TherapyController {
 	}
 	
 	/**
-	 * Deletes all therapies for specified Patient Code 
+	 * Deletes all therapies for specified Patient Code.
 	 * @param code - the Patient Code
 	 * @return <code>true</code> if the therapies have been deleted, <code>false</code> otherwise
 	 * @throws OHServiceException 
@@ -116,7 +116,7 @@ public class TherapyController {
 	}
 	
 	/**
-	 * Gets the medicals that are not available for the specified list of therapies
+	 * Gets the medicals that are not available for the specified list of therapies.
 	 * @param therapyDTOs - the list of therapies
 	 * @return the list of medicals out of stock
 	 * @throws OHServiceException
@@ -129,13 +129,13 @@ public class TherapyController {
 		if(mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
 		} else {
-			log.info("Found " + mappedMeds.size() + " medicals");
+			log.info("Found {} medicals", mappedMeds.size());
 			return ResponseEntity.ok(mappedMeds);
 		}
 	}
 	
 	/**
-	 * Gets the list of therapies for specified Patient ID
+	 * Gets the list of therapies for specified Patient ID.
 	 * @param patientID - the Patient ID
 	 * @return the list of therapies of the patient or all the therapies if <code>0</code> is passed
 	 * @throws OHServiceException 
@@ -147,13 +147,13 @@ public class TherapyController {
 		if(mappedThRows.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
 		} else {
-			log.info("Found " + mappedThRows.size() + " therapies");
+			log.info("Found {} therapies", mappedThRows.size());
 			return ResponseEntity.ok(mappedThRows);
 		}
 	}
 	
 	/**
-	 * Gets a list of therapies from a list of therapyRows (DB records)
+	 * Gets a list of therapies from a list of therapyRows (DB records).
 	 * @param thRowDTOs - the list of therapyRows
 	 * @return the list of therapies
 	 * @throws OHServiceException
@@ -166,13 +166,13 @@ public class TherapyController {
 		if(mappedTherapies == null || mappedTherapies.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
 		} else {
-			log.info("Found " + mappedTherapies.size() + " therapies");
+			log.info("Found {} therapies", mappedTherapies.size());
 			return ResponseEntity.ok(mappedTherapies);
 		}
 	}
 	
 	/**
-	 * Gets therapy from a therapyRow (DB record)
+	 * Gets therapy from a therapyRow (DB record).
 	 * @param thRowDTO - the therapyRow
 	 * @return the therapy
 	 * @throws OHServiceException

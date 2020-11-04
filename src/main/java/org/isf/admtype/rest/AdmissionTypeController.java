@@ -64,7 +64,7 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * create a new {@link AdmissionType}
+	 * Create a new {@link AdmissionType}
 	 * @param admissionTypeDTO
 	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -72,7 +72,7 @@ public class AdmissionTypeController {
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
-		log.info("Create Admission Type " + code);
+		log.info("Create Admission Type {}", code);
 		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
@@ -96,7 +96,7 @@ public class AdmissionTypeController {
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
-		log.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
+		log.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.codeControl(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
@@ -109,7 +109,7 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * get all the available {@link AdmissionType}s.
+	 * Get all the available {@link AdmissionType}s.
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -133,7 +133,7 @@ public class AdmissionTypeController {
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete Admission Type code:" + code);
+		log.info("Delete Admission Type code: {}", code);
 		boolean isDeleted = false;
 		if (admtManager.codeControl(code)) {
 			List<AdmissionType> admts = admtManager.getAdmissionType();
@@ -145,7 +145,7 @@ public class AdmissionTypeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

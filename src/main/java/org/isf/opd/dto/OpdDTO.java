@@ -40,13 +40,13 @@ public class OpdDTO {
     private Date date;
 
     @NotNull
-    @ApiModelProperty(notes = "the visite date", position = 3)
+    @ApiModelProperty(notes = "the visit date", position = 3)
     private Date visitDate;
 
-    @ApiModelProperty(notes = "the next visite date", position = 4)
+    @ApiModelProperty(notes = "the next visit date", position = 4)
     private Date nextVisitDate;
 
-    @ApiModelProperty(notes = "the admited patient code", position = 5)
+    @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;
 
     @NotNull

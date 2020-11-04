@@ -65,9 +65,9 @@ public class WardController {
     }
 
     /**
-     * Get all the wards
+     * Get all the wards.
      *
-     * @return NO_CONTENT if there aren't ward, List<WardDTO> otherwise
+     * @return NO_CONTENT if there aren't wards, {@code List<WardDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,9 +83,9 @@ public class WardController {
     }
 
     /**
-     * Get all the wards with maternity flag <code>false</code>
+     * Get all the wards with maternity flag <code>false</code>.
      *
-     * @return NO_CONTENT if there aren't ward, List<WardDTO> otherwise
+     * @return NO_CONTENT if there aren't wards, {@code List<WardDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/wardsNoMaternity", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,9 +101,9 @@ public class WardController {
     }
 
     /**
-     * Get current number of patients inside ward
+     * Get current number of patients inside a ward.
      *
-     * @param wardDto
+     * @param code
      * @return BAD_REQUEST if there are some problem, integer otherwise
      * @throws OHServiceException
      */
@@ -120,7 +120,7 @@ public class WardController {
     }
 
     /**
-     * Create new Ward
+     * Create a new ward.
      *
      * @param newWard
      * @return an error message if there are some problem, ok otherwise
@@ -128,7 +128,7 @@ public class WardController {
      */
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newWard(@RequestBody WardDTO newWard) throws OHServiceException {
-        log.info("Create Ward: " + newWard);
+	    log.info("Create Ward: {}", newWard);
         boolean isCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
@@ -137,7 +137,7 @@ public class WardController {
     }
 
     /**
-     * Update ward
+     * Update a specified ward.
      *
      * @param updateWard
      * @return an error message if there are some problem, ok otherwise
@@ -145,7 +145,7 @@ public class WardController {
      */
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
-        log.info("Update ward with code: " + updateWard.getCode());
+	    log.info("Update ward with code: {}", updateWard.getCode());
         boolean isUpdated = wardManager.updateWard(mapper.map2Model(updateWard));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
@@ -155,9 +155,9 @@ public class WardController {
     }
 
     /**
-     * Delete ward
+     * Delete a ward.
      *
-     * @param wardToDelete
+     * @param code the ward to delete
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
@@ -178,7 +178,7 @@ public class WardController {
     }
 
     /**
-     * Check if code is already use by other ward
+     * Check if the code is already used by other ward.
      *
      * @param code
      * @return true if it is already use, false otherwise
@@ -186,7 +186,7 @@ public class WardController {
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
-        log.info("Check ward code: " + code);
+	    log.info("Check ward code: {}", code);
         boolean check = wardManager.codeControl(code);
         return ResponseEntity.ok(check);
     }
@@ -194,7 +194,7 @@ public class WardController {
     /**
      * Check if the Maternity Ward with code "M" exists or not.
      *
-     * @param createIfNotExits if {@code true} it will create the missing {@link Ward} (with default values)
+     * @param createIfNotExist if {@code true} it will create the missing {@link Ward} (with default values)
      *                         and will return {@link true}
      * @return <code>true</code> if the Maternity {@link Ward} exists, <code>false</code> otherwise.
      * @throws OHServiceException

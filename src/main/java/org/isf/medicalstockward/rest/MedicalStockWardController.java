@@ -93,15 +93,15 @@ public class MedicalStockWardController {
 			log.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedWards);
 		} else {
-			log.info("Found " + mappedMedWards.size() + " medicals");
+			log.info("Found {} medicals", mappedMedWards.size());
 			return ResponseEntity.ok(mappedMedWards);
 		}
 	}
 	
 	/**
 	 * Gets the current quantity for the specified {@link Medical} and specified {@link Ward}.
-	 * @param ward - if {@code null} the quantity is counted for the whole hospital
-	 * @param medical - the {@link Medical} to check.
+	 * @param wardId - if {@code null} the quantity is counted for the whole hospital
+	 * @param medicalId - the {@link Medical} to check.
 	 * @return the total quantity.
 	 * @throws OHServiceException if an error occurs retrieving the quantity.
 	 */
@@ -170,7 +170,7 @@ public class MedicalStockWardController {
 	}
 	
 	/**
-	 * Gets all the movement ward with the specified criteria.
+	 * Gets all the movement wards with the specified criteria.
 	 * @param idwardTo the target ward id.
 	 * @param dateFrom the lower bound for the movement date range.
 	 * @param dateTo the upper bound for the movement date range.

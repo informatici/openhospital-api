@@ -64,15 +64,15 @@ public class VisitsController {
     }
 
     /**
-     * Get all the visitors related to a patient
+     * Get all the visitors related to a patient.
      *
      * @param patID the id of the patient
-     * @return NO_CONTENT if there aren't visitors, List<VisitDTO> otherwise
+     * @return NO_CONTENT if there aren't visitors, {@code List<VaccineDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
-        log.info("Get visit related to patId: " + patID);
+	    log.info("Get visit related to patId: {}", patID);
         ArrayList<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
         if (listVisit.size() == 0) {
@@ -83,7 +83,7 @@ public class VisitsController {
     }
 
     /**
-     * Create new visitor
+     * Create a new visitor.
      *
      * @param newVisit
      * @return an error if there are some problem, the visitor id (Integer) otherwise
@@ -91,13 +91,13 @@ public class VisitsController {
      */
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
-        log.info("Create Visit: " + newVisit);
+	    log.info("Create Visit: {}", newVisit);
         Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
         return ResponseEntity.status(HttpStatus.CREATED).body(visit.getVisitID()); //TODO: verify if it's correct
     }
 
     /**
-     * Create new visitors
+     * Create new visitors.
      *
      * @param newVisits a list with all the visitors
      * @return an error message if there are some problem, ok otherwise
@@ -115,7 +115,7 @@ public class VisitsController {
     }
 
     /**
-     * Delete all the visits related to a patient
+     * Delete all the visits related to a patient.
      *
      * @param patID the id of the patient
      * @return an error message if there are some problem, ok otherwise
@@ -123,7 +123,7 @@ public class VisitsController {
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
-        log.info("Delete Visit related to patId: " + patID);
+	    log.info("Delete Visit related to patId: {}", patID);
         Boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));

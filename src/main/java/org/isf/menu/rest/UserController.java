@@ -75,8 +75,8 @@ public class UserController {
 	private UserBrowsingManager userManager;
 	
 	/**
-	 * returns the list of {@link User}s
-	 * @return the list of {@link User}s
+	 * Returns the list of {@link User}s.
+	 * @return the list of {@link User}s.
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserDTO>> getUser(@RequestParam(name="group_id", required=false) String groupID) throws OHServiceException {
@@ -92,13 +92,13 @@ public class UserController {
 			log.info("No user found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
-			log.info("Found " + mappedUsers.size() + " users");
+			log.info("Found {} users", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
 		}
 	}
 	
 	/**
-	 * returns the {@link User}
+	 * Returns a {@link User}.
 	 * @param userName - user name
 	 * @return {@link User}
 	 */
@@ -112,7 +112,7 @@ public class UserController {
 	}
 	
 	/**
-	 * inserts a new {@link User} in the DB
+	 * Creates a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
 	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
 	 * @throws OHServiceException 
@@ -131,7 +131,7 @@ public class UserController {
 	}
 	
 	/**
-	 * updates an existing {@link User} in the DB
+	 * Updates an existing {@link User}.
 	 * @param userDTO - the {@link User} to update
 	 * @param updatePassword - indicates if it is the password that need to be updated
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
@@ -159,8 +159,8 @@ public class UserController {
 	}
 	
 	/**
-	 * deletes an existing {@link User}
-	 * @param user - the {@link User} to delete
+	 * Deletes an existing {@link User}.
+	 * @param username - the name of the {@link User} to delete
 	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
 	 */
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -178,7 +178,7 @@ public class UserController {
 	}
 	
 	/**
-	 * returns the list of {@link UserGroup}s
+	 * Returns the list of {@link UserGroup}s.
 	 * @return the list of {@link UserGroup}s
 	 */
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -190,14 +190,14 @@ public class UserController {
 			log.info("No group found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
-			log.info("Found " + mappedGroups.size() + " groups");
+	        log.info("Found {} groups", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
 	}
 	
 	/**
-	 * returns the list of {@link UserMenuItem}s that compose the menu for specified {@link User}
-	 * @param userDTO - the {@link User}
+	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link User}.
+	 * @param username - the name of the {@link User}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
 	@GetMapping(value = "/users/menus/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -216,8 +216,8 @@ public class UserController {
 	}
 	
 	/**
-	 * returns the list of {@link UserMenuItem}s that compose the menu for specified {@link UserGroup}
-	 * @param aGroup - the {@link UserGroup}
+	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link UserGroup}.
+	 * @param code - the {@link UserGroup}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
 	@GetMapping(value = "/users/group-menus/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -232,7 +232,7 @@ public class UserController {
 	}
 	
 	/**
-	 * replaces the {@link UserGroup} rights
+	 * Replaces the {@link UserGroup} rights.
 	 * @param code - the {@link UserGroup}'s code
 	 * @param menusDTO - the list of {@link UserMenuItem}s
 	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
@@ -253,7 +253,7 @@ public class UserController {
 	}
 	
 	/**
-	 * deletes a {@link UserGroup}
+	 * Deletes a {@link UserGroup}.
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
 	 */
@@ -269,7 +269,7 @@ public class UserController {
 	}
 	
 	/**
-	 * insert a new {@link UserGroup} with a minimum set of rights
+	 * Create a new {@link UserGroup} with a minimum set of rights.
 	 * @param aGroup - the {@link UserGroup} to insert
 	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
 	 */
@@ -284,7 +284,7 @@ public class UserController {
 	}
 	
 	/**
-	 * updates an existing {@link UserGroup} in the DB
+	 * Updates an existing {@link UserGroup}.
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
 	 */

@@ -61,7 +61,7 @@ public class SmsController {
 	private SmsMapper smsMapper;
 	
 	/**
-	 * Fetch the list of {@link Sms}s
+	 * Fetch the list of {@link Sms}s.
 	 * @param dateFrom
 	 * @param dateTo
 	 * @return the found list
@@ -86,13 +86,13 @@ public class SmsController {
 			log.info("No sms found");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSmsList);
         }else{
-        	log.info("Found " + mappedSmsList.size() + " sms");
+			log.info("Found {} sms", mappedSmsList.size());
             return ResponseEntity.ok(mappedSmsList);
         }
 	}
 	
 	/**
-	 * Save the specified {@link Sms}
+	 * Save the specified {@link Sms}.
 	 * @param smsDTO
 	 * @return <code>true</code> if the sms is saved
 	 * @throws OHServiceException
@@ -106,7 +106,7 @@ public class SmsController {
 	}
 	
 	/**
-	 * Deletes the specified {@link Sms}
+	 * Deletes the specified {@link Sms}.
 	 * @param smsDTOList
 	 * @return <code>true</code> if the sms is deleted
 	 * @throws OHServiceException

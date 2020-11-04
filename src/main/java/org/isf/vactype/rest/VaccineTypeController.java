@@ -66,7 +66,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Get all the vaccines types
+     * Get all the vaccines types.
      *
      * @return
      * @throws OHServiceException
@@ -84,7 +84,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Create new vaccine type
+     * Create a new vaccine type.
      *
      * @param newVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -92,7 +92,7 @@ public class VaccineTypeController {
      */
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
-        log.info("Create vaccine type: " + newVaccineType.toString());
+	    log.info("Create vaccine type: {}", newVaccineType);
         boolean isCreated;
         try {
             isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
@@ -106,7 +106,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Update vaccineType
+     * Update a vaccine type.
      *
      * @param updateVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -114,7 +114,7 @@ public class VaccineTypeController {
      */
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
-        log.info("Update vaccine type: " + updateVaccineType.toString());
+	    log.info("Update vaccine type: {}", updateVaccineType);
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
@@ -124,9 +124,9 @@ public class VaccineTypeController {
     }
 
     /**
-     * Delete vaccine type
+     * Delete a vaccine type.
      *
-     * @param vaccineTypeToDelete
+     * @param code the vaccineType to delete
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
@@ -147,7 +147,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Check if code is already use by other vaccine type
+     * Check if the code is already used by other vaccine type.
      *
      * @param code
      * @return true if it is already use, false otherwise
@@ -155,7 +155,7 @@ public class VaccineTypeController {
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
-        log.info("Check vaccine type code: " + code);
+	    log.info("Check vaccine type code: {}", code);
         boolean check = vaccineTypeManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

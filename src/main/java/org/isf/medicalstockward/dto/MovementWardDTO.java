@@ -69,7 +69,7 @@ public class MovementWardDTO {
 	private Double quantity;
 	
 	@NotNull
-	@ApiModelProperty(notes="The mesure's unit of the medical concerned by the movement", example="pct", position = 11)
+	@ApiModelProperty(notes="The measure's unit of the medical concerned by the movement", example="pct", position = 11)
 	private String units;
 	
 	@ApiModelProperty(notes="The ward to which the movement is done", position = 12)

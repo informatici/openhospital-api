@@ -60,7 +60,7 @@ public class SupplierController {
 	private SupplierMapper mapper;
 	
 	/**
-	 * Saves the specified {@link SupplierDTO}
+	 * Saves the specified {@link SupplierDTO}.
 	 * @param suplierDTO
 	 * @return <code>true</code> if the supplier was saved
 	 * @throws OHServiceException
@@ -78,7 +78,7 @@ public class SupplierController {
 	}
 	
 	/**
-	 * Updates the specified {@link SupplierDTO}
+	 * Updates the specified {@link SupplierDTO}.
 	 * @param suplierDTO
 	 * @return <code>true</code> if the supplier was updated
 	 * @throws OHServiceException
@@ -99,7 +99,7 @@ public class SupplierController {
 	}
 	
 	/**
-	 * Loads the stored suppliers
+	 * Get the suppliers.
 	 * @param excludeDeleted
 	 * @return the list of suppliers found
 	 * @throws OHServiceException
@@ -114,20 +114,20 @@ public class SupplierController {
 			log.info("No supplier found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
-			log.info("Found " + mappedSuppliers.size() + " suppliers");
+			log.info("Found {} suppliers", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
 		}
 	}
 	
 	/**
-	 * Load a supplier by its ID
+	 * Get a supplier by its ID.
 	 * @param id
 	 * @return the found supplier
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
-		log.info("Loading supplier with ID " + id);
+		log.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if(supplier == null) {
 			log.info("Supplier not found");

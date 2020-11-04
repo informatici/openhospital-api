@@ -64,7 +64,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * create a new {@link DischargeType}
+	 * Create a new {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -72,7 +72,7 @@ public class DischargeTypeController {
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
-		log.info("Create discharge type " + code);
+		log.info("Create discharge type {}", code);
 		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
@@ -87,14 +87,14 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * update the specified {@link DischargeType}
+	 * Update the specified {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
-		log.info("Update dischargetypes code:" + dischTypeDTO.getCode());
+		log.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
 			throw new OHAPIException(
@@ -107,7 +107,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * get all the available {@link DischargeType}
+	 * Get all the available {@link DischargeType}s
 	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -124,14 +124,14 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * Delete {@link DischargeType} for specified code.
+	 * Delete {@link DischargeType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DischargeType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete discharge type code:" + code);
+		log.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
 		if (discTypeManager.codeControl(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
@@ -143,7 +143,7 @@ public class DischargeTypeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

@@ -64,7 +64,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * create a new {@link DeliveryResultType}
+	 * Create a new {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -73,7 +73,7 @@ public class DeliveryResultTypeController {
 	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
-		log.info("Create Delivery result type " + code);
+		log.info("Create Delivery result type {}", code);
 		boolean isCreated = dlvrrestManager
 				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
@@ -90,7 +90,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * update the specified {@link DeliveryResultType}
+	 * Update the specified {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -98,7 +98,7 @@ public class DeliveryResultTypeController {
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
-		log.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
+		log.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
 			throw new OHAPIException(
@@ -112,7 +112,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * get all the available {@link DeliveryResultType}
+	 * Get all the available {@link DeliveryResultType}s.
 	 * @return a {@link List} of {@link DeliveryResultType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -129,7 +129,7 @@ public class DeliveryResultTypeController {
 	}
 	
 	/**
-	 * Delete {@link DeliveryResultType} for specified code.
+	 * Delete {@link DeliveryResultType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -137,7 +137,7 @@ public class DeliveryResultTypeController {
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
 			throws OHServiceException {
-		log.info("Delete Delivery result type code:" + code);
+		log.info("Delete Delivery result type code: {}", code);
 		boolean isDeleted = false;
 		if (dlvrrestManager.codeControl(code)) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
@@ -149,7 +149,7 @@ public class DeliveryResultTypeController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

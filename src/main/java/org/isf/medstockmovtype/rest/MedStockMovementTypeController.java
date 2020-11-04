@@ -30,7 +30,6 @@ import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.mapper.MovementTypeMapper;
 import org.isf.medstockmovtype.model.MovementType;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,13 +74,13 @@ public class MedStockMovementTypeController {
 			log.info("No movement type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMvments);
 		} else {
-			log.info("Found " + mappedMvments.size() + " movement types");
+			log.info("Found {} movement types", mappedMvments.size());
 			return ResponseEntity.ok(mappedMvments);
 		}
 	}
 	
 	/**
-	 * Get the  {@link MovementType} by its code
+	 * Get the {@link MovementType} by its code.
 	 * @param code - the code of the movement type.
 	 * @return {@link MovementType}.
 	 */
