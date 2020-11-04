@@ -54,16 +54,6 @@ public class VisitDTO {
         return visitID;
     }
 
-    @Override
-    public String toString() {
-        return "VisitDTO{" +
-                ", patient=" + patient.toString() +
-                ", date=" + date +
-                ", note='" + note + '\'' +
-                ", sms=" + sms +
-                '}';
-    }
-
 	public PatientDTO getPatient() {
 		return this.patient;
 	}
