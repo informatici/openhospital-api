@@ -30,11 +30,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MovementWardDTO {
 	
 	@ApiModelProperty(notes="The movement ward's code", example="1", position = 1)
@@ -102,5 +98,108 @@ public class MovementWardDTO {
 		this.wardTo = wardTo;
 		this.wardFrom = wardFrom;
 	}
-	
+
+	public int getCode() {
+		return this.code;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public boolean isPatient() {
+		return this.isPatient;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public int getAge() {
+		return this.age;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public Double getQuantity() {
+		return this.quantity;
+	}
+
+	public String getUnits() {
+		return this.units;
+	}
+
+	public WardDTO getWardTo() {
+		return this.wardTo;
+	}
+
+	public WardDTO getWardFrom() {
+		return this.wardFrom;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setPatient(boolean isPatient) {
+		this.isPatient = isPatient;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setMedical(MedicalDTO medical) {
+		this.medical = medical;
+	}
+
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+
+	public void setUnits(String units) {
+		this.units = units;
+	}
+
+	public void setWardTo(WardDTO wardTo) {
+		this.wardTo = wardTo;
+	}
+
+	public void setWardFrom(WardDTO wardFrom) {
+		this.wardFrom = wardFrom;
+	}
 }

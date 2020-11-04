@@ -24,11 +24,7 @@ package org.isf.menu.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class UserGroupDTO {
 
 	@NotNull
@@ -46,4 +42,19 @@ public class UserGroupDTO {
 		this.desc = desc;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDesc() {
+		return this.desc;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
 }

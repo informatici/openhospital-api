@@ -24,11 +24,7 @@ package org.isf.medtype.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MedicalTypeDTO {
 
 	@NotNull
@@ -47,4 +43,19 @@ public class MedicalTypeDTO {
 		this.description = description;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

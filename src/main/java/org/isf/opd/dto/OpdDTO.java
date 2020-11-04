@@ -28,14 +28,10 @@ import javax.validation.constraints.NotNull;
 import org.isf.disease.dto.DiseaseDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author gildas
  */
-@Getter
-@Setter
 public class OpdDTO {
 
     private int code;
@@ -106,4 +102,139 @@ public class OpdDTO {
         return hashCode;
     }
 
+	public int getCode() {
+		return this.code;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public Date getVisitDate() {
+		return this.visitDate;
+	}
+
+	public Date getNextVisitDate() {
+		return this.nextVisitDate;
+	}
+
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
+
+	public int getAge() {
+		return this.age;
+	}
+
+	public char getSex() {
+		return this.sex;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public int getProg_year() {
+		return this.prog_year;
+	}
+
+	public DiseaseDTO getDisease() {
+		return this.disease;
+	}
+
+	public DiseaseDTO getDisease2() {
+		return this.disease2;
+	}
+
+	public DiseaseDTO getDisease3() {
+		return this.disease3;
+	}
+
+	public char getNewPatient() {
+		return this.newPatient;
+	}
+
+	public String getReferralFrom() {
+		return this.referralFrom;
+	}
+
+	public String getReferralTo() {
+		return this.referralTo;
+	}
+
+	public String getUserID() {
+		return this.userID;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setVisitDate(Date visitDate) {
+		this.visitDate = visitDate;
+	}
+
+	public void setNextVisitDate(Date nextVisitDate) {
+		this.nextVisitDate = nextVisitDate;
+	}
+
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setSex(char sex) {
+		this.sex = sex;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setProg_year(int prog_year) {
+		this.prog_year = prog_year;
+	}
+
+	public void setDisease(DiseaseDTO disease) {
+		this.disease = disease;
+	}
+
+	public void setDisease2(DiseaseDTO disease2) {
+		this.disease2 = disease2;
+	}
+
+	public void setDisease3(DiseaseDTO disease3) {
+		this.disease3 = disease3;
+	}
+
+	public void setNewPatient(char newPatient) {
+		this.newPatient = newPatient;
+	}
+
+	public void setReferralFrom(String referralFrom) {
+		this.referralFrom = referralFrom;
+	}
+
+	public void setReferralTo(String referralTo) {
+		this.referralTo = referralTo;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

@@ -24,11 +24,7 @@ package org.isf.supplier.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class SupplierDTO {
 
 	@NotNull(message="supplier's ID is required")
@@ -71,5 +67,68 @@ public class SupplierDTO {
 		this.supEmail = supEmail;
 		this.supNote = supNote;
 	}
-	
+
+	public Integer getSupId() {
+		return this.supId;
+	}
+
+	public String getSupName() {
+		return this.supName;
+	}
+
+	public String getSupAddress() {
+		return this.supAddress;
+	}
+
+	public String getSupTaxcode() {
+		return this.supTaxcode;
+	}
+
+	public String getSupPhone() {
+		return this.supPhone;
+	}
+
+	public String getSupFax() {
+		return this.supFax;
+	}
+
+	public String getSupEmail() {
+		return this.supEmail;
+	}
+
+	public String getSupNote() {
+		return this.supNote;
+	}
+
+	public void setSupId(Integer supId) {
+		this.supId = supId;
+	}
+
+	public void setSupName(String supName) {
+		this.supName = supName;
+	}
+
+	public void setSupAddress(String supAddress) {
+		this.supAddress = supAddress;
+	}
+
+	public void setSupTaxcode(String supTaxcode) {
+		this.supTaxcode = supTaxcode;
+	}
+
+	public void setSupPhone(String supPhone) {
+		this.supPhone = supPhone;
+	}
+
+	public void setSupFax(String supFax) {
+		this.supFax = supFax;
+	}
+
+	public void setSupEmail(String supEmail) {
+		this.supEmail = supEmail;
+	}
+
+	public void setSupNote(String supNote) {
+		this.supNote = supNote;
+	}
 }

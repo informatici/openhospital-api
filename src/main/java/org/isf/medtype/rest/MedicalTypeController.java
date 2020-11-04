@@ -34,6 +34,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,15 +48,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedicalTypeController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalTypeController.class);
+
 	@Autowired
 	private MedicalTypeBrowserManager medicalTypeBrowserManager;
+
 	@Autowired
 	private MedicalTypeMapper medicalTypeMapper;
 	
@@ -66,14 +68,14 @@ public class MedicalTypeController {
 	 */
 	@GetMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalTypeDTO>> getMedicalTypes() throws OHServiceException {
-		log.info("Retrieving all the medical types ...");
+		LOGGER.info("Retrieving all the medical types ...");
 		List<MedicalType> medicalTypes = medicalTypeBrowserManager.getMedicalType();
 		List<MedicalTypeDTO> mappedMedicalTypes = medicalTypeMapper.map2DTOList(medicalTypes);
 		if (mappedMedicalTypes.size() == 0) {
-			log.info("No medical type found");
+			LOGGER.info("No medical type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicalTypes);
 		} else {
-			log.info("Found {} medical types", mappedMedicalTypes.size());
+			LOGGER.info("Found {} medical types", mappedMedicalTypes.size());
 			return ResponseEntity.ok(mappedMedicalTypes);
 		}
 	}

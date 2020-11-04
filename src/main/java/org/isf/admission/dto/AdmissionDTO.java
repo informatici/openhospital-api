@@ -36,16 +36,10 @@ import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
 import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
- * 
  * @author gildas
- *
  */
-@Getter
-@Setter
 public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "admission key", example = "12", position = 1)
@@ -147,6 +141,130 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
 	private String deleted;
 
+	public int getId() {
+		return this.id;
+	}
+
+	public int getAdmitted() {
+		return this.admitted;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public int getYProg() {
+		return this.yProg;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public Date getAdmDate() {
+		return this.admDate;
+	}
+
+	public AdmissionTypeDTO getAdmType() {
+		return this.admType;
+	}
+
+	public String getFHU() {
+		return this.FHU;
+	}
+
+	public DiseaseDTO getDiseaseIn() {
+		return this.diseaseIn;
+	}
+
+	public DiseaseDTO getDiseaseOut1() {
+		return this.diseaseOut1;
+	}
+
+	public DiseaseDTO getDiseaseOut2() {
+		return this.diseaseOut2;
+	}
+
+	public DiseaseDTO getDiseaseOut3() {
+		return this.diseaseOut3;
+	}
+
+	public OperationDTO getOperation() {
+		return this.operation;
+	}
+
+	public Date getOpDate() {
+		return this.opDate;
+	}
+
+	public String getOpResult() {
+		return this.opResult;
+	}
+
+	public Date getDisDate() {
+		return this.disDate;
+	}
+
+	public DischargeTypeDTO getDisType() {
+		return this.disType;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public Float getTransUnit() {
+		return this.transUnit;
+	}
+
+	public Date getVisitDate() {
+		return this.visitDate;
+	}
+
+	public PregnantTreatmentTypeDTO getPregTreatmentType() {
+		return this.pregTreatmentType;
+	}
+
+	public Date getDeliveryDate() {
+		return this.deliveryDate;
+	}
+
+	public DeliveryTypeDTO getDeliveryType() {
+		return this.deliveryType;
+	}
+
+	public DeliveryResultTypeDTO getDeliveryResult() {
+		return this.deliveryResult;
+	}
+
+	public Float getWeight() {
+		return this.weight;
+	}
+
+	public Date getCtrlDate1() {
+		return this.ctrlDate1;
+	}
+
+	public Date getCtrlDate2() {
+		return this.ctrlDate2;
+	}
+
+	public Date getAbortDate() {
+		return this.abortDate;
+	}
+
+	public String getUserID() {
+		return this.userID;
+	}
+
+	public String getDeleted() {
+		return this.deleted;
+	}
+
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
@@ -157,4 +275,135 @@ public class AdmissionDTO {
 		return hashCode;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setAdmitted(int admitted) {
+		this.admitted = admitted;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
+	public void setYProg(int yProg) {
+		this.yProg = yProg;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setAdmDate(Date admDate) {
+		this.admDate = admDate;
+	}
+
+	public void setAdmType(AdmissionTypeDTO admType) {
+		this.admType = admType;
+	}
+
+	public void setFHU(String FHU) {
+		this.FHU = FHU;
+	}
+
+	public void setDiseaseIn(DiseaseDTO diseaseIn) {
+		this.diseaseIn = diseaseIn;
+	}
+
+	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
+		this.diseaseOut1 = diseaseOut1;
+	}
+
+	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
+		this.diseaseOut2 = diseaseOut2;
+	}
+
+	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
+		this.diseaseOut3 = diseaseOut3;
+	}
+
+	public void setOperation(OperationDTO operation) {
+		this.operation = operation;
+	}
+
+	public void setOpDate(Date opDate) {
+		this.opDate = opDate;
+	}
+
+	public void setOpResult(String opResult) {
+		this.opResult = opResult;
+	}
+
+	public void setDisDate(Date disDate) {
+		this.disDate = disDate;
+	}
+
+	public void setDisType(DischargeTypeDTO disType) {
+		this.disType = disType;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setTransUnit(Float transUnit) {
+		this.transUnit = transUnit;
+	}
+
+	public void setVisitDate(Date visitDate) {
+		this.visitDate = visitDate;
+	}
+
+	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
+		this.pregTreatmentType = pregTreatmentType;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+
+	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
+		this.deliveryType = deliveryType;
+	}
+
+	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
+		this.deliveryResult = deliveryResult;
+	}
+
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+
+	public void setCtrlDate1(Date ctrlDate1) {
+		this.ctrlDate1 = ctrlDate1;
+	}
+
+	public void setCtrlDate2(Date ctrlDate2) {
+		this.ctrlDate2 = ctrlDate2;
+	}
+
+	public void setAbortDate(Date abortDate) {
+		this.abortDate = abortDate;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
+
+	public void setDeleted(String deleted) {
+		this.deleted = deleted;
+	}
 }

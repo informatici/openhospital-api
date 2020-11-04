@@ -26,11 +26,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class FullBillDTO {
 	
 	@NotNull
@@ -44,4 +40,27 @@ public class FullBillDTO {
 	@ApiModelProperty(notes = "list of bill payments elements", position = 3)
 	private List<BillPaymentsDTO> billPayments;
 
+	public BillDTO getBill() {
+		return this.bill;
+	}
+
+	public List<BillItemsDTO> getBillItems() {
+		return this.billItems;
+	}
+
+	public List<BillPaymentsDTO> getBillPayments() {
+		return this.billPayments;
+	}
+
+	public void setBill(BillDTO bill) {
+		this.bill = bill;
+	}
+
+	public void setBillItems(List<BillItemsDTO> billItems) {
+		this.billItems = billItems;
+	}
+
+	public void setBillPayments(List<BillPaymentsDTO> billPayments) {
+		this.billPayments = billPayments;
+	}
 }

@@ -23,15 +23,25 @@ package org.isf.admission.dto;
 
 import org.isf.patient.dto.PatientDTO;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class AdmittedPatientDTO {
 
 	private PatientDTO patient;
 
 	private AdmissionDTO admission;
 
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public AdmissionDTO getAdmission() {
+		return this.admission;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setAdmission(AdmissionDTO admission) {
+		this.admission = admission;
+	}
 }

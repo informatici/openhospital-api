@@ -21,11 +21,6 @@
  */
 package org.isf.lab.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class LaboratoryForPrintDTO {
 
     private String exam;
@@ -36,4 +31,35 @@ public class LaboratoryForPrintDTO {
 
     private Integer code;
 
+	public String getExam() {
+		return this.exam;
+	}
+
+	public String getDate() {
+		return this.date;
+	}
+
+	public String getResult() {
+		return this.result;
+	}
+
+	public Integer getCode() {
+		return this.code;
+	}
+
+	public void setExam(String exam) {
+		this.exam = exam;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 }

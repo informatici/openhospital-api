@@ -27,11 +27,7 @@ import org.isf.vactype.dto.VaccineTypeDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a vaccine")
 public class VaccineDTO {
 
@@ -56,4 +52,27 @@ public class VaccineDTO {
                 '}';
     }
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public VaccineTypeDTO getVaccineType() {
+		return this.vaccineType;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setVaccineType(VaccineTypeDTO vaccineType) {
+		this.vaccineType = vaccineType;
+	}
 }

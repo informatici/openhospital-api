@@ -22,11 +22,7 @@
 package org.isf.medicalstockward.dto;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MedicalWardDTO {
 
 	@ApiModelProperty(notes="The medical ward's id", example="1", position = 1)
@@ -47,4 +43,27 @@ public class MedicalWardDTO {
 		this.out_quantity = out_quantity;
 	}
 
+	public MedicalWardIdDTO getId() {
+		return this.id;
+	}
+
+	public float getIn_quantity() {
+		return this.in_quantity;
+	}
+
+	public float getOut_quantity() {
+		return this.out_quantity;
+	}
+
+	public void setId(MedicalWardIdDTO id) {
+		this.id = id;
+	}
+
+	public void setIn_quantity(float in_quantity) {
+		this.in_quantity = in_quantity;
+	}
+
+	public void setOut_quantity(float out_quantity) {
+		this.out_quantity = out_quantity;
+	}
 }

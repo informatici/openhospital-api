@@ -24,11 +24,7 @@ package org.isf.medstockmovtype.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MovementTypeDTO {
 
 	@NotNull
@@ -56,4 +52,27 @@ public class MovementTypeDTO {
         this.type = type;
     }
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }

@@ -27,13 +27,10 @@ import org.isf.distype.dto.DiseaseTypeDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a disease")
 public class DiseaseDTO {
+
 	@NotNull
 	@ApiModelProperty(notes = "Disease code", example = "99")
 	private String code;
@@ -72,4 +69,59 @@ public class DiseaseDTO {
 		return hashCode;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public DiseaseTypeDTO getDiseaseType() {
+		return this.diseaseType;
+	}
+
+	public boolean isOpdInclude() {
+		return this.opdInclude;
+	}
+
+	public boolean isIpdInInclude() {
+		return this.ipdInInclude;
+	}
+
+	public boolean isIpdOutInclude() {
+		return this.ipdOutInclude;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setDiseaseType(DiseaseTypeDTO diseaseType) {
+		this.diseaseType = diseaseType;
+	}
+
+	public void setOpdInclude(boolean opdInclude) {
+		this.opdInclude = opdInclude;
+	}
+
+	public void setIpdInInclude(boolean ipdInInclude) {
+		this.ipdInInclude = ipdInInclude;
+	}
+
+	public void setIpdOutInclude(boolean ipdOutInclude) {
+		this.ipdOutInclude = ipdOutInclude;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 }

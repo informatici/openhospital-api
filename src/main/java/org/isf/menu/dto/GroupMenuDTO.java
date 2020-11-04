@@ -24,11 +24,7 @@ package org.isf.menu.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class GroupMenuDTO {
 
 	@ApiModelProperty(notes="code of the group menu", example = "1", position = 1)
@@ -50,5 +46,28 @@ public class GroupMenuDTO {
 		this.userGroup = userGroup;
 		this.menuItem = menuItem;
 	}
-	
+
+	public Integer getCode() {
+		return this.code;
+	}
+
+	public String getUserGroup() {
+		return this.userGroup;
+	}
+
+	public String getMenuItem() {
+		return this.menuItem;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public void setUserGroup(String userGroup) {
+		this.userGroup = userGroup;
+	}
+
+	public void setMenuItem(String menuItem) {
+		this.menuItem = menuItem;
+	}
 }

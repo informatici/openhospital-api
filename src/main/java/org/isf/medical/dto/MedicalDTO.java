@@ -27,12 +27,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.isf.medtype.dto.MedicalTypeDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MedicalDTO {
+
 	@ApiModelProperty(notes="The id of the medical", example = "1", position = 1)
 	private Integer code;
 	
@@ -86,4 +83,75 @@ public class MedicalDTO {
 		this.outqty = outqty;
 	}
 
+	public Integer getCode() {
+		return this.code;
+	}
+
+	public String getProd_code() {
+		return this.prod_code;
+	}
+
+	public MedicalTypeDTO getType() {
+		return this.type;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public double getInitialqty() {
+		return this.initialqty;
+	}
+
+	public Integer getPcsperpck() {
+		return this.pcsperpck;
+	}
+
+	public double getInqty() {
+		return this.inqty;
+	}
+
+	public double getOutqty() {
+		return this.outqty;
+	}
+
+	public double getMinqty() {
+		return this.minqty;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public void setProd_code(String prod_code) {
+		this.prod_code = prod_code;
+	}
+
+	public void setType(MedicalTypeDTO type) {
+		this.type = type;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setInitialqty(double initialqty) {
+		this.initialqty = initialqty;
+	}
+
+	public void setPcsperpck(Integer pcsperpck) {
+		this.pcsperpck = pcsperpck;
+	}
+
+	public void setInqty(double inqty) {
+		this.inqty = inqty;
+	}
+
+	public void setOutqty(double outqty) {
+		this.outqty = outqty;
+	}
+
+	public void setMinqty(double minqty) {
+		this.minqty = minqty;
+	}
 }

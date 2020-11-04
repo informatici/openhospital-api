@@ -33,6 +33,7 @@ import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,12 +48,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class VaccineController {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineController.class);
 
     @Autowired
     protected VaccineBrowserManager vaccineManager;
@@ -73,7 +74,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
-        log.info("Get vaccines");
+        LOGGER.info("Get vaccines");
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine();
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.size() == 0) {
@@ -92,7 +93,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
-	    log.info("Get vaccine by code: {}", vaccineTypeCode);
+	    LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.size() == 0) {
@@ -111,7 +112,7 @@ public class VaccineController {
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
-	    log.info("Create vaccine: {}", newVaccine.toString());
+	    LOGGER.info("Create vaccine: {}", newVaccine.toString());
         boolean isCreated;
         try {
              isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
@@ -133,7 +134,7 @@ public class VaccineController {
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
-	    log.info("Update vaccine: {}", updateVaccine.toString());
+	    LOGGER.info("Update vaccine: {}", updateVaccine.toString());
         boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
@@ -151,7 +152,7 @@ public class VaccineController {
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
-        log.info("Delete vaccine code: {}", code);
+        LOGGER.info("Delete vaccine code: {}", code);
         boolean isDeleted = false;
         Vaccine vaccine = vaccineManager.findVaccine(code);
         if (vaccine!=null){
@@ -174,7 +175,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineCode(@PathVariable String code) throws OHServiceException {
-	    log.info("Check vaccine code: {}", code);
+	    LOGGER.info("Check vaccine code: {}", code);
         boolean check = vaccineManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

@@ -24,17 +24,12 @@ package org.isf.disctype.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
- * 
  * @author gildas
- *
  */
-@Getter
-@Setter
 public class DischargeTypeDTO {
+
 	@NotNull
 	@ApiModelProperty(notes = "code of the discharge type", example = "SN", position = 1)
 	private String code;
@@ -42,5 +37,20 @@ public class DischargeTypeDTO {
 	@NotNull
 	@ApiModelProperty(notes = "description of the discharge type", example = "SORTIE NORMALE", position = 2)
 	private String description;
-	
+
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

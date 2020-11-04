@@ -27,11 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a patient")
 public class PatientDTO {
 
@@ -141,4 +137,192 @@ public class PatientDTO {
     public int getHashCode() {
         return hashCode;
     }
+
+	public String getFirstName() {
+		return this.firstName;
+	}
+
+	public String getSecondName() {
+		return this.secondName;
+	}
+
+	public Date getBirthDate() {
+		return this.birthDate;
+	}
+
+	public int getAge() {
+		return this.age;
+	}
+
+	public String getAgetype() {
+		return this.agetype;
+	}
+
+	public char getSex() {
+		return this.sex;
+	}
+
+	public String getAddress() {
+		return this.address;
+	}
+
+	public String getCity() {
+		return this.city;
+	}
+
+	public String getTelephone() {
+		return this.telephone;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public String getMother_name() {
+		return this.mother_name;
+	}
+
+	public char getMother() {
+		return this.mother;
+	}
+
+	public String getFather_name() {
+		return this.father_name;
+	}
+
+	public char getFather() {
+		return this.father;
+	}
+
+	public String getBloodType() {
+		return this.bloodType;
+	}
+
+	public char getHasInsurance() {
+		return this.hasInsurance;
+	}
+
+	public char getParentTogether() {
+		return this.parentTogether;
+	}
+
+	public String getTaxCode() {
+		return this.taxCode;
+	}
+
+	public float getHeight() {
+		return this.height;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public byte[] getBlobPhoto() {
+		return this.blobPhoto;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setSecondName(String secondName) {
+		this.secondName = secondName;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setBirthDate(Date birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setAgetype(String agetype) {
+		this.agetype = agetype;
+	}
+
+	public void setSex(char sex) {
+		this.sex = sex;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public void setNextKin(String nextKin) {
+		this.nextKin = nextKin;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setMother_name(String mother_name) {
+		this.mother_name = mother_name;
+	}
+
+	public void setMother(char mother) {
+		this.mother = mother;
+	}
+
+	public void setFather_name(String father_name) {
+		this.father_name = father_name;
+	}
+
+	public void setFather(char father) {
+		this.father = father;
+	}
+
+	public void setBloodType(String bloodType) {
+		this.bloodType = bloodType;
+	}
+
+	public void setHasInsurance(char hasInsurance) {
+		this.hasInsurance = hasInsurance;
+	}
+
+	public void setParentTogether(char parentTogether) {
+		this.parentTogether = parentTogether;
+	}
+
+	public void setTaxCode(String taxCode) {
+		this.taxCode = taxCode;
+	}
+
+	public void setHeight(float height) {
+		this.height = height;
+	}
+
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setBlobPhoto(byte[] blobPhoto) {
+		this.blobPhoto = blobPhoto;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

@@ -26,11 +26,7 @@ import java.util.Date;
 import org.isf.exam.dto.ExamDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class LaboratoryDTO {
 
     @ApiModelProperty(notes = "Laboratory Code", position = 1)
@@ -76,4 +72,103 @@ public class LaboratoryDTO {
 		return lock;
 	}
 
+	public Integer getCode() {
+		return this.code;
+	}
+
+	public String getMaterial() {
+		return this.material;
+	}
+
+	public ExamDTO getExam() {
+		return this.exam;
+	}
+
+	public Date getRegistrationDate() {
+		return this.registrationDate;
+	}
+
+	public Date getExamDate() {
+		return this.examDate;
+	}
+
+	public String getResult() {
+		return this.result;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
+
+	public String getPatName() {
+		return this.patName;
+	}
+
+	public String getInOutPatient() {
+		return this.inOutPatient;
+	}
+
+	public Integer getAge() {
+		return this.age;
+	}
+
+	public String getSex() {
+		return this.sex;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public void setMaterial(String material) {
+		this.material = material;
+	}
+
+	public void setExam(ExamDTO exam) {
+		this.exam = exam;
+	}
+
+	public void setRegistrationDate(Date registrationDate) {
+		this.registrationDate = registrationDate;
+	}
+
+	public void setExamDate(Date examDate) {
+		this.examDate = examDate;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
+
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+
+	public void setInOutPatient(String inOutPatient) {
+		this.inOutPatient = inOutPatient;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
 }

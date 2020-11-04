@@ -25,9 +25,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.http.HttpStatus;
 
-import lombok.Getter;
-
-@Getter
 public class OHAPIException extends OHServiceException {
 
     private HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -41,4 +38,7 @@ public class OHAPIException extends OHServiceException {
         this.status = status;
     }
 
+	public HttpStatus getStatus() {
+		return this.status;
+	}
 }

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,11 +34,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
     protected UserBrowsingManager manager;
@@ -48,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         try {
             user = manager.getUserByName(username);
         } catch (OHServiceException e) {
-            log.error("User login received an unexpected OHServiceException", e);
+            LOGGER.error("User login received an unexpected OHServiceException", e);
             throw new UsernameNotFoundException(username + " authentication failed", e);
         }
         if (user == null) {

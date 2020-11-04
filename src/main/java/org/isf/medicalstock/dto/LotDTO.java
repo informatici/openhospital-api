@@ -27,11 +27,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class LotDTO {
 
 	@NotNull(message="The code is required")
@@ -58,5 +54,36 @@ public class LotDTO {
 		this.dueDate = dueDate;
 		this.cost = cost;
 	}
-	
+
+	public String getCode() {
+		return this.code;
+	}
+
+	public Date getPreparationDate() {
+		return this.preparationDate;
+	}
+
+	public Date getDueDate() {
+		return this.dueDate;
+	}
+
+	public BigDecimal getCost() {
+		return this.cost;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setPreparationDate(Date preparationDate) {
+		this.preparationDate = preparationDate;
+	}
+
+	public void setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public void setCost(BigDecimal cost) {
+		this.cost = cost;
+	}
 }

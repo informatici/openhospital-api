@@ -26,11 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.isf.opetype.dto.OperationTypeDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class OperationDTO {
 
 	private String code;
@@ -54,4 +50,39 @@ public class OperationDTO {
 		return lock;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public OperationTypeDTO getType() {
+		return this.type;
+	}
+
+	public Integer getMajor() {
+		return this.major;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setType(OperationTypeDTO type) {
+		this.type = type;
+	}
+
+	public void setMajor(Integer major) {
+		this.major = major;
+	}
+
+	public void setLock(Integer lock) {
+		this.lock = lock;
+	}
 }

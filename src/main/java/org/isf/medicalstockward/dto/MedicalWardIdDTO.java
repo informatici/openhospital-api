@@ -27,11 +27,7 @@ import org.isf.medical.dto.MedicalDTO;
 import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class MedicalWardIdDTO {
 
 	@NotNull
@@ -50,4 +46,19 @@ public class MedicalWardIdDTO {
 		this.medical = medical;
 	}
 
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
+	public void setMedical(MedicalDTO medical) {
+		this.medical = medical;
+	}
 }

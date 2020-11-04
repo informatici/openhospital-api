@@ -26,11 +26,7 @@ import java.util.Date;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class SmsDTO {
 
 	@ApiModelProperty(notes = "SMS Id", example="1", position = 1)
@@ -82,4 +78,75 @@ public class SmsDTO {
 		this.moduleID = moduleID;
 	}
 
+	public Integer getSmsId() {
+		return this.smsId;
+	}
+
+	public Date getSmsDate() {
+		return this.smsDate;
+	}
+
+	public Date getSmsDateSched() {
+		return this.smsDateSched;
+	}
+
+	public String getSmsNumber() {
+		return this.smsNumber;
+	}
+
+	public String getSmsText() {
+		return this.smsText;
+	}
+
+	public Date getSmsDateSent() {
+		return this.smsDateSent;
+	}
+
+	public String getSmsUser() {
+		return this.smsUser;
+	}
+
+	public String getModule() {
+		return this.module;
+	}
+
+	public String getModuleID() {
+		return this.moduleID;
+	}
+
+	public void setSmsId(Integer smsId) {
+		this.smsId = smsId;
+	}
+
+	public void setSmsDate(Date smsDate) {
+		this.smsDate = smsDate;
+	}
+
+	public void setSmsDateSched(Date smsDateSched) {
+		this.smsDateSched = smsDateSched;
+	}
+
+	public void setSmsNumber(String smsNumber) {
+		this.smsNumber = smsNumber;
+	}
+
+	public void setSmsText(String smsText) {
+		this.smsText = smsText;
+	}
+
+	public void setSmsDateSent(Date smsDateSent) {
+		this.smsDateSent = smsDateSent;
+	}
+
+	public void setSmsUser(String smsUser) {
+		this.smsUser = smsUser;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public void setModuleID(String moduleID) {
+		this.moduleID = moduleID;
+	}
 }

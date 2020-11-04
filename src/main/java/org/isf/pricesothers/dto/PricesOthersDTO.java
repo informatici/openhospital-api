@@ -26,11 +26,7 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a price others")
 public class PricesOthersDTO
 {
@@ -65,4 +61,71 @@ public class PricesOthersDTO
 		return hashCode;
 	}
 
+	public int getId() {
+		return this.id;
+	}
+
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public boolean isOpdInclude() {
+		return this.opdInclude;
+	}
+
+	public boolean isIpdInclude() {
+		return this.ipdInclude;
+	}
+
+	public boolean isDaily() {
+		return this.daily;
+	}
+
+	public boolean isDischarge() {
+		return this.discharge;
+	}
+
+	public boolean isUndefined() {
+		return this.undefined;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setOpdInclude(boolean opdInclude) {
+		this.opdInclude = opdInclude;
+	}
+
+	public void setIpdInclude(boolean ipdInclude) {
+		this.ipdInclude = ipdInclude;
+	}
+
+	public void setDaily(boolean daily) {
+		this.daily = daily;
+	}
+
+	public void setDischarge(boolean discharge) {
+		this.discharge = discharge;
+	}
+
+	public void setUndefined(boolean undefined) {
+		this.undefined = undefined;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

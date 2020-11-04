@@ -29,11 +29,7 @@ import org.isf.patient.dto.PatientDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a bill")
 public class BillDTO {
 	
@@ -61,7 +57,7 @@ public class BillDTO {
 	
 	@NotNull
 	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
-	private boolean isPatientBill;
+	private boolean patientTrue;
 	
 	@NotNull
 	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
@@ -82,5 +78,108 @@ public class BillDTO {
 	@NotNull
 	@ApiModelProperty(notes = "user name who create the bill", example="admin", position = 10)
 	private String user;
-	
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public Integer getListId() {
+		return this.listId;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public Date getUpdate() {
+		return this.update;
+	}
+
+	public boolean isList() {
+		return this.isList;
+	}
+
+	public String getListName() {
+		return this.listName;
+	}
+
+	public boolean isPatientTrue() {
+		return this.patientTrue;
+	}
+
+	public String getPatName() {
+		return this.patName;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public Double getAmount() {
+		return this.amount;
+	}
+
+	public Double getBalance() {
+		return this.balance;
+	}
+
+	public String getUser() {
+		return this.user;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setListId(Integer listId) {
+		this.listId = listId;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setUpdate(Date update) {
+		this.update = update;
+	}
+
+	public void setList(boolean isList) {
+		this.isList = isList;
+	}
+
+	public void setListName(String listName) {
+		this.listName = listName;
+	}
+
+	public void setPatientTrue(boolean isPatientBill) {
+		this.patientTrue = isPatientBill;
+	}
+
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
 }

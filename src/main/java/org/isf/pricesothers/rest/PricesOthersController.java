@@ -32,6 +32,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,12 +46,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PricesOthersController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PricesOthersController.class);
 
 	@Autowired
 	protected PricesOthersManager pricesOthersManager;
@@ -71,7 +72,7 @@ public class PricesOthersController {
 	 */
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
-		log.info("Create prices others {}", pricesOthersDTO.getCode());
+		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
 		boolean isCreated = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not created!", OHSeverityLevel.ERROR));
@@ -88,7 +89,7 @@ public class PricesOthersController {
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
 			throws OHServiceException {
-		log.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
+		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
 		if (pricesOthersFounds.size() == 0)
@@ -106,7 +107,7 @@ public class PricesOthersController {
 	 */
 	@GetMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PricesOthersDTO>> getPricesOtherss() throws OHServiceException {
-		log.info("Get all prices others ");
+		LOGGER.info("Get all prices others ");
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthersDTO> pricesOthersDTOs = mapper.map2DTOList(pricesOthers);
 		if (pricesOthersDTOs.size() == 0) {
@@ -125,7 +126,7 @@ public class PricesOthersController {
 	 */
 	@DeleteMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
-		log.info("Delete prices others id: {}", id);
+		LOGGER.info("Delete prices others id: {}", id);
 		boolean isDeleted = false;
 		List<PricesOthers> pricesOtherss = pricesOthersManager.getOthers();
 		List<PricesOthers> pricesOthersFounds = pricesOtherss.stream().filter(po -> po.getId() == id).collect(Collectors.toList());

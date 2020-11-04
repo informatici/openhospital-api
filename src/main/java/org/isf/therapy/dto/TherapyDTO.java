@@ -26,11 +26,7 @@ import java.util.Date;
 import org.isf.medical.dto.MedicalDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class TherapyDTO {
 
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
@@ -80,4 +76,83 @@ public class TherapyDTO {
 		this.sms = sms;
 	}
 
+	public Integer getTherapyID() {
+		return this.therapyID;
+	}
+
+	public Integer getPatID() {
+		return this.patID;
+	}
+
+	public Date[] getDates() {
+		return this.dates;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public Double getQty() {
+		return this.qty;
+	}
+
+	public String getUnits() {
+		return this.units;
+	}
+
+	public Integer getFreqInDay() {
+		return this.freqInDay;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public boolean isNotify() {
+		return this.notify;
+	}
+
+	public boolean isSms() {
+		return this.sms;
+	}
+
+	public void setTherapyID(Integer therapyID) {
+		this.therapyID = therapyID;
+	}
+
+	public void setPatID(Integer patID) {
+		this.patID = patID;
+	}
+
+	public void setDates(Date[] dates) {
+		this.dates = dates;
+	}
+
+	public void setMedical(MedicalDTO medical) {
+		this.medical = medical;
+	}
+
+	public void setQty(Double qty) {
+		this.qty = qty;
+	}
+
+	public void setUnits(String units) {
+		this.units = units;
+	}
+
+	public void setFreqInDay(Integer freqInDay) {
+		this.freqInDay = freqInDay;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setNotify(boolean notify) {
+		this.notify = notify;
+	}
+
+	public void setSms(boolean sms) {
+		this.sms = sms;
+	}
 }

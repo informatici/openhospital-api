@@ -21,10 +21,11 @@
  */
 package org.isf.testing.rest;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
-@Slf4j
 public class ControllerBaseTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ControllerBaseTest.class);
 
 	public ControllerBaseTest() {
 	}

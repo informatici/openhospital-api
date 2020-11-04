@@ -29,11 +29,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.vaccine.dto.VaccineDTO;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class PatientVaccineDTO
 {
 	private int code;
@@ -68,4 +64,51 @@ public class PatientVaccineDTO
 		return hashCode;
 	}
 
+	public int getCode() {
+		return this.code;
+	}
+
+	public int getProgr() {
+		return this.progr;
+	}
+
+	public Date getVaccineDate() {
+		return this.vaccineDate;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public VaccineDTO getVaccine() {
+		return this.vaccine;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setProgr(int progr) {
+		this.progr = progr;
+	}
+
+	public void setVaccineDate(Date vaccineDate) {
+		this.vaccineDate = vaccineDate;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setVaccine(VaccineDTO vaccine) {
+		this.vaccine = vaccine;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

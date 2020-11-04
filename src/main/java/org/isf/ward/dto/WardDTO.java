@@ -23,11 +23,6 @@ package org.isf.ward.dto;
 
 import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class WardDTO {
 
 	private String code;
@@ -61,4 +56,99 @@ public class WardDTO {
 
 	private Integer lock;
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public String getTelephone() {
+		return this.telephone;
+	}
+
+	public String getFax() {
+		return this.fax;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public Integer getBeds() {
+		return this.beds;
+	}
+
+	public Integer getNurs() {
+		return this.nurs;
+	}
+
+	public Integer getDocs() {
+		return this.docs;
+	}
+
+	public boolean isPharmacy() {
+		return this.isPharmacy;
+	}
+
+	public boolean isMale() {
+		return this.isMale;
+	}
+
+	public boolean isFemale() {
+		return this.isFemale;
+	}
+
+	public Integer getLock() {
+		return this.lock;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setBeds(Integer beds) {
+		this.beds = beds;
+	}
+
+	public void setNurs(Integer nurs) {
+		this.nurs = nurs;
+	}
+
+	public void setDocs(Integer docs) {
+		this.docs = docs;
+	}
+
+	public void setPharmacy(boolean isPharmacy) {
+		this.isPharmacy = isPharmacy;
+	}
+
+	public void setMale(boolean isMale) {
+		this.isMale = isMale;
+	}
+
+	public void setFemale(boolean isFemale) {
+		this.isFemale = isFemale;
+	}
+
+	public void setLock(Integer lock) {
+		this.lock = lock;
+	}
 }

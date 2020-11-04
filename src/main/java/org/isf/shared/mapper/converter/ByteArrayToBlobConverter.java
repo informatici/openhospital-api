@@ -27,24 +27,23 @@ import java.sql.SQLException;
 import javax.sql.rowset.serial.SerialBlob;
 
 import org.modelmapper.AbstractConverter;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author akashytsa
- *
  */
-@Slf4j
 @Component
 public class ByteArrayToBlobConverter extends AbstractConverter<byte[], Blob> {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ByteArrayToBlobConverter.class);
+
 	@Override
 	protected Blob convert(byte[] data) {
         try {
             return new SerialBlob(data);
         } catch (SQLException e) {
-            log.error("", e);
+            LOGGER.error("", e);
         }
         return null;
     }

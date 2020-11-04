@@ -27,11 +27,7 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a billPayment")
 public class BillPaymentsDTO {
 	
@@ -55,9 +51,52 @@ public class BillPaymentsDTO {
 
 	private volatile int hashCode = 0;
 
+	public Integer getId() {
+		return this.id;
+	}
+
+	public Integer getBillId() {
+		return this.billId;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public double getAmount() {
+		return this.amount;
+	}
+
+	public String getUser() {
+		return this.user;
+	}
+
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
 	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
+	public void setBillId(Integer billId) {
+		this.billId = billId;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

@@ -35,6 +35,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,13 +49,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MalnutritionController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MalnutritionController.class);
+
 	@Autowired
 	private MalnutritionMapper mapper;
 	
@@ -69,13 +70,13 @@ public class MalnutritionController {
 	 */
 	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> newMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		log.info("Creating a new malnutrition ...");
+		LOGGER.info("Creating a new malnutrition ...");
 		boolean isCreated = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
 		if (!isCreated) {
-			log.info("Malnutrition is not created!");
+			LOGGER.info("Malnutrition is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created!", OHSeverityLevel.ERROR));
         }
-		log.info("Malnutrition successfully created!");
+		LOGGER.info("Malnutrition successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 	
@@ -87,17 +88,17 @@ public class MalnutritionController {
 	 */
 	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
-		log.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
+		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if(malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 		if(mappedMalnutritions.isEmpty()) {
-			log.info("No malnutrition control found");
+			LOGGER.info("No malnutrition control found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
-			log.info("Found {} malnutrition controls", mappedMalnutritions.size());
+			LOGGER.info("Found {} malnutrition controls", mappedMalnutritions.size());
 			return ResponseEntity.ok(mappedMalnutritions);
 		}
 	}

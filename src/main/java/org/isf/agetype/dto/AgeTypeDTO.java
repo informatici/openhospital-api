@@ -25,11 +25,7 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing an age type which is typically a range")
 public class AgeTypeDTO {
 
@@ -48,4 +44,35 @@ public class AgeTypeDTO {
 	@ApiModelProperty(notes = "The maximum value of the range", example="0")
     private int to;
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public int getFrom() {
+		return this.from;
+	}
+
+	public int getTo() {
+		return this.to;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setFrom(int from) {
+		this.from = from;
+	}
+
+	public void setTo(int to) {
+		this.to = to;
+	}
 }

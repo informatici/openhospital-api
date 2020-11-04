@@ -54,6 +54,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,13 +70,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/admissions", produces = "application/vnd.ohapi.app-v1+json")
 public class AdmissionController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);
+
 	@Autowired
 	private AdmissionBrowserManager admissionManager;
 
@@ -132,12 +133,12 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getAdmissions(@PathVariable int id) throws OHServiceException {
-		log.info("Get admission by id: {}", id);
+		LOGGER.info("Get admission by id: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		log.info("admissiontype code: {}", admission.getAdmType().getCode());
+		LOGGER.info("admissiontype code: {}", admission.getAdmType().getCode());
 		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
 	}
 
@@ -152,7 +153,7 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
-		log.info("Get admission by patient code: {}", patientCode);
+		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
@@ -178,7 +179,7 @@ public class AdmissionController {
 			@RequestParam(name = "admissionrange", required = false) GregorianCalendar[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) GregorianCalendar[] dischargeRange)
 			throws OHServiceException {
-		log.info("Get admitted patients search terms: {}", searchTerms);
+		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 		
 		List<AdmittedPatient> amittedPatients = admissionManager
 				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
@@ -198,7 +199,7 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
 			throws OHServiceException {
-		log.info("Get patient admissions by patient code: {}", patientCode);
+		LOGGER.info("Get patient admissions by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
@@ -220,7 +221,7 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/getNextProgressiveIdInYear", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode)
 			throws OHServiceException {
-		log.info("get the next prog in the year for ward code: {}", wardCode);
+		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 		
 		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
@@ -237,7 +238,7 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions/getBedsOccupationInWard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
-		log.info("Counts the number of used bed for ward code: {}", wardCode);
+		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
 			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
@@ -254,7 +255,7 @@ public class AdmissionController {
 	 */
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int id) throws OHServiceException {
-		log.info("setting admission to deleted: {}", id);
+		LOGGER.info("setting admission to deleted: {}", id);
 		boolean isDeleted = false;
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission != null) {
@@ -421,7 +422,7 @@ public class AdmissionController {
 		String name = StringUtils.isEmpty(newAdmission.getPatient().getName())
 				? newAdmission.getPatient().getFirstName() + " " + newAdmission.getPatient().getSecondName()
 				: newAdmission.getPatient().getName();
-		log.info("Create admission for patient {}", name);
+		LOGGER.info("Create admission for patient {}", name);
 		Integer aId = admissionManager.newAdmissionReturnKey(newAdmission);
 		if (aId != null && aId.intValue() > 0) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(aId);
@@ -587,7 +588,7 @@ public class AdmissionController {
 		String name = StringUtils.isEmpty(updAdmission.getPatient().getName())
 				? updAdmission.getPatient().getFirstName() + " " + updAdmission.getPatient().getSecondName()
 				: updAdmission.getPatient().getName();
-		log.info("update admission for patient {}", name);
+		LOGGER.info("update admission for patient {}", name);
 		boolean isUpdated = admissionManager.updateAdmission(updAdmission);
 		if (isUpdated) {
 			return ResponseEntity.ok(updAdmission.getId());

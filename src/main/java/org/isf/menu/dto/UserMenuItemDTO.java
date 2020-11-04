@@ -24,11 +24,7 @@ package org.isf.menu.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class UserMenuItemDTO {
 
 	@NotNull
@@ -81,4 +77,75 @@ public class UserMenuItemDTO {
 		this.position = position;
 	}
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getButtonLabel() {
+		return this.buttonLabel;
+	}
+
+	public String getAltLabel() {
+		return this.altLabel;
+	}
+
+	public String getTooltip() {
+		return this.tooltip;
+	}
+
+	public char getShortcut() {
+		return this.shortcut;
+	}
+
+	public String getMySubmenu() {
+		return this.mySubmenu;
+	}
+
+	public String getMyClass() {
+		return this.myClass;
+	}
+
+	public boolean isASubMenu() {
+		return this.isASubMenu;
+	}
+
+	public int getPosition() {
+		return this.position;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setButtonLabel(String buttonLabel) {
+		this.buttonLabel = buttonLabel;
+	}
+
+	public void setAltLabel(String altLabel) {
+		this.altLabel = altLabel;
+	}
+
+	public void setTooltip(String tooltip) {
+		this.tooltip = tooltip;
+	}
+
+	public void setShortcut(char shortcut) {
+		this.shortcut = shortcut;
+	}
+
+	public void setMySubmenu(String mySubmenu) {
+		this.mySubmenu = mySubmenu;
+	}
+
+	public void setMyClass(String myClass) {
+		this.myClass = myClass;
+	}
+
+	public void setASubMenu(boolean isASubMenu) {
+		this.isASubMenu = isASubMenu;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
 }

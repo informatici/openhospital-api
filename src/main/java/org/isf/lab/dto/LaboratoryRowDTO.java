@@ -21,11 +21,6 @@
  */
 package org.isf.lab.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class LaboratoryRowDTO {
 
     private Integer code;
@@ -42,4 +37,27 @@ public class LaboratoryRowDTO {
         this.laboratory = labDTO;
     }
 
+	public Integer getCode() {
+		return this.code;
+	}
+
+	public LaboratoryDTO getLaboratory() {
+		return this.laboratory;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(Integer code) {
+		this.code = code;
+	}
+
+	public void setLaboratory(LaboratoryDTO laboratory) {
+		this.laboratory = laboratory;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

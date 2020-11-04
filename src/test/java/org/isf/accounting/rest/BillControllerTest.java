@@ -81,6 +81,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -91,13 +92,12 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author Emerson Castaneda
  */
-@Slf4j
 public class BillControllerTest extends ControllerBaseTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BillControllerTest.class);
 
 	@Mock
 	private BillBrowserManager billManagerMock;
@@ -148,7 +148,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
-		log.debug("exception: {}", exception);
+		LOGGER.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
 
@@ -172,7 +172,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
-		log.debug("exception: {}", exception);
+		LOGGER.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
@@ -186,7 +186,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer code = 0;
 		newFullBillDTO.getBill().getPatient().setCode(code);
 
-		newFullBillDTO.getBill().setPatientBill(true);
+		newFullBillDTO.getBill().setPatientTrue(true);
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
 
@@ -204,7 +204,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		log.debug("oHAPIException: {}", oHAPIException);
+		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
@@ -218,7 +218,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatient().setCode(code);
-		newFullBillDTO.getBill().setPatientBill(true);
+		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
@@ -238,7 +238,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		log.debug("oHAPIException: {}", oHAPIException);
+		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
@@ -251,7 +251,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatient().setCode(code);
-		newFullBillDTO.getBill().setPatientBill(true);
+		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
 
 		Patient patient = bill.getBillPatient();

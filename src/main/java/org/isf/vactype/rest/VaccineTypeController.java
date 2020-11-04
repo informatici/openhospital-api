@@ -33,6 +33,7 @@ import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
 import org.isf.vactype.model.VaccineType;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,12 +48,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
 public class VaccineTypeController {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineTypeController.class);
 
     @Autowired
     protected VaccineTypeBrowserManager vaccineTypeManager;
@@ -73,7 +74,7 @@ public class VaccineTypeController {
      */
     @GetMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineTypeDTO>> getVaccineType() throws OHServiceException {
-        log.info("Get vaccines type");
+        LOGGER.info("Get vaccines type");
         ArrayList<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
         List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
         if (listVaccines.size() == 0) {
@@ -92,7 +93,7 @@ public class VaccineTypeController {
      */
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
-	    log.info("Create vaccine type: {}", newVaccineType.toString());
+	    LOGGER.info("Create vaccine type: {}", newVaccineType.toString());
         boolean isCreated;
         try {
             isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
@@ -114,7 +115,7 @@ public class VaccineTypeController {
      */
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
-	    log.info("Update vaccine type: {}", updateVaccineType.toString());
+	    LOGGER.info("Update vaccine type: {}", updateVaccineType.toString());
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
@@ -132,7 +133,7 @@ public class VaccineTypeController {
      */
     @DeleteMapping(value = "/vaccinetype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
-        log.info("Delete vaccine type code: {}", code);
+        LOGGER.info("Delete vaccine type code: {}", code);
         boolean isDeleted = false;
         VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
         if (vaccineType!=null){
@@ -155,7 +156,7 @@ public class VaccineTypeController {
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
-	    log.info("Check vaccine type code: {}", code);
+	    LOGGER.info("Check vaccine type code: {}", code);
         boolean check = vaccineTypeManager.codeControl(code);
         return ResponseEntity.ok(check);
     }

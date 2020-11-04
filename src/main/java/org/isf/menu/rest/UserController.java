@@ -41,6 +41,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,13 +56,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -80,7 +81,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserDTO>> getUser(@RequestParam(name="group_id", required=false) String groupID) throws OHServiceException {
-		log.info("Fetching the list of users");
+		LOGGER.info("Fetching the list of users");
 		List<User> users;
 		if(groupID != null) {
 			users = userManager.getUser(groupID);
@@ -89,10 +90,10 @@ public class UserController {
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
 		if(mappedUsers.isEmpty()) {
-			log.info("No user found");
+			LOGGER.info("No user found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
-			log.info("Found {} users", mappedUsers.size());
+			LOGGER.info("Found {} users", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
 		}
 	}
@@ -119,14 +120,14 @@ public class UserController {
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
-		log.info("Attempting to create a user");
+		LOGGER.info("Attempting to create a user");
 		User user = userMapper.map2Model(userDTO);
 		boolean isCreated = userManager.newUser(user);
 		if (!isCreated) {
-			log.info("User is not created!");
+			LOGGER.info("User is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "User is not created!", OHSeverityLevel.ERROR));
         }
-		log.info("User successfully created!");
+		LOGGER.info("User successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 	
@@ -183,14 +184,14 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserGroupDTO>> getUserGroup() throws OHServiceException {
-		log.info("Attempting to fetch the list of user groups");
+		LOGGER.info("Attempting to fetch the list of user groups");
         List<UserGroup> groups = userManager.getUserGroup();
         List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
         if(mappedGroups.isEmpty()) {
-			log.info("No group found");
+			LOGGER.info("No group found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
-	        log.info("Found {} groups", mappedGroups.size());
+	        LOGGER.info("Found {} groups", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
 	}

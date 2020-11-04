@@ -29,11 +29,7 @@ import org.isf.patient.dto.PatientDTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a vaccine type")
 public class VisitDTO {
 
@@ -67,4 +63,40 @@ public class VisitDTO {
                 ", sms=" + sms +
                 '}';
     }
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public GregorianCalendar getDate() {
+		return this.date;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public boolean isSms() {
+		return this.sms;
+	}
+
+	public void setVisitID(int visitID) {
+		this.visitID = visitID;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public void setDate(GregorianCalendar date) {
+		this.date = date;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setSms(boolean sms) {
+		this.sms = sms;
+	}
 }

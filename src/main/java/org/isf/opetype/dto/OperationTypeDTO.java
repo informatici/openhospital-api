@@ -23,11 +23,6 @@ package org.isf.opetype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class OperationTypeDTO {
 
 	private String code;
@@ -35,4 +30,19 @@ public class OperationTypeDTO {
 	@NotNull
 	private String description;
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

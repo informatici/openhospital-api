@@ -25,13 +25,10 @@ import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @ApiModel(description = "Class representing a disease type")
 public class DiseaseTypeDTO {
+
 	@NotNull
 	@ApiModelProperty(notes = "Disease type code")
 	private String code;
@@ -40,4 +37,19 @@ public class DiseaseTypeDTO {
 	@ApiModelProperty(notes = "Disease type description")
     private String description;
 
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }
