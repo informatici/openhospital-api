@@ -132,9 +132,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(newBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(newBillDto.getBillItems()));
         
-        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(newBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(newBillDto.getBillPayments()));
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
         
@@ -183,9 +183,9 @@ public class BillController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
         }
         
-        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(odBillDto.getBillItemsDTO()));
+        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(odBillDto.getBillItems()));
         
-        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(odBillDto.getBillPaymentsDTO()));
+        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(odBillDto.getBillPayments()));
         
         boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
     
