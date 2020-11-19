@@ -81,7 +81,7 @@ public class VisitsControllerTest {
 	}
 
 	@Test
-	public void testGetVisit_200() throws JsonProcessingException, Exception {
+	public void testGetVisit_200() throws Exception {
 		String request = "/visit/{patID}";
 
 		int patID = 0;

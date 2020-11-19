@@ -82,7 +82,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllDiseaseTypes_200() throws JsonProcessingException, Exception {
+	public void testGetAllDiseaseTypes_200() throws Exception {
 		String request = "/diseasetypes";
 
 		ArrayList<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);

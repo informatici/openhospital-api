@@ -82,7 +82,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetWards_200() throws JsonProcessingException, Exception {
+	public void testGetWards_200() throws Exception {
 		String request = "/wards";
 
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
@@ -104,7 +104,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetWardsNoMaternity_200() throws JsonProcessingException, Exception {
+	public void testGetWardsNoMaternity_200() throws Exception {
 		String request = "/wardsNoMaternity";
 
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
@@ -127,7 +127,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetCurrentOccupation() throws JsonProcessingException, Exception {
+	public void testGetCurrentOccupation() throws Exception {
 		String request = "/wards/occupation/{code}";
 
 		Integer code = 4;

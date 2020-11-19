@@ -140,7 +140,7 @@ public class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	public void testGetDeliveryResultTypes_200() throws JsonProcessingException, Exception {
+	public void testGetDeliveryResultTypes_200() throws Exception {
 		String request = "/deliveryresulttypes";
 
 		ArrayList<DeliveryResultType> results = DeliveryResultTypeHelper.setupDeliveryResultTypeList(3);

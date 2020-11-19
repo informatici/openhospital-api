@@ -82,7 +82,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccines_200() throws JsonProcessingException, Exception {
+	public void testGetVaccines_200() throws Exception {
 		String request = "/vaccines";
 
 		String code = "AA";
@@ -105,7 +105,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccinesByVaccineTypeCode_200() throws JsonProcessingException, Exception {
+	public void testGetVaccinesByVaccineTypeCode_200() throws Exception {
 		String request = "/vaccines/{vaccineTypeCode}";
 
 		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
@@ -200,7 +200,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testCheckVaccineCode_200() throws JsonProcessingException, Exception {
+	public void testCheckVaccineCode_200() throws Exception {
 		String request = "/vaccines/check/{code}";
 
 		String code = "AA";

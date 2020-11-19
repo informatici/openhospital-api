@@ -80,7 +80,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllAgeTypes_200() throws JsonProcessingException, Exception {
+	public void testGetAllAgeTypes_200() throws Exception {
 		String request = "/agetypes";
 
 		ArrayList<AgeType> results = AgeTypeHelper.genArrayList(5);
@@ -147,7 +147,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAgeTypeByIndex_200() throws JsonProcessingException, Exception {
+	public void testGetAgeTypeByIndex_200() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
