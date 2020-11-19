@@ -85,9 +85,7 @@ public class StockMovementController {
 	public ResponseEntity<Boolean> newMultipleChargingMovements(@RequestBody List<MovementDTO> movementDTOs, 
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		ArrayList<Movement> movements = new ArrayList<>();
-		movMapper.map2ModelList(movementDTOs).forEach(mov -> {
-			movements.add(mov);
-		});
+		movements.addAll(movMapper.map2ModelList(movementDTOs));
 		boolean done = movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
@@ -105,9 +103,7 @@ public class StockMovementController {
 	public ResponseEntity<Boolean> newMultipleDischargingMovements(@RequestBody List<MovementDTO> movementDTOs, 
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		ArrayList<Movement> movements = new ArrayList<>();
-		movMapper.map2ModelList(movementDTOs).forEach(mov -> {
-			movements.add(mov);
-		});
+		movements.addAll(movMapper.map2ModelList(movementDTOs));
 		boolean done = movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
