@@ -229,9 +229,7 @@ public class MedicalStockWardController {
 	@PostMapping(value = "/medicalstockward/movements/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody List<MovementWardDTO> newMovementDTOs) throws OHServiceException {
 		ArrayList<MovementWard> newMovements = new ArrayList<>();
-		movementWardMapper.map2ModelList(newMovementDTOs).forEach(mov -> {
-			newMovements.add(mov);
-		});
+		newMovements.addAll(movementWardMapper.map2ModelList(newMovementDTOs));
 		boolean arePersisted = movWardBrowserManager.newMovementWard(newMovements);
 		if (!arePersisted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Movements ward are not created!", OHSeverityLevel.ERROR));
