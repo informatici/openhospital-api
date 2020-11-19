@@ -129,7 +129,7 @@ public class WardControllerTest {
 	public void testGetCurrentOccupation() throws Exception {
 		String request = "/wards/occupation/{code}";
 
-		Integer code = 4;
+		int code = 4;
 
 		Ward ward = WardHelper.setup(code);
 
