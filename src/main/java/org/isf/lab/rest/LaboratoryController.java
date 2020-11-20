@@ -179,11 +179,11 @@ public class LaboratoryController {
         LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
         List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
-        if (code != laboratoryDTO.getCode()) {
+        if (!code.equals(laboratoryDTO.getCode())) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch!", OHSeverityLevel.ERROR));
         }
 
-        if (laboratoryManager.getLaboratory().stream().noneMatch(l -> l.getCode() == code)) {
+        if (laboratoryManager.getLaboratory().stream().noneMatch(l -> l.getCode().equals(code))) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
         }
         Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
@@ -215,7 +215,7 @@ public class LaboratoryController {
 
     @DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteExam(@PathVariable Integer code) throws OHServiceException {
-        Laboratory labToDelete = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode() == code).findFirst().orElse(null);
+        Laboratory labToDelete = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
         if (labToDelete == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
         }
