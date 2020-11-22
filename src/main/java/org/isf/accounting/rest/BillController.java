@@ -107,7 +107,10 @@ public class BillController {
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
-		LOGGER.info("Create Bill {}", newBillDto.toString());
+		if (newBillDto == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Bill is null!", OHSeverityLevel.ERROR));
+		}
+		LOGGER.info("Create Bill {}", newBillDto);
       
         Bill bill = billMapper.map2Model(newBillDto.getBill());
         
@@ -138,7 +141,7 @@ public class BillController {
         
         boolean isCreated = billManager.newBill(bill, billItems, billPayments);
         
-        if(!isCreated || newBillDto == null){
+        if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
