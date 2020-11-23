@@ -157,11 +157,11 @@ public class WardControllerTest {
 	public void testNewWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
+		Ward ward = WardHelper.setup(code);
+		WardDTO body = wardMapper.map2DTO(ward);
 
-		boolean isCreated = true;
 		when(wardBrowserManagerMock.newWard(wardMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(ward);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -180,11 +180,12 @@ public class WardControllerTest {
 	public void testUpdateWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
+		Ward ward = WardHelper.setup(code);
+		WardDTO body = wardMapper.map2DTO(ward);
 
 		boolean isUpdated = true;
 		when(wardBrowserManagerMock.updateWard(wardMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(ward);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
