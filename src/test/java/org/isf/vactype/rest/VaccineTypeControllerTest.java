@@ -82,7 +82,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testGetVaccineType_200() throws JsonProcessingException, Exception {
+	public void testGetVaccineType_200() throws Exception {
 		String request = "/vaccinetype";
 
 		ArrayList<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);

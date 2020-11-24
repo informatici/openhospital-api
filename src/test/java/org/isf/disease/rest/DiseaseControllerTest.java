@@ -99,7 +99,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesOpdByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesOpdByCode_200() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -120,7 +120,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdOut_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdOut_200() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -139,7 +139,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdOutByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdOutByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -160,7 +160,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdIn_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdIn_200() throws Exception {
 
 		String request = "/diseases/ipd/in";
 
@@ -180,7 +180,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdInByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdInByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -201,7 +201,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseases_200() throws JsonProcessingException, Exception {
+	public void testGetDiseases_200() throws Exception {
 		String request = "/diseases/both";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -220,7 +220,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesString_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesString_200() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -242,7 +242,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetAllDiseases_200() throws JsonProcessingException, Exception {
+	public void testGetAllDiseases_200() throws Exception {
 		String request = "/diseases/all";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -261,7 +261,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseaseByCode() throws JsonProcessingException, Exception {
+	public void testGetDiseaseByCode() throws Exception {
 		String request = "/diseases/{code}";
 
 		int code = 1;
@@ -282,7 +282,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testNewDisease_200() throws JsonProcessingException, Exception {
+	public void testNewDisease_200() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
