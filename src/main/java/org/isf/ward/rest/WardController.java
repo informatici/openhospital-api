@@ -131,7 +131,7 @@ public class WardController {
     public ResponseEntity newWard(@RequestBody WardDTO newWard) throws OHServiceException {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
-        if (wardCreated != null) {
+        if (wardCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
@@ -148,7 +148,7 @@ public class WardController {
     public ResponseEntity updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
         Ward wardUpdated = wardManager.updateWard(mapper.map2Model(updateWard));
-        if (wardUpdated != null) {
+        if (wardUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(null);

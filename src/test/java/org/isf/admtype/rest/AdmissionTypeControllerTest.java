@@ -111,7 +111,6 @@ public class AdmissionTypeControllerTest {
 		when(admtManagerMock.codeControl(body.getCode()))
 				.thenReturn(true);
 
-		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
 		boolean isUpdated = true;
 		when(admtManagerMock.updateAdmissionType(admissionTypemapper.map2Model(body)))
 				.thenReturn(isUpdated);
