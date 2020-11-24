@@ -71,7 +71,7 @@ public class MedicalTypeController {
 		LOGGER.info("Retrieving all the medical types ...");
 		List<MedicalType> medicalTypes = medicalTypeBrowserManager.getMedicalType();
 		List<MedicalTypeDTO> mappedMedicalTypes = medicalTypeMapper.map2DTOList(medicalTypes);
-		if (mappedMedicalTypes.size() == 0) {
+		if (mappedMedicalTypes.isEmpty()) {
 			LOGGER.info("No medical type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicalTypes);
 		} else {

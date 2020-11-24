@@ -136,7 +136,7 @@ public class OperationController {
 		LOGGER.info("Get all operations ");
 		List<Operation> operations = operationManager.getOperation();
 		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
-		if (operationDTOs.size() == 0) {
+		if (operationDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationDTOs);
 		} else {
 			return ResponseEntity.ok(operationDTOs);
@@ -169,7 +169,7 @@ public class OperationController {
 		LOGGER.info("Get operations for provided type description");
 		List<Operation> operations = operationManager.getOperationByTypeDescription(typeDescription);
 		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
-		if (operationDTOs.size() == 0) {
+		if (operationDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationDTOs);
 		} else {
 			return ResponseEntity.ok(operationDTOs);
@@ -231,7 +231,7 @@ public class OperationController {
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 				.collect(Collectors.toList());
-		if (opRowFounds.size() == 0)
+		if (opRowFounds.isEmpty())
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = operationRowManager.updateOperationRow(opRow);
 		if (!isUpdated)
@@ -250,7 +250,7 @@ public class OperationController {
 		Admission adm = admissionManager.getAdmission(id);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByAdmission(adm);
 		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
-		if (operationRowDTOs.size() == 0) {
+		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {
 			return ResponseEntity.ok(operationRowDTOs);
@@ -267,7 +267,7 @@ public class OperationController {
 		LOGGER.info("Get operations row for provided opd");
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
 		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
-		if (operationRowDTOs.size() == 0) {
+		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {
 			return ResponseEntity.ok(operationRowDTOs);

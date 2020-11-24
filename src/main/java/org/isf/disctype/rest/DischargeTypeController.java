@@ -117,7 +117,7 @@ public class DischargeTypeController {
 		LOGGER.info("Get all discharge types ");
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
-		if (dischTypeDTOs.size() == 0) {
+		if (dischTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dischTypeDTOs);

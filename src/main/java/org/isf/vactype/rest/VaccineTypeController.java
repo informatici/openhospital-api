@@ -77,7 +77,7 @@ public class VaccineTypeController {
         LOGGER.info("Get vaccines type");
         ArrayList<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
         List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);

@@ -117,7 +117,7 @@ public class DeliveryTypeController {
 		LOGGER.info("Get all Delivery types ");
 		List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
 		List<DeliveryTypeDTO> dlvrTypeDTOs = deliveryTypeMapper.map2DTOList(dlvrTypes);
-		if (dlvrTypeDTOs.size() == 0) {
+		if (dlvrTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dlvrTypeDTOs);

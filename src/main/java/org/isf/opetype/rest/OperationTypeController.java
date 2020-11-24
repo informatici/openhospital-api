@@ -112,7 +112,7 @@ public class OperationTypeController {
 		LOGGER.info("Get all operation Types ");
 		List<OperationType> operationTypes = opeTypeManager.getOperationType();
 		List<OperationTypeDTO> operationTypeDTOs = mapper.map2DTOList(operationTypes);
-		if (operationTypeDTOs.size() == 0) {
+		if (operationTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationTypeDTOs);
 		} else {
 			return ResponseEntity.ok(operationTypeDTOs);

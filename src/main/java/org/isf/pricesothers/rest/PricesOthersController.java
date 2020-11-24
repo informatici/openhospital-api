@@ -92,7 +92,7 @@ public class PricesOthersController {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
-		if (pricesOthersFounds.size() == 0)
+		if (pricesOthersFounds.isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		boolean isUpdated = pricesOthersManager.updateOther(pricesOthers);
 		if (!isUpdated)
@@ -110,7 +110,7 @@ public class PricesOthersController {
 		LOGGER.info("Get all prices others ");
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthersDTO> pricesOthersDTOs = mapper.map2DTOList(pricesOthers);
-		if (pricesOthersDTOs.size() == 0) {
+		if (pricesOthersDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pricesOthersDTOs);
 		} else {
 			return ResponseEntity.ok(pricesOthersDTOs);

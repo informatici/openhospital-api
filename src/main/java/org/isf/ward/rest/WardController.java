@@ -76,7 +76,7 @@ public class WardController {
         LOGGER.info("Get wards");
         ArrayList<Ward> wards = wardManager.getWards();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
-        if (listWard.size() == 0) {
+        if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listWard);
@@ -94,7 +94,7 @@ public class WardController {
         LOGGER.info("Get wards no maternity");
         ArrayList<Ward> wards = wardManager.getWardsNoMaternity();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
-        if (listWard.size() == 0) {
+        if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listWard);

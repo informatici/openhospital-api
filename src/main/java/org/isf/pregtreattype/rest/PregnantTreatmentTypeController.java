@@ -112,7 +112,7 @@ public class PregnantTreatmentTypeController {
 		LOGGER.info("Get all pregnantTreatment Types ");
 		List<PregnantTreatmentType> pregnantTreatmentTypes = pregTreatTypeManager.getPregnantTreatmentType();
 		List<PregnantTreatmentTypeDTO> pregnantTreatmentTypeDTOs = mapper.map2DTOList(pregnantTreatmentTypes);
-		if (pregnantTreatmentTypeDTOs.size() == 0) {
+		if (pregnantTreatmentTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pregnantTreatmentTypeDTOs);
 		} else {
 			return ResponseEntity.ok(pregnantTreatmentTypeDTOs);

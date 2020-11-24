@@ -110,7 +110,7 @@ public class PatVacController {
 		if(oneWeek == null) oneWeek = false;
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(oneWeek);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.size() == 0) {
+		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
@@ -134,7 +134,7 @@ public class PatVacController {
         
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, datefrom, dateto, sex, ageFrom, ageTo);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.size() == 0) {
+		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
