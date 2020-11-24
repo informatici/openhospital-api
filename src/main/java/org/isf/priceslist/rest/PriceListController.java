@@ -114,7 +114,7 @@ public class PriceListController {
 		LOGGER.info("Get all price lists ");
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceListDTO> priceListDTOs = mapper.map2DTOList(priceLists);
-		if (priceListDTOs.size() == 0) {
+		if (priceListDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
 		} else {
 			return ResponseEntity.ok(priceListDTOs);
@@ -131,7 +131,7 @@ public class PriceListController {
 		LOGGER.info("Get all price");
 		List<Price> prices = priceListManager.getPrices();
 		List<PriceDTO> priceListDTOs = priceMapper.map2DTOList(prices);
-		if (priceListDTOs.size() == 0) {
+		if (priceListDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
 		} else {
 			return ResponseEntity.ok(priceListDTOs);
@@ -169,7 +169,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;
-		if (priceListFounds.size() == 0) {
+		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
 		    isCopied = priceListManager.copyList(priceListFounds.get(0));
@@ -190,7 +190,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;
-		if (priceListFounds.size() == 0) {
+		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		} else {
 		    isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);

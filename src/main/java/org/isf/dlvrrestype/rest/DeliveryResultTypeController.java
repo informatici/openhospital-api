@@ -122,7 +122,7 @@ public class DeliveryResultTypeController {
 		LOGGER.info("Get all Delivery result types ");
 		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
 		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = mapper.map2DTOList(dlvrrestissionTypes);
-		if (dlvrrestTypeDTOs.size() == 0) {
+		if (dlvrrestTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrrestTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dlvrrestTypeDTOs);

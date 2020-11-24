@@ -234,7 +234,7 @@ public class BillController {
         
         billDTOS = billMapper.map2DTOList(bills);
         
-        if(billDTOS.size() == 0){
+        if(billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
         }else{
             return ResponseEntity.ok(billDTOS);
@@ -276,7 +276,7 @@ public class BillController {
         
         paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
         
-        if(paymentsDTOS.size() == 0){
+        if(paymentsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(paymentsDTOS);
@@ -297,7 +297,7 @@ public class BillController {
 	    
         List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
         
-        if(paymentsDTOS.size() == 0){
+        if(paymentsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(paymentsDTOS);
@@ -318,7 +318,7 @@ public class BillController {
 	    
         List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
-        if(itemsDTOS.size() == 0){
+        if(itemsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(itemsDTOS);
@@ -360,7 +360,7 @@ public class BillController {
 	    
 	    List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
-        if(billDTOS.size() == 0){
+        if(billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(billDTOS);
@@ -382,7 +382,7 @@ public class BillController {
 	    List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
         
-        if(billDTOS.size() == 0){
+        if(billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
         }else{
             return ResponseEntity.ok(billDTOS);
@@ -416,7 +416,7 @@ public class BillController {
         
         List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         
-        if(billDTOS.size() == 0){
+        if(billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(billDTOS);
@@ -438,7 +438,7 @@ public class BillController {
 	    
         List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
-        if(itemsDTOS.size() == 0){
+        if(itemsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(itemsDTOS);
@@ -476,7 +476,7 @@ public class BillController {
         
         List<BillDTO>billDTOS = billMapper.map2DTOList(bills);
         
-        if(billDTOS.size() == 0){
+        if(billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }else{
             return ResponseEntity.ok(billDTOS);

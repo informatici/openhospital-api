@@ -119,7 +119,7 @@ public class AdmissionTypeController {
 		LOGGER.info("Get all Admission Types ");
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
-		if (admissionTypeDTOs.size() == 0) {
+		if (admissionTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
 		} else {
 			return ResponseEntity.ok(admissionTypeDTOs);

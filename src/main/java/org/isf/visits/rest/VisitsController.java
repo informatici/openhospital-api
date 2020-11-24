@@ -76,7 +76,7 @@ public class VisitsController {
 	    LOGGER.info("Get visit related to patId: {}", patID);
         ArrayList<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
-        if (listVisit.size() == 0) {
+        if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listVisit);

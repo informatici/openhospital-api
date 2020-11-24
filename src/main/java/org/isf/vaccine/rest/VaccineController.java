@@ -77,7 +77,7 @@ public class VaccineController {
         LOGGER.info("Get vaccines");
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine();
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);
@@ -96,7 +96,7 @@ public class VaccineController {
 	    LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
         ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);

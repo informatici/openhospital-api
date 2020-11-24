@@ -105,7 +105,7 @@ public class PatientController {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 	    ArrayList<Patient> patients = patientManager.getPatient(page, size);
         List<PatientDTO> patientDTOS = patientMapper.map2DTOList(patients);
-        if(patientDTOS.size() == 0){
+        if(patientDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
         }else{
             return ResponseEntity.ok(patientDTOS);

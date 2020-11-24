@@ -136,7 +136,7 @@ public class OpdController {
 		}		
 		List<Opd> opds = opdManager.getOpd(oneWeek);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
-		if (opdDTOs.size() == 0) {
+		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
 			return ResponseEntity.ok(opdDTOs);
@@ -161,7 +161,7 @@ public class OpdController {
         
 		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, datefrom, dateto, ageFrom,  ageTo, sex, newPatient);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
-		if (opdDTOs.size() == 0) {
+		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
 			return ResponseEntity.ok(opdDTOs);
@@ -178,7 +178,7 @@ public class OpdController {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", patientcode);
 		List<Opd> opds = opdManager.getOpdList(patientcode);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
-		if (opdDTOs.size() == 0) {
+		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
 			return ResponseEntity.ok(opdDTOs);
