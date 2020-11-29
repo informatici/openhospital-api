@@ -52,7 +52,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE)
 public class DiseaseController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseController.class);
