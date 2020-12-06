@@ -106,7 +106,7 @@ public class VaccineControllerTest {
 
 	@Test
 	public void testGetVaccinesByVaccineTypeCode_200() throws Exception {
-		String request = "/vaccines/{vaccineTypeCode}";
+		String request = "/vaccines/type-code/{vaccineTypeCode}";
 
 		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
 		String vaccineTypeCode = vaccinesList.get(0).getVaccineType().getCode();
