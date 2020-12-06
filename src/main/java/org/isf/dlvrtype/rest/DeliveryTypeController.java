@@ -93,7 +93,7 @@ public class DeliveryTypeController {
 	 * @return <code>true</code> if the {@link DeliveryType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		LOGGER.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);

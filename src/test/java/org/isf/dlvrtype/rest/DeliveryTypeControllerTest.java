@@ -113,7 +113,7 @@ public class DeliveryTypeControllerTest {
 
 	@Test
 	public void testUpdateDeliveryTypet_200() throws Exception {
-		String request = "/deliverytypes/{code}";
+		String request = "/deliverytypes/";
 		int code = 456;
 
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
