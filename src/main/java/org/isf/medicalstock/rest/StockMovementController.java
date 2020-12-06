@@ -215,7 +215,7 @@ public class StockMovementController {
 	}
 	
 	/**
-	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}.
+	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}, expiring first on top
 	 * @param medCode
 	 * @return the retrieved lots.
 	 * @throws OHServiceException
