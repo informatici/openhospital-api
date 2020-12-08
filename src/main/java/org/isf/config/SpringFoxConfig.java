@@ -40,7 +40,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SpringFoxConfig {
-    @Bean
+
+	private static final String EXCLUDE_LOGIN_PATH_REGEX_PATTERN = "^(?!\\/auth\\/login).*$";
+
+	@Bean
     public Docket apiDocket() {
 
         return new Docket(DocumentationType.SWAGGER_2)
@@ -56,7 +59,7 @@ public class SpringFoxConfig {
     private SecurityContext actuatorSecurityContext() {
         return SecurityContext.builder()
                 .securityReferences(Arrays.asList(basicAuthReference()))
-                .forPaths(PathSelectors.ant("/patients/**"))
+                .forPaths(PathSelectors.regex(EXCLUDE_LOGIN_PATH_REGEX_PATTERN))
                 .build();
     }
 

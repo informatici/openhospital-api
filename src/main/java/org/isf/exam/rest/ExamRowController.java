@@ -48,10 +48,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExamRowController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExamRowController.class);

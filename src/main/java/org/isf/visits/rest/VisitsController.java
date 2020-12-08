@@ -45,10 +45,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VisitsController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsController.class);

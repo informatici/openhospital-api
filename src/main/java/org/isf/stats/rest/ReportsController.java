@@ -45,10 +45,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReportsController {
 	@Autowired
 	private JasperReportsManager reportsManager;
