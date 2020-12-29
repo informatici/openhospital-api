@@ -21,15 +21,21 @@
  */
 package org.isf.config;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.BasicAuth;
 import springfox.documentation.service.SecurityReference;
 import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
@@ -40,31 +46,47 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SpringFoxConfig {
+
+	@Value("${api.host:localhost\\:8080}")
+	String host;
+
+	@Value("${api.protocol:http}")
+	String protocol;
+
     @Bean
     public Docket apiDocket() {
 
+        List<SecurityScheme> securitySchemes = Arrays.asList(new ApiKey("JWT", "Authorization", "header"));
+
+        ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
+
+        Set<String> protocols = new HashSet<>();
+        protocols.add(protocol);
+
+
         return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo)
+                .host(host)
+                .protocols(protocols)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.isf"))
                 //.apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .securityContexts(Arrays.asList(actuatorSecurityContext()))
-                .securitySchemes(Arrays.asList(basicAuthScheme()));
+                .securityContexts(Arrays.asList(jwtSecurityContext()))
+                .securitySchemes(securitySchemes);
     }
 
-    private SecurityContext actuatorSecurityContext() {
-        return SecurityContext.builder()
-                .securityReferences(Arrays.asList(basicAuthReference()))
-                .forPaths(PathSelectors.ant("/patients/**"))
+    private SecurityContext jwtSecurityContext() {
+        return SecurityContext
+                .builder()
+                .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.regex("^(?!(\\/auth\\/login)).*$"))
                 .build();
     }
 
-    private SecurityScheme basicAuthScheme() {
-        return new BasicAuth("basicAuth");
+    List<SecurityReference> defaultAuth() {
+        return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
     }
 
-    private SecurityReference basicAuthReference() {
-        return new SecurityReference("basicAuth", new AuthorizationScope[0]);
-    }
 }
