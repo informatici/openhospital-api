@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.isf.security.jwt.TokenProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -36,46 +35,48 @@ import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
 	private RequestCache requestCache = new HttpSessionRequestCache();
 
 	private TokenProvider tokenProvider;
 
-    public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
-    }
+	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
+		this.tokenProvider = tokenProvider;
+	}
 
-    @Override
-    public void onAuthenticationSuccess(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication)
-            throws ServletException, IOException {
+	@Override
+	public void onAuthenticationSuccess(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			Authentication authentication)
+			throws ServletException, IOException {
 
-        SavedRequest savedRequest
-                = requestCache.getRequest(request, response);
+		SavedRequest savedRequest
+				= requestCache.getRequest(request, response);
 
+		LoginResponse loginResponse = new LoginResponse();
+		loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
+		loginResponse.setDisplayName(authentication.getName());
+		ObjectMapper mapper = new ObjectMapper();
 
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
-        loginResponse.setDisplayName(authentication.getName());
-        ObjectMapper mapper = new ObjectMapper();
+		response.getWriter().append(mapper.writeValueAsString(loginResponse));
+		response.setStatus(200);
 
-        response.getWriter().append(mapper.writeValueAsString(loginResponse));
-        response.setStatus(200);
-
-        if (savedRequest == null) {
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        String targetUrlParam = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl()
-                || (targetUrlParam != null
-                && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
-            requestCache.removeRequest(request, response);
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        clearAuthenticationAttributes(request);
-    }
+		if (savedRequest == null) {
+			clearAuthenticationAttributes(request);
+			return;
+		}
+		String targetUrlParam = getTargetUrlParameter();
+		if (isAlwaysUseDefaultTargetUrl()
+				|| (targetUrlParam != null
+				&& StringUtils.hasText(request.getParameter(targetUrlParam)))) {
+			requestCache.removeRequest(request, response);
+			clearAuthenticationAttributes(request);
+			return;
+		}
+		clearAuthenticationAttributes(request);
+	}
 }
