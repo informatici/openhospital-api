@@ -30,3 +30,4 @@ HELP.md
 *.log
 /oh-rest-api.log.*.gz
 /logs/
+/pom.xml
