@@ -1,9 +1,20 @@
 package org.isf.permissions.dto;
 
-public class PermissionDTO {
+import java.util.List;
 
-	private String name;
+public class PermissionDTO extends LitePermissionDTO {
+
+	private Integer id;
 	private String description;
+	private List<String> userGroupIds;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getDescription() {
 		return description;
@@ -13,12 +24,14 @@ public class PermissionDTO {
 		this.description = description;
 	}
 
-	public String getName() {
-		return name;
+	public List<String> getUserGroupIds() {
+		return userGroupIds;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUserGroupIds(List<String> userGroupIds) {
+		this.userGroupIds = userGroupIds;
 	}
+
+
 
 }

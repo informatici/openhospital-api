@@ -23,9 +23,13 @@ package org.isf.permissions.rest;
 
 import java.util.List;
 
+import org.isf.menu.manager.UserGroupManager;
+import org.isf.menu.model.UserGroup;
 import org.isf.permissions.dto.PermissionDTO;
+import org.isf.permissions.manager.GroupPermissionManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
+import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
@@ -33,8 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -46,21 +54,79 @@ public class PermissionController {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PermissionController.class);
 
 	@Autowired
-	protected PermissionManager manager;
+	protected PermissionManager permissionManager;
 
 	@Autowired
-	protected PermissionMapper mapper;
+	protected PermissionMapper permissionMapper;
+
+	@Autowired
+	private GroupPermissionManager groupPermissionManager;
+
+	@Autowired
+	private UserGroupManager userGroupManager;
 
 	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode) throws OHServiceException {
+	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionsByUserGroupcode({})", userGroupCode);
-		List<Permission> domains = this.manager.retrivePermisionsByGroupCode(userGroupCode);
-		List<PermissionDTO> dtos = this.mapper.map2DTOList(domains);
+		List<Permission> domains = this.permissionManager.retrivePermisionsByGroupCode(userGroupCode);
+		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
 		} else {
 			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 		}
+	}
+
+	@GetMapping(value = "/permissions/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
+		LOGGER.info("retrieving permissions: retrievePermissionById({})", id);
+		Permission permission = this.permissionManager.retrievePermissionById(id);
+		if (permission == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+	}
+
+	@GetMapping(value = "/permissions/name/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PermissionDTO> retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
+		LOGGER.info("retrieving permissions: retrievePermissionByName({})", name);
+		Permission permission = this.permissionManager.retrievePermissionByName(name);
+		if (permission == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+	}
+
+	@PostMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PermissionDTO> insertPermission(@RequestBody PermissionDTO permissionDTO) throws OHServiceException {
+		LOGGER.info("insertPermission({})", permissionDTO);
+		Permission model = this.permissionMapper.map2Model(permissionDTO);
+		List<UserGroup> userGroups = this.userGroupManager.findByIdIn(permissionDTO.getUserGroupIds());
+		model.setGroupPermission(this.groupPermissionManager.generateGroupPermissionList(model, userGroups));
+		Permission permission = this.permissionManager.insertPermission(model);
+
+		PermissionDTO resultPermissionDTO = this.permissionMapper.map2DTO(permission);
+		return ResponseEntity.status(HttpStatus.CREATED).body(resultPermissionDTO);
+	}
+
+	@PutMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PermissionDTO> updatePermission(@RequestBody PermissionDTO permissionDTO) throws OHServiceException {
+		LOGGER.info("updatePermission({})", permissionDTO);
+		Permission model = this.permissionMapper.map2Model(permissionDTO);
+		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(), permissionDTO.getUserGroupIds());
+		model.setGroupPermission(groupPermissions);
+		Permission permission = this.permissionManager.updatePermission(model);
+		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		return ResponseEntity.status(HttpStatus.OK).body(dtos);
+	}
+
+	@DeleteMapping(value = "/permissions/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
+		LOGGER.info("deletePermission({})", id);
+		Boolean result = this.permissionManager.deletePermission(id);
+		return ResponseEntity.status(result.booleanValue() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 	}
 
 }
