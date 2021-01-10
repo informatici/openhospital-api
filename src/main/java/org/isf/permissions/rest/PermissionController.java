@@ -22,6 +22,7 @@
 package org.isf.permissions.rest;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.isf.menu.manager.UserGroupManager;
 import org.isf.menu.model.UserGroup;
@@ -31,7 +32,10 @@ import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
+import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,7 +81,18 @@ public class PermissionController {
 		}
 	}
 
-	@GetMapping(value = "/permissions/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
+		LOGGER.info("retrieving permissions: retrieveAllPermissions({})");
+		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
+		if (permissions == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(permissions);
+		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+	}
+
+	@GetMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionById({})", id);
 		Permission permission = this.permissionManager.retrievePermissionById(id);
@@ -111,18 +126,37 @@ public class PermissionController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(resultPermissionDTO);
 	}
 
-	@PutMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> updatePermission(@RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("updatePermission({})", permissionDTO);
+	@PutMapping(value = { "/permissions/{id}", "/permissions" }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable(value = "id") Optional<Integer> optionalPermissionId, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
+		LOGGER.info("updatePermission(id: {}, id: {})", optionalPermissionId.isPresent() ? optionalPermissionId.get() : "EMPTY", permissionDTO);
+
+		if (optionalPermissionId.isEmpty() && permissionDTO.getId() == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "wrong input: no permission id", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
+		}
+
+		if (optionalPermissionId.isPresent() && optionalPermissionId.get().compareTo(permissionDTO.getId()) != 0) {
+			throw new OHAPIException(new OHExceptionMessage(null, "wrong input: permissio ids does not match", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
+		}
+
+		final Integer permissionId = optionalPermissionId.isPresent() ? optionalPermissionId.get() : permissionDTO.getId();
+
+		if (!this.permissionManager.exists(permissionId.intValue())) {
+			throw new OHAPIException(new OHExceptionMessage(null, "permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
+
 		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(), permissionDTO.getUserGroupIds());
 		model.setGroupPermission(groupPermissions);
 		Permission permission = this.permissionManager.updatePermission(model);
-		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
-		return ResponseEntity.status(HttpStatus.OK).body(dtos);
+		if (permission != null) {
+			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+			return ResponseEntity.status(HttpStatus.OK).body(dtos);
+		}
+		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@DeleteMapping(value = "/permissions/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("deletePermission({})", id);
 		Boolean result = this.permissionManager.deletePermission(id);
