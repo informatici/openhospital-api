@@ -247,7 +247,7 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		if(diseaseManager.newDisease(disease)) {
+		if(diseaseManager.newDisease(disease) != null) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -267,7 +267,7 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		if(diseaseManager.updateDisease(disease)) {
+		if(diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);

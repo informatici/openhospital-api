@@ -294,7 +294,7 @@ public class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
 				.thenReturn(false);
 
-		when(diseaseBrowserManagerMock.newDisease(disease))
+		when(diseaseBrowserManagerMock.newDisease(disease) != null)
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
@@ -320,7 +320,7 @@ public class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
 				.thenReturn(true);
 
-		when(diseaseBrowserManagerMock.updateDisease(disease))
+		when(diseaseBrowserManagerMock.updateDisease(disease) != null)
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
