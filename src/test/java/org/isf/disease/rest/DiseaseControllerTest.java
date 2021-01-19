@@ -295,7 +295,7 @@ public class DiseaseControllerTest {
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.newDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -321,7 +321,7 @@ public class DiseaseControllerTest {
 				.thenReturn(true);
 
 		when(diseaseBrowserManagerMock.updateDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
