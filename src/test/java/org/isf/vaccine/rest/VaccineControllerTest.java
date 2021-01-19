@@ -129,11 +129,11 @@ public class VaccineControllerTest {
 	public void testNewVaccine_201() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isCreated = true;
-		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)) != null)
-				.thenReturn(isCreated);
+		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -153,11 +153,11 @@ public class VaccineControllerTest {
 	public void testUpdateVaccine_200() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isUpdated = true;
-		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)) != null)
-				.thenReturn(isUpdated);
+		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
