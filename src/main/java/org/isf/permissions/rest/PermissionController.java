@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import org.isf.menu.manager.UserGroupManager;
 import org.isf.menu.model.UserGroup;
-import org.isf.permissions.dto.PermissionDTO;
+import org.isf.permissions.dto.GroupsPermissionDTO;
 import org.isf.permissions.manager.GroupPermissionManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
@@ -70,10 +70,10 @@ public class PermissionController {
 	private UserGroupManager userGroupManager;
 
 	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode) throws OHServiceException {
+	public ResponseEntity<List<GroupsPermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionsByUserGroupcode({})", userGroupCode);
 		List<Permission> domains = this.permissionManager.retrivePermisionsByGroupCode(userGroupCode);
-		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(domains);
+		List<GroupsPermissionDTO> dtos = this.permissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
 		} else {
@@ -82,52 +82,52 @@ public class PermissionController {
 	}
 
 	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
+	public ResponseEntity<List<GroupsPermissionDTO>> retrieveAllPermissions() throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrieveAllPermissions({})");
 		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
 		if (permissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(permissions);
+		List<GroupsPermissionDTO> dtos = this.permissionMapper.map2DTOList(permissions);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@GetMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
+	public ResponseEntity<GroupsPermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionById({})", id);
 		Permission permission = this.permissionManager.retrievePermissionById(id);
 		if (permission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		GroupsPermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@GetMapping(value = "/permissions/name/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
+	public ResponseEntity<GroupsPermissionDTO> retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionByName({})", name);
 		Permission permission = this.permissionManager.retrievePermissionByName(name);
 		if (permission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		GroupsPermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@PostMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> insertPermission(@RequestBody PermissionDTO permissionDTO) throws OHServiceException {
+	public ResponseEntity<GroupsPermissionDTO> insertPermission(@RequestBody GroupsPermissionDTO permissionDTO) throws OHServiceException {
 		LOGGER.info("insertPermission({})", permissionDTO);
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
 		List<UserGroup> userGroups = this.userGroupManager.findByIdIn(permissionDTO.getUserGroupIds());
 		model.setGroupPermission(this.groupPermissionManager.generateGroupPermissionList(model, userGroups));
 		Permission permission = this.permissionManager.insertPermission(model);
 
-		PermissionDTO resultPermissionDTO = this.permissionMapper.map2DTO(permission);
+		GroupsPermissionDTO resultPermissionDTO = this.permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(resultPermissionDTO);
 	}
 
 	@PutMapping(value = { "/permissions/{id}", "/permissions" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable(value = "id") Optional<Integer> optionalPermissionId, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
+	public ResponseEntity<GroupsPermissionDTO> updatePermission(@PathVariable(value = "id") Optional<Integer> optionalPermissionId, @RequestBody GroupsPermissionDTO permissionDTO) throws OHServiceException {
 		LOGGER.info("updatePermission(id: {}, id: {})", optionalPermissionId.isPresent() ? optionalPermissionId.get() : "EMPTY", permissionDTO);
 
 		if (optionalPermissionId.isEmpty() && permissionDTO.getId() == null) {
@@ -150,7 +150,7 @@ public class PermissionController {
 		model.setGroupPermission(groupPermissions);
 		Permission permission = this.permissionManager.updatePermission(model);
 		if (permission != null) {
-			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+			GroupsPermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);

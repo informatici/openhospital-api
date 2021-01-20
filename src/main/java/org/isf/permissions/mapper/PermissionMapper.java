@@ -4,22 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.permissions.dto.PermissionDTO;
+import org.isf.permissions.dto.GroupsPermissionDTO;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.GenericMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PermissionMapper extends GenericMapper<Permission, PermissionDTO> {
+public class PermissionMapper extends GenericMapper<Permission, GroupsPermissionDTO> {
 
 	public PermissionMapper() {
-		super(Permission.class, PermissionDTO.class);
+		super(Permission.class, GroupsPermissionDTO.class);
 	}
 
 	@Override
-	public List<PermissionDTO> map2DTOList(List<Permission> list) {
+	public List<GroupsPermissionDTO> map2DTOList(List<Permission> list) {
 		return list.stream().map(permission -> {
-			PermissionDTO dto = modelMapper.map(permission, PermissionDTO.class);
+			GroupsPermissionDTO dto = modelMapper.map(permission, GroupsPermissionDTO.class);
 			List<String> userGroupCodes = extractUserGroupCodes(permission);
 			dto.setUserGroupIds(userGroupCodes);
 			return dto;
@@ -27,8 +27,8 @@ public class PermissionMapper extends GenericMapper<Permission, PermissionDTO> {
 	}
 
 	@Override
-	public PermissionDTO map2DTO(Permission fromObj) {
-		PermissionDTO dto = modelMapper.map(fromObj, PermissionDTO.class);
+	public GroupsPermissionDTO map2DTO(Permission fromObj) {
+		GroupsPermissionDTO dto = modelMapper.map(fromObj, GroupsPermissionDTO.class);
 		List<String> userGroupCodes = extractUserGroupCodes(fromObj);
 		dto.setUserGroupIds(userGroupCodes);
 		return dto;

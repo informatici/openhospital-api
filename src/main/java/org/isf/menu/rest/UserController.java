@@ -37,8 +37,8 @@ import org.isf.menu.mapper.UserMenuItemMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
-import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.dto.PermissionDTO;
+import org.isf.permissions.dto.GroupsPermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
 import org.isf.permissions.model.Permission;
@@ -352,13 +352,13 @@ public class UserController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
+	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
 			LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUserName);
 			List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUserName);
-			List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
+			List<PermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 			if (dtos.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
 			} else {
@@ -376,10 +376,10 @@ public class UserController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/users/permissions/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
+	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionsByUsername({})", username);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
-		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
+		List<PermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
 		} else {
