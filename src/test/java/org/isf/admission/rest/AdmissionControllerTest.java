@@ -135,7 +135,7 @@ public class AdmissionControllerTest {
 	@Test
 	public void testGetAdmissions_200() throws Exception {
 		String request = "/admissions/{id}";
-		Integer id = 1;
+		int id = 1;
 
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getAdmission(id))

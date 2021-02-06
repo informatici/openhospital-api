@@ -111,7 +111,7 @@ public class WardController {
     public ResponseEntity<Integer> getCurrentOccupation(@PathVariable String code) throws OHServiceException {
     	LOGGER.info("Get current occupation ward code: {}", code);
         Ward ward = wardManager.findWard(code);
-        Integer numberOfPatients = wardManager.getCurrentOccupation(ward);
+        int numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } else {
