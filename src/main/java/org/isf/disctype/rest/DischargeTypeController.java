@@ -78,8 +78,9 @@ public class DischargeTypeController {
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (dischTypeFounds.size() > 0)
+		if (!dischTypeFounds.isEmpty()) {
 			dischTypeCreated = dischTypeFounds.get(0);
+		}
 		if (!isCreated || dischTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -138,8 +139,9 @@ public class DischargeTypeController {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (dischTypeFounds.size() > 0)
+			if (!dischTypeFounds.isEmpty()) {
 				isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

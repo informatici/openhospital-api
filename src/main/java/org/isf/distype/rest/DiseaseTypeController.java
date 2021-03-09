@@ -77,9 +77,9 @@ public class DiseaseTypeController {
 	public ResponseEntity<List<DiseaseTypeDTO>> getAllDiseaseTypes() throws OHServiceException {
 		List<DiseaseType> results = diseaseTypeManager.getDiseaseType();
 		List<DiseaseTypeDTO> parsedResults=mapper.map2DTOList(results);
-		if(parsedResults.size() > 0){
+		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
-        }else{
+        } else {
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
         }
 	}	

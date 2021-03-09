@@ -245,14 +245,14 @@ public class MedicalStockWardController {
 	 */
 	@PutMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateMovementWard(@Valid @RequestBody MovementWardDTO movementWardDTO) throws OHServiceException {
-		MovementWard movemenWard = movementWardMapper.map2Model(movementWardDTO);
-		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movemenWard.getCode());
-		if(!isPresent) {
+		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
+		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
+		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward not found!", OHSeverityLevel.ERROR));
 		} 
 		
-		boolean isUpdated = movWardBrowserManager.updateMovementWard(movemenWard);
-		if(!isUpdated) {
+		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
+		if (!isUpdated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward is not updated!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isUpdated);

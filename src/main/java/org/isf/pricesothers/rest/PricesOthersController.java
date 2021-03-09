@@ -128,11 +128,11 @@ public class PricesOthersController {
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete prices others id: {}", id);
 		boolean isDeleted = false;
-		List<PricesOthers> pricesOtherss = pricesOthersManager.getOthers();
-		List<PricesOthers> pricesOthersFounds = pricesOtherss.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
-		if (pricesOthersFounds.size() > 0)
+		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
+		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
+		if (!pricesOthersFounds.isEmpty()) {
 			isDeleted = pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
-		else {
+		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		return ResponseEntity.ok(isDeleted);

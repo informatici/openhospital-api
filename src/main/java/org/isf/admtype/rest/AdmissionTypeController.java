@@ -78,8 +78,9 @@ public class AdmissionTypeController {
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (admtFounds.size() > 0)
+		if (!admtFounds.isEmpty()) {
 			admtCreated = admtFounds.get(0);
+		}
 		if (!isCreated || admtCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR),
@@ -140,8 +141,9 @@ public class AdmissionTypeController {
 			List<AdmissionType> admts = admtManager.getAdmissionType();
 			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (admtFounds.size() > 0)
+			if (!admtFounds.isEmpty()) {
 				isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

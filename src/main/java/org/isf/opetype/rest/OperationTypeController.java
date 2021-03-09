@@ -133,8 +133,9 @@ public class OperationTypeController {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();
 			List<OperationType> opeTypeFounds = opeTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (opeTypeFounds.size() > 0)
+			if (!opeTypeFounds.isEmpty()) {
 				isDeleted = opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
