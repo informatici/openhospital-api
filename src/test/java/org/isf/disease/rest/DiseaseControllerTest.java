@@ -287,7 +287,7 @@ public class DiseaseControllerTest {
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
@@ -316,7 +316,7 @@ public class DiseaseControllerTest {
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(true);
 
 		when(diseaseBrowserManagerMock.updateDisease(disease))

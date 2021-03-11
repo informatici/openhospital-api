@@ -236,7 +236,7 @@ public class WardControllerTest {
 
 		String code = ward.getCode();
 
-		when(wardBrowserManagerMock.codeControl(ward.getCode()))
+		when(wardBrowserManagerMock.isCodePresent(ward.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc

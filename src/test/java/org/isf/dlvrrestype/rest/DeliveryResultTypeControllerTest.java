@@ -118,7 +118,7 @@ public class DeliveryResultTypeControllerTest {
 		DeliveryResultType deliveryResultType = DeliveryResultTypeHelper.setup(code);
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(deliveryResultType);
 
-		when(deliveryResultTypeBrowserManagerMock.codeControl(body.getCode()))
+		when(deliveryResultTypeBrowserManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;
@@ -167,7 +167,7 @@ public class DeliveryResultTypeControllerTest {
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(DeliveryResultTypeHelper.setup(0));
 		String code = body.getCode();
 
-		when(deliveryResultTypeBrowserManagerMock.codeControl(code))
+		when(deliveryResultTypeBrowserManagerMock.isCodePresent(code))
 				.thenReturn(true);
 
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())

@@ -118,7 +118,7 @@ public class OperationController {
 			throws OHServiceException {
 		LOGGER.info("Update operations code: {}", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
-		if (!operationManager.codeControl(code))
+		if (!operationManager.isCodePresent(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = operationManager.updateOperation(operation);
 		if (!isUpdated)

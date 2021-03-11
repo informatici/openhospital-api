@@ -120,7 +120,7 @@ public class MedStockMovementTypeController {
 	@PutMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovTypeDTO) throws OHServiceException {
 		MovementType medicaldsrstockmovType = mapper.map2Model(medicaldsrstockmovTypeDTO);
-		if(!manager.codeControl(medicaldsrstockmovType.getCode())) 
+		if (!manager.isCodePresent(medicaldsrstockmovType.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
 		if (!isUpdated) {
@@ -137,7 +137,7 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
-		return ResponseEntity.ok(manager.codeControl(code));
+		return ResponseEntity.ok(manager.isCodePresent(code));
 	}
 	
 	/**

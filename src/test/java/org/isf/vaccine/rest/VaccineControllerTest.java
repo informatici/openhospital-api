@@ -205,7 +205,7 @@ public class VaccineControllerTest {
 		String code = "AA";
 		Vaccine vaccine = VaccineHelper.setup(code);
 
-		when(vaccineBrowserManagerMock.codeControl(vaccine.getCode()))
+		when(vaccineBrowserManagerMock.isCodePresent(vaccine.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc

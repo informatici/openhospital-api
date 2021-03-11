@@ -156,7 +156,7 @@ public class VaccineTypeController {
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Check vaccine type code: {}", code);
-        boolean check = vaccineTypeManager.codeControl(code);
+        boolean check = vaccineTypeManager.isCodePresent(code);
         return ResponseEntity.ok(check);
     }
 }

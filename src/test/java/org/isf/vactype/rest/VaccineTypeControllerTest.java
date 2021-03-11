@@ -182,7 +182,7 @@ public class VaccineTypeControllerTest {
 		String code = "AA";
 		VaccineType vaccineType = VaccineTypeHelper.setup(code);
 
-		when(vaccineTypeBrowserManagerMock.codeControl(vaccineType.getCode()))
+		when(vaccineTypeBrowserManagerMock.isCodePresent(vaccineType.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc

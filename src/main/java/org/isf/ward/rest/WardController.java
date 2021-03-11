@@ -187,7 +187,7 @@ public class WardController {
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Check ward code: {}", code);
-        boolean check = wardManager.codeControl(code);
+        boolean check = wardManager.isCodePresent(code);
         return ResponseEntity.ok(check);
     }
 

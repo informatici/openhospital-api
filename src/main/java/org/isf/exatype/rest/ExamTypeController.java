@@ -83,7 +83,7 @@ public class ExamTypeController {
         if (!updateExamType.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType code mismatch", OHSeverityLevel.ERROR));
         }
-        if (!examTypeBrowserManager.codeControl(code)) {
+        if (!examTypeBrowserManager.isCodePresent(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType not Found!", OHSeverityLevel.WARNING));
         }
 

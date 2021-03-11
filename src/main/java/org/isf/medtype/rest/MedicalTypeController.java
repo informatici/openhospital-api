@@ -104,7 +104,7 @@ public class MedicalTypeController {
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
-		if(!medicalTypeBrowserManager.codeControl(medicalType.getCode())) 
+		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (!isUpdated) {
@@ -121,7 +121,7 @@ public class MedicalTypeController {
 	 */
 	@GetMapping(value = "/medicaltypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
-		return ResponseEntity.ok(medicalTypeBrowserManager.codeControl(code));
+		return ResponseEntity.ok(medicalTypeBrowserManager.isCodePresent(code));
 	}
 
 	/**
