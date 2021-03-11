@@ -100,7 +100,7 @@ public class AdmissionTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		if (!admtManager.codeControl(admt.getCode()))
+		if (!admtManager.isCodePresent(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
 		if (!isUpdated)
@@ -137,7 +137,7 @@ public class AdmissionTypeController {
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Admission Type code: {}", code);
 		boolean isDeleted = false;
-		if (admtManager.codeControl(code)) {
+		if (admtManager.isCodePresent(code)) {
 			List<AdmissionType> admts = admtManager.getAdmissionType();
 			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());

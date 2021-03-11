@@ -93,13 +93,13 @@ public class DiseaseTypeController {
 	@PostMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if(diseaseTypeManager.codeControl(diseaseType.getCode())) {
+        if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"specified code is already used!", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
-        if(diseaseTypeManager.newDiseaseType(diseaseType)) {
+        if (diseaseTypeManager.newDiseaseType(diseaseType)) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 
@@ -117,13 +117,13 @@ public class DiseaseTypeController {
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if(!diseaseTypeManager.codeControl(diseaseType.getCode())) {
+        if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"disease type not found!", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
-        if(diseaseTypeManager.updateDiseaseType(diseaseType)) {
+        if (diseaseTypeManager.updateDiseaseType(diseaseType)) {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 

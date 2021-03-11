@@ -237,7 +237,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getNextProgressiveIdInYear?wardcode={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer nextYProg = 1;
@@ -262,7 +262,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getBedsOccupationInWard?wardid={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer bed = 1012;

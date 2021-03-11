@@ -108,7 +108,7 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
-		when(admtManagerMock.codeControl(body.getCode()))
+		when(admtManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;
@@ -154,7 +154,7 @@ public class AdmissionTypeControllerTest {
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		String code = body.getCode();
 
-		when(admtManagerMock.codeControl(code))
+		when(admtManagerMock.isCodePresent(code))
 				.thenReturn(true);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
