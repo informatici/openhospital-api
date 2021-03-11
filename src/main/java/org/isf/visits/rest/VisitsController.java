@@ -124,7 +124,7 @@ public class VisitsController {
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
-        Boolean areDeleted = visitManager.deleteAllVisits(patID);
+        boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
