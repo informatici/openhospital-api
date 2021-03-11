@@ -90,7 +90,7 @@
         <dependency>
             <groupId>org.isf</groupId>
             <artifactId>OH-core</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
             <classifier>tests</classifier>
             <type>test-jar</type>
             <scope>test</scope>
