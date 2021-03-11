@@ -70,13 +70,13 @@ public class MedStockMovementTypeController {
 	public ResponseEntity<List<MovementTypeDTO>> getMedicaldsrstockmovType() throws OHServiceException {
 		LOGGER.info("Retrieving all the movement types ...");
 		List<MovementType> movementTypes = manager.getMedicaldsrstockmovType();
-		List<MovementTypeDTO> mappedMovments = mapper.map2DTOList(movementTypes);
-		if (mappedMovments.isEmpty()) {
+		List<MovementTypeDTO> mappedMovements = mapper.map2DTOList(movementTypes);
+		if (mappedMovements.isEmpty()) {
 			LOGGER.info("No movement type found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovments);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
 		} else {
-			LOGGER.info("Found {} movement types", mappedMovments.size());
-			return ResponseEntity.ok(mappedMovments);
+			LOGGER.info("Found {} movement types", mappedMovements.size());
+			return ResponseEntity.ok(mappedMovements);
 		}
 	}
 	
