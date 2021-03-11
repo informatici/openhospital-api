@@ -128,7 +128,7 @@ public class VisitsController {
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(areDeleted.toString());
+        return ResponseEntity.ok(true);
     }
 
 }
