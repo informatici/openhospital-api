@@ -211,7 +211,9 @@ public class OperationController {
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == code)
 				.collect(Collectors.toList());
 		OperationRow opCreated = null;
-		if (opRowFounds.size() > 0) opCreated = opRowFounds.get(0);
+		if (!opRowFounds.isEmpty()) {
+			opCreated = opRowFounds.get(0);
+		}
 		if (!isCreated || opCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not created!", OHSeverityLevel.ERROR));
 		}

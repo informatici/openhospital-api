@@ -136,9 +136,10 @@ public class MedicalTypeController {
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (machedMedicalTypes.size() > 0)
+		if (!machedMedicalTypes.isEmpty()) {
 			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(machedMedicalTypes.get(0)));
-		else 
+		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
+		}
 	}
 }

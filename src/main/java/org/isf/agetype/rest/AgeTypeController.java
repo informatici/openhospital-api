@@ -77,9 +77,9 @@ public class AgeTypeController {
 		LOGGER.info("Get age types");
 		List<AgeType> results = ageTypeManager.getAgeType();
 		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
-		if(parsedResults.size() > 0){
+		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
-        }else{
+        } else {
         	LOGGER.info("Empty age types list");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
         }

@@ -181,13 +181,13 @@ public class AdmissionController {
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 		
-		List<AdmittedPatient> amittedPatients = admissionManager
+		List<AdmittedPatient> admittedPatients = admissionManager
 				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
-		if (amittedPatients.isEmpty()) {
+		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		
-		return ResponseEntity.ok(admittedMapper.map2DTOList(amittedPatients));
+		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
 	}
 
 	/**

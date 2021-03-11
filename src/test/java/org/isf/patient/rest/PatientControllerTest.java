@@ -332,7 +332,7 @@ public class PatientControllerTest {
 
 		ArrayList<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
 
-		List<PatientDTO> expectedPatienDTOList = patientMapper.map2DTOList(patientList);
+		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
 		when(patientBrowserManagerMock.getPatient(any(Integer.class), any(Integer.class)))
 				.thenReturn(patientList);
@@ -344,7 +344,7 @@ public class PatientControllerTest {
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatienDTOList))))
+				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
 				.andReturn();
 	}
 
@@ -460,7 +460,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_witout_code_then_response_null_and_NO_Content() throws Exception {
+	public void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String request = "/patients/search";
 
 		this.mockMvc
@@ -478,7 +478,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_with_unexistent_name_and_witout_code_then_response_null_and_NO_Content() throws Exception {
+	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String name = "unexistent_name";
 		String request = "/patients/search";
 

@@ -70,13 +70,13 @@ public class MedStockMovementTypeController {
 	public ResponseEntity<List<MovementTypeDTO>> getMedicaldsrstockmovType() throws OHServiceException {
 		LOGGER.info("Retrieving all the movement types ...");
 		List<MovementType> movementTypes = manager.getMedicaldsrstockmovType();
-		List<MovementTypeDTO> mappedMvments = mapper.map2DTOList(movementTypes);
-		if(mappedMvments.isEmpty()) {
+		List<MovementTypeDTO> mappedMovements = mapper.map2DTOList(movementTypes);
+		if (mappedMovements.isEmpty()) {
 			LOGGER.info("No movement type found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMvments);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
 		} else {
-			LOGGER.info("Found {} movement types", mappedMvments.size());
-			return ResponseEntity.ok(mappedMvments);
+			LOGGER.info("Found {} movement types", mappedMovements.size());
+			return ResponseEntity.ok(mappedMovements);
 		}
 	}
 	
@@ -148,22 +148,15 @@ public class MedStockMovementTypeController {
 	 */
 	@DeleteMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicaldsrstockmovType(@PathVariable("code") String code) throws OHServiceException {
-		List<MovementType> machedMvmntTypes = manager.getMedicaldsrstockmovType()
+		List<MovementType> matchedMvmntTypes = manager.getMedicaldsrstockmovType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (machedMvmntTypes.size() > 0)
-			return ResponseEntity.ok(manager.deleteMedicaldsrstockmovType(machedMvmntTypes.get(0)));
-		else 
+		if (!matchedMvmntTypes.isEmpty()) {
+			return ResponseEntity.ok(manager.deleteMedicaldsrstockmovType(matchedMvmntTypes.get(0)));
+		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement type not found!", OHSeverityLevel.ERROR));
+		}
 	}
 	
 }
-
-
-
-
-
-
-
-

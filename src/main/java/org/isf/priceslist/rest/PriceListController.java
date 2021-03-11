@@ -150,9 +150,9 @@ public class PriceListController {
 		boolean isDeleted = false;
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
-		if (priceListFounds.size() > 0)
+		if (!priceListFounds.isEmpty()) {
 			isDeleted = priceListManager.deleteList(priceListFounds.get(0));
-		else {
+		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		return ResponseEntity.ok(isDeleted);
@@ -165,7 +165,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists/duplicate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyList(@PathVariable Long id) throws OHServiceException {
-		LOGGER.info("duplicate list for price liste id : {}", id);
+		LOGGER.info("duplicate list for price list id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;
@@ -186,7 +186,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists/duplicate/byfactor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyByFactorAndStep(@PathVariable Long id, @RequestParam double factor, @RequestParam double step) throws OHServiceException {
-		LOGGER.info("duplicate list for price liste id : {}", id);
+		LOGGER.info("duplicate list for price list id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied = false;
@@ -196,7 +196,7 @@ public class PriceListController {
 		    isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
 		}
 		if (!isCopied)
-			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been diplicated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been duplicated!", OHSeverityLevel.ERROR));
 		return ResponseEntity.ok(isCopied);
 	}
 
