@@ -423,8 +423,8 @@ public class AdmissionController {
 				? newAdmission.getPatient().getFirstName() + " " + newAdmission.getPatient().getSecondName()
 				: newAdmission.getPatient().getName();
 		LOGGER.info("Create admission for patient {}", name);
-		Integer aId = admissionManager.newAdmissionReturnKey(newAdmission);
-		if (aId != null && aId.intValue() > 0) {
+		int aId = admissionManager.newAdmissionReturnKey(newAdmission);
+		if (aId > 0) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(aId);
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "Admission is not created!", OHSeverityLevel.ERROR));
