@@ -34,6 +34,16 @@ For the moment, to build this project you should
 
 Service available on localhost:8080
 
+## How to contribute
+
+You can find the contribution guidelines in the [Open Hospital wiki][contribution-guide].  
+A list of open issues is available on [Jira][jira].
+
+## Community
+
+You can reach out to the community of contributors by joining 
+our [Slack workspace][slack] or by subscribing to our [mailing list][ml].
+
 
 ## Code style
 
@@ -78,4 +88,7 @@ For Eclipse the process requires loading the formatting style and the import ord
 
 [openhospital]: https://www.open-hospital.org/
 [core]: https://github.com/informatici/openhospital/openhospital-core
-
+[contribution-guide]: https://openhospital.atlassian.net/wiki/display/OH/Contribution+Guidelines
+[jira]: https://openhospital.atlassian.net/jira/software/c/projects/OP/issues/
+[slack]: https://join.slack.com/t/openhospitalworkspace/shared_invite/enQtOTc1Nzc0MzE2NjQ0LWIyMzRlZTU5NmNlMjE2MDcwM2FhMjRkNmM4YzI0MTAzYTA0YTI3NjZiOTVhMDZlNWUwNWEzMjE5ZDgzNWQ1YzE
+[ml]: https://sourceforge.net/projects/openhospital/lists/openhospital-devel
