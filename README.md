@@ -2,13 +2,13 @@
 
 [![Java CI with Maven](https://github.com/informatici/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/informatici/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
-This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
+This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project](https://github.com/informatici/openhospital-core).  
 
 ## How to build [WIP]
 
 For the moment, to build this project you should 
 
- 1. fetch and build the [core] project
+ 1. fetch and build the [core](https://github.com/informatici/openhospital-core) project
     
         git clone https://github.com/informatici/openhospital-core.git
         cd openhospital-core
@@ -87,7 +87,7 @@ For Eclipse the process requires loading the formatting style and the import ord
 </details> 
 
 [openhospital]: https://www.open-hospital.org/
-[core]: https://github.com/informatici/openhospital/openhospital-core
+[core]: https://github.com/informatici/openhospital-core
 [contribution-guide]: https://openhospital.atlassian.net/wiki/display/OH/Contribution+Guidelines
 [jira]: https://openhospital.atlassian.net/jira/software/c/projects/OP/issues/
 [slack]: https://join.slack.com/t/openhospitalworkspace/shared_invite/enQtOTc1Nzc0MzE2NjQ0LWIyMzRlZTU5NmNlMjE2MDcwM2FhMjRkNmM4YzI0MTAzYTA0YTI3NjZiOTVhMDZlNWUwNWEzMjE5ZDgzNWQ1YzE
