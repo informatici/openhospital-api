@@ -47,7 +47,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig {
 
-	@Value("${api.host:localhost\\:8080}")
+	@Value("${api.host:localhost:8080}")
 	String host;
 
 	@Value("${api.protocol:http}")
