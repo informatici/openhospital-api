@@ -115,7 +115,7 @@ public class DischargeTypeControllerTest {
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
 
-		when(discTypeManagerMock.codeControl(body.getCode()))
+		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
@@ -166,7 +166,7 @@ public class DischargeTypeControllerTest {
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
 
-		when(discTypeManagerMock.codeControl(body.getCode()))
+		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");

@@ -181,13 +181,13 @@ public class AdmissionController {
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 		
-		List<AdmittedPatient> amittedPatients = admissionManager
+		List<AdmittedPatient> admittedPatients = admissionManager
 				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
-		if (amittedPatients.isEmpty()) {
+		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		
-		return ResponseEntity.ok(admittedMapper.map2DTOList(amittedPatients));
+		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class AdmissionController {
 			throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 		
-		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
+		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 		
@@ -240,7 +240,7 @@ public class AdmissionController {
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
-		if (wardCode.trim().isEmpty() || !wardManager.codeControl(wardCode)) {
+		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
 			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 
@@ -423,8 +423,8 @@ public class AdmissionController {
 				? newAdmission.getPatient().getFirstName() + " " + newAdmission.getPatient().getSecondName()
 				: newAdmission.getPatient().getName();
 		LOGGER.info("Create admission for patient {}", name);
-		Integer aId = admissionManager.newAdmissionReturnKey(newAdmission);
-		if (aId != null && aId.intValue() > 0) {
+		int aId = admissionManager.newAdmissionReturnKey(newAdmission);
+		if (aId > 0) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(aId);
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "Admission is not created!", OHSeverityLevel.ERROR));

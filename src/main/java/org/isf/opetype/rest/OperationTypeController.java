@@ -94,7 +94,7 @@ public class OperationTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
-		if (!opeTypeManager.codeControl(code))
+		if (!opeTypeManager.isCodePresent(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = opeTypeManager.updateOperationType(opeType);
 		if (!isUpdated)
@@ -129,12 +129,13 @@ public class OperationTypeController {
 	public ResponseEntity<Boolean> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation Type code: {}", code);
 		boolean isDeleted = false;
-		if (opeTypeManager.codeControl(code)) {
+		if (opeTypeManager.isCodePresent(code)) {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();
 			List<OperationType> opeTypeFounds = opeTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (opeTypeFounds.size() > 0)
+			if (!opeTypeFounds.isEmpty()) {
 				isDeleted = opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

@@ -222,7 +222,7 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/last/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable int code) throws OHServiceException {
-		LOGGER.info("Get the last opp for patien code: {}", code);
+		LOGGER.info("Get the last opp for patient code: {}", code);
 		Opd lastOpd = opdManager.getLastOpd(code);
 		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
 	}

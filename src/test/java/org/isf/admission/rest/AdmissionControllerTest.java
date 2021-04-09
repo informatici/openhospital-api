@@ -135,7 +135,7 @@ public class AdmissionControllerTest {
 	@Test
 	public void testGetAdmissions_200() throws Exception {
 		String request = "/admissions/{id}";
-		Integer id = 1;
+		int id = 1;
 
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getAdmission(id))
@@ -184,14 +184,14 @@ public class AdmissionControllerTest {
 	@Test
 	public void testGetAdmittedPatients_200() throws Exception {
 		String request = "/admissions/admittedPatients?searchterms=searchTerms";
-		ArrayList<AdmittedPatient> amittedPatients = PatientHelper.setupAdmittedPatientList(2);
+		ArrayList<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
 		//GregorianCalendar[] admissionRange = null;
 		//GregorianCalendar[] dischargeRange = null;
 		String searchTerms = "";
 		//when(admissionManagerMock.getAdmittedPatients(admissionRange, dischargeRange, searchTerms))
 		when(admissionManagerMock.getAdmittedPatients(any(GregorianCalendar[].class), any(GregorianCalendar[].class), any(String.class)))
-				.thenReturn(amittedPatients);
+				.thenReturn(admittedPatients);
 
 		MvcResult result = this.mockMvc
 				.perform(get(request, searchTerms)
@@ -200,7 +200,7 @@ public class AdmissionControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(amittedPatients)))))
+				.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -237,7 +237,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getNextProgressiveIdInYear?wardcode={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer nextYProg = 1;
@@ -262,7 +262,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getBedsOccupationInWard?wardid={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer bed = 1012;

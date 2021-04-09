@@ -62,14 +62,14 @@ public class SupplierController {
 	
 	/**
 	 * Saves the specified {@link SupplierDTO}.
-	 * @param suplierDTO
+	 * @param supplierDTO
 	 * @return <code>true</code> if the supplier was saved
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO suplierDTO) throws OHServiceException {
+	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
-		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
+		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (!isCreated) {
 			LOGGER.error("Supplier is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
@@ -80,17 +80,17 @@ public class SupplierController {
 	
 	/**
 	 * Updates the specified {@link SupplierDTO}.
-	 * @param suplierDTO
+	 * @param supplierDTO
 	 * @return <code>true</code> if the supplier was updated
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO suplierDTO) throws OHServiceException {
-		if(suplierDTO.getSupId() == null || manager.getByID(suplierDTO.getSupId()) == null) {
+	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+		if(supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Updating supplier...");
-		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
+		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (!isUpdated) {
 			LOGGER.error("Supplier is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));

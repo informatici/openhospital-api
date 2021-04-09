@@ -54,7 +54,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseTypeControllerTest {
@@ -109,7 +108,7 @@ public class DiseaseTypeControllerTest {
 		int code = 123;
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
 
-		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(false);
 
 		boolean isCreated = true;
@@ -137,7 +136,7 @@ public class DiseaseTypeControllerTest {
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
 
-		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;

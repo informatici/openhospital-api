@@ -54,7 +54,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VaccineControllerTest {
@@ -129,11 +128,11 @@ public class VaccineControllerTest {
 	public void testNewVaccine_201() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isCreated = true;
 		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -153,11 +152,11 @@ public class VaccineControllerTest {
 	public void testUpdateVaccine_200() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isUpdated = true;
 		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -206,7 +205,7 @@ public class VaccineControllerTest {
 		String code = "AA";
 		Vaccine vaccine = VaccineHelper.setup(code);
 
-		when(vaccineBrowserManagerMock.codeControl(vaccine.getCode()))
+		when(vaccineBrowserManagerMock.isCodePresent(vaccine.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc

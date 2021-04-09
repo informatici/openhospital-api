@@ -111,7 +111,7 @@ public class WardController {
     public ResponseEntity<Integer> getCurrentOccupation(@PathVariable String code) throws OHServiceException {
     	LOGGER.info("Get current occupation ward code: {}", code);
         Ward ward = wardManager.findWard(code);
-        Integer numberOfPatients = wardManager.getCurrentOccupation(ward);
+        int numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } else {
@@ -187,7 +187,7 @@ public class WardController {
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Check ward code: {}", code);
-        boolean check = wardManager.codeControl(code);
+        boolean check = wardManager.isCodePresent(code);
         return ResponseEntity.ok(check);
     }
 

@@ -54,7 +54,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DeliveryResultTypeControllerTest {
@@ -119,7 +118,7 @@ public class DeliveryResultTypeControllerTest {
 		DeliveryResultType deliveryResultType = DeliveryResultTypeHelper.setup(code);
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(deliveryResultType);
 
-		when(deliveryResultTypeBrowserManagerMock.codeControl(body.getCode()))
+		when(deliveryResultTypeBrowserManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;
@@ -168,7 +167,7 @@ public class DeliveryResultTypeControllerTest {
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(DeliveryResultTypeHelper.setup(0));
 		String code = body.getCode();
 
-		when(deliveryResultTypeBrowserManagerMock.codeControl(code))
+		when(deliveryResultTypeBrowserManagerMock.isCodePresent(code))
 				.thenReturn(true);
 
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())

@@ -78,8 +78,9 @@ public class DischargeTypeController {
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (dischTypeFounds.size() > 0)
+		if (!dischTypeFounds.isEmpty()) {
 			dischTypeCreated = dischTypeFounds.get(0);
+		}
 		if (!isCreated || dischTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -97,7 +98,7 @@ public class DischargeTypeController {
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
-		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
+		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
@@ -134,12 +135,13 @@ public class DischargeTypeController {
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
-		if (discTypeManager.codeControl(code)) {
+		if (discTypeManager.isCodePresent(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (dischTypeFounds.size() > 0)
+			if (!dischTypeFounds.isEmpty()) {
 				isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

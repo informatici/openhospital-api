@@ -53,7 +53,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseControllerTest {
@@ -288,14 +287,14 @@ public class DiseaseControllerTest {
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.newDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -317,11 +316,11 @@ public class DiseaseControllerTest {
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(true);
 
 		when(diseaseBrowserManagerMock.updateDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)

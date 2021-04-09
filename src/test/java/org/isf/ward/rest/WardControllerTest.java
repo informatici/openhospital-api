@@ -54,7 +54,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WardControllerTest {
@@ -130,7 +129,7 @@ public class WardControllerTest {
 	public void testGetCurrentOccupation() throws Exception {
 		String request = "/wards/occupation/{code}";
 
-		Integer code = 4;
+		int code = 4;
 
 		Ward ward = WardHelper.setup(code);
 
@@ -237,7 +236,7 @@ public class WardControllerTest {
 
 		String code = ward.getCode();
 
-		when(wardBrowserManagerMock.codeControl(ward.getCode()))
+		when(wardBrowserManagerMock.isCodePresent(ward.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc

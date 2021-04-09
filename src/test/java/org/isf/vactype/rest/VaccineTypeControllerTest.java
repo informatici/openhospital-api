@@ -54,7 +54,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VaccineTypeControllerTest {
@@ -183,7 +182,7 @@ public class VaccineTypeControllerTest {
 		String code = "AA";
 		VaccineType vaccineType = VaccineTypeHelper.setup(code);
 
-		when(vaccineTypeBrowserManagerMock.codeControl(vaccineType.getCode()))
+		when(vaccineTypeBrowserManagerMock.isCodePresent(vaccineType.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
