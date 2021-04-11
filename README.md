@@ -87,7 +87,7 @@ For Eclipse the process requires loading the formatting style and the import ord
 </details> 
 
 [openhospital]: https://www.open-hospital.org/
-[core]: https://github.com/informatici/openhospital/openhospital-core
+[core]: https://github.com/informatici/openhospital-core
 [contribution-guide]: https://openhospital.atlassian.net/wiki/display/OH/Contribution+Guidelines
 [jira]: https://openhospital.atlassian.net/jira/software/c/projects/OP/issues/
 [slack]: https://join.slack.com/t/openhospitalworkspace/shared_invite/enQtOTc1Nzc0MzE2NjQ0LWIyMzRlZTU5NmNlMjE2MDcwM2FhMjRkNmM4YzI0MTAzYTA0YTI3NjZiOTVhMDZlNWUwNWEzMjE5ZDgzNWQ1YzE
