@@ -25,6 +25,8 @@ import java.util.Arrays;
 
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
+import org.isf.security.jwt.JWTConfigurer;
+import org.isf.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,28 +52,34 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
+	@Autowired
     private UserDetailsService userDetailsService;
-
-    @Autowired
+	
+	@Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
+	private TokenProvider tokenProvider;
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider
-                = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(encoder());
-        return authProvider;
-    }
-
-    @Bean
+	public SecurityConfig(TokenProvider tokenProvider) {
+		this.tokenProvider = tokenProvider;
+	}
+	
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth)
+	  throws Exception {
+	    auth.authenticationProvider(authenticationProvider());
+	}
+	
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider() {
+	    DaoAuthenticationProvider authProvider
+	      = new DaoAuthenticationProvider();
+	    authProvider.setUserDetailsService(userDetailsService);
+	    authProvider.setPasswordEncoder(encoder());
+	    return authProvider;
+	}
+	
+	@Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
@@ -93,7 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.cors()
+        http.sessionManagement()
+		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			.cors()
 			.and()
 			.csrf()
 				.disable()
@@ -249,20 +260,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             		.successHandler(successHandler())
             		.failureHandler(failureHandler())
             .and()
+			.apply(securityConfigurerAdapter())
+			.and()
             .httpBasic()
             .and()
           	.logout()
 				.logoutUrl("/auth/logout")
-          			.permitAll();
+				.permitAll();
     }
 
+	private JWTConfigurer securityConfigurerAdapter() {
+		return new JWTConfigurer(tokenProvider);
+	}
+    
     @Bean
-    public SimpleUrlAuthenticationFailureHandler failureHandler() {
-        return new SimpleUrlAuthenticationFailureHandler();
+	public SimpleUrlAuthenticationFailureHandler failureHandler() {
+    	return new SimpleUrlAuthenticationFailureHandler();
     }
-
+    
     @Bean
-    public SimpleUrlAuthenticationSuccessHandler successHandler() {
-        return new OHSimpleUrlAuthenticationSuccessHandler();
+	public SimpleUrlAuthenticationSuccessHandler successHandler() {
+    	return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
     }
 }
