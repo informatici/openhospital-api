@@ -58,7 +58,7 @@ public class SpringFoxConfig {
 
         List<SecurityScheme> securitySchemes = Arrays.asList(new ApiKey("JWT", "Authorization", "header"));
 
-        ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "http://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
+        ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
 
         Set<String> protocols = new HashSet<>();
         protocols.add(protocol);
