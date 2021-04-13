@@ -216,11 +216,11 @@ public class BillController {
         GregorianCalendar dateto = new GregorianCalendar();
         dateto.setTime(dateTo);
         
-        ArrayList<Bill> bills = new ArrayList<>();
+        ArrayList<Bill> bills;
         
-        List<BillDTO> billDTOS = new ArrayList<>();
+        List<BillDTO> billDTOS;
         
-        if(code == null) {
+        if (code == null) {
 	        LOGGER.info("Get payments datefrom: {}  dateTo: {}", datefrom, dateto);
         	bills = billManager.getBills(datefrom, dateto);
         } else {
@@ -233,9 +233,9 @@ public class BillController {
         
         billDTOS = billMapper.map2DTOList(bills);
         
-        if(billDTOS.isEmpty()){
+        if (billDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
-        }else{
+        } else {
             return ResponseEntity.ok(billDTOS);
         }
 	}
@@ -254,9 +254,9 @@ public class BillController {
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
         
-        ArrayList<BillPayments> payments = new ArrayList<>();
+        ArrayList<BillPayments> payments;
         
-        List<BillPaymentsDTO> paymentsDTOS = new ArrayList<>();
+        List<BillPaymentsDTO> paymentsDTOS;
         
         GregorianCalendar datefrom = new GregorianCalendar();
         datefrom.setTime(dateFrom);
@@ -266,7 +266,7 @@ public class BillController {
 
 		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", datefrom, dateto);
         
-        if(code == null) {
+        if (code == null) {
         	payments = billManager.getPayments(datefrom, dateto);
         } else {
         	 Patient pat = patientManager.getPatientById(code);             
@@ -275,9 +275,9 @@ public class BillController {
         
         paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
         
-        if(paymentsDTOS.isEmpty()){
+        if (paymentsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }else{
+        } else {
             return ResponseEntity.ok(paymentsDTOS);
         }
 	}
@@ -296,9 +296,9 @@ public class BillController {
 	    
         List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
         
-        if(paymentsDTOS.isEmpty()){
+        if (paymentsDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }else{
+        } else {
             return ResponseEntity.ok(paymentsDTOS);
         }
 	}
