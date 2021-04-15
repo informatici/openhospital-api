@@ -118,8 +118,6 @@ public class DischargeTypeControllerTest {
 		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-    
 		boolean isUpdated = true;
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
 				.thenReturn(isUpdated);
