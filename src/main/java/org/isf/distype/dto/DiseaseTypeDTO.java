@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Class representing a disease type")
 public class DiseaseTypeDTO {
+
 	@NotNull
 	@ApiModelProperty(notes = "Disease type code")
 	private String code;
@@ -37,20 +38,18 @@ public class DiseaseTypeDTO {
     private String description;
 
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
 }

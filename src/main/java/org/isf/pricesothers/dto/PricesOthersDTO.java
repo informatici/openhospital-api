@@ -56,77 +56,76 @@ public class PricesOthersDTO
     
 	private int hashCode = 0;
 
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
+	}
+
 	public int getId() {
-		return id;
+		return this.id;
 	}
-    
-	public void setId(int id) {
-		this.id = id;
-	}
-	
+
 	public String getCode() {
 		return this.code;
 	}
-	
-	public void setCode(String code) {
-		this.code = code;
-	}
-	
+
 	public String getDescription() {
 		return this.description;
 	}
-	
-	public void setDescription(String desc) {
-		this.description = desc;
-	}
-	
+
 	public boolean isOpdInclude() {
-		return opdInclude;
+		return this.opdInclude;
 	}
-	
-	public void setOpdInclude(boolean opdInclude) {
-		this.opdInclude = opdInclude;
-	}
-	
+
 	public boolean isIpdInclude() {
-		return ipdInclude;
-	}
-	
-	public void setIpdInclude(boolean ipdInclude) {
-		this.ipdInclude = ipdInclude;
+		return this.ipdInclude;
 	}
 
 	public boolean isDaily() {
-		return daily;
+		return this.daily;
+	}
+
+	public boolean isDischarge() {
+		return this.discharge;
+	}
+
+	public boolean isUndefined() {
+		return this.undefined;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setOpdInclude(boolean opdInclude) {
+		this.opdInclude = opdInclude;
+	}
+
+	public void setIpdInclude(boolean ipdInclude) {
+		this.ipdInclude = ipdInclude;
 	}
 
 	public void setDaily(boolean daily) {
 		this.daily = daily;
 	}
 
-	public boolean isDischarge() {
-		return discharge;
-	}
-
 	public void setDischarge(boolean discharge) {
 		this.discharge = discharge;
-	}
-
-	public boolean isUndefined() {
-		return undefined;
 	}
 
 	public void setUndefined(boolean undefined) {
 		this.undefined = undefined;
 	}
-	
-	@ApiModelProperty(hidden= true)
-	public int getHashCode() {
-		return hashCode;
-	}
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-
 }

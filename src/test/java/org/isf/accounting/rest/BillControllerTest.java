@@ -81,6 +81,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -91,13 +92,12 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author Emerson Castaneda
  */
-@Slf4j
 public class BillControllerTest extends ControllerBaseTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BillControllerTest.class);
 
 	@Mock
 	private BillBrowserManager billManagerMock;
@@ -148,7 +148,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
-		log.debug("exception: {}", exception);
+		LOGGER.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
 
@@ -172,7 +172,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
-		log.debug("exception: {}", exception);
+		LOGGER.debug("exception: {}", exception);
 		exception.ifPresent((se) -> assertThat(se, notNullValue()));
 		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
@@ -182,11 +182,11 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		Integer id = 0;
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 0;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
+		newFullBillDTO.getBill().getPatient().setCode(code);
 
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().setPatientTrue(true);
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
 
@@ -204,7 +204,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		log.debug("oHAPIException: {}", oHAPIException);
+		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
@@ -215,10 +215,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills/{id}";
 
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().getPatient().setCode(code);
+		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
@@ -238,7 +238,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
-		log.debug("oHAPIException: {}", oHAPIException);
+		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
@@ -248,10 +248,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer id = 123;
 		String request = "/bills/{id}";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
-		newFullBillDTO.getBillDTO().getPatientDTO().setCode(code);
-		newFullBillDTO.getBillDTO().setPatient(true);
+		newFullBillDTO.getBill().getPatient().setCode(code);
+		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
 
 		Patient patient = bill.getBillPatient();
@@ -259,12 +259,12 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		ArrayList<PriceList> priceListList = new ArrayList<PriceList>();
+		ArrayList<PriceList> priceListList = new ArrayList<>();
 
 		PriceList priceList = bill.getPriceList();
 
 		priceList.setName("TestListNameToMatch");
-		newFullBillDTO.getBillDTO().setListName("TestListNameToMatch");
+		newFullBillDTO.getBill().setListName("TestListNameToMatch");
 		priceListList.add(priceList);
 		when(priceListManagerMock.getLists()).thenReturn(priceListList);
 
@@ -275,9 +275,9 @@ public class BillControllerTest extends ControllerBaseTest {
 		//ArrayList<BillItems> billItemsArrayList = new ArrayList(newFullBillDTO.getBillItems());
 		//billItemsArrayList.addAll(newFullBillDTO.getBillItems());
 
-		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItemsDTO(), billItemsMapper);
+		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItems(), billItemsMapper);
 
-		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPaymentsDTO(), billPaymentsMapper);
+		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPayments(), billPaymentsMapper);
 
 		//TODO  check eq(bill) case
 		//when(billManagerMock.updateBill(eq(bill), eq(billItemsArrayList), eq(billPaymentsArrayList)))
@@ -302,10 +302,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills/items/{bill_id}";
 
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
-		newFullBillDTO.getBillDTO().setId(id);
+		newFullBillDTO.getBill().setId(id);
 
-		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<BillItems>();
-		itemsDTOSExpected.addAll(newFullBillDTO.getBillItemsDTO().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<>();
+		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
 		when(billManagerMock.getItems(eq(id))).thenReturn(itemsDTOSExpected);
 
@@ -316,7 +316,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItemsDTO()))))
+				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
 				.andReturn();
 	}
 
@@ -461,7 +461,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		BillItemsDTO billItemsDTO = BillItemsDTOHelper.setup(billItemsMapper);
 		BillItems billItem = billItemsMapper.map2Model(billItemsDTO);
 
-		ArrayList<Bill> billList = new ArrayList<Bill>();
+		ArrayList<Bill> billList = new ArrayList<>();
 		Integer id = 0;
 		Bill bill = BillHelper.setup(id);
 		billList.add(bill);
@@ -523,7 +523,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems1 = tbi.setup(bill, false);
 		BillItems billItems2 = tbi.setup(bill, false);
-		ArrayList<BillItems> billItemsList = new ArrayList<BillItems>();
+		ArrayList<BillItems> billItemsList = new ArrayList<>();
 		billItemsList.add(billItems1);
 		billItemsList.add(billItems2);
 

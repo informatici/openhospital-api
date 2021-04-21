@@ -32,6 +32,7 @@ import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,13 +45,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
-@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "basicAuth")})
+@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VisitsController {
+
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsController.class);
 
     @Autowired
     protected VisitManager visitManager;
@@ -72,10 +72,10 @@ public class VisitsController {
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
-	    log.info("Get visit related to patId: {}", patID);
+	    LOGGER.info("Get visit related to patId: {}", patID);
         ArrayList<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
-        if (listVisit.size() == 0) {
+        if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listVisit);
@@ -91,7 +91,7 @@ public class VisitsController {
      */
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
-	    log.info("Create Visit: {}", newVisit);
+	    LOGGER.info("Create Visit: {}", newVisit);
         Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
         return ResponseEntity.status(HttpStatus.CREATED).body(visit.getVisitID()); //TODO: verify if it's correct
     }
@@ -105,7 +105,7 @@ public class VisitsController {
      */
     @PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
-        log.info("Create Visits");
+        LOGGER.info("Create Visits");
         ArrayList<Visit> listVisits = (ArrayList<Visit>) mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
@@ -123,12 +123,12 @@ public class VisitsController {
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
-	    log.info("Delete Visit related to patId: {}", patID);
-        Boolean areDeleted = visitManager.deleteAllVisits(patID);
+	    LOGGER.info("Delete Visit related to patId: {}", patID);
+        boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(areDeleted.toString());
+        return ResponseEntity.ok(true);
     }
 
 }

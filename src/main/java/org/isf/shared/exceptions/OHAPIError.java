@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
 import org.isf.utils.exception.OHServiceException;
 import org.springframework.http.HttpStatus;
 
-import lombok.Getter;
-import lombok.Setter;
-
 //import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
@@ -39,8 +36,6 @@ import lombok.Setter;
  *
  * @author antonio
  */
-@Getter
-@Setter
 public class OHAPIError {
     private HttpStatus status;
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
@@ -62,4 +57,43 @@ public class OHAPIError {
         this.stackTrace = sw.toString();
     }
 
+	public HttpStatus getStatus() {
+		return this.status;
+	}
+
+	public String getMessage() {
+		return this.message;
+	}
+
+	public String getDebugMessage() {
+		return this.debugMessage;
+	}
+
+	public String getStackTrace() {
+		return this.stackTrace;
+	}
+
+	public LocalDateTime getTimestamp() {
+		return this.timestamp;
+	}
+
+	public void setStatus(HttpStatus status) {
+		this.status = status;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setDebugMessage(String debugMessage) {
+		this.debugMessage = debugMessage;
+	}
+
+	public void setStackTrace(String stackTrace) {
+		this.stackTrace = stackTrace;
+	}
+
+	public void setTimestamp(LocalDateTime timestamp) {
+		this.timestamp = timestamp;
+	}
 }

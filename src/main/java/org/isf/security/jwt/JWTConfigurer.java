@@ -19,43 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.isf.medtype.dto;
+package org.isf.security.jwt;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import io.swagger.annotations.ApiModelProperty;
+public class JWTConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
-public class MedicalTypeDTO {
+    private final TokenProvider tokenProvider;
 
-	@NotNull
-	@ApiModelProperty(notes="Code of the medical type", example = "M", position = 1)
-	private String code;
-
-	@NotNull
-	@ApiModelProperty(notes="Description of the medical type", example = "Medical material", position = 2)
-	private String description;
-	
-	public MedicalTypeDTO() {
+    public JWTConfigurer(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
     }
-	
-	public MedicalTypeDTO(String code, String description) {
-		this.code = code;
-		this.description = description;
-	}
 
-	public String getCode() {
-		return this.code;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @Override
+    public void configure(HttpSecurity http) {
+        JWTFilter customFilter = new JWTFilter(tokenProvider);
+        http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 }

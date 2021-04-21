@@ -84,10 +84,8 @@ public class StockMovementController {
 	@PostMapping(value = "/stockmovements/charge", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newMultipleChargingMovements(@RequestBody List<MovementDTO> movementDTOs, 
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
-		ArrayList<Movement> movements = new ArrayList<Movement>();
-		movMapper.map2ModelList(movementDTOs).forEach(mov -> {
-			movements.add(mov);
-		});
+		ArrayList<Movement> movements = new ArrayList<>();
+		movements.addAll(movMapper.map2ModelList(movementDTOs));
 		boolean done = movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
@@ -104,10 +102,8 @@ public class StockMovementController {
 	@PostMapping(value = "/stockmovements/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newMultipleDischargingMovements(@RequestBody List<MovementDTO> movementDTOs, 
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
-		ArrayList<Movement> movements = new ArrayList<Movement>();
-		movMapper.map2ModelList(movementDTOs).forEach(mov -> {
-			movements.add(mov);
-		});
+		ArrayList<Movement> movements = new ArrayList<>();
+		movements.addAll(movMapper.map2ModelList(movementDTOs));
 		boolean done = movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
@@ -219,7 +215,7 @@ public class StockMovementController {
 	}
 	
 	/**
-	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}.
+	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}, expiring first on top
 	 * @param medCode
 	 * @return the retrieved lots.
 	 * @throws OHServiceException

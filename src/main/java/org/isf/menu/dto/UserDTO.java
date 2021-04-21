@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class UserDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="the username (must be unique)", example = "John Doe", position = 1)	
 	private String userName;
@@ -42,11 +43,9 @@ public class UserDTO {
 	private String desc;
 	
 	public UserDTO() {
-		super();
 	}
 
 	public UserDTO(String userName, UserGroupDTO userGroupName, String passwd, String desc) {
-		super();
 		this.userName = userName;
 		this.userGroupName = userGroupName;
 		this.passwd = passwd;
@@ -54,35 +53,34 @@ public class UserDTO {
 	}
 
 	public String getUserName() {
-		return userName;
+		return this.userName;
+	}
+
+	public UserGroupDTO getUserGroupName() {
+		return this.userGroupName;
+	}
+
+	public String getPasswd() {
+		return this.passwd;
+	}
+
+	public String getDesc() {
+		return this.desc;
 	}
 
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
 
-	public UserGroupDTO getUserGroupName() {
-		return userGroupName;
-	}
-
 	public void setUserGroupName(UserGroupDTO userGroupName) {
 		this.userGroupName = userGroupName;
-	}
-
-	public String getPasswd() {
-		return passwd;
 	}
 
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
 
-	public String getDesc() {
-		return desc;
-	}
-
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	
 }

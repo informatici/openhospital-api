@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class MovementTypeDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="Code of the movement type", example = "D", position = 1)
 	private String code;
@@ -50,29 +51,28 @@ public class MovementTypeDTO {
         this.description = description;
         this.type = type;
     }
-	
+
 	public String getCode() {
-        return this.code;
-    }
-    
-    public void setCode(String code) {
-        this.code = code;
-    }
-    
-    public String getDescription() {
-        return this.description;
-    }
-    
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-	public String getType() {
-		return type;
+		return this.code;
 	}
-	
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	
 }

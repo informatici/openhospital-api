@@ -65,7 +65,7 @@ public class BillPaymentsDTOHelper {
 	}
 
 	public static ArrayList<BillPayments> toModelList(List<BillPaymentsDTO> billPaymentsDTOList, BillPaymentsMapper billPaymentsMapper) {
-		ArrayList<BillPayments> billPayments = new ArrayList<BillPayments>(
+		ArrayList<BillPayments> billPayments = new ArrayList<>(
 				billPaymentsDTOList.stream().map(pay -> billPaymentsMapper.map2Model(pay)).collect(Collectors.toList()));
 		return billPayments;
 	}
@@ -83,7 +83,7 @@ public class BillPaymentsDTOHelper {
 	}
 
 	public static ArrayList<BillPaymentsDTO> genArrayList(int n, BillPaymentsMapper billPaymentsMapper) throws OHException {
-		return new ArrayList<BillPaymentsDTO>(genList(n, billPaymentsMapper));
+		return new ArrayList<>(genList(n, billPaymentsMapper));
 	}
 
 	public static ArrayList<BillPayments> genListModel(int n, BillPaymentsMapper billPaymentsMapper) throws OHException {

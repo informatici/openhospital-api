@@ -33,6 +33,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,12 +48,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PatVacController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatVacController.class);
 
 	@Autowired
 	protected PatVacManager patVacManager;
@@ -74,7 +75,7 @@ public class PatVacController {
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
-		log.info("Create patient vaccine {}", code);
+		LOGGER.info("Create patient vaccine {}", code);
 		boolean isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isCreated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
@@ -91,7 +92,7 @@ public class PatVacController {
 	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
-		log.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
+		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		boolean isUpdated = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (!isUpdated)
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not updated!", OHSeverityLevel.ERROR));
@@ -105,11 +106,11 @@ public class PatVacController {
 	 */
 	@GetMapping(value = "/patientvaccines/week", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccines(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
-		log.info("Get the all patient vaccine of to day or one week");
+		LOGGER.info("Get the all patient vaccine of to day or one week");
 		if(oneWeek == null) oneWeek = false;
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(oneWeek);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.size() == 0) {
+		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
@@ -124,7 +125,7 @@ public class PatVacController {
 	@GetMapping(value = "/patientvaccines/filter", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccinesByDatesRanges(@RequestParam String vaccineTypeCode, @RequestParam String vaccineCode, 
 			@RequestParam Date dateFrom, @RequestParam Date dateTo, @RequestParam char sex, @RequestParam int ageFrom, @RequestParam int ageTo) throws OHServiceException {
-		log.info("filter patient vaccine by dates ranges");
+		LOGGER.info("filter patient vaccine by dates ranges");
 		
 		GregorianCalendar datefrom = new GregorianCalendar();
 		GregorianCalendar dateto = new GregorianCalendar();
@@ -133,7 +134,7 @@ public class PatVacController {
         
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, datefrom, dateto, sex, ageFrom, ageTo);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.size() == 0) {
+		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
@@ -147,7 +148,7 @@ public class PatVacController {
 	 */
 	@GetMapping(value = "/patientvaccines/progyear/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
-		log.info("Get progressive number within specified year");
+		LOGGER.info("Get progressive number within specified year");
 		int yProg = patVacManager.getProgYear(year);
 		return ResponseEntity.ok(yProg);
 	}
@@ -160,14 +161,14 @@ public class PatVacController {
 	 */
 	@DeleteMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
-		log.info("Delete patient vaccine code: {}", code);
+		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
 		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
 		if (!isDeleted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted!", OHSeverityLevel.ERROR));
 		}
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

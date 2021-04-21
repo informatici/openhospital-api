@@ -40,6 +40,7 @@ import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,20 +53,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
-@Api(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TherapyController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TherapyController.class);
 
 	@Autowired
 	private TherapyManager manager;
+
 	@Autowired
 	private TherapyMapper therapyMapper;
+
 	@Autowired
 	private TherapyRowMapper therapyRowMapper;
+
 	@Autowired
 	private MedicalMapper medicalMapper;
 	
@@ -129,7 +132,7 @@ public class TherapyController {
 		if(mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
 		} else {
-			log.info("Found {} medicals", mappedMeds.size());
+			LOGGER.info("Found {} medicals", mappedMeds.size());
 			return ResponseEntity.ok(mappedMeds);
 		}
 	}
@@ -147,7 +150,7 @@ public class TherapyController {
 		if(mappedThRows.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
 		} else {
-			log.info("Found {} therapies", mappedThRows.size());
+			LOGGER.info("Found {} therapies", mappedThRows.size());
 			return ResponseEntity.ok(mappedThRows);
 		}
 	}
@@ -166,7 +169,7 @@ public class TherapyController {
 		if(mappedTherapies == null || mappedTherapies.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
 		} else {
-			log.info("Found {} therapies", mappedTherapies.size());
+			LOGGER.info("Found {} therapies", mappedTherapies.size());
 			return ResponseEntity.ok(mappedTherapies);
 		}
 	}

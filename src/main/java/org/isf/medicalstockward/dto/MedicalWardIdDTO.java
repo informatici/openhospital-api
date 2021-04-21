@@ -29,6 +29,7 @@ import org.isf.ward.dto.WardDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class MedicalWardIdDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="The ward", position = 1)
 	private WardDTO ward;
@@ -38,30 +39,26 @@ public class MedicalWardIdDTO {
 	private MedicalDTO medical;
 	
 	public MedicalWardIdDTO() {
-		super();
 	}
 
 	public MedicalWardIdDTO(WardDTO ward, MedicalDTO medical) {
-		super();
 		this.ward = ward;
 		this.medical = medical;
 	}
 
 	public WardDTO getWard() {
-		return ward;
+		return this.ward;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
 	}
 
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
 
-	public MedicalDTO getMedical() {
-		return medical;
-	}
-
 	public void setMedical(MedicalDTO medical) {
 		this.medical = medical;
 	}
-	
-	
 }

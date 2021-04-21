@@ -45,19 +45,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class AgeTypeControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AgeTypeControllerTest.class);
 
 	@Mock
 	private AgeTypeBrowserManager ageTypeManagerMock;
@@ -80,7 +79,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllAgeTypes_200() throws JsonProcessingException, Exception {
+	public void testGetAllAgeTypes_200() throws Exception {
 		String request = "/agetypes";
 
 		ArrayList<AgeType> results = AgeTypeHelper.genArrayList(5);
@@ -97,7 +96,7 @@ public class AgeTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(parsedResults))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -105,7 +104,7 @@ public class AgeTypeControllerTest {
 		String request = "/agetypes";
 		AgeTypeDTO body = ageTypeMapper.map2DTO(AgeTypeHelper.setup());
 
-		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
+		ArrayList<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(AgeTypeHelper.setup());
 
 		when(ageTypeManagerMock.updateAgeType(ageTypes))
@@ -121,7 +120,7 @@ public class AgeTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -143,11 +142,11 @@ public class AgeTypeControllerTest {
 				.andExpect(content().string(containsString("code")))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetAgeTypeByIndex_200() throws JsonProcessingException, Exception {
+	public void testGetAgeTypeByIndex_200() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
@@ -163,7 +162,7 @@ public class AgeTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(ageType))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

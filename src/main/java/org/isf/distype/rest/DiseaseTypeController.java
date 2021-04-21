@@ -36,6 +36,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,13 +50,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
-@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="basicAuth")})
+@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE)
 public class DiseaseTypeController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseTypeController.class);
+
 	@Autowired
 	private DiseaseTypeBrowserManager diseaseTypeManager;
 	
@@ -76,9 +77,9 @@ public class DiseaseTypeController {
 	public ResponseEntity<List<DiseaseTypeDTO>> getAllDiseaseTypes() throws OHServiceException {
 		List<DiseaseType> results = diseaseTypeManager.getDiseaseType();
 		List<DiseaseTypeDTO> parsedResults=mapper.map2DTOList(results);
-		if(parsedResults.size() > 0){
+		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
-        }else{
+        } else {
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
         }
 	}	
@@ -92,13 +93,13 @@ public class DiseaseTypeController {
 	@PostMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if(diseaseTypeManager.codeControl(diseaseType.getCode())) {
+        if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"specified code is already used!", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
-        if(diseaseTypeManager.newDiseaseType(diseaseType)) {
+        if (diseaseTypeManager.newDiseaseType(diseaseType)) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 
@@ -116,13 +117,13 @@ public class DiseaseTypeController {
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if(!diseaseTypeManager.codeControl(diseaseType.getCode())) {
+        if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
         			"disease type not found!", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
-        if(diseaseTypeManager.updateDiseaseType(diseaseType)) {
+        if (diseaseTypeManager.updateDiseaseType(diseaseType)) {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 
@@ -145,7 +146,7 @@ public class DiseaseTypeController {
 				.findFirst();
 		if(optDiseaseType.isPresent()) {
 			boolean deleted = diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
-			Map<String, Boolean> result = new HashMap<String, Boolean>();
+			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", deleted);
 			return ResponseEntity.ok(result);
 		} else {

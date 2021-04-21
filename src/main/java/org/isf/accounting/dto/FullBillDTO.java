@@ -39,23 +39,28 @@ public class FullBillDTO {
 	
 	@ApiModelProperty(notes = "list of bill payments elements", position = 3)
 	private List<BillPaymentsDTO> billPayments;
-	
-	public BillDTO getBillDTO() {
-		return bill;
+
+	public BillDTO getBill() {
+		return this.bill;
 	}
-	public void setBillDTO(BillDTO billDTO) {
-		this.bill = billDTO;
+
+	public List<BillItemsDTO> getBillItems() {
+		return this.billItems;
 	}
-	public List<BillItemsDTO> getBillItemsDTO() {
-		return billItems;
+
+	public List<BillPaymentsDTO> getBillPayments() {
+		return this.billPayments;
 	}
-	public void setBillItemsDTO(List<BillItemsDTO> billItemsDTO) {
-		this.billItems = billItemsDTO;
+
+	public void setBill(BillDTO bill) {
+		this.bill = bill;
 	}
-	public List<BillPaymentsDTO> getBillPaymentsDTO() {
-		return billPayments;
+
+	public void setBillItems(List<BillItemsDTO> billItems) {
+		this.billItems = billItems;
 	}
-	public void setBillPaymentsDTO(List<BillPaymentsDTO> billPaymentsDTO) {
-		this.billPayments = billPaymentsDTO;
+
+	public void setBillPayments(List<BillPaymentsDTO> billPayments) {
+		this.billPayments = billPayments;
 	}
 }

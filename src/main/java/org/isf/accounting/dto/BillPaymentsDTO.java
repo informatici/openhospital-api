@@ -50,52 +50,53 @@ public class BillPaymentsDTO {
 	private String user;
 
 	private volatile int hashCode = 0;
-	
-	public int getId() {
-		return id;
+
+	public Integer getId() {
+		return this.id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public Integer getBillId() {
+		return this.billId;
 	}
 
 	public Date getDate() {
-		return date;
+		return this.date;
+	}
+
+	public double getAmount() {
+		return this.amount;
+	}
+
+	public String getUser() {
+		return this.user;
+	}
+
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
+	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setBillId(Integer billId) {
+		this.billId = billId;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public double getAmount() {
-		return amount;
-	}
-
 	public void setAmount(double amount) {
 		this.amount = amount;
-	}
-
-	public String getUser() {
-		return user;
 	}
 
 	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public int getHashCode() {
-		return hashCode;
-	}
-
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-	public int getBillId() {
-		return billId;
-	}
-
-	public void setBillId(int billId) {
-		this.billId = billId;
-	}
-	
 }

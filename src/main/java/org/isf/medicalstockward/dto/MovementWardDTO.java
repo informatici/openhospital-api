@@ -79,13 +79,11 @@ public class MovementWardDTO {
 	private WardDTO wardFrom;
 	
 	public MovementWardDTO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public MovementWardDTO(int code, WardDTO ward, Date date, boolean isPatient, PatientDTO patient, int age,
 			float weight, String description, MedicalDTO medical, Double quantity, String units, WardDTO wardTo,
 			WardDTO wardFrom) {
-		super();
 		this.code = code;
 		this.ward = ward;
 		this.date = date;
@@ -102,107 +100,106 @@ public class MovementWardDTO {
 	}
 
 	public int getCode() {
-		return code;
+		return this.code;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public boolean isPatient() {
+		return this.isPatient;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public int getAge() {
+		return this.age;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public Double getQuantity() {
+		return this.quantity;
+	}
+
+	public String getUnits() {
+		return this.units;
+	}
+
+	public WardDTO getWardTo() {
+		return this.wardTo;
+	}
+
+	public WardDTO getWardFrom() {
+		return this.wardFrom;
 	}
 
 	public void setCode(int code) {
 		this.code = code;
 	}
 
-	public WardDTO getWard() {
-		return ward;
-	}
-
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
-	}
-
-	public Date getDate() {
-		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public boolean isPatient() {
-		return isPatient;
-	}
-
 	public void setPatient(boolean isPatient) {
 		this.isPatient = isPatient;
-	}
-
-	public PatientDTO getPatient() {
-		return patient;
 	}
 
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
 
-	public int getAge() {
-		return age;
-	}
-
 	public void setAge(int age) {
 		this.age = age;
-	}
-
-	public float getWeight() {
-		return weight;
 	}
 
 	public void setWeight(float weight) {
 		this.weight = weight;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public MedicalDTO getMedical() {
-		return medical;
 	}
 
 	public void setMedical(MedicalDTO medical) {
 		this.medical = medical;
 	}
 
-	public Double getQuantity() {
-		return quantity;
-	}
-
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
-	}
-
-	public String getUnits() {
-		return units;
 	}
 
 	public void setUnits(String units) {
 		this.units = units;
 	}
 
-	public WardDTO getWardTo() {
-		return wardTo;
-	}
-
 	public void setWardTo(WardDTO wardTo) {
 		this.wardTo = wardTo;
-	}
-
-	public WardDTO getWardFrom() {
-		return wardFrom;
 	}
 
 	public void setWardFrom(WardDTO wardFrom) {
 		this.wardFrom = wardFrom;
 	}
-	
 }

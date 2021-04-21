@@ -19,43 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.isf.medtype.dto;
+package org.isf.security;
 
-import javax.validation.constraints.NotNull;
+public class LoginResponse {
 
-import io.swagger.annotations.ApiModelProperty;
+    private String token;
+    private String displayName;
 
-public class MedicalTypeDTO {
-
-	@NotNull
-	@ApiModelProperty(notes="Code of the medical type", example = "M", position = 1)
-	private String code;
-
-	@NotNull
-	@ApiModelProperty(notes="Description of the medical type", example = "Medical material", position = 2)
-	private String description;
-	
-	public MedicalTypeDTO() {
+    public String getToken() {
+        return token;
     }
-	
-	public MedicalTypeDTO(String code, String description) {
-		this.code = code;
-		this.description = description;
-	}
 
-	public String getCode() {
-		return this.code;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public String getDisplayName() {
+        return displayName;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 }

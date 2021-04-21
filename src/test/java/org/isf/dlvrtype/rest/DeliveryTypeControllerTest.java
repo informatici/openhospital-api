@@ -47,19 +47,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class DeliveryTypeControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
 
 	@Mock
 	protected DeliveryTypeBrowserManager deliveryTypeBrowserManagerMock;
@@ -88,7 +87,7 @@ public class DeliveryTypeControllerTest {
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
 
-		ArrayList<DeliveryType> results = new ArrayList<DeliveryType>();
+		ArrayList<DeliveryType> results = new ArrayList<>();
 		results.add(deliveryType);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
@@ -108,18 +107,18 @@ public class DeliveryTypeControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testUpdateDeliveryTypet_200() throws Exception {
-		String request = "/deliverytypes/{code}";
+		String request = "/deliverytypes/";
 		int code = 456;
 
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
 
-		when(deliveryTypeBrowserManagerMock.codeControl(body.getCode()))
+		when(deliveryTypeBrowserManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;
@@ -136,11 +135,11 @@ public class DeliveryTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDeliveryTypes_200() throws JsonProcessingException, Exception {
+	public void testGetDeliveryTypes_200() throws Exception {
 		String request = "/deliverytypes";
 
 		ArrayList<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
@@ -158,7 +157,7 @@ public class DeliveryTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -168,7 +167,7 @@ public class DeliveryTypeControllerTest {
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));
 		String code = body.getCode();
 
-		when(deliveryTypeBrowserManagerMock.codeControl(code))
+		when(deliveryTypeBrowserManagerMock.isCodePresent(code))
 				.thenReturn(true);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
@@ -186,7 +185,7 @@ public class DeliveryTypeControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

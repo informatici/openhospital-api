@@ -34,6 +34,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,13 +48,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedStockMovementTypeController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedStockMovementTypeController.class);
+
 	@Autowired
 	private MovementTypeMapper mapper;
 	
@@ -67,15 +68,15 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementTypeDTO>> getMedicaldsrstockmovType() throws OHServiceException {
-		log.info("Retrieving all the movement types ...");
+		LOGGER.info("Retrieving all the movement types ...");
 		List<MovementType> movementTypes = manager.getMedicaldsrstockmovType();
-		List<MovementTypeDTO> mappedMvments = mapper.map2DTOList(movementTypes);
-		if(mappedMvments.isEmpty()) {
-			log.info("No movement type found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMvments);
+		List<MovementTypeDTO> mappedMovements = mapper.map2DTOList(movementTypes);
+		if (mappedMovements.isEmpty()) {
+			LOGGER.info("No movement type found");
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
 		} else {
-			log.info("Found {} movement types", mappedMvments.size());
-			return ResponseEntity.ok(mappedMvments);
+			LOGGER.info("Found {} movement types", mappedMovements.size());
+			return ResponseEntity.ok(mappedMovements);
 		}
 	}
 	
@@ -119,7 +120,7 @@ public class MedStockMovementTypeController {
 	@PutMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovTypeDTO) throws OHServiceException {
 		MovementType medicaldsrstockmovType = mapper.map2Model(medicaldsrstockmovTypeDTO);
-		if(!manager.codeControl(medicaldsrstockmovType.getCode())) 
+		if (!manager.isCodePresent(medicaldsrstockmovType.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
 		if (!isUpdated) {
@@ -136,7 +137,7 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
-		return ResponseEntity.ok(manager.codeControl(code));
+		return ResponseEntity.ok(manager.isCodePresent(code));
 	}
 	
 	/**
@@ -147,22 +148,15 @@ public class MedStockMovementTypeController {
 	 */
 	@DeleteMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicaldsrstockmovType(@PathVariable("code") String code) throws OHServiceException {
-		List<MovementType> machedMvmntTypes = manager.getMedicaldsrstockmovType()
+		List<MovementType> matchedMvmntTypes = manager.getMedicaldsrstockmovType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (machedMvmntTypes.size() > 0)
-			return ResponseEntity.ok(manager.deleteMedicaldsrstockmovType(machedMvmntTypes.get(0)));
-		else 
+		if (!matchedMvmntTypes.isEmpty()) {
+			return ResponseEntity.ok(manager.deleteMedicaldsrstockmovType(matchedMvmntTypes.get(0)));
+		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement type not found!", OHSeverityLevel.ERROR));
+		}
 	}
 	
 }
-
-
-
-
-
-
-
-

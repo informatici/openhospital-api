@@ -46,19 +46,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class DiseaseControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseControllerTest.class);
 
 	@Mock
 	private DiseaseBrowserManager diseaseBrowserManagerMock;
@@ -95,11 +94,11 @@ public class DiseaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesOpdByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesOpdByCode_200() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -116,11 +115,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdOut_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdOut_200() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -135,11 +134,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdOutByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdOutByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -156,11 +155,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdIn_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdIn_200() throws Exception {
 
 		String request = "/diseases/ipd/in";
 
@@ -176,11 +175,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesIpdInByCode_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesIpdInByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -197,11 +196,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseases_200() throws JsonProcessingException, Exception {
+	public void testGetDiseases_200() throws Exception {
 		String request = "/diseases/both";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -216,11 +215,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseasesString_200() throws JsonProcessingException, Exception {
+	public void testGetDiseasesString_200() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -237,12 +236,12 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 
 	}
 
 	@Test
-	public void testGetAllDiseases_200() throws JsonProcessingException, Exception {
+	public void testGetAllDiseases_200() throws Exception {
 		String request = "/diseases/all";
 
 		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -257,11 +256,11 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDiseaseByCode() throws JsonProcessingException, Exception {
+	public void testGetDiseaseByCode() throws Exception {
 		String request = "/diseases/{code}";
 
 		int code = 1;
@@ -278,24 +277,24 @@ public class DiseaseControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testNewDisease_200() throws JsonProcessingException, Exception {
+	public void testNewDisease_200() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
 				.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.newDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -307,7 +306,7 @@ public class DiseaseControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -317,11 +316,11 @@ public class DiseaseControllerTest {
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
-		when(diseaseBrowserManagerMock.codeControl(disease.getCode()))
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 				.thenReturn(true);
 
 		when(diseaseBrowserManagerMock.updateDisease(disease))
-				.thenReturn(true);
+				.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -333,7 +332,7 @@ public class DiseaseControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -363,7 +362,7 @@ public class DiseaseControllerTest {
 
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

@@ -71,6 +71,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -78,10 +79,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class AdmissionControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionControllerTest.class);
 
 	@Mock
 	private AdmissionBrowserManager admissionManagerMock;
@@ -135,7 +135,7 @@ public class AdmissionControllerTest {
 	@Test
 	public void testGetAdmissions_200() throws Exception {
 		String request = "/admissions/{id}";
-		Integer id = 1;
+		int id = 1;
 
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getAdmission(id))
@@ -151,7 +151,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -163,7 +163,6 @@ public class AdmissionControllerTest {
 		when(patientManagerMock.getPatientById(patientCode))
 				.thenReturn(patient);
 
-		Integer id = 0;
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getCurrentAdmission(patient))
 				.thenReturn(admission);
@@ -178,20 +177,20 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testGetAdmittedPatients_200() throws Exception {
 		String request = "/admissions/admittedPatients?searchterms=searchTerms";
-		ArrayList<AdmittedPatient> amittedPatients = PatientHelper.setupAdmittedPatientList(2);
+		ArrayList<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
 		//GregorianCalendar[] admissionRange = null;
 		//GregorianCalendar[] dischargeRange = null;
 		String searchTerms = "";
 		//when(admissionManagerMock.getAdmittedPatients(admissionRange, dischargeRange, searchTerms))
 		when(admissionManagerMock.getAdmittedPatients(any(GregorianCalendar[].class), any(GregorianCalendar[].class), any(String.class)))
-				.thenReturn(amittedPatients);
+				.thenReturn(admittedPatients);
 
 		MvcResult result = this.mockMvc
 				.perform(get(request, searchTerms)
@@ -200,10 +199,10 @@ public class AdmissionControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(amittedPatients)))))
+				.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -229,7 +228,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(admissionMapper.map2DTOList(admissions)))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -237,7 +236,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getNextProgressiveIdInYear?wardcode={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer nextYProg = 1;
@@ -254,7 +253,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(nextYProg.toString())))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -262,7 +261,7 @@ public class AdmissionControllerTest {
 		String request = "/admissions/getBedsOccupationInWard?wardid={wardCode}";
 		String wardCode = "1";
 
-		when(wardManagerMock.codeControl(wardCode))
+		when(wardManagerMock.isCodePresent(wardCode))
 				.thenReturn(true);
 
 		Integer bed = 1012;
@@ -279,7 +278,7 @@ public class AdmissionControllerTest {
 				.andExpect(content().string(containsString(bed.toString())))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -356,7 +355,7 @@ public class AdmissionControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -420,7 +419,7 @@ public class AdmissionControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

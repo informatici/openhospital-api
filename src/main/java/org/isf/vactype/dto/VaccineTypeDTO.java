@@ -37,19 +37,19 @@ public class VaccineTypeDTO {
     @ApiModelProperty(notes = "Description of the vaccine type", example="Child", position = 2)
     private String description;
 
-    public String getCode() {
-        return code;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

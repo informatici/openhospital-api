@@ -47,6 +47,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,10 +56,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class DischargeTypeControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DischargeTypeControllerTest.class);
 
 	@Mock
 	protected DischargeTypeBrowserManager discTypeManagerMock;
@@ -91,7 +91,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(isCreated);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
@@ -106,7 +106,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -115,12 +115,9 @@ public class DischargeTypeControllerTest {
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
 
-		when(discTypeManagerMock.codeControl(body.getCode()))
+		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> admtFounds = new ArrayList<DischargeType>();
-		admtFounds.add(dischargeType);
 		boolean isUpdated = true;
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
 				.thenReturn(isUpdated);
@@ -135,7 +132,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -143,7 +140,7 @@ public class DischargeTypeControllerTest {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypes = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypes = new ArrayList<>();
 		dischTypes.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypes);
@@ -158,7 +155,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedDischTypeDTOs))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -167,11 +164,11 @@ public class DischargeTypeControllerTest {
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
 
-		when(discTypeManagerMock.codeControl(body.getCode()))
+		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<DischargeType>();
+		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
@@ -188,7 +185,7 @@ public class DischargeTypeControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

@@ -47,19 +47,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class VaccineControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineControllerTest.class);
 
 	@Mock
 	protected VaccineBrowserManager vaccineBrowserManagerMock;
@@ -82,7 +81,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccines_200() throws JsonProcessingException, Exception {
+	public void testGetVaccines_200() throws Exception {
 		String request = "/vaccines";
 
 		String code = "AA";
@@ -101,12 +100,12 @@ public class VaccineControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVaccineDTOs))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetVaccinesByVaccineTypeCode_200() throws JsonProcessingException, Exception {
-		String request = "/vaccines/{vaccineTypeCode}";
+	public void testGetVaccinesByVaccineTypeCode_200() throws Exception {
+		String request = "/vaccines/type-code/{vaccineTypeCode}";
 
 		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
 		String vaccineTypeCode = vaccinesList.get(0).getVaccineType().getCode();
@@ -122,18 +121,18 @@ public class VaccineControllerTest {
 				.andExpect(content().string(new ObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testNewVaccine_201() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isCreated = true;
 		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -146,18 +145,18 @@ public class VaccineControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testUpdateVaccine_200() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
-		VaccineDTO body = vaccineMapper.map2DTO(VaccineHelper.setup(code));
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
 
-		boolean isUpdated = true;
 		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(vaccine);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -169,7 +168,7 @@ public class VaccineControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -196,17 +195,17 @@ public class VaccineControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testCheckVaccineCode_200() throws JsonProcessingException, Exception {
+	public void testCheckVaccineCode_200() throws Exception {
 		String request = "/vaccines/check/{code}";
 
 		String code = "AA";
 		Vaccine vaccine = VaccineHelper.setup(code);
 
-		when(vaccineBrowserManagerMock.codeControl(vaccine.getCode()))
+		when(vaccineBrowserManagerMock.isCodePresent(vaccine.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
@@ -217,7 +216,7 @@ public class VaccineControllerTest {
 				.andExpect(content().string("true"))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

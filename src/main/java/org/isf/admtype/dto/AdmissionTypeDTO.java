@@ -24,16 +24,10 @@ package org.isf.admtype.dto;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
- * Not used anymore
- *
  * @author antonio
  */
-@Getter
-@Setter
 public class AdmissionTypeDTO {
 	
 	@NotNull
@@ -43,4 +37,20 @@ public class AdmissionTypeDTO {
 	@NotNull
 	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
     private String description;
+
+	public String getCode() {
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

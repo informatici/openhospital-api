@@ -30,6 +30,7 @@ import org.isf.patient.dto.PatientDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class TherapyRowDTO {
+
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
 	private Integer therapyID;
 
@@ -77,14 +78,11 @@ public class TherapyRowDTO {
 	private Integer smsInt;
 
 	public TherapyRowDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public TherapyRowDTO(Integer therapyID, PatientDTO patID, Date startDate, Date endDate, Integer medicalId,
 			Double qty, Integer unitID, Integer freqInDay, Integer freqInPeriod, String note, Integer notifyInt,
 			Integer smsInt) {
-		super();
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.startDate = startDate;
@@ -100,99 +98,98 @@ public class TherapyRowDTO {
 	}
 
 	public Integer getTherapyID() {
-		return therapyID;
+		return this.therapyID;
+	}
+
+	public PatientDTO getPatID() {
+		return this.patID;
+	}
+
+	public Date getStartDate() {
+		return this.startDate;
+	}
+
+	public Date getEndDate() {
+		return this.endDate;
+	}
+
+	public Integer getMedicalId() {
+		return this.medicalId;
+	}
+
+	public Double getQty() {
+		return this.qty;
+	}
+
+	public Integer getUnitID() {
+		return this.unitID;
+	}
+
+	public Integer getFreqInDay() {
+		return this.freqInDay;
+	}
+
+	public Integer getFreqInPeriod() {
+		return this.freqInPeriod;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public Integer getNotifyInt() {
+		return this.notifyInt;
+	}
+
+	public Integer getSmsInt() {
+		return this.smsInt;
 	}
 
 	public void setTherapyID(Integer therapyID) {
 		this.therapyID = therapyID;
 	}
 
-	public PatientDTO getPatID() {
-		return patID;
-	}
-
 	public void setPatID(PatientDTO patID) {
 		this.patID = patID;
-	}
-
-	public Date getStartDate() {
-		return startDate;
 	}
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
-		return endDate;
-	}
-
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	public Integer getMedicalId() {
-		return medicalId;
 	}
 
 	public void setMedicalId(Integer medicalId) {
 		this.medicalId = medicalId;
 	}
 
-	public Double getQty() {
-		return qty;
-	}
-
 	public void setQty(Double qty) {
 		this.qty = qty;
-	}
-
-	public Integer getUnitID() {
-		return unitID;
 	}
 
 	public void setUnitID(Integer unitID) {
 		this.unitID = unitID;
 	}
 
-	public Integer getFreqInDay() {
-		return freqInDay;
-	}
-
 	public void setFreqInDay(Integer freqInDay) {
 		this.freqInDay = freqInDay;
-	}
-
-	public Integer getFreqInPeriod() {
-		return freqInPeriod;
 	}
 
 	public void setFreqInPeriod(Integer freqInPeriod) {
 		this.freqInPeriod = freqInPeriod;
 	}
 
-	public String getNote() {
-		return note;
-	}
-
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	public Integer getNotifyInt() {
-		return notifyInt;
 	}
 
 	public void setNotifyInt(Integer notifyInt) {
 		this.notifyInt = notifyInt;
 	}
 
-	public Integer getSmsInt() {
-		return smsInt;
-	}
-
 	public void setSmsInt(Integer smsInt) {
 		this.smsInt = smsInt;
 	}
-	
 }

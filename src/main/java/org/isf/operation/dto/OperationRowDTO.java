@@ -36,7 +36,6 @@ import org.isf.opd.dto.OpdDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 
-
 public class OperationRowDTO {
 
     private int id;
@@ -67,97 +66,97 @@ public class OperationRowDTO {
     
     private int hashCode = 0;
 
-    
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public OperationDTO getOperation() {
-        return operation;
-    }
-
-    public void setOperation(OperationDTO operation) {
-        this.operation = operation;
-    }
-
-    public String getPrescriber() {
-        return prescriber;
-    }
-
-    public void setPrescriber(String prescriber) {
-        this.prescriber = prescriber;
-    }
-
-    public String getOpResult() {
-        return opResult;
-    }
-
-    public void setOpResult(String opResult) {
-        this.opResult = opResult;
-    }
-
-    public Date getOpDate() {
-        return opDate;
-    }
-
-    public void setOpDate(Date opDate) {
-        this.opDate = opDate;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
-    public AdmissionDTO getAdmission() {
-        return admission;
-    }
-
-    public void setAdmission(AdmissionDTO admission) {
-        this.admission = admission;
-    }
-
-    public OpdDTO getOpd() {
-        return opd;
-    }
-
-    public void setOpd(OpdDTO opd) {
-        this.opd = opd;
-    }
-
-    public BillDTO getBill() {
-        return bill;
-    }
-
-    public void setBill(BillDTO bill) {
-        this.bill = bill;
-    }
-
-    public Float getTransUnit() {
-        return transUnit;
-    }
-
-    public void setTransUnit(Float transUnit) {
-        this.transUnit = transUnit;
-    }
-
     @ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
 	}
 
+	@Override
+	public String toString() {
+        return this.operation.getDescription() + " " + this.admission.getUserID();
+    }
+
+	public int getId() {
+		return this.id;
+	}
+
+	public OperationDTO getOperation() {
+		return this.operation;
+	}
+
+	public String getPrescriber() {
+		return this.prescriber;
+	}
+
+	public String getOpResult() {
+		return this.opResult;
+	}
+
+	public Date getOpDate() {
+		return this.opDate;
+	}
+
+	public String getRemarks() {
+		return this.remarks;
+	}
+
+	public AdmissionDTO getAdmission() {
+		return this.admission;
+	}
+
+	public OpdDTO getOpd() {
+		return this.opd;
+	}
+
+	public BillDTO getBill() {
+		return this.bill;
+	}
+
+	public Float getTransUnit() {
+		return this.transUnit;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setOperation(OperationDTO operation) {
+		this.operation = operation;
+	}
+
+	public void setPrescriber(String prescriber) {
+		this.prescriber = prescriber;
+	}
+
+	public void setOpResult(String opResult) {
+		this.opResult = opResult;
+	}
+
+	public void setOpDate(Date opDate) {
+		this.opDate = opDate;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
+	public void setAdmission(AdmissionDTO admission) {
+		this.admission = admission;
+	}
+
+	public void setOpd(OpdDTO opd) {
+		this.opd = opd;
+	}
+
+	public void setBill(BillDTO bill) {
+		this.bill = bill;
+	}
+
+	public void setTransUnit(Float transUnit) {
+		this.transUnit = transUnit;
+	}
+
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-	
-    public String toString() {
-        return this.operation.getDescription() + " " + this.admission.getUserID();
-    }
 }

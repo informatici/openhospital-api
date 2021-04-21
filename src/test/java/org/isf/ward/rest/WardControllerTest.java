@@ -47,19 +47,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class WardControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(WardControllerTest.class);
 
 	@Mock
 	protected WardBrowserManager wardBrowserManagerMock;
@@ -82,7 +81,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetWards_200() throws JsonProcessingException, Exception {
+	public void testGetWards_200() throws Exception {
 		String request = "/wards";
 
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
@@ -100,11 +99,11 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedWardDTOs))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetWardsNoMaternity_200() throws JsonProcessingException, Exception {
+	public void testGetWardsNoMaternity_200() throws Exception {
 		String request = "/wardsNoMaternity";
 
 		ArrayList<Ward> wardList = WardHelper.setupWardList(4);
@@ -123,14 +122,14 @@ public class WardControllerTest {
 				// TODO assert that all wards on list are WRD_ID_A <> M
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetCurrentOccupation() throws JsonProcessingException, Exception {
+	public void testGetCurrentOccupation() throws Exception {
 		String request = "/wards/occupation/{code}";
 
-		Integer code = 4;
+		int code = 4;
 
 		Ward ward = WardHelper.setup(code);
 
@@ -150,18 +149,18 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(numberOfPatients.toString())))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testNewWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
+		Ward ward = WardHelper.setup(code);
+		WardDTO body = wardMapper.map2DTO(ward);
 
-		boolean isCreated = true;
 		when(wardBrowserManagerMock.newWard(wardMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(ward);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -173,18 +172,19 @@ public class WardControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
 	public void testUpdateWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
-		WardDTO body = wardMapper.map2DTO(WardHelper.setup(code));
+		Ward ward = WardHelper.setup(code);
+		WardDTO body = wardMapper.map2DTO(ward);
 
 		boolean isUpdated = true;
 		when(wardBrowserManagerMock.updateWard(wardMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(ward);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -196,7 +196,7 @@ public class WardControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class WardControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -236,7 +236,7 @@ public class WardControllerTest {
 
 		String code = ward.getCode();
 
-		when(wardBrowserManagerMock.codeControl(ward.getCode()))
+		when(wardBrowserManagerMock.isCodePresent(ward.getCode()))
 				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
@@ -247,7 +247,7 @@ public class WardControllerTest {
 				.andExpect(content().string("true"))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class WardControllerTest {
 				.andExpect(content().string(createIfNotExist.toString()))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -287,7 +287,7 @@ public class WardControllerTest {
 				.andExpect(content().string(createIfNotExist.toString()))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

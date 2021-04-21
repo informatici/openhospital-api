@@ -92,150 +92,149 @@ public class OpdDTO {
 
     private int hashCode = 0;
 
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public Integer getPatientCode() {
-        return patientCode;
-    }
-
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
-
-    public char getNewPatient() {
-        return newPatient;
-    }
-
-    public void setNewPatient(char newPatient) {
-        this.newPatient = newPatient;
-    }
-
-    public String getReferralTo() {
-        return referralTo;
-    }
-
-    public void setReferralTo(String referralTo) {
-        this.referralTo = referralTo;
-    }
-
-    public String getReferralFrom() {
-        return referralFrom;
-    }
-
-    public void setReferralFrom(String referralFrom) {
-        this.referralFrom = referralFrom;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public DiseaseDTO getDisease() {
-        return disease;
-    }
-
-    public DiseaseDTO getDisease2() {
-        return disease2;
-    }
-
-    public DiseaseDTO getDisease3() {
-        return disease3;
-    }
-
-    public void setDisease(DiseaseDTO disease) {
-        this.disease = disease;
-    }
-
-    public void setDisease2(DiseaseDTO disease) {
-        this.disease2 = disease;
-    }
-
-    public void setDisease3(DiseaseDTO disease) {
-        this.disease3 = disease;
-    }
-
-    public int getLock() {
-        return lock;
-    }
-
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	@ApiModelProperty(hidden= true)
+	public int getLock() {
+		return lock;
+	}
 
     @ApiModelProperty(hidden = true)
     public int getHashCode() {
         return hashCode;
     }
 
-    public void setHashCode(int hashCode) {
-        this.hashCode = hashCode;
-    }
+	public int getCode() {
+		return this.code;
+	}
 
-    public Date getDate() {
-        return date;
-    }
+	public Date getDate() {
+		return this.date;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public Date getVisitDate() {
+		return this.visitDate;
+	}
 
-    public Date getVisitDate() {
-        return visitDate;
-    }
+	public Date getNextVisitDate() {
+		return this.nextVisitDate;
+	}
 
-    public void setVisitDate(Date visDate) {
-        this.visitDate = visDate;
-    }
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
 
-    public char getSex() {
-        return sex;
-    }
+	public int getAge() {
+		return this.age;
+	}
 
-    public void setSex(char sex) {
-        this.sex = sex;
-    }
+	public char getSex() {
+		return this.sex;
+	}
 
-    public int getProgYear() {
-        return prog_year;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public void setProgYear(int prog_year) {
-        this.prog_year = prog_year;
-    }
+	public int getProg_year() {
+		return this.prog_year;
+	}
 
-    public String getUserID() {
-        return userID;
-    }
+	public DiseaseDTO getDisease() {
+		return this.disease;
+	}
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+	public DiseaseDTO getDisease2() {
+		return this.disease2;
+	}
 
-    public Date getNextVisitDate() {
-        return nextVisitDate;
-    }
+	public DiseaseDTO getDisease3() {
+		return this.disease3;
+	}
 
-    public void setNextVisitDate(Date nextVisitDate) {
-        this.nextVisitDate = nextVisitDate;
-    }
+	public char getNewPatient() {
+		return this.newPatient;
+	}
 
+	public String getReferralFrom() {
+		return this.referralFrom;
+	}
+
+	public String getReferralTo() {
+		return this.referralTo;
+	}
+
+	public String getUserID() {
+		return this.userID;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public void setVisitDate(Date visitDate) {
+		this.visitDate = visitDate;
+	}
+
+	public void setNextVisitDate(Date nextVisitDate) {
+		this.nextVisitDate = nextVisitDate;
+	}
+
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public void setSex(char sex) {
+		this.sex = sex;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setProg_year(int prog_year) {
+		this.prog_year = prog_year;
+	}
+
+	public void setDisease(DiseaseDTO disease) {
+		this.disease = disease;
+	}
+
+	public void setDisease2(DiseaseDTO disease2) {
+		this.disease2 = disease2;
+	}
+
+	public void setDisease3(DiseaseDTO disease3) {
+		this.disease3 = disease3;
+	}
+
+	public void setNewPatient(char newPatient) {
+		this.newPatient = newPatient;
+	}
+
+	public void setReferralFrom(String referralFrom) {
+		this.referralFrom = referralFrom;
+	}
+
+	public void setReferralTo(String referralTo) {
+		this.referralTo = referralTo;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
 }

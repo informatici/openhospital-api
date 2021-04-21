@@ -25,28 +25,24 @@ import javax.validation.constraints.NotNull;
 
 public class OperationTypeDTO {
 
-	
 	private String code;
 
 	@NotNull
 	private String description;
 
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	public String getDescription() {
+		return this.description;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	
-
 }

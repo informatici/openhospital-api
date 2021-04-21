@@ -47,19 +47,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class DiseaseTypeControllerTest {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
 
 	@Mock
 	protected DiseaseTypeBrowserManager diseaseTypeBrowserManager;
@@ -82,7 +81,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllDiseaseTypes_200() throws JsonProcessingException, Exception {
+	public void testGetAllDiseaseTypes_200() throws Exception {
 		String request = "/diseasetypes";
 
 		ArrayList<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
@@ -100,7 +99,7 @@ public class DiseaseTypeControllerTest {
 				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(parsedResults))))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -109,7 +108,7 @@ public class DiseaseTypeControllerTest {
 		int code = 123;
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
 
-		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(false);
 
 		boolean isCreated = true;
@@ -126,7 +125,7 @@ public class DiseaseTypeControllerTest {
 				.andExpect(status().isCreated())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -137,7 +136,7 @@ public class DiseaseTypeControllerTest {
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
 
-		when(diseaseTypeBrowserManager.codeControl(body.getCode()))
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
 		boolean isUpdated = true;
@@ -154,7 +153,7 @@ public class DiseaseTypeControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -179,7 +178,7 @@ public class DiseaseTypeControllerTest {
 				.andExpect(content().string(containsString(isDeleted)))
 				.andReturn();
 
-		log.debug("result: {}", result);
+		LOGGER.debug("result: {}", result);
 	}
 
 }

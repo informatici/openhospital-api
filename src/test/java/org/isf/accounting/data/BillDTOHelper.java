@@ -39,7 +39,7 @@ public class BillDTOHelper {
 		Patient patient = new TestPatient().setup(true);
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 		BillDTO billDTO = new BillDTO();
-		billDTO.setPatientDTO(patientDTO);
+		billDTO.setPatient(patientDTO);
 		return billDTO;
 	}
 

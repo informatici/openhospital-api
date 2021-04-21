@@ -32,6 +32,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,12 +46,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @Api(value = "/deliverytype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryTypeController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DeliveryTypeController.class);
 
 	@Autowired
 	protected DeliveryTypeBrowserManager dlvrtypeManager;
@@ -72,13 +73,14 @@ public class DeliveryTypeController {
 	@PostMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		String code = dlvrTypeDTO.getCode();
-		log.info("Create Delivery type {}", code);
+		LOGGER.info("Create Delivery type {}", code);
 		boolean isCreated = dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
 		DeliveryType dlvrTypeCreated = null;
 		List<DeliveryType> dlvrTypeFounds = dlvrtypeManager.getDeliveryType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (dlvrTypeFounds.size() > 0)
+		if (!dlvrTypeFounds.isEmpty()) {
 			dlvrTypeCreated = dlvrTypeFounds.get(0);
+		}
 		if (!isCreated || dlvrTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery type is not created!", OHSeverityLevel.ERROR));
@@ -92,11 +94,11 @@ public class DeliveryTypeController {
 	 * @return <code>true</code> if the {@link DeliveryType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
-		log.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
+		LOGGER.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
-		if(!dlvrtypeManager.codeControl(dlvrType.getCode())) 
+		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = dlvrtypeManager.updateDeliveryType(dlvrType);
@@ -113,10 +115,10 @@ public class DeliveryTypeController {
 	 */
 	@GetMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryTypeDTO>> getDeliveryTypes() throws OHServiceException {
-		log.info("Get all Delivery types ");
+		LOGGER.info("Get all Delivery types ");
 		List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
 		List<DeliveryTypeDTO> dlvrTypeDTOs = deliveryTypeMapper.map2DTOList(dlvrTypes);
-		if (dlvrTypeDTOs.size() == 0) {
+		if (dlvrTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dlvrTypeDTOs);
@@ -131,19 +133,20 @@ public class DeliveryTypeController {
 	 */
 	@DeleteMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
-		log.info("Delete Delivery type code: {}", code);
+		LOGGER.info("Delete Delivery type code: {}", code);
 		boolean isDeleted = false;
-		if (dlvrtypeManager.codeControl(code)) {
+		if (dlvrtypeManager.isCodePresent(code)) {
 			List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypeFounds = dlvrTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (dlvrTypeFounds.size() > 0)
+			if (!dlvrTypeFounds.isEmpty()) {
 				isDeleted = dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

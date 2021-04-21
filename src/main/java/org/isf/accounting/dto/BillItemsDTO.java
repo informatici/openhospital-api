@@ -34,22 +34,6 @@ public class BillItemsDTO {
 	@ApiModelProperty(notes = "Bill id", example="", position = 1)
 	private Integer billId;
 
-	public String getPriceId() {
-		return priceId;
-	}
-
-	public void setPriceId(String priceId) {
-		this.priceId = priceId;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public void setBillId(Integer billId) {
-		this.billId = billId;
-	}
-
 	@ApiModelProperty(notes = "check if it is a price", example="true", position = 2)
 	private boolean isPrice;
 
@@ -78,78 +62,85 @@ public class BillItemsDTO {
 	private String itemId;
 	
 	private volatile int hashCode = 0;
-	
-	public int getId() {
-		return id;
+
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
 	}
 
-	public void setId(int id) {
+	public Integer getId() {
+		return this.id;
+	}
+
+	public Integer getBillId() {
+		return this.billId;
+	}
+
+	public boolean isPrice() {
+		return this.isPrice;
+	}
+
+	public String getPriceId() {
+		return this.priceId;
+	}
+
+	public String getItemDescription() {
+		return this.itemDescription;
+	}
+
+	public double getItemAmount() {
+		return this.itemAmount;
+	}
+
+	public int getItemQuantity() {
+		return this.itemQuantity;
+	}
+
+	public String getItemDisplayCode() {
+		return this.itemDisplayCode;
+	}
+
+	public String getItemId() {
+		return this.itemId;
+	}
+
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-
-	public boolean isPrice() {
-		return isPrice;
+	public void setBillId(Integer billId) {
+		this.billId = billId;
 	}
 
 	public void setPrice(boolean isPrice) {
 		this.isPrice = isPrice;
 	}
-	
-	public String getItemDescription() {
-		return itemDescription;
+
+	public void setPriceId(String priceId) {
+		this.priceId = priceId;
 	}
 
 	public void setItemDescription(String itemDescription) {
 		this.itemDescription = itemDescription;
 	}
 
-	public double getItemAmount() {
-		return itemAmount;
-	}
-
 	public void setItemAmount(double itemAmount) {
 		this.itemAmount = itemAmount;
-	}
-
-	public int getItemQuantity() {
-		return itemQuantity;
 	}
 
 	public void setItemQuantity(int itemQuantity) {
 		this.itemQuantity = itemQuantity;
 	}
 
-	public int getHashCode() {
-		return hashCode;
+	public void setItemDisplayCode(String itemDisplayCode) {
+		this.itemDisplayCode = itemDisplayCode;
+	}
+
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
 	}
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-
-	public String getItemDisplayCode() {
-		return itemDisplayCode;
-	}
-
-	public void setItemDisplayCode(String itemDisplayCode) {
-		this.itemDisplayCode = itemDisplayCode;
-	}
-
-	public String getItemId() {
-		return itemId;
-	}
-
-	public void setItemId(String itemId) {
-		this.itemId = itemId;
-	}	
-
-	public int getBillId() {
-		return billId;
-	}
-
-	public void setBillId(int billId) {
-		this.billId = billId;
-	}
-	
 }

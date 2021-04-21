@@ -29,19 +29,19 @@ public class LabWithRowsDTO {
 
     private List<String> laboratoryRowList;
 
-    public LaboratoryDTO getLaboratoryDTO() {
-        return laboratoryDTO;
-    }
+	public LaboratoryDTO getLaboratoryDTO() {
+		return this.laboratoryDTO;
+	}
 
-    public void setLaboratoryDTO(LaboratoryDTO laboratoryDTO) {
-        this.laboratoryDTO = laboratoryDTO;
-    }
+	public List<String> getLaboratoryRowList() {
+		return this.laboratoryRowList;
+	}
 
-    public List<String> getLaboratoryRowList() {
-        return laboratoryRowList;
-    }
+	public void setLaboratoryDTO(LaboratoryDTO laboratoryDTO) {
+		this.laboratoryDTO = laboratoryDTO;
+	}
 
-    public void setLaboratoryRowList(List<String> laboratoryRowList) {
-        this.laboratoryRowList = laboratoryRowList;
-    }
+	public void setLaboratoryRowList(List<String> laboratoryRowList) {
+		this.laboratoryRowList = laboratoryRowList;
+	}
 }
