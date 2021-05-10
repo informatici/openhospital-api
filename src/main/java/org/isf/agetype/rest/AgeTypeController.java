@@ -143,7 +143,7 @@ public class AgeTypeController {
 			return ResponseEntity.ok(result);
         }else{
         	LOGGER.info("No corresponding age code for the given index");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(result);
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 	}
 	
