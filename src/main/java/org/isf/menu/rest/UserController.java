@@ -292,7 +292,7 @@ public class UserController {
 	@PutMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
         UserGroup group = userGroupMapper.map2Model(aGroup);
-        if(!userManager.getUserGroup().stream().anyMatch(g -> g.getCode().equals(group.getCode()))) {
+        if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
         	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
         }
         boolean isUpdated = userManager.updateUserGroup(group);
