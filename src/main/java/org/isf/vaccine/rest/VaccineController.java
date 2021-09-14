@@ -21,7 +21,6 @@
  */
 package org.isf.vaccine.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -74,7 +73,7 @@ public class VaccineController {
     @GetMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
         LOGGER.info("Get vaccines");
-        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine();
+        List<Vaccine> vaccines = vaccineManager.getVaccine();
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
@@ -93,7 +92,7 @@ public class VaccineController {
     @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
 	    LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
-        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
+        List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);

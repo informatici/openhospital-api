@@ -114,8 +114,8 @@ public class BillController {
         Bill bill = billMapper.map2Model(newBillDto.getBill());
         
         Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
-        
-        ArrayList<PriceList> list = priceListManager.getLists();
+
+		List<PriceList> list = priceListManager.getLists();
         
         PriceList plist = list.stream()
         		  .filter(pricel -> pricel.getName().equals(bill.getListName()))
@@ -165,8 +165,8 @@ public class BillController {
         }
         
         Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
-        
-        ArrayList<PriceList> list = priceListManager.getLists();
+
+		List<PriceList> list = priceListManager.getLists();
         
         PriceList plist = list.stream()
         		  .filter(pricel -> pricel.getName().equals(bill.getListName()))
@@ -215,8 +215,8 @@ public class BillController {
         
         GregorianCalendar dateto = new GregorianCalendar();
         dateto.setTime(dateTo);
-        
-        ArrayList<Bill> bills;
+
+		List<Bill> bills;
         
         List<BillDTO> billDTOS;
         
@@ -253,8 +253,8 @@ public class BillController {
 			@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
-        
-        ArrayList<BillPayments> payments;
+
+		List<BillPayments> payments;
         
         List<BillPaymentsDTO> paymentsDTOS;
         
@@ -291,8 +291,8 @@ public class BillController {
 	@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
-           
-	    ArrayList<BillPayments> billPayments = billManager.getPayments(id);
+
+		List<BillPayments> billPayments = billManager.getPayments(id);
 	    
         List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
         
@@ -312,8 +312,8 @@ public class BillController {
 	@GetMapping(value = "/bills/items/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value="bill_id")Integer id) throws OHServiceException {
 		LOGGER.info("Get Items for bill with id: {}", id);
-           
-	    ArrayList<BillItems> items = billManager.getItems(id);
+
+		List<BillItems> items = billManager.getItems(id);
 	    
         List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
@@ -410,8 +410,8 @@ public class BillController {
         BillItems billItem = billItemsMapper.map2Model(billItemDTO);
 
 		LOGGER.info("Get Bills datefrom: {}  dateTo: {}  Bill ITEM ID: {}", datefrom, dateto, billItem.getId());
-             
-        ArrayList<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
+
+		List<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
         
         List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         

@@ -21,7 +21,6 @@
  */
 package org.isf.ward.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -73,7 +72,7 @@ public class WardController {
     @GetMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWards() throws OHServiceException {
         LOGGER.info("Get wards");
-        ArrayList<Ward> wards = wardManager.getWards();
+        List<Ward> wards = wardManager.getWards();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -91,7 +90,7 @@ public class WardController {
     @GetMapping(value = "/wardsNoMaternity", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWardsNoMaternity() throws OHServiceException {
         LOGGER.info("Get wards no maternity");
-        ArrayList<Ward> wards = wardManager.getWardsNoMaternity();
+        List<Ward> wards = wardManager.getWardsNoMaternity();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

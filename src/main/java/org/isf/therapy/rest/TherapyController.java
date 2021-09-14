@@ -127,7 +127,7 @@ public class TherapyController {
 	@PostMapping(value = "/therapies/meds-out-of-stock", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalDTO>> getMedicalsOutOfStock(@RequestBody List<TherapyDTO> therapyDTOs) throws OHServiceException {
 		ArrayList<Therapy> therapyRows = (ArrayList<Therapy>) therapyMapper.map2ModelList(therapyDTOs);
-		ArrayList<Medical> meds = manager.getMedicalsOutOfStock(therapyRows);
+		List<Medical> meds = manager.getMedicalsOutOfStock(therapyRows);
 		List<MedicalDTO> mappedMeds = medicalMapper.map2DTOList(meds);
 		if(mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
