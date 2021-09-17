@@ -104,46 +104,46 @@ public class BillController {
      * @throws OHServiceException
      */
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
+	ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill is null!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
-      
-        Bill bill = billMapper.map2Model(newBillDto.getBill());
-        
-        Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
-        
-        ArrayList<PriceList> list = priceListManager.getLists();
-        
-        PriceList plist = list.stream()
-        		  .filter(pricel -> pricel.getName().equals(bill.getListName()))
-        		  .findAny()
-        		  .orElse(null);
-        
-        if(pat != null) {
-        	bill.setBillPatient(pat);
-        } else {
-        	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
-        }
-        
-        if(plist != null) {
-        	bill.setPriceList(plist);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
-        }
-        
-        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(newBillDto.getBillItems()));
-        
-        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(newBillDto.getBillPayments()));
-        
-        boolean isCreated = billManager.newBill(bill, billItems, billPayments);
-        
-        if (!isCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
+
+		Bill bill = billMapper.map2Model(newBillDto.getBill());
+
+		Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
+
+		List<PriceList> list = priceListManager.getLists();
+
+		PriceList plist = list.stream()
+				.filter(pricel -> pricel.getName().equals(bill.getListName()))
+				.findAny()
+				.orElse(null);
+
+		if (pat != null) {
+			bill.setBillPatient(pat);
+		} else {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
+		}
+
+		if (plist != null) {
+			bill.setPriceList(plist);
+		} else {
+			throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
+		}
+
+		ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(newBillDto.getBillItems()));
+
+		ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(newBillDto.getBillPayments()));
+
+		boolean isCreated = billManager.newBill(bill, billItems, billPayments);
+
+		if (!isCreated) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
 	}
 
 	 /**
@@ -152,50 +152,50 @@ public class BillController {
      * @return {@link FullBillDTO}
      * @throws OHServiceException
      */
-	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
+	 @PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	 ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
-        LOGGER.info("updated Bill {}", odBillDto.toString());
-        Bill bill = billMapper.map2Model(odBillDto.getBill());
-        
-        bill.setId(id);
-        
-        if(billManager.getBill(id) == null) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found!", OHSeverityLevel.ERROR));
-        }
-        
-        Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
-        
-        ArrayList<PriceList> list = priceListManager.getLists();
-        
-        PriceList plist = list.stream()
-        		  .filter(pricel -> pricel.getName().equals(bill.getListName()))
-        		  .findAny()
-        		  .orElse(null);
-          
-        if(pat != null) {
-        	bill.setBillPatient(pat);
-        } else {
-        	 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
-        }
-        
-        if(plist != null) {
-        	bill.setPriceList(plist);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
-        }
-        
-        ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(odBillDto.getBillItems()));
-        
-        ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(odBillDto.getBillPayments()));
-        
-        boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
-    
-        if(!isUpdated){
-            throw new OHAPIException(new OHExceptionMessage(null, "Bill is not updated!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
-	}
+		 LOGGER.info("updated Bill {}", odBillDto.toString());
+		 Bill bill = billMapper.map2Model(odBillDto.getBill());
+
+		 bill.setId(id);
+
+		 if (billManager.getBill(id) == null) {
+			 throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found!", OHSeverityLevel.ERROR));
+		 }
+
+		 Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
+
+		 List<PriceList> list = priceListManager.getLists();
+
+		 PriceList plist = list.stream()
+				 .filter(pricel -> pricel.getName().equals(bill.getListName()))
+				 .findAny()
+				 .orElse(null);
+
+		 if (pat != null) {
+			 bill.setBillPatient(pat);
+		 } else {
+			 throw new OHAPIException(new OHExceptionMessage(null, "Patient Not found!", OHSeverityLevel.ERROR));
+		 }
+
+		 if (plist != null) {
+			 bill.setPriceList(plist);
+		 } else {
+			 throw new OHAPIException(new OHExceptionMessage(null, "Price list not found!", OHSeverityLevel.ERROR));
+		 }
+
+		 ArrayList<BillItems> billItems = new ArrayList<>(billItemsMapper.map2ModelList(odBillDto.getBillItems()));
+
+		 ArrayList<BillPayments> billPayments = new ArrayList<>(billPaymentsMapper.map2ModelList(odBillDto.getBillPayments()));
+
+		 boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
+
+		 if (!isUpdated) {
+			 throw new OHAPIException(new OHExceptionMessage(null, "Bill is not updated!", OHSeverityLevel.ERROR));
+		 }
+		 return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
+	 }
 	
 	/**
 	 * Retrieves all the {@link Bill}s for the specified parameters
@@ -206,38 +206,38 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
-			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
-			@RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
-        
-        GregorianCalendar datefrom = new GregorianCalendar();
-        datefrom.setTime(dateFrom);
-        
-        GregorianCalendar dateto = new GregorianCalendar();
-        dateto.setTime(dateTo);
-        
-        ArrayList<Bill> bills;
-        
-        List<BillDTO> billDTOS;
-        
-        if (code == null) {
-	        LOGGER.info("Get payments datefrom: {}  dateTo: {}", datefrom, dateto);
-        	bills = billManager.getBills(datefrom, dateto);
-        } else {
-        	Patient pat = patientManager.getPatientById(code);
+	public ResponseEntity<List<BillDTO>> searchBills(@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+			@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
+			@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
 
-	        LOGGER.info("Get Bills datefrom: {}  dateTo: {} patient: {}", datefrom, dateto, pat);
-             
-     	    bills = billManager.getBills(datefrom, dateto, pat);
-        }
-        
-        billDTOS = billMapper.map2DTOList(bills);
-        
-        if (billDTOS.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
-        } else {
-            return ResponseEntity.ok(billDTOS);
-        }
+		GregorianCalendar datefrom = new GregorianCalendar();
+		datefrom.setTime(dateFrom);
+
+		GregorianCalendar dateto = new GregorianCalendar();
+		dateto.setTime(dateTo);
+
+		List<Bill> bills;
+
+		List<BillDTO> billDTOS;
+
+		if (code == null) {
+			LOGGER.info("Get payments datefrom: {}  dateTo: {}", datefrom, dateto);
+			bills = billManager.getBills(datefrom, dateto);
+		} else {
+			Patient pat = patientManager.getPatientById(code);
+
+			LOGGER.info("Get Bills datefrom: {}  dateTo: {} patient: {}", datefrom, dateto, pat);
+
+			bills = billManager.getBills(datefrom, dateto, pat);
+		}
+
+		billDTOS = billMapper.map2DTOList(bills);
+
+		if (billDTOS.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+		} else {
+			return ResponseEntity.ok(billDTOS);
+		}
 	}
 	
 	/**
@@ -253,8 +253,8 @@ public class BillController {
 			@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
-        
-        ArrayList<BillPayments> payments;
+
+		List<BillPayments> payments;
         
         List<BillPaymentsDTO> paymentsDTOS;
         
@@ -291,8 +291,8 @@ public class BillController {
 	@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
-           
-	    ArrayList<BillPayments> billPayments = billManager.getPayments(id);
+
+		List<BillPayments> billPayments = billManager.getPayments(id);
 	    
         List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
         
@@ -312,8 +312,8 @@ public class BillController {
 	@GetMapping(value = "/bills/items/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value="bill_id")Integer id) throws OHServiceException {
 		LOGGER.info("Get Items for bill with id: {}", id);
-           
-	    ArrayList<BillItems> items = billManager.getItems(id);
+
+		List<BillItems> items = billManager.getItems(id);
 	    
         List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
         
@@ -410,8 +410,8 @@ public class BillController {
         BillItems billItem = billItemsMapper.map2Model(billItemDTO);
 
 		LOGGER.info("Get Bills datefrom: {}  dateTo: {}  Bill ITEM ID: {}", datefrom, dateto, billItem.getId());
-             
-        ArrayList<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
+
+		List<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
         
         List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         

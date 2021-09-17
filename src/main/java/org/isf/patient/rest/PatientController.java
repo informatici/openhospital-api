@@ -21,7 +21,6 @@
  */
 package org.isf.patient.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.patient.dto.PatientDTO;
@@ -102,7 +101,7 @@ public class PatientController {
 			@RequestParam(value="page", required=false, defaultValue="0") Integer page,
 			@RequestParam(value="size", required=false, defaultValue=DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
-	    ArrayList<Patient> patients = patientManager.getPatient(page, size);
+		List<Patient> patients = patientManager.getPatient(page, size);
         List<PatientDTO> patientDTOS = patientMapper.map2DTOList(patients);
         if(patientDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
