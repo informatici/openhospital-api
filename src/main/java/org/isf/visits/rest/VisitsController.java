@@ -72,7 +72,7 @@ public class VisitsController {
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
-	    LOGGER.info("Get visit related to patId: {}", patID);
+        LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
         if (listVisit.isEmpty()) {

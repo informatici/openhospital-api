@@ -91,7 +91,7 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
-	    LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
+        LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
         List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
