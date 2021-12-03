@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.supplier.dto;
 
 import javax.validation.constraints.NotNull;
@@ -5,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class SupplierDTO {
+
 	@NotNull(message="supplier's ID is required")
 	@ApiModelProperty(notes="The supplier's ID", example = "111", position = 1)
 	private Integer supId;
@@ -32,13 +54,10 @@ public class SupplierDTO {
 	private String supNote;
 
 	public SupplierDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public SupplierDTO(Integer supId, String supName, String supAddress, String supTaxcode, String supPhone,
 			String supFax, String supEmail, String supNote) {
-		super();
 		this.supId = supId;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -49,70 +68,67 @@ public class SupplierDTO {
 		this.supNote = supNote;
 	}
 
-
-
 	public Integer getSupId() {
-		return supId;
+		return this.supId;
+	}
+
+	public String getSupName() {
+		return this.supName;
+	}
+
+	public String getSupAddress() {
+		return this.supAddress;
+	}
+
+	public String getSupTaxcode() {
+		return this.supTaxcode;
+	}
+
+	public String getSupPhone() {
+		return this.supPhone;
+	}
+
+	public String getSupFax() {
+		return this.supFax;
+	}
+
+	public String getSupEmail() {
+		return this.supEmail;
+	}
+
+	public String getSupNote() {
+		return this.supNote;
 	}
 
 	public void setSupId(Integer supId) {
 		this.supId = supId;
 	}
 
-	public String getSupName() {
-		return supName;
-	}
-
 	public void setSupName(String supName) {
 		this.supName = supName;
-	}
-
-	public String getSupAddress() {
-		return supAddress;
 	}
 
 	public void setSupAddress(String supAddress) {
 		this.supAddress = supAddress;
 	}
 
-	public String getSupTaxcode() {
-		return supTaxcode;
-	}
-
 	public void setSupTaxcode(String supTaxcode) {
 		this.supTaxcode = supTaxcode;
-	}
-
-	public String getSupPhone() {
-		return supPhone;
 	}
 
 	public void setSupPhone(String supPhone) {
 		this.supPhone = supPhone;
 	}
 
-	public String getSupFax() {
-		return supFax;
-	}
-
 	public void setSupFax(String supFax) {
 		this.supFax = supFax;
-	}
-
-	public String getSupEmail() {
-		return supEmail;
 	}
 
 	public void setSupEmail(String supEmail) {
 		this.supEmail = supEmail;
 	}
 
-	public String getSupNote() {
-		return supNote;
-	}
-
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
 	}
-	
 }

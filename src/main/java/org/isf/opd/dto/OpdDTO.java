@@ -25,7 +25,6 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.disease.dto.DiseaseDTO;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -38,16 +37,13 @@ public class OpdDTO {
     private int code;
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date date;
 
     @NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date visitDate;
 
     @ApiModelProperty(notes = "the next visit date", position = 4)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
@@ -91,6 +87,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "user id", position = 16)
     private String userID;
 
+    @ApiModelProperty(notes = "opd lock column", position = 16)
     private int lock;
 
     private int hashCode = 0;

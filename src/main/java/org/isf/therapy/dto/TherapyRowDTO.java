@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.therapy.dto;
 
 import java.util.Date;
@@ -10,6 +31,7 @@ import org.isf.patient.dto.PatientDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class TherapyRowDTO {
+
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
 	private Integer therapyID;
 
@@ -39,12 +61,12 @@ public class TherapyRowDTO {
 	@ApiModelProperty(notes="The unit's ID", example = "1", position = 7)
 	private Integer unitID;
 
-	@NotNull(message="the frequence in day is required")
-	@ApiModelProperty(notes="The frequence in day", example = "2", position = 8)	
+	@NotNull(message="the frequency in day is required")
+	@ApiModelProperty(notes="The frequency in day", example = "2", position = 8)
 	private Integer freqInDay;
 
-	@NotNull(message="the frequence in period is required")
-	@ApiModelProperty(notes="The frequence in period", example = "1", position = 9)	
+	@NotNull(message="the frequency in period is required")
+	@ApiModelProperty(notes="The frequency in period", example = "1", position = 9)
 	private Integer freqInPeriod;
 	
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 10)		
@@ -59,14 +81,11 @@ public class TherapyRowDTO {
 	private Integer smsInt;
 
 	public TherapyRowDTO() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public TherapyRowDTO(Integer therapyID, PatientDTO patID, Date startDate, Date endDate, Integer medicalId,
 			Double qty, Integer unitID, Integer freqInDay, Integer freqInPeriod, String note, Integer notifyInt,
 			Integer smsInt) {
-		super();
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.startDate = startDate;
@@ -82,99 +101,98 @@ public class TherapyRowDTO {
 	}
 
 	public Integer getTherapyID() {
-		return therapyID;
+		return this.therapyID;
+	}
+
+	public PatientDTO getPatID() {
+		return this.patID;
+	}
+
+	public Date getStartDate() {
+		return this.startDate;
+	}
+
+	public Date getEndDate() {
+		return this.endDate;
+	}
+
+	public Integer getMedicalId() {
+		return this.medicalId;
+	}
+
+	public Double getQty() {
+		return this.qty;
+	}
+
+	public Integer getUnitID() {
+		return this.unitID;
+	}
+
+	public Integer getFreqInDay() {
+		return this.freqInDay;
+	}
+
+	public Integer getFreqInPeriod() {
+		return this.freqInPeriod;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public Integer getNotifyInt() {
+		return this.notifyInt;
+	}
+
+	public Integer getSmsInt() {
+		return this.smsInt;
 	}
 
 	public void setTherapyID(Integer therapyID) {
 		this.therapyID = therapyID;
 	}
 
-	public PatientDTO getPatID() {
-		return patID;
-	}
-
 	public void setPatID(PatientDTO patID) {
 		this.patID = patID;
-	}
-
-	public Date getStartDate() {
-		return startDate;
 	}
 
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
-		return endDate;
-	}
-
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	public Integer getMedicalId() {
-		return medicalId;
 	}
 
 	public void setMedicalId(Integer medicalId) {
 		this.medicalId = medicalId;
 	}
 
-	public Double getQty() {
-		return qty;
-	}
-
 	public void setQty(Double qty) {
 		this.qty = qty;
-	}
-
-	public Integer getUnitID() {
-		return unitID;
 	}
 
 	public void setUnitID(Integer unitID) {
 		this.unitID = unitID;
 	}
 
-	public Integer getFreqInDay() {
-		return freqInDay;
-	}
-
 	public void setFreqInDay(Integer freqInDay) {
 		this.freqInDay = freqInDay;
-	}
-
-	public Integer getFreqInPeriod() {
-		return freqInPeriod;
 	}
 
 	public void setFreqInPeriod(Integer freqInPeriod) {
 		this.freqInPeriod = freqInPeriod;
 	}
 
-	public String getNote() {
-		return note;
-	}
-
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	public Integer getNotifyInt() {
-		return notifyInt;
 	}
 
 	public void setNotifyInt(Integer notifyInt) {
 		this.notifyInt = notifyInt;
 	}
 
-	public Integer getSmsInt() {
-		return smsInt;
-	}
-
 	public void setSmsInt(Integer smsInt) {
 		this.smsInt = smsInt;
 	}
-	
 }

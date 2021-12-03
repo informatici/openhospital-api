@@ -1,10 +1,30 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.admission.dto;
 
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disease.dto.DiseaseDTO;
@@ -18,9 +38,7 @@ import org.isf.ward.dto.WardDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 
  * @author gildas
- *
  */
 public class AdmissionDTO {
 
@@ -47,7 +65,6 @@ public class AdmissionDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "admission date", position = 7)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date admDate;
 
 	@ApiModelProperty(notes = "admission type", position = 8)
@@ -72,14 +89,12 @@ public class AdmissionDTO {
 	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date disDate;
 
 	@ApiModelProperty(notes = "disChargeType ", position = 18)
@@ -91,15 +106,13 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "transfusional unit", position = 20)
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visite date", position = 21)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@ApiModelProperty(notes = "visit date", position = 21)
 	private Date visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date deliveryDate;
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
@@ -120,267 +133,277 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
 
-	@ApiModelProperty(notes = "lock", example = "0", position = 31)
 	private int lock;
+	
+	private int hashCode = 0;
 
 	@NotNull
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
 	private String deleted;
 
 	public int getId() {
-		return id;
+		return this.id;
+	}
+
+	public int getAdmitted() {
+		return this.admitted;
+	}
+
+	public String getType() {
+		return this.type;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public int getYProg() {
+		return this.yProg;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public Date getAdmDate() {
+		return this.admDate;
+	}
+
+	public AdmissionTypeDTO getAdmType() {
+		return this.admType;
+	}
+
+	public String getFHU() {
+		return this.FHU;
+	}
+
+	public DiseaseDTO getDiseaseIn() {
+		return this.diseaseIn;
+	}
+
+	public DiseaseDTO getDiseaseOut1() {
+		return this.diseaseOut1;
+	}
+
+	public DiseaseDTO getDiseaseOut2() {
+		return this.diseaseOut2;
+	}
+
+	public DiseaseDTO getDiseaseOut3() {
+		return this.diseaseOut3;
+	}
+
+	public OperationDTO getOperation() {
+		return this.operation;
+	}
+
+	public Date getOpDate() {
+		return this.opDate;
+	}
+
+	public String getOpResult() {
+		return this.opResult;
+	}
+
+	public Date getDisDate() {
+		return this.disDate;
+	}
+
+	public DischargeTypeDTO getDisType() {
+		return this.disType;
+	}
+
+	public String getNote() {
+		return this.note;
+	}
+
+	public Float getTransUnit() {
+		return this.transUnit;
+	}
+
+	public Date getVisitDate() {
+		return this.visitDate;
+	}
+
+	public PregnantTreatmentTypeDTO getPregTreatmentType() {
+		return this.pregTreatmentType;
+	}
+
+	public Date getDeliveryDate() {
+		return this.deliveryDate;
+	}
+
+	public DeliveryTypeDTO getDeliveryType() {
+		return this.deliveryType;
+	}
+
+	public DeliveryResultTypeDTO getDeliveryResult() {
+		return this.deliveryResult;
+	}
+
+	public Float getWeight() {
+		return this.weight;
+	}
+
+	public Date getCtrlDate1() {
+		return this.ctrlDate1;
+	}
+
+	public Date getCtrlDate2() {
+		return this.ctrlDate2;
+	}
+
+	public Date getAbortDate() {
+		return this.abortDate;
+	}
+
+	public String getUserID() {
+		return this.userID;
+	}
+
+	public String getDeleted() {
+		return this.deleted;
+	}
+
+	@ApiModelProperty(hidden= true)
+	public int getLock() {
+		return lock;
+	}
+
+	@ApiModelProperty(hidden= true)
+	public int getHashCode() {
+		return hashCode;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	public int getAdmitted() {
-		return admitted;
-	}
-
 	public void setAdmitted(int admitted) {
 		this.admitted = admitted;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
 	}
 
-	public WardDTO getWard() {
-		return ward;
-	}
-
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
 
-	public int getyProg() {
-		return yProg;
-	}
-
-	public void setyProg(int yProg) {
+	public void setYProg(int yProg) {
 		this.yProg = yProg;
-	}
-
-	public PatientDTO getPatient() {
-		return patient;
 	}
 
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
 
-	public Date getAdmDate() {
-		return admDate;
-	}
-
 	public void setAdmDate(Date admDate) {
 		this.admDate = admDate;
-	}
-
-	public AdmissionTypeDTO getAdmType() {
-		return admType;
 	}
 
 	public void setAdmType(AdmissionTypeDTO admType) {
 		this.admType = admType;
 	}
 
-	public String getFHU() {
-		return FHU;
-	}
-
-	public void setFHU(String fHU) {
-		FHU = fHU;
-	}
-
-	public DiseaseDTO getDiseaseIn() {
-		return diseaseIn;
+	public void setFHU(String FHU) {
+		this.FHU = FHU;
 	}
 
 	public void setDiseaseIn(DiseaseDTO diseaseIn) {
 		this.diseaseIn = diseaseIn;
 	}
 
-	public DiseaseDTO getDiseaseOut1() {
-		return diseaseOut1;
-	}
-
 	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
 		this.diseaseOut1 = diseaseOut1;
-	}
-
-	public DiseaseDTO getDiseaseOut2() {
-		return diseaseOut2;
 	}
 
 	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
 		this.diseaseOut2 = diseaseOut2;
 	}
 
-	public DiseaseDTO getDiseaseOut3() {
-		return diseaseOut3;
-	}
-
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
-	}
-
-	public OperationDTO getOperation() {
-		return operation;
 	}
 
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}
 
-	public Date getOpDate() {
-		return opDate;
-	}
-
 	public void setOpDate(Date opDate) {
 		this.opDate = opDate;
-	}
-
-	public String getOpResult() {
-		return opResult;
 	}
 
 	public void setOpResult(String opResult) {
 		this.opResult = opResult;
 	}
 
-	public Date getDisDate() {
-		return disDate;
-	}
-
 	public void setDisDate(Date disDate) {
 		this.disDate = disDate;
-	}
-
-	public DischargeTypeDTO getDisType() {
-		return disType;
 	}
 
 	public void setDisType(DischargeTypeDTO disType) {
 		this.disType = disType;
 	}
 
-	public String getNote() {
-		return note;
-	}
-
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-	public Float getTransUnit() {
-		return transUnit;
 	}
 
 	public void setTransUnit(Float transUnit) {
 		this.transUnit = transUnit;
 	}
 
-	public Date getVisitDate() {
-		return visitDate;
-	}
-
 	public void setVisitDate(Date visitDate) {
 		this.visitDate = visitDate;
-	}
-
-	public PregnantTreatmentTypeDTO getPregTreatmentType() {
-		return pregTreatmentType;
 	}
 
 	public void setPregTreatmentType(PregnantTreatmentTypeDTO pregTreatmentType) {
 		this.pregTreatmentType = pregTreatmentType;
 	}
 
-	public Date getDeliveryDate() {
-		return deliveryDate;
-	}
-
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
-	}
-
-	public DeliveryTypeDTO getDeliveryType() {
-		return deliveryType;
 	}
 
 	public void setDeliveryType(DeliveryTypeDTO deliveryType) {
 		this.deliveryType = deliveryType;
 	}
 
-	public DeliveryResultTypeDTO getDeliveryResult() {
-		return deliveryResult;
-	}
-
 	public void setDeliveryResult(DeliveryResultTypeDTO deliveryResult) {
 		this.deliveryResult = deliveryResult;
-	}
-
-	public Float getWeight() {
-		return weight;
 	}
 
 	public void setWeight(Float weight) {
 		this.weight = weight;
 	}
 
-	public Date getCtrlDate1() {
-		return ctrlDate1;
-	}
-
 	public void setCtrlDate1(Date ctrlDate1) {
 		this.ctrlDate1 = ctrlDate1;
-	}
-
-	public Date getCtrlDate2() {
-		return ctrlDate2;
 	}
 
 	public void setCtrlDate2(Date ctrlDate2) {
 		this.ctrlDate2 = ctrlDate2;
 	}
 
-	public Date getAbortDate() {
-		return abortDate;
-	}
-
 	public void setAbortDate(Date abortDate) {
 		this.abortDate = abortDate;
-	}
-
-	public String getUserID() {
-		return userID;
 	}
 
 	public void setUserID(String userID) {
 		this.userID = userID;
 	}
 
-	public int getLock() {
-		return lock;
-	}
-
 	public void setLock(int lock) {
 		this.lock = lock;
 	}
 
-	public String getDeleted() {
-		return deleted;
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
 	}
 
 	public void setDeleted(String deleted) {
 		this.deleted = deleted;
 	}
-
 }

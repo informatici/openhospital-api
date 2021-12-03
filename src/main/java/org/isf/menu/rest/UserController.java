@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.menu.rest;
 
 import java.util.ArrayList;
@@ -26,7 +47,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,8 +68,9 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
-	private final Logger logger = LoggerFactory.getLogger(UserController.class);
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -69,12 +90,12 @@ public class UserController {
 	protected LitePermissionMapper litePermissionMapper;
 
 	/**
-	 * returns the list of {@link User}s
-	 * @return the list of {@link User}s
+	 * Returns the list of {@link User}s.
+	 * @return the list of {@link User}s.
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserDTO>> getUser(@RequestParam(name="group_id", required=false) String groupID) throws OHServiceException {
-		logger.info("Fetching the list of users");
+		LOGGER.info("Fetching the list of users");
 		List<User> users;
 		if(groupID != null) {
 			users = userManager.getUser(groupID);
@@ -83,16 +104,16 @@ public class UserController {
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
 		if(mappedUsers.isEmpty()) {
-			logger.info("No user found");
+			LOGGER.info("No user found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
-			logger.info("Found " + mappedUsers.size() + " users");
+			LOGGER.info("Found {} users", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
 		}
 	}
 	
 	/**
-	 * returns the {@link User}
+	 * Returns a {@link User}.
 	 * @param userName - user name
 	 * @return {@link User}
 	 */
@@ -106,26 +127,26 @@ public class UserController {
 	}
 	
 	/**
-	 * inserts a new {@link User} in the DB
+	 * Creates a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
 	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
-		logger.info("Attempting to create a user");
+		LOGGER.info("Attempting to create a user");
 		User user = userMapper.map2Model(userDTO);
 		boolean isCreated = userManager.newUser(user);
 		if (!isCreated) {
-			logger.info("User is not created!");
+			LOGGER.info("User is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "User is not created!", OHSeverityLevel.ERROR));
         }
-		logger.info("User successfully created!");
+		LOGGER.info("User successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 	
 	/**
-	 * updates an existing {@link User} in the DB
+	 * Updates an existing {@link User}.
 	 * @param userDTO - the {@link User} to update
 	 * @param updatePassword - indicates if it is the password that need to be updated
 	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
@@ -153,8 +174,8 @@ public class UserController {
 	}
 	
 	/**
-	 * deletes an existing {@link User}
-	 * @param user - the {@link User} to delete
+	 * Deletes an existing {@link User}.
+	 * @param username - the name of the {@link User} to delete
 	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
 	 */
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -172,26 +193,26 @@ public class UserController {
 	}
 	
 	/**
-	 * returns the list of {@link UserGroup}s
+	 * Returns the list of {@link UserGroup}s.
 	 * @return the list of {@link UserGroup}s
 	 */
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserGroupDTO>> getUserGroup() throws OHServiceException {
-		logger.info("Attempting to fetch the list of user groups");
+		LOGGER.info("Attempting to fetch the list of user groups");
         List<UserGroup> groups = userManager.getUserGroup();
         List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
         if(mappedGroups.isEmpty()) {
-			logger.info("No group found");
+			LOGGER.info("No group found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
-			logger.info("Found " + mappedGroups.size() + " groups");
+	        LOGGER.info("Found {} groups", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
 	}
 	
 	/**
-	 * returns the list of {@link UserMenuItem}s that compose the menu for specified {@link User}
-	 * @param userDTO - the {@link User}
+	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link User}.
+	 * @param username - the name of the {@link User}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
 	@GetMapping(value = "/users/menus/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -210,8 +231,8 @@ public class UserController {
 	}
 	
 	/**
-	 * returns the list of {@link UserMenuItem}s that compose the menu for specified {@link UserGroup}
-	 * @param aGroup - the {@link UserGroup}
+	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link UserGroup}.
+	 * @param code - the {@link UserGroup}
 	 * @return the list of {@link UserMenuItem}s 
 	 */
 	@GetMapping(value = "/users/group-menus/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -226,7 +247,7 @@ public class UserController {
 	}
 	
 	/**
-	 * replaces the {@link UserGroup} rights
+	 * Replaces the {@link UserGroup} rights.
 	 * @param code - the {@link UserGroup}'s code
 	 * @param menusDTO - the list of {@link UserMenuItem}s
 	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
@@ -236,8 +257,8 @@ public class UserController {
 			@PathVariable("group_code") String code, 
 			@Valid @RequestBody List<UserMenuItemDTO> menusDTO) throws OHServiceException {
 		UserGroup group = loadUserGroup(code);
-        ArrayList<UserMenuItem> menus = new ArrayList<UserMenuItem>();
-        userMenuItemMapper.map2ModelList(menusDTO).forEach(m -> menus.add(m));
+        ArrayList<UserMenuItem> menus = new ArrayList<>();
+		menus.addAll(userMenuItemMapper.map2ModelList(menusDTO));
         boolean done = userManager.setGroupMenu(group, menus);
         if(done) {
         	return ResponseEntity.ok(done);
@@ -247,7 +268,7 @@ public class UserController {
 	}
 	
 	/**
-	 * deletes a {@link UserGroup}
+	 * Deletes a {@link UserGroup}.
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
 	 */
@@ -263,7 +284,7 @@ public class UserController {
 	}
 	
 	/**
-	 * insert a new {@link UserGroup} with a minimum set of rights
+	 * Create a new {@link UserGroup} with a minimum set of rights.
 	 * @param aGroup - the {@link UserGroup} to insert
 	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
 	 */
@@ -278,14 +299,14 @@ public class UserController {
 	}
 	
 	/**
-	 * updates an existing {@link UserGroup} in the DB
+	 * Updates an existing {@link UserGroup}.
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
 	 */
 	@PutMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
         UserGroup group = userGroupMapper.map2Model(aGroup);
-        if(!userManager.getUserGroup().stream().anyMatch(g -> g.getCode().equals(group.getCode()))) {
+        if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
         	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
         }
         boolean isUpdated = userManager.updateUserGroup(group);

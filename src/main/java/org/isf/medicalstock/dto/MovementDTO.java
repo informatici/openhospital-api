@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.medicalstock.dto;
 
 import java.util.Date;
@@ -13,6 +34,7 @@ import org.isf.ward.dto.WardDTO;
 import io.swagger.annotations.ApiModelProperty;
 
 public class MovementDTO {
+
 	@ApiModelProperty(notes="The movement code", example = "1", position = 1)
 	private int code;
 
@@ -47,12 +69,10 @@ public class MovementDTO {
 	private String refNo;
 	
 	public MovementDTO() {
-		super();
 	}
 	
 	public MovementDTO(int code, MedicalDTO medical, MovementTypeDTO type, WardDTO ward, LotDTO lot, Date date,
 			int quantity, SupplierDTO supplier, String refNo) {
-		super();
 		this.code = code;
 		this.medical = medical;
 		this.type = type;
@@ -65,75 +85,74 @@ public class MovementDTO {
 	}
 
 	public int getCode() {
-		return code;
+		return this.code;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public MovementTypeDTO getType() {
+		return this.type;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public LotDTO getLot() {
+		return this.lot;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public int getQuantity() {
+		return this.quantity;
+	}
+
+	public SupplierDTO getSupplier() {
+		return this.supplier;
+	}
+
+	public String getRefNo() {
+		return this.refNo;
 	}
 
 	public void setCode(int code) {
 		this.code = code;
 	}
 
-	public MedicalDTO getMedical() {
-		return medical;
-	}
-
 	public void setMedical(MedicalDTO medical) {
 		this.medical = medical;
-	}
-
-	public MovementTypeDTO getType() {
-		return type;
 	}
 
 	public void setType(MovementTypeDTO type) {
 		this.type = type;
 	}
 
-	public WardDTO getWard() {
-		return ward;
-	}
-
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
-	}
-
-	public LotDTO getLot() {
-		return lot;
 	}
 
 	public void setLot(LotDTO lot) {
 		this.lot = lot;
 	}
 
-	public Date getDate() {
-		return date;
-	}
-
 	public void setDate(Date date) {
 		this.date = date;
-	}
-
-	public int getQuantity() {
-		return quantity;
 	}
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 
-	public SupplierDTO getSupplier() {
-		return supplier;
-	}
-
 	public void setSupplier(SupplierDTO supplier) {
 		this.supplier = supplier;
-	}
-
-	public String getRefNo() {
-		return refNo;
 	}
 
 	public void setRefNo(String refNo) {
 		this.refNo = refNo;
 	}
-	
 }

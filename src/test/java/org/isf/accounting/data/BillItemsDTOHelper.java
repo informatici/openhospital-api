@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.accounting.data;
 
 import java.util.ArrayList;
@@ -14,16 +35,17 @@ import org.isf.utils.exception.OHException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class BillItemsDTOHelper{
-	public static BillItemsDTO setup(BillItemsMapper billItemsMapper) throws OHException{
+public class BillItemsDTOHelper {
+
+	public static BillItemsDTO setup(BillItemsMapper billItemsMapper) throws OHException {
 		Bill bill = BillHelper.setup();
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems = tbi.setup(bill, false);
 		BillItemsDTO billItemsDTO = billItemsMapper.map2DTO(billItems);
 		return billItemsDTO;
 	}
-	
-	public static String asJsonString(BillItemsDTO billItemsDTO){
+
+	public static String asJsonString(BillItemsDTO billItemsDTO) {
 		try {
 			return new ObjectMapper().writeValueAsString(billItemsDTO);
 		} catch (JsonProcessingException e) {
@@ -31,8 +53,8 @@ public class BillItemsDTOHelper{
 		}
 		return null;
 	}
-	
-	public static String asJsonString(List<BillItemsDTO> billItemsDTOList){
+
+	public static String asJsonString(List<BillItemsDTO> billItemsDTOList) {
 		try {
 			return new ObjectMapper().writeValueAsString(billItemsDTOList);
 		} catch (JsonProcessingException e) {
@@ -40,9 +62,10 @@ public class BillItemsDTOHelper{
 		}
 		return null;
 	}
-	
-	public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList, BillItemsMapper billItemsMapper){
-        ArrayList<BillItems> billItems = new ArrayList<BillItems>(billItemsDTOList.stream().map(pay-> billItemsMapper.map2Model(pay)).collect(Collectors.toList()));
-        return billItems;
+
+	public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList, BillItemsMapper billItemsMapper) {
+		ArrayList<BillItems> billItems = new ArrayList<>(
+				billItemsDTOList.stream().map(pay -> billItemsMapper.map2Model(pay)).collect(Collectors.toList()));
+		return billItems;
 	}
 }

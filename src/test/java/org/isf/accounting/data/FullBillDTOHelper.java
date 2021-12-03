@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.accounting.data;
 
 import java.util.Arrays;
@@ -23,36 +44,37 @@ import org.isf.utils.exception.OHException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class FullBillDTOHelper{
-	public static FullBillDTO setup(PatientMapper patientMapper, BillItemsMapper billItemsMapper, BillPaymentsMapper billPaymentsMapper) throws OHException{
+public class FullBillDTOHelper {
+
+	public static FullBillDTO setup(PatientMapper patientMapper, BillItemsMapper billItemsMapper, BillPaymentsMapper billPaymentsMapper) throws OHException {
 		Bill bill = BillHelper.setup();
-		FullBillDTO fullBillDTO = new  FullBillDTO();
-		
+		FullBillDTO fullBillDTO = new FullBillDTO();
+
 		Patient patient = new TestPatient().setup(true);
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
-		
+
 		BillDTO billDTO = new BillDTO();
-		billDTO.setPatientDTO(patientDTO);
+		billDTO.setPatient(patientDTO);
 		billDTO.setListName(bill.getListName());
 		billDTO.setPatName(patient.getFirstName());
 		//OP-205
 		//BillDTO billDTO = OHModelMapper.getObjectMapper().map(bill, BillDTO.class);
-		fullBillDTO.setBillDTO(billDTO);
-		
+		fullBillDTO.setBill(billDTO);
+
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems = tbi.setup(bill, false);
 		BillItemsDTO billItemsDTO = billItemsMapper.map2DTO(billItems);
-		fullBillDTO.setBillItemsDTO(Arrays.asList(billItemsDTO));
+		fullBillDTO.setBillItems(Arrays.asList(billItemsDTO));
 
 		TestBillPayments tbp = new TestBillPayments();
 		BillPayments billPayments = tbp.setup(bill, false);
 		BillPaymentsDTO billPaymentsDTO = billPaymentsMapper.map2DTO(billPayments);
-		fullBillDTO.setBillPaymentsDTO(Arrays.asList(billPaymentsDTO));
-		
+		fullBillDTO.setBillPayments(Arrays.asList(billPaymentsDTO));
+
 		return fullBillDTO;
 	}
-	
-	public static String asJsonString(FullBillDTO fullBillDTO){
+
+	public static String asJsonString(FullBillDTO fullBillDTO) {
 		try {
 			return new ObjectMapper().writeValueAsString(fullBillDTO);
 		} catch (JsonProcessingException e) {
@@ -60,8 +82,8 @@ public class FullBillDTOHelper{
 		}
 		return null;
 	}
-	
-	public static String asJsonString(List<FullBillDTO> fullBillDTOList){
+
+	public static String asJsonString(List<FullBillDTO> fullBillDTOList) {
 		try {
 			return new ObjectMapper().writeValueAsString(fullBillDTOList);
 		} catch (JsonProcessingException e) {

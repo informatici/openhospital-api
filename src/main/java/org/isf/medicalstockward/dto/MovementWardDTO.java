@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.medicalstockward.dto;
 
 import java.util.Date;
@@ -50,7 +71,7 @@ public class MovementWardDTO {
 	private Double quantity;
 	
 	@NotNull
-	@ApiModelProperty(notes="The mesure's unit of the medical concerned by the movement", example="pct", position = 11)
+	@ApiModelProperty(notes="The measure's unit of the medical concerned by the movement", example="pct", position = 11)
 	private String units;
 	
 	@ApiModelProperty(notes="The ward to which the movement is done", position = 12)
@@ -60,13 +81,11 @@ public class MovementWardDTO {
 	private WardDTO wardFrom;
 	
 	public MovementWardDTO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public MovementWardDTO(int code, WardDTO ward, Date date, boolean isPatient, PatientDTO patient, int age,
 			float weight, String description, MedicalDTO medical, Double quantity, String units, WardDTO wardTo,
 			WardDTO wardFrom) {
-		super();
 		this.code = code;
 		this.ward = ward;
 		this.date = date;
@@ -83,107 +102,106 @@ public class MovementWardDTO {
 	}
 
 	public int getCode() {
-		return code;
+		return this.code;
+	}
+
+	public WardDTO getWard() {
+		return this.ward;
+	}
+
+	public Date getDate() {
+		return this.date;
+	}
+
+	public boolean isPatient() {
+		return this.isPatient;
+	}
+
+	public PatientDTO getPatient() {
+		return this.patient;
+	}
+
+	public int getAge() {
+		return this.age;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public MedicalDTO getMedical() {
+		return this.medical;
+	}
+
+	public Double getQuantity() {
+		return this.quantity;
+	}
+
+	public String getUnits() {
+		return this.units;
+	}
+
+	public WardDTO getWardTo() {
+		return this.wardTo;
+	}
+
+	public WardDTO getWardFrom() {
+		return this.wardFrom;
 	}
 
 	public void setCode(int code) {
 		this.code = code;
 	}
 
-	public WardDTO getWard() {
-		return ward;
-	}
-
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
-	}
-
-	public Date getDate() {
-		return date;
 	}
 
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	public boolean isPatient() {
-		return isPatient;
-	}
-
 	public void setPatient(boolean isPatient) {
 		this.isPatient = isPatient;
-	}
-
-	public PatientDTO getPatient() {
-		return patient;
 	}
 
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
 
-	public int getAge() {
-		return age;
-	}
-
 	public void setAge(int age) {
 		this.age = age;
-	}
-
-	public float getWeight() {
-		return weight;
 	}
 
 	public void setWeight(float weight) {
 		this.weight = weight;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public MedicalDTO getMedical() {
-		return medical;
 	}
 
 	public void setMedical(MedicalDTO medical) {
 		this.medical = medical;
 	}
 
-	public Double getQuantity() {
-		return quantity;
-	}
-
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
-	}
-
-	public String getUnits() {
-		return units;
 	}
 
 	public void setUnits(String units) {
 		this.units = units;
 	}
 
-	public WardDTO getWardTo() {
-		return wardTo;
-	}
-
 	public void setWardTo(WardDTO wardTo) {
 		this.wardTo = wardTo;
-	}
-
-	public WardDTO getWardFrom() {
-		return wardFrom;
 	}
 
 	public void setWardFrom(WardDTO wardFrom) {
 		this.wardFrom = wardFrom;
 	}
-	
 }

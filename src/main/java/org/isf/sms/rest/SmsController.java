@@ -1,7 +1,25 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.sms.rest;
-
-import org.isf.shared.exceptions.OHAPIException;
-import org.isf.sms.dto.SmsDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +28,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.isf.shared.exceptions.OHAPIException;
+import org.isf.sms.dto.SmsDTO;
 import org.isf.sms.manager.SmsManager;
 import org.isf.sms.mapper.SmsMapper;
 import org.isf.sms.model.Sms;
@@ -17,7 +37,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,19 +48,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE)
 public class SmsController {
-	private final Logger logger = LoggerFactory.getLogger(SmsController.class);
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SmsController.class);
+
 	@Autowired
 	private SmsManager smsManager;
+
 	@Autowired
 	private SmsMapper smsMapper;
 	
 	/**
-	 * Fetch the list of {@link Sms}s
+	 * Fetch the list of {@link Sms}s.
 	 * @param dateFrom
 	 * @param dateTo
 	 * @return the found list
@@ -51,7 +72,7 @@ public class SmsController {
 	public ResponseEntity<List<SmsDTO>> getAll(
 			@RequestParam(required=true) String dateFrom, 
 			@RequestParam(required=true) String dateTo) throws OHServiceException {
-		logger.info("Fetching the list of sms");
+		LOGGER.info("Fetching the list of sms");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		Date from, to;
 		try {
@@ -63,16 +84,16 @@ public class SmsController {
 		List<Sms> smsList = smsManager.getAll(from, to);
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);
 		if(mappedSmsList.isEmpty()){
-			logger.info("No sms found");
+			LOGGER.info("No sms found");
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSmsList);
         }else{
-        	logger.info("Found " + mappedSmsList.size() + " sms");
+			LOGGER.info("Found {} sms", mappedSmsList.size());
             return ResponseEntity.ok(mappedSmsList);
         }
 	}
 	
 	/**
-	 * Save the specified {@link Sms}
+	 * Save the specified {@link Sms}.
 	 * @param smsDTO
 	 * @return <code>true</code> if the sms is saved
 	 * @throws OHServiceException
@@ -86,7 +107,7 @@ public class SmsController {
 	}
 	
 	/**
-	 * Deletes the specified {@link Sms}
+	 * Deletes the specified {@link Sms}.
 	 * @param smsDTOList
 	 * @return <code>true</code> if the sms is deleted
 	 * @throws OHServiceException

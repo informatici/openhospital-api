@@ -1,12 +1,32 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.examination.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import java.util.List;
+
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
-import org.isf.exatype.rest.ExamTypeController;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -14,25 +34,33 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import io.swagger.annotations.Api;
 
 @RestController
-@Api(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExaminationController {
 
-    private final Logger logger = LoggerFactory.getLogger(ExamTypeController.class);
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExaminationController.class);
+
+	@Autowired
+    protected ExaminationBrowserManager examinationBrowserManager;
 
     @Autowired
-    protected ExaminationBrowserManager examinationBrowserManager;
-    @Autowired
     private PatientExaminationMapper patientExaminationMapper;
+
     @Autowired
     private PatientBrowserManager patientBrowserManager;
 
@@ -44,7 +72,7 @@ public class ExaminationController {
 
     @PostMapping(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
-        Patient patient = patientBrowserManager.getPatient(newPatientExamination.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(newPatientExamination.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -67,7 +95,7 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not Found!", OHSeverityLevel.WARNING));
         }
 
-        Patient patient = patientBrowserManager.getPatient(dto.getPatientCode());
+        Patient patient = patientBrowserManager.getPatientById(dto.getPatientCode());
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
@@ -82,7 +110,7 @@ public class ExaminationController {
     @GetMapping(value = "/examinations/defaultPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PatientExaminationDTO> getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
 
-        Patient patient = patientBrowserManager.getPatient(patId);
+        Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }

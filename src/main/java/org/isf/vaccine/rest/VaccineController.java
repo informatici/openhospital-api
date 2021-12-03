@@ -1,8 +1,27 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.vaccine.rest;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
@@ -14,7 +33,6 @@ import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,13 +46,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VaccineController {
 
-    private final Logger logger = LoggerFactory.getLogger(VaccineController.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineController.class);
 
     @Autowired
     protected VaccineBrowserManager vaccineManager;
@@ -48,17 +65,17 @@ public class VaccineController {
     }
 
     /**
-     * Get all the vaccines stored
+     * Get all the vaccines.
      *
-     * @return NO_CONTENT if there aren't vaccines, List<VaccineDTO> otherwise
+     * @return NO_CONTENT if there aren't vaccines, {@code List<VaccineDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
-        logger.info("Get vaccines");
-        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine();
+        LOGGER.info("Get vaccines");
+        List<Vaccine> vaccines = vaccineManager.getVaccine();
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);
@@ -66,18 +83,18 @@ public class VaccineController {
     }
 
     /**
-     * Get all the vacccines related to a vaccineType code
+     * Get all the vaccines related to a vaccineType code.
      *
      * @param vaccineTypeCode of the vaccine
-     * @return NO_CONTENT if there aren't vaccines related to code, List<VaccineDTO> otherwise
+     * @return NO_CONTENT if there aren't vaccines related to code, {@code List<VaccineDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
-        logger.info("Get vaccine by code:" + vaccineTypeCode);
-        ArrayList<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
+        LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
+        List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);
@@ -85,7 +102,7 @@ public class VaccineController {
     }
 
     /**
-     * Create new vaccine
+     * Create a new vaccine.
      *
      * @param newVaccine
      * @return an error message if there are some problem, ok otherwise
@@ -93,10 +110,10 @@ public class VaccineController {
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
-        logger.info("Create vaccine: " + newVaccine.toString());
+        LOGGER.info("Create vaccine: {}", newVaccine.toString());
         boolean isCreated;
         try {
-             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
+             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine)) != null;
         } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
         }
@@ -107,7 +124,7 @@ public class VaccineController {
     }
 
     /**
-     * Update vaccine
+     * Update a vaccine.
      *
      * @param updateVaccine
      * @return an error message if there are some problem, ok otherwise
@@ -115,8 +132,8 @@ public class VaccineController {
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
-        logger.info("Update vaccine: " + updateVaccine.toString());
-        boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+        LOGGER.info("Update vaccine: {}", updateVaccine.toString());
+        boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine)) != null;
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
         }
@@ -125,7 +142,7 @@ public class VaccineController {
     }
 
     /**
-     * Delete vaccine
+     * Delete a vaccine.
      *
      * @param code of the vaccine to delete
      * @return an error message if there are some problem, ok otherwise
@@ -133,7 +150,7 @@ public class VaccineController {
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
-        logger.info("Delete vaccine code: {}", code);
+        LOGGER.info("Delete vaccine code: {}", code);
         boolean isDeleted = false;
         Vaccine vaccine = vaccineManager.findVaccine(code);
         if (vaccine!=null){
@@ -148,7 +165,7 @@ public class VaccineController {
     }
     
     /**
-     * Check if code is already use by other vaccine
+     * Check if the code is already used by other vaccine.
      *
      * @param code
      * @return true if it is already use, false otherwise
@@ -156,8 +173,8 @@ public class VaccineController {
      */
     @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineCode(@PathVariable String code) throws OHServiceException {
-        logger.info("Check vaccine code: " + code);
-        boolean check = vaccineManager.codeControl(code);
+	    LOGGER.info("Check vaccine code: {}", code);
+        boolean check = vaccineManager.isCodePresent(code);
         return ResponseEntity.ok(check);
     }
 }

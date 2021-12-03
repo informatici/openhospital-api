@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.malnutrition.dto;
 
 import java.util.Date;
@@ -48,51 +69,51 @@ public class MalnutritionDTO {
 		weight = aWeight;
 	}
 
-	public void setCode(int aCode) {
-		code = aCode;
+	public int getCode() {
+		return this.code;
 	}
 
-	public int getCode() {
-		return code;
+	public Date getDateSupp() {
+		return this.dateSupp;
 	}
-	
+
+	public Date getDateConf() {
+		return this.dateConf;
+	}
+
 	public AdmissionDTO getAdmission() {
-		return admission;
+		return this.admission;
+	}
+
+	public float getHeight() {
+		return this.height;
+	}
+
+	public float getWeight() {
+		return this.weight;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+
+	public void setDateSupp(Date dateSupp) {
+		this.dateSupp = dateSupp;
+	}
+
+	public void setDateConf(Date dateConf) {
+		this.dateConf = dateConf;
 	}
 
 	public void setAdmission(AdmissionDTO admission) {
 		this.admission = admission;
 	}
 
-	public void setDateSupp(Date aDateSupp) {
-		dateSupp = aDateSupp;
+	public void setHeight(float height) {
+		this.height = height;
 	}
 
-	public void setDateConf(Date aDateConf) {
-		dateConf = aDateConf;
-	}
-	
-	public void setHeight(float aHeight) {
-		height = aHeight;
-	}
-
-	public void setWeight(float aWeight) {
-		weight = aWeight;
-	}
-
-	public Date getDateSupp() {
-		return dateSupp;
-	}
-
-	public Date getDateConf() {
-		return dateConf;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public float getWeight() {
-		return weight;
+	public void setWeight(float weight) {
+		this.weight = weight;
 	}
 }

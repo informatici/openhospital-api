@@ -25,5 +25,9 @@ logs/
 /nbdist/
 /.nb-gradle/
 /build/
+
+
+
 *.log
 /oh-rest-api.log.*.gz
+/logs/

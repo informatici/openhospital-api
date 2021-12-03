@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.medical.rest;
 
 import java.util.List;
@@ -9,13 +30,11 @@ import org.isf.medical.dto.MedicalSortBy;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,8 +53,9 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedicalController {
-	private final Logger logger = LoggerFactory.getLogger(MedicalTypeController.class);
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalController.class);
+
 	@Autowired
 	private MedicalBrowsingManager medicalManager;
 	
@@ -50,13 +70,13 @@ public class MedicalController {
 	 */
 	@GetMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalDTO> getMedical(@PathVariable int code) throws OHServiceException {
-		logger.info("Retrieving medical with code "+ code + " ...");
+		LOGGER.info("Retrieving medical with code {} ...", code);
 		Medical medical = medicalManager.getMedical(code);
 		if(medical == null) {
-			logger.info("Medical not found");
+			LOGGER.info("Medical not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
 		} else {
-			logger.info("Medical retrieved sucessfully");
+			LOGGER.info("Medical retrieved successfully");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
 		}
 	}
@@ -70,7 +90,7 @@ public class MedicalController {
 	@GetMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalDTO>> getMedicals(@RequestParam(name="sort_by", required=false) MedicalSortBy sortBy) 
 			throws OHServiceException {
-		logger.info("Retrieving all the medicals...");
+		LOGGER.info("Retrieving all the medicals...");
 		List<Medical> medicals;
 		if(sortBy == null || sortBy == MedicalSortBy.NONE) {
 			medicals = medicalManager.getMedicals();
@@ -85,10 +105,10 @@ public class MedicalController {
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if(mappedMedicals.isEmpty()) {
-			logger.info("No medical found");
+			LOGGER.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			logger.info("Found " + mappedMedicals.size() + " medicals");
+			LOGGER.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
@@ -108,7 +128,7 @@ public class MedicalController {
 			@RequestParam(name="type", required=false) String type,
 			@RequestParam(name="critical", defaultValue="false") boolean critical,
 			@RequestParam(name="name_sorted", defaultValue="false") boolean nameSorted) throws OHServiceException {
-		logger.info("Filtering the medicals...");
+		LOGGER.info("Filtering the medicals...");
 		List<Medical> medicals = null;
 		if(description != null && type != null) {
 			medicals = medicalManager.getMedicals(description, type, critical);
@@ -131,16 +151,16 @@ public class MedicalController {
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if(mappedMedicals.isEmpty()) {
-			logger.info("No medical found");
+			LOGGER.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			logger.info("Found " + mappedMedicals.size() + " medicals");
+			LOGGER.info("Found {} medicals", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
 	
 	/**
-	 * Saves the specified {@link Medical}
+	 * Saves the specified {@link Medical}.
 	 * @param medicalDTO - the medical to save
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the medical was created
@@ -150,18 +170,18 @@ public class MedicalController {
 	public ResponseEntity<Void> newMedical(
 			@RequestBody MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
-		logger.info("Creating a new medical ...");
+		LOGGER.info("Creating a new medical ...");
 		boolean isCreated = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		if (!isCreated) {
-			logger.info("Medical is not created!");
+			LOGGER.info("Medical is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Medical is not created!", OHSeverityLevel.ERROR));
         }
-		logger.info("Medical successfully created!");
+		LOGGER.info("Medical successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 	
 	/**
-	 * Updates the specified {@link Medical}
+	 * Updates the specified {@link Medical}.
 	 * @param medicalDTO - the medical to update
 	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.OK</code> if the medical was updated
@@ -171,19 +191,19 @@ public class MedicalController {
 	public ResponseEntity<Void> updateMedical(
 			@RequestBody @Valid MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
-		logger.info("Updating a medical ...");
+		LOGGER.info("Updating a medical ...");
 		boolean isUpdated = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		if (!isUpdated) {
-			logger.info("Medical is not updated!");
+			LOGGER.info("Medical is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Medical is not updated!", OHSeverityLevel.ERROR));
         }
-		logger.info("Medical successfully updated!");
+		LOGGER.info("Medical successfully updated!");
         return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 	
 	/**
-	 * Deletes the specified medical.
-	 * @param medical the medical to delete.
+	 * Deletes the specified {@link Medical}.
+	 * @param code the medical to delete.
 	 * @return <code>true</code> if the medical has been deleted.
 	 * @throws OHServiceException
 	 */

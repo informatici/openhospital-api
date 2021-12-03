@@ -1,6 +1,26 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.vactype.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -13,7 +33,6 @@ import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
 import org.isf.vactype.model.VaccineType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,13 +46,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VaccineTypeController {
 
-    private final Logger logger = LoggerFactory.getLogger(VaccineTypeController.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineTypeController.class);
 
     @Autowired
     protected VaccineTypeBrowserManager vaccineTypeManager;
@@ -47,17 +65,17 @@ public class VaccineTypeController {
     }
 
     /**
-     * Get all the vaccines types
+     * Get all the vaccines types.
      *
      * @return
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineTypeDTO>> getVaccineType() throws OHServiceException {
-        logger.info("Get vaccines type");
-        ArrayList<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
+        LOGGER.info("Get vaccines type");
+        List<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
         List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
-        if (listVaccines.size() == 0) {
+        if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
         } else {
             return ResponseEntity.ok(listVaccines);
@@ -65,7 +83,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Create new vaccine type
+     * Create a new vaccine type.
      *
      * @param newVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -73,7 +91,7 @@ public class VaccineTypeController {
      */
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
-        logger.info("Create vaccine type: " + newVaccineType.toString());
+        LOGGER.info("Create vaccine type: {}", newVaccineType.toString());
         boolean isCreated;
         try {
             isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
@@ -87,7 +105,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Update vaccineType
+     * Update a vaccine type.
      *
      * @param updateVaccineType
      * @return an error message if there are some problem, ok otherwise
@@ -95,7 +113,7 @@ public class VaccineTypeController {
      */
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
-        logger.info("Update vaccine type: " + updateVaccineType.toString());
+        LOGGER.info("Update vaccine type: {}", updateVaccineType.toString());
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
@@ -105,15 +123,15 @@ public class VaccineTypeController {
     }
 
     /**
-     * Delete vaccine type
+     * Delete a vaccine type.
      *
-     * @param vaccineTypeToDelete
+     * @param code the vaccineType to delete
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccinetype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
-        logger.info("Delete vaccine type code: {}", code);
+        LOGGER.info("Delete vaccine type code: {}", code);
         boolean isDeleted = false;
         VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
         if (vaccineType!=null){
@@ -128,7 +146,7 @@ public class VaccineTypeController {
     }
 
     /**
-     * Check if code is already use by other vaccine type
+     * Check if the code is already used by other vaccine type.
      *
      * @param code
      * @return true if it is already use, false otherwise
@@ -136,8 +154,8 @@ public class VaccineTypeController {
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
-        logger.info("Check vaccine type code: " + code);
-        boolean check = vaccineTypeManager.codeControl(code);
+	    LOGGER.info("Check vaccine type code: {}", code);
+        boolean check = vaccineTypeManager.isCodePresent(code);
         return ResponseEntity.ok(check);
     }
 }

@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.agetype.rest;
 
 import java.util.ArrayList;
@@ -16,7 +37,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,19 +49,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/agetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value="/agetypes",produces = MediaType.APPLICATION_JSON_VALUE)
 public class AgeTypeController {
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AgeTypeController.class);
+
 	@Autowired
 	private AgeTypeBrowserManager ageTypeManager;
 	
 	@Autowired
 	private AgeTypeMapper mapper;
-	
-	private final Logger logger = LoggerFactory.getLogger(AgeTypeController.class);
 	
 	public AgeTypeController(AgeTypeBrowserManager ageTypeManager, AgeTypeMapper ageTypeMapper) {
 		this.ageTypeManager = ageTypeManager;
@@ -55,13 +74,13 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
-		logger.info("Get age types");
+		LOGGER.info("Get age types");
 		List<AgeType> results = ageTypeManager.getAgeType();
 		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
-		if(parsedResults.size() > 0){
+		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
-        }else{
-        	logger.info("Empty age types list");
+        } else {
+        	LOGGER.info("Empty age types list");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
         }
 	}
@@ -77,9 +96,9 @@ public class AgeTypeController {
 		if(ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid!", OHSeverityLevel.ERROR));
 		}
-		logger.info("Update age type");
+		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
-		ArrayList<AgeType> ageTypes = new ArrayList<AgeType>();
+		ArrayList<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
 		if(ageTypeManager.updateAgeType(ageTypes)) {
 			return ResponseEntity.ok(ageTypeDTO);
@@ -98,14 +117,14 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
-		logger.info("Get age type by age: " + age);
+		LOGGER.info("Get age type by age: {}", age);
 		String result = ageTypeManager.getTypeByAge(age);
-		Map<String, String> responseBody = new HashMap<String, String>();
+		Map<String, String> responseBody = new HashMap<>();
 		if(result != null){
 			responseBody.put("code", result);
 			return ResponseEntity.ok(responseBody);
         }else{
-        	logger.info("No corresponding age code for the given age");
+        	LOGGER.info("No corresponding age code for the given age");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
         }
 	}
@@ -118,13 +137,13 @@ public class AgeTypeController {
 	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
-		logger.info("Get age type by index: " + index);
+		LOGGER.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
 		if(result != null){
 			return ResponseEntity.ok(result);
         }else{
-        	logger.info("No corresponding age code for the given index");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(result);
+        	LOGGER.info("No corresponding age code for the given index");
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 	}
 	

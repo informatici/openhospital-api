@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.visits.rest;
 
 import java.util.ArrayList;
@@ -12,7 +33,6 @@ import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +45,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
 public class VisitsController {
 
-    private final Logger logger = LoggerFactory.getLogger(VisitsController.class);
+    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsController.class);
 
     @Autowired
     protected VisitManager visitManager;
@@ -45,18 +64,18 @@ public class VisitsController {
     }
 
     /**
-     * Get all the visitors related to a patient
+     * Get all the visitors related to a patient.
      *
      * @param patID the id of the patient
-     * @return NO_CONTENT if there aren't visitors, List<VisitDTO> otherwise
+     * @return NO_CONTENT if there aren't visitors, {@code List<VaccineDTO>} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
-        logger.info("Get visit related to patId: " + patID);
-        ArrayList<Visit> visit = visitManager.getVisits(patID);
+        LOGGER.info("Get visit related to patId: {}", patID);
+        List<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
-        if (listVisit.size() == 0) {
+        if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
             return ResponseEntity.ok(listVisit);
@@ -64,7 +83,7 @@ public class VisitsController {
     }
 
     /**
-     * Create new visitor
+     * Create a new visitor.
      *
      * @param newVisit
      * @return an error if there are some problem, the visitor id (Integer) otherwise
@@ -72,13 +91,13 @@ public class VisitsController {
      */
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
-        logger.info("Create Visit: " + newVisit);
-        int visitId = visitManager.newVisit(mapper.map2Model(newVisit));
-        return ResponseEntity.status(HttpStatus.CREATED).body(newVisit.getVisitID());
+	    LOGGER.info("Create Visit: {}", newVisit);
+        Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
+        return ResponseEntity.status(HttpStatus.CREATED).body(visit.getVisitID()); //TODO: verify if it's correct
     }
 
     /**
-     * Create new visitors
+     * Create new visitors.
      *
      * @param newVisits a list with all the visitors
      * @return an error message if there are some problem, ok otherwise
@@ -86,7 +105,7 @@ public class VisitsController {
      */
     @PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
-        logger.info("Create Visits");
+        LOGGER.info("Create Visits");
         ArrayList<Visit> listVisits = (ArrayList<Visit>) mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
@@ -96,7 +115,7 @@ public class VisitsController {
     }
 
     /**
-     * Delete all the visits related to a patient
+     * Delete all the visits related to a patient.
      *
      * @param patID the id of the patient
      * @return an error message if there are some problem, ok otherwise
@@ -104,12 +123,12 @@ public class VisitsController {
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
-        logger.info("Delete Visit related to patId: " + patID);
-        Boolean areDeleted = visitManager.deleteAllVisits(patID);
+	    LOGGER.info("Delete Visit related to patId: {}", patID);
+        boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(areDeleted.toString());
+        return ResponseEntity.ok(true);
     }
 
 }

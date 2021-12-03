@@ -1,12 +1,31 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.lab.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModelProperty;
-import org.isf.exam.dto.ExamDTO;
-import org.isf.patient.dto.PatientDTO;
-
 import java.util.Date;
-import java.util.GregorianCalendar;
+
+import org.isf.exam.dto.ExamDTO;
+
+import io.swagger.annotations.ApiModelProperty;
 
 public class LaboratoryDTO {
 
@@ -20,11 +39,9 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date registrationDate;
 
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date examDate;
 
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
@@ -50,107 +67,108 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
 
-    public Integer getCode() {
-        return code;
-    }
+	@ApiModelProperty(hidden= true)
+	public int getLock() {
+		return lock;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public Integer getCode() {
+		return this.code;
+	}
 
-    public String getMaterial() {
-        return material;
-    }
+	public String getMaterial() {
+		return this.material;
+	}
 
-    public void setMaterial(String material) {
-        this.material = material;
-    }
+	public ExamDTO getExam() {
+		return this.exam;
+	}
 
-    public ExamDTO getExam() {
-        return exam;
-    }
+	public Date getRegistrationDate() {
+		return this.registrationDate;
+	}
 
-    public void setExam(ExamDTO exam) {
-        this.exam = exam;
-    }
+	public Date getExamDate() {
+		return this.examDate;
+	}
 
-    public Date getDate() {
-        return registrationDate;
-    }
+	public String getResult() {
+		return this.result;
+	}
 
-    public void setDate(Date registrationDate) {
-        this.registrationDate = registrationDate;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public Date getExamDate() {
-        return examDate;
-    }
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
 
-    public void setExamDate(Date examDate) {
-        this.examDate = examDate;
-    }
+	public String getPatName() {
+		return this.patName;
+	}
 
-    public String getResult() {
-        return result;
-    }
+	public String getInOutPatient() {
+		return this.inOutPatient;
+	}
 
-    public void setResult(String result) {
-        this.result = result;
-    }
+	public Integer getAge() {
+		return this.age;
+	}
 
-    public int getLock() {
-        return lock;
-    }
+	public String getSex() {
+		return this.sex;
+	}
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 
-    public String getNote() {
-        return note;
-    }
+	public void setMaterial(String material) {
+		this.material = material;
+	}
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+	public void setExam(ExamDTO exam) {
+		this.exam = exam;
+	}
 
-    public Integer getPatientCode() {
-        return patientCode;
-    }
+	public void setRegistrationDate(Date registrationDate) {
+		this.registrationDate = registrationDate;
+	}
 
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
+	public void setExamDate(Date examDate) {
+		this.examDate = examDate;
+	}
 
-    public String getPatName() {
-        return patName;
-    }
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-    public void setPatName(String patName) {
-        this.patName = patName;
-    }
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public String getInOutPatient() {
-        return inOutPatient;
-    }
+	public void setNote(String note) {
+		this.note = note;
+	}
 
-    public void setInOutPatient(String inOutPatient) {
-        this.inOutPatient = inOutPatient;
-    }
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
 
-    public Integer getAge() {
-        return age;
-    }
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public void setInOutPatient(String inOutPatient) {
+		this.inOutPatient = inOutPatient;
+	}
 
-    public String getSex() {
-        return sex;
-    }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
 }

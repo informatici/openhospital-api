@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.disctype.rest;
 
 import java.util.List;
@@ -12,7 +33,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,13 +51,13 @@ import io.swagger.annotations.Api;
 @Api(value = "/dischargetype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DischargeTypeController {
 
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DischargeTypeController.class);
+
 	@Autowired
 	protected DischargeTypeBrowserManager discTypeManager;
 	
 	@Autowired
 	protected DischargeTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(DischargeTypeController.class);
 
 	public DischargeTypeController(DischargeTypeBrowserManager discTypeManager, DischargeTypeMapper dischargeTypemapper) {
 		this.discTypeManager = discTypeManager;
@@ -45,7 +65,7 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * create a new {@link DischargeType}
+	 * Create a new {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -53,13 +73,14 @@ public class DischargeTypeController {
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
-		logger.info("Create discharge type " + code);
+		LOGGER.info("Create discharge type {}", code);
 		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		DischargeType dischTypeCreated = null;
 		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (dischTypeFounds.size() > 0)
+		if (!dischTypeFounds.isEmpty()) {
 			dischTypeCreated = dischTypeFounds.get(0);
+		}
 		if (!isCreated || dischTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,16 +89,16 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * update the specified {@link DischargeType}
+	 * Update the specified {@link DischargeType}
 	 * @param dischTypeDTO
 	 * @return <code>true</code> if the {@link DischargeType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
-		logger.info("Update dischargetypes code:" + dischTypeDTO.getCode());
+		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
-		if(!discTypeManager.codeControl(dischTypeDTO.getCode())) 
+		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
@@ -88,16 +109,16 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * get all the available {@link DischargeType}
+	 * Get all the available {@link DischargeType}s
 	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
-		logger.info("Get all discharge types ");
+		LOGGER.info("Get all discharge types ");
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
-		if (dischTypeDTOs.size() == 0) {
+		if (dischTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dischTypeDTOs);
@@ -105,26 +126,27 @@ public class DischargeTypeController {
 	}
 
 	/**
-	 * Delete {@link DischargeType} for specified code.
+	 * Delete {@link DischargeType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DischargeType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
-		logger.info("Delete discharge type code:" + code);
+		LOGGER.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
-		if (discTypeManager.codeControl(code)) {
+		if (discTypeManager.isCodePresent(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (dischTypeFounds.size() > 0)
+			if (!dischTypeFounds.isEmpty()) {
 				isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

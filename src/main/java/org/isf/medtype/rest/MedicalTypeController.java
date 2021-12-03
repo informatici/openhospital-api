@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.medtype.rest;
 
 import java.util.List;
@@ -14,7 +35,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,10 +52,12 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedicalTypeController {
-	private final Logger logger = LoggerFactory.getLogger(MedicalTypeController.class);
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalTypeController.class);
+
 	@Autowired
 	private MedicalTypeBrowserManager medicalTypeBrowserManager;
+
 	@Autowired
 	private MedicalTypeMapper medicalTypeMapper;
 	
@@ -46,14 +68,14 @@ public class MedicalTypeController {
 	 */
 	@GetMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalTypeDTO>> getMedicalTypes() throws OHServiceException {
-		logger.info("Retrieving all the medical types ...");
+		LOGGER.info("Retrieving all the medical types ...");
 		List<MedicalType> medicalTypes = medicalTypeBrowserManager.getMedicalType();
 		List<MedicalTypeDTO> mappedMedicalTypes = medicalTypeMapper.map2DTOList(medicalTypes);
-		if (mappedMedicalTypes.size() == 0) {
-			logger.info("No medical type found");
+		if (mappedMedicalTypes.isEmpty()) {
+			LOGGER.info("No medical type found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicalTypes);
 		} else {
-			logger.info("Found " + mappedMedicalTypes.size() + " medical types");
+			LOGGER.info("Found {} medical types", mappedMedicalTypes.size());
 			return ResponseEntity.ok(mappedMedicalTypes);
 		}
 	}
@@ -82,7 +104,7 @@ public class MedicalTypeController {
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
-		if(!medicalTypeBrowserManager.codeControl(medicalType.getCode())) 
+		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (!isUpdated) {
@@ -99,7 +121,7 @@ public class MedicalTypeController {
 	 */
 	@GetMapping(value = "/medicaltypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
-		return ResponseEntity.ok(medicalTypeBrowserManager.codeControl(code));
+		return ResponseEntity.ok(medicalTypeBrowserManager.isCodePresent(code));
 	}
 
 	/**
@@ -114,9 +136,10 @@ public class MedicalTypeController {
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (machedMedicalTypes.size() > 0)
+		if (!machedMedicalTypes.isEmpty()) {
 			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(machedMedicalTypes.get(0)));
-		else 
+		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
+		}
 	}
 }

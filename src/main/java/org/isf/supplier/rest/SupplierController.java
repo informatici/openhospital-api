@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.supplier.rest;
 
 import java.util.List;
@@ -13,7 +34,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,58 +47,60 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SupplierController {
-	private final Logger logger = LoggerFactory.getLogger(SupplierController.class);
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SupplierController.class);
+
 	@Autowired
 	private SupplierBrowserManager manager;
+
 	@Autowired
 	private SupplierMapper mapper;
 	
 	/**
-	 * Saves the specified {@link SupplierDTO}
-	 * @param suplierDTO
+	 * Saves the specified {@link SupplierDTO}.
+	 * @param supplierDTO
 	 * @return <code>true</code> if the supplier was saved
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO suplierDTO) throws OHServiceException {
-		logger.info("Saving a new supplier...");
-		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
+	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+		LOGGER.info("Saving a new supplier...");
+		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (!isCreated) {
-			logger.error("Supplier is not created!");
+			LOGGER.error("Supplier is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
         }
-		logger.info("Supplier saved successfully");
+		LOGGER.info("Supplier saved successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 	
 	/**
-	 * Updates the specified {@link SupplierDTO}
-	 * @param suplierDTO
+	 * Updates the specified {@link SupplierDTO}.
+	 * @param supplierDTO
 	 * @return <code>true</code> if the supplier was updated
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO suplierDTO) throws OHServiceException {
-		if(suplierDTO.getSupId() == null || manager.getByID(suplierDTO.getSupId()) == null) {
+	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+		if(supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
-		logger.info("Updating supplier...");
-		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(suplierDTO));
+		LOGGER.info("Updating supplier...");
+		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (!isUpdated) {
-			logger.error("Supplier is not updated!");
+			LOGGER.error("Supplier is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));
         }
-		logger.info("Supplier updated successfully");
+		LOGGER.info("Supplier updated successfully");
         return ResponseEntity.ok(isUpdated);
 	}
 	
 	/**
-	 * Loads the stored suppliers
+	 * Get the suppliers.
 	 * @param excludeDeleted
 	 * @return the list of suppliers found
 	 * @throws OHServiceException
@@ -86,33 +108,33 @@ public class SupplierController {
 	@GetMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<SupplierDTO>> getSuppliers(
 			@RequestParam(name="exclude_deleted", defaultValue="true") boolean excludeDeleted) throws OHServiceException {
-		logger.info("Loading suppliers...");
+		LOGGER.info("Loading suppliers...");
 		List<Supplier> suppliers = excludeDeleted? manager.getList() : manager.getAll();
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
 		if(mappedSuppliers.isEmpty()) {
-			logger.info("No supplier found");
+			LOGGER.info("No supplier found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
-			logger.info("Found " + mappedSuppliers.size() + " suppliers");
+			LOGGER.info("Found {} suppliers", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
 		}
 	}
 	
 	/**
-	 * Load a supplier by its ID
+	 * Get a supplier by its ID.
 	 * @param id
 	 * @return the found supplier
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
-		logger.info("Loading supplier with ID " + id);
+		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if(supplier == null) {
-			logger.info("Supplier not found");
+			LOGGER.info("Supplier not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		} else {
-			logger.info("Found supplier!");
+			LOGGER.info("Found supplier!");
 			return ResponseEntity.ok(mapper.map2DTO(supplier));
 		}
 	}

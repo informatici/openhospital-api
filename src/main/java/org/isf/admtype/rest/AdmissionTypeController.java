@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.admtype.rest;
 
 import java.util.List;
@@ -12,7 +33,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,13 +51,13 @@ import io.swagger.annotations.Api;
 @Api(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdmissionTypeController {
 
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionTypeController.class);
+
 	@Autowired
 	protected AdmissionTypeBrowserManager admtManager;
 	
 	@Autowired
 	protected AdmissionTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(AdmissionTypeController.class);
 
 	public AdmissionTypeController(AdmissionTypeBrowserManager admtManager, AdmissionTypeMapper admissionTypemapper) {
 		this.admtManager = admtManager;
@@ -45,7 +65,7 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * create a new {@link AdmissionType}
+	 * Create a new {@link AdmissionType}
 	 * @param admissionTypeDTO
 	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -53,13 +73,14 @@ public class AdmissionTypeController {
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
-		logger.info("Create Admission Type " + code);
+		LOGGER.info("Create Admission Type {}", code);
 		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (admtFounds.size() > 0)
+		if (!admtFounds.isEmpty()) {
 			admtCreated = admtFounds.get(0);
+		}
 		if (!isCreated || admtCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR),
@@ -77,9 +98,9 @@ public class AdmissionTypeController {
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
-		logger.info("Update admissiontypes code:" + admissionTypeDTO.getCode());
+		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		if (!admtManager.codeControl(admt.getCode()))
+		if (!admtManager.isCodePresent(admt.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
 		if (!isUpdated)
@@ -90,16 +111,16 @@ public class AdmissionTypeController {
 	}
 
 	/**
-	 * get all the available {@link AdmissionType}s.
+	 * Get all the available {@link AdmissionType}s.
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
-		logger.info("Get all Admission Types ");
+		LOGGER.info("Get all Admission Types ");
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
-		if (admissionTypeDTOs.size() == 0) {
+		if (admissionTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
 		} else {
 			return ResponseEntity.ok(admissionTypeDTOs);
@@ -114,19 +135,20 @@ public class AdmissionTypeController {
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
-		logger.info("Delete Admission Type code:" + code);
+		LOGGER.info("Delete Admission Type code: {}", code);
 		boolean isDeleted = false;
-		if (admtManager.codeControl(code)) {
+		if (admtManager.isCodePresent(code)) {
 			List<AdmissionType> admts = admtManager.getAdmissionType();
 			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (admtFounds.size() > 0)
+			if (!admtFounds.isEmpty()) {
 				isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }

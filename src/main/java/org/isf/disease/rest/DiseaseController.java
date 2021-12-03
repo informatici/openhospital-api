@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.disease.rest;
 
 import java.util.HashMap;
@@ -15,7 +36,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,18 +49,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE)
 public class DiseaseController {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseController.class);
+
 	@Autowired
 	protected DiseaseBrowserManager diseaseManager;
 	
 	@Autowired
 	protected DiseaseMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(DiseaseController.class);
 
 	public DiseaseController(DiseaseBrowserManager diseaseManager, DiseaseMapper diseaseMapper) {
 		this.diseaseManager = diseaseManager;
@@ -54,7 +74,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpd() throws OHServiceException {
-        logger.info("Get opd diseases");
+        LOGGER.info("Get opd diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -71,7 +91,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/opd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpdByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        logger.info("Get opd diseases by type code");
+        LOGGER.info("Get opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -87,7 +107,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/out", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOut() throws OHServiceException {
-        logger.info("Get ipd out diseases");
+        LOGGER.info("Get ipd out diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -104,7 +124,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/out/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOutByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        logger.info("Get ipd out diseases by type code");
+        LOGGER.info("Get ipd out diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -120,7 +140,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/in", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdIn() throws OHServiceException {
-        logger.info("Get ipd-in diseases");
+        LOGGER.info("Get ipd-in diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -137,7 +157,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/ipd/in/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdInByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        logger.info("Get ipd-in diseases by type code");
+        LOGGER.info("Get ipd-in diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -153,7 +173,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/both", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases() throws OHServiceException {
-        logger.info("Get both ipd and opd diseases");
+        LOGGER.info("Get both ipd and opd diseases");
 	    List<Disease> diseases = diseaseManager.getDisease();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -170,7 +190,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/both/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@PathVariable("typecode") String typeCode) throws OHServiceException {
-        logger.info("Get both ipd and opd diseases by type code");
+        LOGGER.info("Get both ipd and opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDisease(typeCode);
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -186,7 +206,7 @@ public class DiseaseController {
 	 */
 	@GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getAllDiseases() throws OHServiceException {
-        logger.info("Get all diseases, deleted ones too");
+        LOGGER.info("Get all diseases, deleted ones too");
 	    List<Disease> diseases = diseaseManager.getDiseaseAll();
 	    if(diseases != null) {
 	    	return computeResponse(diseases);
@@ -202,8 +222,8 @@ public class DiseaseController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") int code) throws OHServiceException {
-        logger.info("Get disease by code");
+	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
+        LOGGER.info("Get disease by code");
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
 	    if(disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
@@ -221,13 +241,13 @@ public class DiseaseController {
 	@PostMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		if(diseaseManager.codeControl(disease.getCode())) {
+		if (diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		} else if(diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		if(diseaseManager.newDisease(disease)) {
+		if (diseaseManager.newDisease(disease) != null) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -243,11 +263,11 @@ public class DiseaseController {
 	@PutMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		if(!diseaseManager.codeControl(disease.getCode())) {
+		if (!diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		if(diseaseManager.updateDisease(disease)) {
+		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -261,10 +281,10 @@ public class DiseaseController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") int code) throws OHServiceException {
+	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if(disease != null) {
-			Map<String, Boolean> result = new HashMap<String, Boolean>();
+			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", diseaseManager.deleteDisease(disease));
 			return ResponseEntity.ok(result);
 		} else {
@@ -276,7 +296,7 @@ public class DiseaseController {
 	
 	private ResponseEntity<List<DiseaseDTO>> computeResponse(List<Disease> diseases) {
 		List<DiseaseDTO> diseasesDTO = mapper.map2DTOList(diseases);
-        if(diseasesDTO.size() == 0){
+        if(diseasesDTO.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
         }else{
             return ResponseEntity.ok(diseasesDTO);

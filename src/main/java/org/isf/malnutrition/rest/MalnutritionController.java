@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.malnutrition.rest;
 
 import java.util.ArrayList;
@@ -10,13 +31,11 @@ import org.isf.malnutrition.dto.MalnutritionDTO;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.mapper.MalnutritionMapper;
 import org.isf.malnutrition.model.Malnutrition;
-import org.isf.medtype.rest.MedicalTypeController;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,8 +53,9 @@ import io.swagger.annotations.Api;
 @RestController
 @Api(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MalnutritionController {
-	private final Logger logger = LoggerFactory.getLogger(MedicalTypeController.class);
-	
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MalnutritionController.class);
+
 	@Autowired
 	private MalnutritionMapper mapper;
 	
@@ -44,19 +64,19 @@ public class MalnutritionController {
 	
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
-	 * @param malnutrition the malnutrition to store.
+	 * @param malnutritionDTO the malnutrition to store.
 	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the malnutrition has been stored
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> newMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		logger.info("Creating a new malnutrition ...");
+		LOGGER.info("Creating a new malnutrition ...");
 		boolean isCreated = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
 		if (!isCreated) {
-			logger.info("Malnutrition is not created!");
+			LOGGER.info("Malnutrition is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created!", OHSeverityLevel.ERROR));
         }
-		logger.info("Malnutrition successfully created!");
+		LOGGER.info("Malnutrition successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 	
@@ -68,23 +88,23 @@ public class MalnutritionController {
 	 */
 	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
-		logger.info("Looking for malnutrition controls. Admission ID is " + admissionID);
+		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if(malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 		if(mappedMalnutritions.isEmpty()) {
-			logger.info("No malnutrition control found");
+			LOGGER.info("No malnutrition control found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
-			logger.info("Found " + mappedMalnutritions.size() + " malnutrition controls");
+			LOGGER.info("Found {} malnutrition controls", mappedMalnutritions.size());
 			return ResponseEntity.ok(mappedMalnutritions);
 		}
 	}
 	
 	/**
-	 * returns the last {@link Malnutrition} entry for specified patient ID
+	 * Returns the last {@link Malnutrition} entry for specified patient ID.
 	 * @param patientID - the patient ID
 	 * @return the last {@link Malnutrition} for specified patient ID.
 	 * @throws OHServiceException 
@@ -100,8 +120,8 @@ public class MalnutritionController {
 	}
 	
 	/**
-	 * Updates the specified malnutrition
-	 * @param the {@link Malnutrition} to update
+	 * Updates the specified {@link Malnutrition}.
+	 * @param malnutritionDTO the {@link Malnutrition} to update
 	 * @return the updated {@link Malnutrition}
 	 * @throws OHServiceException
 	 */
@@ -120,7 +140,7 @@ public class MalnutritionController {
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
 		List<Malnutrition> malnutritions = manager.getMalnutrition(malnutritionDTO.getAdmission().getId()+"");
-		List<Malnutrition> matchedMalnutritions = new ArrayList<Malnutrition>();
+		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if(malnutritions != null) {
 			matchedMalnutritions = malnutritions
 					.stream()

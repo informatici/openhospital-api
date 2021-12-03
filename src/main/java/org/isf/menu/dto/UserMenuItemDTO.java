@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
@@ -5,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 
 public class UserMenuItemDTO {
+
 	@NotNull
 	@ApiModelProperty(notes="code of the menu item (must be unique)", example = "admtype", position = 1)
 	private String 	code;
@@ -39,13 +61,11 @@ public class UserMenuItemDTO {
 	@ApiModelProperty(notes="position of the menu item", example = "5", position = 9)
 	private int position;
 	
-	public UserMenuItemDTO() {
-		super();
+	public UserMenuItemDTO(){
 	}
 
 	public UserMenuItemDTO(String code, String buttonLabel, String altLabel, String tooltip, char shortcut,
 			String mySubmenu, String myClass, boolean isASubMenu, int position) {
-		super();
 		this.code = code;
 		this.buttonLabel = buttonLabel;
 		this.altLabel = altLabel;
@@ -58,75 +78,74 @@ public class UserMenuItemDTO {
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
+	}
+
+	public String getButtonLabel() {
+		return this.buttonLabel;
+	}
+
+	public String getAltLabel() {
+		return this.altLabel;
+	}
+
+	public String getTooltip() {
+		return this.tooltip;
+	}
+
+	public char getShortcut() {
+		return this.shortcut;
+	}
+
+	public String getMySubmenu() {
+		return this.mySubmenu;
+	}
+
+	public String getMyClass() {
+		return this.myClass;
+	}
+
+	public boolean isASubMenu() {
+		return this.isASubMenu;
+	}
+
+	public int getPosition() {
+		return this.position;
 	}
 
 	public void setCode(String code) {
 		this.code = code;
 	}
 
-	public String getButtonLabel() {
-		return buttonLabel;
-	}
-
 	public void setButtonLabel(String buttonLabel) {
 		this.buttonLabel = buttonLabel;
-	}
-
-	public String getAltLabel() {
-		return altLabel;
 	}
 
 	public void setAltLabel(String altLabel) {
 		this.altLabel = altLabel;
 	}
 
-	public String getTooltip() {
-		return tooltip;
-	}
-
 	public void setTooltip(String tooltip) {
 		this.tooltip = tooltip;
-	}
-
-	public char getShortcut() {
-		return shortcut;
 	}
 
 	public void setShortcut(char shortcut) {
 		this.shortcut = shortcut;
 	}
 
-	public String getMySubmenu() {
-		return mySubmenu;
-	}
-
 	public void setMySubmenu(String mySubmenu) {
 		this.mySubmenu = mySubmenu;
-	}
-
-	public String getMyClass() {
-		return myClass;
 	}
 
 	public void setMyClass(String myClass) {
 		this.myClass = myClass;
 	}
 
-	public boolean isASubMenu() {
-		return isASubMenu;
-	}
-
 	public void setASubMenu(boolean isASubMenu) {
 		this.isASubMenu = isASubMenu;
-	}
-
-	public int getPosition() {
-		return position;
 	}
 
 	public void setPosition(int position) {
 		this.position = position;
 	}
-	
 }

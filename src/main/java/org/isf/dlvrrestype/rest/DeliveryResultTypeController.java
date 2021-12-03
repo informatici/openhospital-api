@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.isf.dlvrrestype.rest;
 
 import java.util.List;
@@ -12,7 +33,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,13 +51,13 @@ import io.swagger.annotations.Api;
 @Api(value = "/deliveryresulttype", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryResultTypeController {
 
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DeliveryResultTypeController.class);
+
 	@Autowired
 	protected DeliveryResultTypeBrowserManager dlvrrestManager;
 	
 	@Autowired
 	protected DeliveryResultTypeMapper mapper;
-
-	private final Logger logger = LoggerFactory.getLogger(DeliveryResultTypeController.class);
 
 	public DeliveryResultTypeController(DeliveryResultTypeBrowserManager dlvrrestManager, DeliveryResultTypeMapper deliveryResultTypeMapper) {
 		this.dlvrrestManager = dlvrrestManager;
@@ -45,7 +65,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * create a new {@link DeliveryResultType}
+	 * Create a new {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been stored, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -54,14 +74,15 @@ public class DeliveryResultTypeController {
 	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
-		logger.info("Create Delivery result type " + code);
+		LOGGER.info("Create Delivery result type {}", code);
 		boolean isCreated = dlvrrestManager
 				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
 		List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
 				.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
-		if (dlvrrestTypeFounds.size() > 0)
+		if (!dlvrrestTypeFounds.isEmpty()) {
 			dlvrrestTypeCreated = dlvrrestTypeFounds.get(0);
+		}
 		if (!isCreated || dlvrrestTypeCreated == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR),
@@ -71,7 +92,7 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * update the specified {@link DeliveryResultType}
+	 * Update the specified {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -79,9 +100,9 @@ public class DeliveryResultTypeController {
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
-		logger.info("Update deliveryresulttypes code:" + dlvrrestTypeDTO.getCode());
+		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
-		if (!dlvrrestManager.codeControl(dlvrrestType.getCode()))
+		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode()))
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
 		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
@@ -93,16 +114,16 @@ public class DeliveryResultTypeController {
 	}
 
 	/**
-	 * get all the available {@link DeliveryResultType}
+	 * Get all the available {@link DeliveryResultType}s.
 	 * @return a {@link List} of {@link DeliveryResultType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
-		logger.info("Get all Delivery result types ");
+		LOGGER.info("Get all Delivery result types ");
 		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
 		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = mapper.map2DTOList(dlvrrestissionTypes);
-		if (dlvrrestTypeDTOs.size() == 0) {
+		if (dlvrrestTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrrestTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dlvrrestTypeDTOs);
@@ -110,7 +131,7 @@ public class DeliveryResultTypeController {
 	}
 	
 	/**
-	 * Delete {@link DeliveryResultType} for specified code.
+	 * Delete {@link DeliveryResultType} for the specified code.
 	 * @param code
 	 * @return <code>true</code> if the {@link DeliveryResultType} has been deleted, <code>false</code> otherwise.
 	 * @throws OHServiceException
@@ -118,19 +139,20 @@ public class DeliveryResultTypeController {
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
 			throws OHServiceException {
-		logger.info("Delete Delivery result type code:" + code);
+		LOGGER.info("Delete Delivery result type code: {}", code);
 		boolean isDeleted = false;
-		if (dlvrrestManager.codeControl(code)) {
+		if (dlvrrestManager.isCodePresent(code)) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
 			List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
-			if (dlvrrestTypeFounds.size() > 0)
+			if (!dlvrrestTypeFounds.isEmpty()) {
 				isDeleted = dlvrrestManager.deleteDeliveryResultType(dlvrrestTypeFounds.get(0));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 
-		return (ResponseEntity<Boolean>) ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(isDeleted);
 	}
 
 }
