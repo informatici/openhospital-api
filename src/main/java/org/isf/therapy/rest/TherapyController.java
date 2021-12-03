@@ -8,6 +8,9 @@ import javax.validation.Valid;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.model.Medical;
+import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.mapper.PatientMapper;
+import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.therapy.dto.TherapyDTO;
 import org.isf.therapy.dto.TherapyRowDTO;
@@ -47,6 +50,10 @@ public class TherapyController {
 	private TherapyRowMapper therapyRowMapper;
 	@Autowired
 	private MedicalMapper medicalMapper;
+	@Autowired
+	private PatientMapper patientMapper;
+	@Autowired
+	protected PatientBrowserManager patientBrowserManager;
 	
 	/**
 	 * Creates a new therapy for related Patient
@@ -56,6 +63,13 @@ public class TherapyController {
 	 */
 	@PostMapping(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
+
+		Patient patient = patientBrowserManager.getPatient(thRowDTO.getPatID().getCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+		thRowDTO.setPatID(patientMapper.map2DTO(patient));
+
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
 		thRow = manager.newTherapy(thRow);
 		return ResponseEntity.status(HttpStatus.CREATED).body(therapyRowMapper.map2DTO(thRow));

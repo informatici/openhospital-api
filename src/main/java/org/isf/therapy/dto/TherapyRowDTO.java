@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.patient.dto.PatientDTO;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -18,10 +19,12 @@ public class TherapyRowDTO {
 
 	@NotNull(message="the start date is require")
 	@ApiModelProperty(notes="The start date of therapy", example = "2020-07-16", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date startDate;
 
 	@NotNull(message="the end date is required")
 	@ApiModelProperty(notes="The end date of the therapy", example = "2020-07-30", position = 4)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date endDate;
 
 	@NotNull(message="the medical's ID is required")

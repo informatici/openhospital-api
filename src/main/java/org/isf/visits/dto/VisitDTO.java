@@ -1,5 +1,6 @@
 package org.isf.visits.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.isf.patient.dto.PatientDTO;
@@ -22,6 +23,7 @@ public class VisitDTO {
 
     @NotNull
     @ApiModelProperty(notes = "Date of the visit", position = 2)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private GregorianCalendar date;
 
     @ApiModelProperty(notes = "Note of the visit", position = 3)

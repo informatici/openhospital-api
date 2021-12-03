@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.isf.disease.dto.DiseaseDTO;
+import org.isf.disease.mapper.DiseaseMapper;
+import org.isf.disease.model.Disease;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
@@ -62,6 +65,10 @@ public class OpdController {
 	
 	@Autowired
 	protected OpdMapper mapper;
+
+	@Autowired
+	protected DiseaseMapper diseaseMapper;
+
 	
 	@Autowired
 	protected PatientBrowserManager patientBrowserManager;
@@ -86,7 +93,24 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
+		Disease disease = null;
+		if (opdDTO.getDisease() != null) {
+			disease = diseaseMapper.map2Model(opdDTO.getDisease());
+		}
+		Disease disease2 = null;
+		if (opdDTO.getDisease2() != null) {
+			disease2 = diseaseMapper.map2Model(opdDTO.getDisease2());
+		}
+		Disease disease3 = null;
+		if (opdDTO.getDisease3() != null) {
+			disease3 = diseaseMapper.map2Model(opdDTO.getDisease3());
+		}
+
 		Opd opdToInsert = mapper.map2Model(opdDTO);
+		opdToInsert.setDisease(disease);
+		opdToInsert.setDisease2(disease2);
+		opdToInsert.setDisease3(disease3);
+
 		opdToInsert.setPatient(patient);
 		boolean isCreated = opdManager.newOpd(opdToInsert);
 		if (!isCreated) {
@@ -104,17 +128,33 @@ public class OpdController {
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updateOpd(@PathVariable Integer code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
-		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
-		}
+		LOGGER.info("Update opds code: {}", code);
 
 		Patient patient = patientBrowserManager.getPatient(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
+		Disease disease = null;
+		if (opdDTO.getDisease() != null) {
+			disease = diseaseMapper.map2Model(opdDTO.getDisease());
+		}
+		Disease disease2 = null;
+		if (opdDTO.getDisease2() != null) {
+			disease2 = diseaseMapper.map2Model(opdDTO.getDisease2());
+		}
+		Disease disease3 = null;
+		if (opdDTO.getDisease3() != null) {
+			disease3 = diseaseMapper.map2Model(opdDTO.getDisease3());
+		}
+
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
+		opdToUpdate.setCode(code);
+
+		opdToUpdate.setDisease(disease);
+		opdToUpdate.setDisease2(disease2);
+		opdToUpdate.setDisease3(disease3);
+
 		opdToUpdate.setPatient(patient);
 
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.supplier.dto.SupplierDTO;
@@ -31,6 +32,7 @@ public class MovementDTO {
 
 	@NotNull(message="the movement's date is required")
 	@ApiModelProperty(notes="The movement date", example = "2020-06-24", position = 6)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date date;
 
 	@NotNull(message="the movement's medical quantity is required")

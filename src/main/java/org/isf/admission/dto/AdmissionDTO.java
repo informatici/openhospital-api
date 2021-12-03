@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disease.dto.DiseaseDTO;
@@ -46,6 +47,7 @@ public class AdmissionDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "admission date", position = 7)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date admDate;
 
 	@ApiModelProperty(notes = "admission type", position = 8)
@@ -70,12 +72,14 @@ public class AdmissionDTO {
 	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date disDate;
 
 	@ApiModelProperty(notes = "disChargeType ", position = 18)
@@ -88,12 +92,14 @@ public class AdmissionDTO {
 	private Float transUnit;
 
 	@ApiModelProperty(notes = "visite date", position = 21)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date deliveryDate;
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
