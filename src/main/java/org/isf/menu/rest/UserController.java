@@ -337,7 +337,7 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
-			logger.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUserName);
+			LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUserName);
 			List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 			if (dtos.isEmpty()) {
@@ -361,7 +361,7 @@ public class UserController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			String currentUserName = authentication.getName();
-			logger.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
+			LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
 			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
 			UserProfileDTO userProfileDTO = new UserProfileDTO();
@@ -382,7 +382,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/permissions/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
-		logger.info("retrieving permissions: retrievePermissionsByUsername({})", username);
+		LOGGER.info("retrieving permissions: retrievePermissionsByUsername({})", username);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
 		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
