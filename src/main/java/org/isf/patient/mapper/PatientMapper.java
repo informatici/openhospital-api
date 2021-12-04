@@ -21,14 +21,54 @@
  */
 package org.isf.patient.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
+import org.isf.patient.model.PatientProfilePhoto;
 import org.isf.shared.GenericMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
+
 	public PatientMapper() {
 		super(Patient.class, PatientDTO.class);
+	}
+
+	@Override
+	public PatientDTO map2DTO(Patient fromObj) {
+		PatientDTO patientDTO = super.map2DTO(fromObj);
+		if (fromObj.getPatientProfilePhoto() != null) {
+			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
+		}
+		return patientDTO;
+
+	}
+
+	@Override
+	public Patient map2Model(PatientDTO toObj) {
+
+		Patient patient = super.map2Model(toObj);
+
+		if (toObj.getBlobPhoto() != null) {
+			PatientProfilePhoto photo = new PatientProfilePhoto();
+			photo.setPatient(patient);
+			photo.setPhoto(toObj.getBlobPhoto());
+			patient.setPatientProfilePhoto(photo);
+		}
+
+		return patient;
+	}
+
+	@Override
+	public List<PatientDTO> map2DTOList(List<Patient> list) {
+		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Patient> map2ModelList(List<PatientDTO> list) {
+		return list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
 	}
 }
