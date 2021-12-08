@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.vaccine.dto.VaccineDTO;
 
@@ -40,6 +41,7 @@ public class PatientVaccineDTO
 
 	@NotNull
 	@ApiModelProperty(notes = "the vaccine date", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date vaccineDate;
 
 	@NotNull

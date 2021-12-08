@@ -23,6 +23,7 @@ package org.isf.lab.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.exam.dto.ExamDTO;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -39,10 +40,12 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-    private Date registrationDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date registrationDate;
 
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private Date examDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date examDate;
 
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;

@@ -30,6 +30,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.accounting.dto.BillDTO;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.opd.dto.OpdDTO;
@@ -50,7 +51,8 @@ public class OperationRowDTO {
     private String opResult;
 
     @NotNull
-    private Date opDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date opDate;
 
     private String remarks;
 

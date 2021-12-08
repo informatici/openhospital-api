@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -45,6 +46,7 @@ public class PatientDTO {
 	private String name;
 
 	@ApiModelProperty(notes = "Birth date", example="1979-05-01", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date birthDate;
 
 	@NotNull
