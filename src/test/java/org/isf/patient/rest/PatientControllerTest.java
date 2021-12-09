@@ -374,6 +374,7 @@ public class PatientControllerTest {
 	}
 
 	/**
+<<<<<<< Upstream, based on upstream/develop
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
 	 *
 	 * @throws Exception
@@ -433,6 +434,9 @@ public class PatientControllerTest {
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
 	 *
+=======
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+>>>>>>> 93302a2 Search patients by firstName, secondName, birthDate and address
 	 * @throws Exception
 	 */
 	@Test
@@ -453,8 +457,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -470,9 +473,9 @@ public class PatientControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
+
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test

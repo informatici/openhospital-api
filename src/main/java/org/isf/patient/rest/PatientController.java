@@ -21,7 +21,12 @@
  */
 package org.isf.patient.rest;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -121,22 +126,48 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> searchPatient(
-			@RequestParam(value="name", defaultValue="") String name,
-			@RequestParam(value="code", required=false) Integer code) throws OHServiceException {
-		LOGGER.info("Search patient name: {}  code: {}", name, code);
-		Patient patient = null;
-		if (code != null) {
-            patient = patientManager.getPatientById(code);
-		} else if (!name.isEmpty()) {
-            patient = patientManager.getPatientByName(name);
+	public ResponseEntity<List<PatientDTO>> searchPatient(
+			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
+			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+			@RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+			@RequestParam(value="address", defaultValue="", required = false) String address
+	) throws OHServiceException {
+
+
+		List<Patient> patientList = null;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (firstName != null && !firstName.isEmpty()) {
+			params.put("firstName", firstName);
 		}
-        if (patient == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.ok(patientMapper.map2DTO(patient));
+		if (secondName != null && !secondName.isEmpty()) {
+			params.put("secondName", secondName);
+		}
+		if (birthDate != null && !birthDate.isEmpty()) {
+			try {
+
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date birthDateDate = df.parse(birthDate);
+				params.put("birthDate", birthDateDate);
+
+			} catch (Exception e) {
+				// TODO: fixme
+			}
+		}
+		if (address != null && !address.isEmpty()) {
+			params.put("address", address);
+		}
+
+
+		if (params.entrySet().size() > 0) {
+			patientList = patientManager.getPatients(params);
+		}
+		if (patientList == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
 	}
-	
+
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam Integer code) throws OHServiceException {
 		LOGGER.info("get patient for provided code even if logically deleted: {}", code);
