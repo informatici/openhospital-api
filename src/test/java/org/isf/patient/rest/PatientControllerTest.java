@@ -376,65 +376,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 456;
-		String name = "TestFirstName";
-		String request = "/patients/search";
-		PatientDTO expectedPatientDTO = PatientHelper.setup(patientMapper);
-		expectedPatientDTO.setCode(code);
-		Patient patient = PatientHelper.setup();
-		patient.setCode(code);
-
-		when(patientBrowserManagerMock.getPatientByName(eq(name))).thenReturn(patient);
-
-		this.mockMvc
-				.perform(
-						get(request)
-								.param("name", name)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-				.andReturn();
-	}
-
-	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 678;
-		String request = "/patients/search";
-		PatientDTO expectedPatientDTO = PatientHelper.setup(patientMapper);
-		expectedPatientDTO.setCode(code);
-		Patient patient = PatientHelper.setup();
-		patient.setCode(code);
-
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(patient);
-
-		this.mockMvc
-				.perform(
-						get(request)
-								.param("code", code.toString())
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-				.andReturn();
-	}
-
-	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -455,8 +397,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -472,9 +413,9 @@ public class PatientControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
+
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
