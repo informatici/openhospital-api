@@ -135,7 +135,7 @@ public class DiseaseTypeController {
 	/**
 	 * Deletes the specified {@link DiseaseType}.
 	 * @param code - the code of the disease type to remove.
-	 * @return <code>true</code> if the disease has been removed, <code>false</code> otherwise.
+	 * @return {@code true} if the disease has been removed, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseasetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -144,7 +144,7 @@ public class DiseaseTypeController {
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.findFirst();
-		if(optDiseaseType.isPresent()) {
+		if (optDiseaseType.isPresent()) {
 			boolean deleted = diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
 			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", deleted);

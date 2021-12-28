@@ -21,7 +21,7 @@
  */
 package org.isf.visits.dto;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -41,7 +41,7 @@ public class VisitDTO {
 
     @NotNull
     @ApiModelProperty(notes = "Date of the visit", position = 2)
-    private GregorianCalendar date;
+    private LocalDateTime date;
 
     @ApiModelProperty(notes = "Note of the visit", position = 3)
     private String note;
@@ -58,7 +58,7 @@ public class VisitDTO {
 		return this.patient;
 	}
 
-	public GregorianCalendar getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 
@@ -78,7 +78,7 @@ public class VisitDTO {
 		this.patient = patient;
 	}
 
-	public void setDate(GregorianCalendar date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

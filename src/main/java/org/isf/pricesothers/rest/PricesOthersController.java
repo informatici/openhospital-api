@@ -67,7 +67,7 @@ public class PricesOthersController {
 	/**
 	 * Create a new {@link PricesOthers}.
 	 * @param pricesOthersDTO
-	 * @return <code>true</code> if the prices others has been stored, <code>false</code> otherwise.
+	 * @return {@code true} if the prices others has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +83,7 @@ public class PricesOthersController {
 	/**
 	 * Updates the specified {@link PricesOthers}.
 	 * @param pricesOthersDTO
-	 * @return <code>true</code> if the prices others has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the prices others has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,11 +92,13 @@ public class PricesOthersController {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
-		if (pricesOthersFounds.isEmpty())
+		if (pricesOthersFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
 		boolean isUpdated = pricesOthersManager.updateOther(pricesOthers);
-		if (!isUpdated)
+		if (!isUpdated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not updated!", OHSeverityLevel.ERROR));
+		}
 		return ResponseEntity.ok(pricesOthers.getCode());
 	}
 
@@ -121,13 +123,13 @@ public class PricesOthersController {
 	/**
 	 * Delete {@link PricesOthers} for specified code.
 	 * @param id
-	 * @return <code>true</code> if the {@link PricesOthers} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link PricesOthers} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete prices others id: {}", id);
-		boolean isDeleted = false;
+		boolean isDeleted;
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
 		if (!pricesOthersFounds.isEmpty()) {

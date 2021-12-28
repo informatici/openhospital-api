@@ -31,7 +31,6 @@ import org.isf.patient.test.TestPatient;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BillDTOHelper {
 
@@ -51,7 +50,7 @@ public class BillDTOHelper {
 
 	public static String asJsonString(BillDTO billDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(billDTO);
+			return BillHelper.getObjectMapper().writeValueAsString(billDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -60,7 +59,7 @@ public class BillDTOHelper {
 
 	public static String asJsonString(List<BillDTO> billDTOList) {
 		try {
-			return new ObjectMapper().writeValueAsString(billDTOList);
+			return BillHelper.getObjectMapper().writeValueAsString(billDTOList);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

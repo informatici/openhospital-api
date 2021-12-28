@@ -26,10 +26,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +51,8 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -81,9 +79,9 @@ public class PatientControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new PatientController(patientBrowserManagerMock, patientMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -113,8 +111,8 @@ public class PatientControllerTest {
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
-		exception.ifPresent((se) -> assertThat(se, notNullValue()));
-		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
+		exception.ifPresent(se -> assertThat(se, notNullValue()));
+		exception.ifPresent(se -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
 	}
 
 	/**
@@ -141,8 +139,8 @@ public class PatientControllerTest {
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
-		exception.ifPresent((se) -> assertThat(se, notNullValue()));
-		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
+		exception.ifPresent(se -> assertThat(se, notNullValue()));
+		exception.ifPresent(se -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
 
 	/**
@@ -172,8 +170,8 @@ public class PatientControllerTest {
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 	/**
@@ -202,8 +200,8 @@ public class PatientControllerTest {
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 	/**
@@ -284,8 +282,8 @@ public class PatientControllerTest {
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", exception);
-		exception.ifPresent((se) -> assertThat(se, notNullValue()));
-		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
+		exception.ifPresent(se -> assertThat(se, notNullValue()));
+		exception.ifPresent(se -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
 
 	/**
@@ -315,8 +313,8 @@ public class PatientControllerTest {
 		//TODO Create OHUpdateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 	/**
@@ -330,7 +328,7 @@ public class PatientControllerTest {
 
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
 
-		ArrayList<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
+		List<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
 
 		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
@@ -362,7 +360,7 @@ public class PatientControllerTest {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(patient);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
 		this.mockMvc
 				.perform(
@@ -390,7 +388,7 @@ public class PatientControllerTest {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 
-		when(patientBrowserManagerMock.getPatientByName(eq(name))).thenReturn(patient);
+		when(patientBrowserManagerMock.getPatientByName(name)).thenReturn(patient);
 
 		this.mockMvc
 				.perform(
@@ -418,7 +416,7 @@ public class PatientControllerTest {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(patient);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
 		this.mockMvc
 				.perform(
@@ -442,7 +440,7 @@ public class PatientControllerTest {
 		Integer code = 1000;
 		String request = "/patients/search";
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(null);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		this.mockMvc
 				.perform(
@@ -482,7 +480,7 @@ public class PatientControllerTest {
 		String name = "unexistent_name";
 		String request = "/patients/search";
 
-		when(patientBrowserManagerMock.getPatientByName(eq(name))).thenReturn(null);
+		when(patientBrowserManagerMock.getPatientByName(name)).thenReturn(null);
 
 		this.mockMvc
 				.perform(
@@ -506,9 +504,9 @@ public class PatientControllerTest {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(patient);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
-		when(patientBrowserManagerMock.deletePatient(eq(patient))).thenReturn(true);
+		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(true);
 
 		this.mockMvc
 				.perform(
@@ -530,7 +528,7 @@ public class PatientControllerTest {
 		Integer code = 111;
 		String request = "/patients/{code}";
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(null);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		this.mockMvc
 				.perform(
@@ -553,9 +551,9 @@ public class PatientControllerTest {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 
-		when(patientBrowserManagerMock.getPatientById(eq(code))).thenReturn(patient);
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
-		when(patientBrowserManagerMock.deletePatient(eq(patient))).thenReturn(false);
+		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(false);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -571,8 +569,8 @@ public class PatientControllerTest {
 		//TODO Create OHDeleteAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 }

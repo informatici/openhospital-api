@@ -42,8 +42,8 @@ import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -53,8 +53,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DeliveryTypeControllerTest {
 
@@ -67,9 +65,9 @@ public class DeliveryTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DeliveryTypeController(deliveryTypeBrowserManagerMock, deliveryTypeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -87,7 +85,7 @@ public class DeliveryTypeControllerTest {
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
 
-		ArrayList<DeliveryType> results = new ArrayList<>();
+		List<DeliveryType> results = new ArrayList<>();
 		results.add(deliveryType);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
@@ -142,7 +140,7 @@ public class DeliveryTypeControllerTest {
 	public void testGetDeliveryTypes_200() throws Exception {
 		String request = "/deliverytypes";
 
-		ArrayList<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
+		List<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
 
 		List<DeliveryTypeDTO> dlvrrestTypeDTOs = deliveryTypeMapper.map2DTOList(results);
 
@@ -154,7 +152,7 @@ public class DeliveryTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
+				.andExpect(content().string(containsString(DeliveryTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

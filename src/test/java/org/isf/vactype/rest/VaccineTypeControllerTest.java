@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
@@ -42,8 +41,8 @@ import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
 import org.isf.vactype.model.VaccineType;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -53,8 +52,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VaccineTypeControllerTest {
 
@@ -67,9 +64,9 @@ public class VaccineTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineTypeController(vaccineTypeBrowserManagerMock, vaccineTypeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -84,7 +81,7 @@ public class VaccineTypeControllerTest {
 	public void testGetVaccineType_200() throws Exception {
 		String request = "/vaccinetype";
 
-		ArrayList<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
+		List<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
 
 		when(vaccineTypeBrowserManagerMock.getVaccineType())
 				.thenReturn(vaccinesTypeList);
@@ -96,7 +93,7 @@ public class VaccineTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVaccineTypeDTOs))))
+				.andExpect(content().string(containsString(VaccineTypeHelper.getObjectMapper().writeValueAsString(expectedVaccineTypeDTOs))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

@@ -68,7 +68,7 @@ public class DiseaseController {
 	}
 	
 	/**
-	 * Gets all the stored {@link Disease} with ODP flag <code>true</code>.
+	 * Gets all the stored {@link Disease} with ODP flag {@code true}.
 	 * @return the stored diseases with ODP flag true.
 	 * @throws OHServiceException
 	 */
@@ -76,7 +76,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpd() throws OHServiceException {
         LOGGER.info("Get opd diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd();
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting opd diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -93,7 +93,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpdByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseOpd(typeCode);
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting opd diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -101,15 +101,15 @@ public class DiseaseController {
 	}
 	
 	/**
-	 * Gets all the stored {@link Disease} with IPD_OUT flag <code>true</code>.
-	 * @return the stored disease with IPD flag <code>true</code>.
+	 * Gets all the stored {@link Disease} with IPD_OUT flag {@code true}.
+	 * @return the stored disease with IPD flag {@code true}.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/diseases/ipd/out", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOut() throws OHServiceException {
         LOGGER.info("Get ipd out diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut();
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd out diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,7 +117,7 @@ public class DiseaseController {
 	}
 	
 	/**
-	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_OUT <code>true</code>.
+	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_OUT {@code true}.
 	 * @param typeCode - the filter typecode.
 	 * @return the retrieved diseases.
 	 * @throws OHServiceException
@@ -126,7 +126,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOutByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get ipd out diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut(typeCode);
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd out diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -134,15 +134,15 @@ public class DiseaseController {
 	}
 	
 	/**
-	 * Gets all the stored {@link Disease} with IPD_IN flag <code>true</code>.
-	 * @return the stored disease with IPD flag <code>true</code>.
+	 * Gets all the stored {@link Disease} with IPD_IN flag {@code true}.
+	 * @return the stored disease with IPD flag {@code true}.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/diseases/ipd/in", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdIn() throws OHServiceException {
         LOGGER.info("Get ipd-in diseases");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn();
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd-in diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -150,7 +150,7 @@ public class DiseaseController {
 	}
 	
 	/**
-	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_IN <code>true</code>.
+	 * Gets all the stored {@link Disease} with the specified typecode and the flag IPD_IN {@code true}.
 	 * @param typeCode - the filter typecode.
 	 * @return the retrieved diseases.
 	 * @throws OHServiceException
@@ -159,7 +159,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdInByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get ipd-in diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn(typeCode);
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd-in diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -175,7 +175,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseases() throws OHServiceException {
         LOGGER.info("Get both ipd and opd diseases");
 	    List<Disease> diseases = diseaseManager.getDisease();
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -192,7 +192,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get both ipd and opd diseases by type code");
 	    List<Disease> diseases = diseaseManager.getDisease(typeCode);
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting diseases by type code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -208,7 +208,7 @@ public class DiseaseController {
 	public ResponseEntity<List<DiseaseDTO>> getAllDiseases() throws OHServiceException {
         LOGGER.info("Get all diseases, deleted ones too");
 	    List<Disease> diseases = diseaseManager.getDiseaseAll();
-	    if(diseases != null) {
+	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting all diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -225,7 +225,7 @@ public class DiseaseController {
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Get disease by code");
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
-	    if(disease != null) {
+	    if (disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
 	    } else {
 	    	throw new OHAPIException(new OHExceptionMessage(null, "no disease found with the specified code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -243,15 +243,15 @@ public class DiseaseController {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-		} else if(diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
+		}
+		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		if (diseaseManager.newDisease(disease) != null) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -277,13 +277,13 @@ public class DiseaseController {
 	/**
 	 * Mark as deleted the specified {@link Disease}.
 	 * @param code - the code of the disease to mark delete.
-	 * @return <code>true</code> if the disease has been marked, <code>false</code> otherwise.
+	 * @return {@code true} if the disease has been marked, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
-		if(disease != null) {
+		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", diseaseManager.deleteDisease(disease));
 			return ResponseEntity.ok(result);
@@ -296,9 +296,9 @@ public class DiseaseController {
 	
 	private ResponseEntity<List<DiseaseDTO>> computeResponse(List<Disease> diseases) {
 		List<DiseaseDTO> diseasesDTO = mapper.map2DTOList(diseases);
-        if(diseasesDTO.isEmpty()){
+        if (diseasesDTO.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
-        }else{
+        } else {
             return ResponseEntity.ok(diseasesDTO);
         }
 	}

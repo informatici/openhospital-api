@@ -21,7 +21,7 @@
  */
 package org.isf.vaccine.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -33,8 +33,13 @@ import org.isf.vactype.test.TestVaccineType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class VaccineHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static Vaccine setup(String code) throws OHException {
 		TestVaccine testVaccine = new TestVaccine();
@@ -46,15 +51,15 @@ public class VaccineHelper {
 
 	public static String asJsonString(VaccineDTO vaccineDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(vaccineDTO);
+			return getObjectMapper().writeValueAsString(vaccineDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ArrayList<Vaccine> setupVaccineList(int size) {
-		return (ArrayList<Vaccine>) IntStream.range(0, size)
+	public static List<Vaccine> setupVaccineList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return VaccineHelper.setup("" + i);
@@ -63,6 +68,16 @@ public class VaccineHelper {
 					}
 					return null;
 				}).collect(Collectors.toList());
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }

@@ -28,7 +28,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdmittedPatientMapper extends GenericMapper<AdmittedPatient, AdmittedPatientDTO> {
+
 	public AdmittedPatientMapper() {
 		super(AdmittedPatient.class, AdmittedPatientDTO.class);
 	}
+
 }

@@ -67,7 +67,7 @@ public class PregnantTreatmentTypeController {
 	/**
 	 * Create a new {@link PregnantTreatmentType}.
 	 * @param pregnantTreatmentTypeDTO
-	 * @return <code>true</code> if the pregnant treatment type has been stored, <code>false</code> otherwise.
+	 * @return {@code true} if the pregnant treatment type has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -86,7 +86,7 @@ public class PregnantTreatmentTypeController {
 	/**
 	 * Updates the specified {@link PregnantTreatmentType}.
 	 * @param pregnantTreatmentTypeDTO
-	 * @return <code>true</code> if the pregnant treatment type has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the pregnant treatment type has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,11 +94,13 @@ public class PregnantTreatmentTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update pregnanttreatmenttypes code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
-		if (!pregTreatTypeManager.isCodePresent(code))
+		if (!pregTreatTypeManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type not found!", OHSeverityLevel.ERROR));
+		}
 		boolean isUpdated = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
-		if (!isUpdated)
+		if (!isUpdated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type is not updated!", OHSeverityLevel.ERROR));
+		}
 		return ResponseEntity.ok(pregTreatType.getCode());
 	}
 
@@ -122,7 +124,7 @@ public class PregnantTreatmentTypeController {
 	/**
 	 * Delete {@link PregnantTreatmentType} for the specified code.
 	 * @param code
-	 * @return <code>true</code> if the {@link PregnantTreatmentType} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link PregnantTreatmentType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

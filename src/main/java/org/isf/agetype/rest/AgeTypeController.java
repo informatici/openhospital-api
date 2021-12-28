@@ -93,14 +93,14 @@ public class AgeTypeController {
 	 */
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
-		if(ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
+		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
-		ArrayList<AgeType> ageTypes = new ArrayList<>();
+		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
-		if(ageTypeManager.updateAgeType(ageTypes)) {
+		if (ageTypeManager.updateAgeType(ageTypes)) {
 			return ResponseEntity.ok(ageTypeDTO);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, 
@@ -120,10 +120,10 @@ public class AgeTypeController {
 		LOGGER.info("Get age type by age: {}", age);
 		String result = ageTypeManager.getTypeByAge(age);
 		Map<String, String> responseBody = new HashMap<>();
-		if(result != null){
+		if (result != null){
 			responseBody.put("code", result);
 			return ResponseEntity.ok(responseBody);
-        }else{
+        } else {
         	LOGGER.info("No corresponding age code for the given age");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
         }
@@ -139,9 +139,9 @@ public class AgeTypeController {
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		LOGGER.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
-		if(result != null){
+		if (result != null){
 			return ResponseEntity.ok(result);
-        }else{
+        } else {
         	LOGGER.info("No corresponding age code for the given index");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }

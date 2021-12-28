@@ -56,7 +56,7 @@ public class PriceDTO
 	
     private boolean editable;
 	
-	private int hashCode = 0;
+	private int hashCode;
 
 	@ApiModelProperty(hidden= true)
 	public boolean isEditable() {

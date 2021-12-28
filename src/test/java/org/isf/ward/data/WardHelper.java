@@ -21,7 +21,7 @@
  */
 package org.isf.ward.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -32,24 +32,27 @@ import org.isf.ward.test.TestWard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class WardHelper {
 
+	private static ObjectMapper objectMapper;
+
 	public static Ward setup() throws OHException {
 		TestWard testWard = new TestWard();
-		Ward ward = testWard.setup(false);
-		return ward;
+		return testWard.setup(false);
 	}
 
 	public static Ward setup(int id) throws OHException {
 		TestWard testWard = new TestWard();
-		Ward ward = testWard.setup(false);
 		//ward.setCode(ward.getCode()+id);
-		return ward;
+		return testWard.setup(false);
 	}
 
-	public static ArrayList<Ward> setupWardList(int size) {
-		return (ArrayList<Ward>) IntStream.range(0, size)
+	public static List<Ward> setupWardList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return WardHelper.setup(i);
@@ -58,16 +61,25 @@ public class WardHelper {
 					}
 					return null;
 				}).collect(Collectors.toList());
-
 	}
 
 	public static String asJsonString(WardDTO wardDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(wardDTO);
+			return getObjectMapper().writeValueAsString(wardDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }

@@ -72,7 +72,7 @@ public class MedicalController {
 	public ResponseEntity<MedicalDTO> getMedical(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Retrieving medical with code {} ...", code);
 		Medical medical = medicalManager.getMedical(code);
-		if(medical == null) {
+		if (medical == null) {
 			LOGGER.info("Medical not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
 		} else {
@@ -92,19 +92,19 @@ public class MedicalController {
 			throws OHServiceException {
 		LOGGER.info("Retrieving all the medicals...");
 		List<Medical> medicals;
-		if(sortBy == null || sortBy == MedicalSortBy.NONE) {
+		if (sortBy == null || sortBy == MedicalSortBy.NONE) {
 			medicals = medicalManager.getMedicals();
 		}
-		else if(sortBy == MedicalSortBy.CODE) {
+		else if (sortBy == MedicalSortBy.CODE) {
 			medicals = medicalManager.getMedicalsSortedByCode();
 		} else { //sortBy == MedicalSortBy.NAME
 			medicals = medicalManager.getMedicalsSortedByName();
 		}
-		if(medicals == null) {
+		if (medicals == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving medicals!", OHSeverityLevel.ERROR));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
-		if(mappedMedicals.isEmpty()) {
+		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
@@ -117,8 +117,8 @@ public class MedicalController {
 	 * Returns all the medicals with the specified criteria.
 	 * @param description - the medical description
 	 * @param type - the medical type
-	 * @param critical - <code>true</code> to include only medicals under critical level
-	 * @param nameSorted - if <code>true</code> return the list in alphabetical order
+	 * @param critical - {@code true} to include only medicals under critical level
+	 * @param nameSorted - if {@code true} return the list in alphabetical order
 	 * @return
 	 * @throws OHServiceException
 	 */
@@ -130,27 +130,27 @@ public class MedicalController {
 			@RequestParam(name="name_sorted", defaultValue="false") boolean nameSorted) throws OHServiceException {
 		LOGGER.info("Filtering the medicals...");
 		List<Medical> medicals = null;
-		if(description != null && type != null) {
+		if (description != null && type != null) {
 			medicals = medicalManager.getMedicals(description, type, critical);
 		}
-		else if(description != null && type == null) {
+		else if (description != null && type == null) {
 			medicals = medicalManager.getMedicals(description);
 		}
-		else if(description == null && type != null) {
+		else if (description == null && type != null) {
 			medicals = medicalManager.getMedicals(type, nameSorted);
 		}
-		else if(nameSorted){
+		else if (nameSorted){
 			medicals = medicalManager.getMedicals(null, nameSorted);
 		}
 		else {
 			medicalManager.getMedicals();
 		}
 		
-		if(medicals == null) {
+		if (medicals == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving medicals!", OHSeverityLevel.ERROR));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
-		if(mappedMedicals.isEmpty()) {
+		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
@@ -162,8 +162,8 @@ public class MedicalController {
 	/**
 	 * Saves the specified {@link Medical}.
 	 * @param medicalDTO - the medical to save
-	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
-	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the medical was created
+	 * @param ignoreSimilar - if {@code true}, it ignore the warning "similarsFoundWarning"
+	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the medical was created
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -183,8 +183,8 @@ public class MedicalController {
 	/**
 	 * Updates the specified {@link Medical}.
 	 * @param medicalDTO - the medical to update
-	 * @param ignoreSimilar - if <code>true</code>, it ignore the warning "similarsFoundWarning"
-	 * @return {@link ResponseEntity} with status <code>HttpStatus.OK</code> if the medical was updated
+	 * @param ignoreSimilar - if {@code true}, it ignore the warning "similarsFoundWarning"
+	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical was updated
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -204,13 +204,13 @@ public class MedicalController {
 	/**
 	 * Deletes the specified {@link Medical}.
 	 * @param code the medical to delete.
-	 * @return <code>true</code> if the medical has been deleted.
+	 * @return {@code true} if the medical has been deleted.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(code);
-		if(medical == null) {
+		if (medical == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
 		}
 		boolean isDeleted = medicalManager.deleteMedical(medical);

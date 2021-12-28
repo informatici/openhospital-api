@@ -24,6 +24,7 @@ package org.isf.shared.mapper;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.module.jsr310.Jsr310Module;
 
 /**
  * @author akashytsa
@@ -36,10 +37,12 @@ public class OHModelMapper {
         modelMapper = new ModelMapper();
         modelMapper.addConverter(new BlobToByteArrayConverter());
         modelMapper.addConverter(new ByteArrayToBlobConverter());
+        modelMapper.registerModule(new Jsr310Module());
         return modelMapper;
     }
 
     public static ModelMapper getObjectMapper() {
         return modelMapper == null ? getInstance() : modelMapper;
     }
+
 }

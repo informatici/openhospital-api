@@ -83,7 +83,7 @@ public class MedicalTypeController {
 	/**
 	 * Saves the specified medical type.
 	 * @param medicalTypeDTO the medical type to save.
-	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the medical type has been saved.
+	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the medical type has been saved.
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,14 +98,15 @@ public class MedicalTypeController {
 	/**
 	 * Updates the specified medical type.
 	 * @param medicalTypeDTO the medical type to update.
-	 * @return {@link ResponseEntity} with status <code>HttpStatus.OK</code> if the medical type has been updated.
+	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical type has been updated.
 	 * @throws OHServiceException 
 	 */
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
-		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode()))
+		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
+		}
 		boolean isUpdated = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not updated!", OHSeverityLevel.ERROR));
@@ -116,7 +117,7 @@ public class MedicalTypeController {
 	/**
 	 * Checks if the specified medical type code is already used.
 	 * @param code - the code to check.
-	 * @return <code>true</code> if the code is used, <code>false</code> otherwise.
+	 * @return {@code true} if the code is used, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/medicaltypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -127,7 +128,7 @@ public class MedicalTypeController {
 	/**
 	 * Deletes the specified medical type.
 	 * @param code - the code of the medical type to delete.
-	 * @return <code>true</code> if the medical type has been deleted.
+	 * @return {@code true} if the medical type has been deleted.
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/medicaltypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

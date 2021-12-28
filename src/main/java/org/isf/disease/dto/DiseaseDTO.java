@@ -55,7 +55,7 @@ public class DiseaseDTO {
 	@ApiModelProperty(notes = "indicates whether the disease is an IPD-OUT disease", example="true")
 	private boolean ipdOutInclude;
 	
-	private int hashCode = 0;
+	private int hashCode;
 
 	private int lock;
 

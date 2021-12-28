@@ -117,9 +117,8 @@ public class ExaminationController {
         PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(examinationBrowserManager.getDefaultPatientExamination(patient));
         if (patientExaminationDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(patientExaminationDTO);
         }
+        return ResponseEntity.ok(patientExaminationDTO);
     }
 
     @GetMapping(value = "/examinations/fromLastPatientExamination/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

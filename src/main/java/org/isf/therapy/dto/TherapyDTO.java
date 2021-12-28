@@ -21,7 +21,7 @@
  */
 package org.isf.therapy.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.isf.medical.dto.MedicalDTO;
 
@@ -36,7 +36,7 @@ public class TherapyDTO {
 	private Integer patID;
 	
 	@ApiModelProperty(notes="The dates of the therapy", position = 3)
-	private Date[] dates;
+	private LocalDateTime[] dates;
 	
 	@ApiModelProperty(notes="The medical associated to the therapy", position = 4)
 	private MedicalDTO medical;
@@ -62,7 +62,7 @@ public class TherapyDTO {
 	public TherapyDTO() {
 	}
 
-	public TherapyDTO(Integer therapyID, Integer patID, Date[] dates, MedicalDTO medical, Double qty, String units,
+	public TherapyDTO(Integer therapyID, Integer patID, LocalDateTime[] dates, MedicalDTO medical, Double qty, String units,
 			Integer freqInDay, String note, boolean notify, boolean sms) {
 		this.therapyID = therapyID;
 		this.patID = patID;
@@ -84,7 +84,7 @@ public class TherapyDTO {
 		return this.patID;
 	}
 
-	public Date[] getDates() {
+	public LocalDateTime[] getDates() {
 		return this.dates;
 	}
 
@@ -124,7 +124,7 @@ public class TherapyDTO {
 		this.patID = patID;
 	}
 
-	public void setDates(Date[] dates) {
+	public void setDates(LocalDateTime[] dates) {
 		this.dates = dates;
 	}
 
