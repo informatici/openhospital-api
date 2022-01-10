@@ -238,20 +238,21 @@ public class DiseaseController {
 	 * @return the stored disease
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		if (diseaseManager.newDisease(disease) != null) {
-        	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
-        }
-        throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
+		}
+		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
