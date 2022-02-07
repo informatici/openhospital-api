@@ -21,7 +21,6 @@
  */
 package org.isf.accounting.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,6 @@ import org.isf.accounting.test.TestBillItems;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BillItemsDTOHelper {
 
@@ -41,13 +39,12 @@ public class BillItemsDTOHelper {
 		Bill bill = BillHelper.setup();
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems = tbi.setup(bill, false);
-		BillItemsDTO billItemsDTO = billItemsMapper.map2DTO(billItems);
-		return billItemsDTO;
+		return billItemsMapper.map2DTO(billItems);
 	}
 
 	public static String asJsonString(BillItemsDTO billItemsDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(billItemsDTO);
+			return BillHelper.getObjectMapper().writeValueAsString(billItemsDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -56,16 +53,15 @@ public class BillItemsDTOHelper {
 
 	public static String asJsonString(List<BillItemsDTO> billItemsDTOList) {
 		try {
-			return new ObjectMapper().writeValueAsString(billItemsDTOList);
+			return BillHelper.getObjectMapper().writeValueAsString(billItemsDTOList);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ArrayList<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList, BillItemsMapper billItemsMapper) {
-		ArrayList<BillItems> billItems = new ArrayList<>(
-				billItemsDTOList.stream().map(pay -> billItemsMapper.map2Model(pay)).collect(Collectors.toList()));
-		return billItems;
+	public static List<BillItems> toModelList(List<BillItemsDTO> billItemsDTOList, BillItemsMapper billItemsMapper) {
+		return billItemsDTOList.stream().map(billItemsMapper::map2Model).collect(Collectors.toList());
 	}
+
 }

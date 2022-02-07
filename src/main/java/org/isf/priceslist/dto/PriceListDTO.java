@@ -41,7 +41,7 @@ public class PriceListDTO {
 	@ApiModelProperty(notes = "the currency", example="FCFA", position = 4)
 	private String currency;
 	
-	private int hashCode = 0;
+	private int hashCode;
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {

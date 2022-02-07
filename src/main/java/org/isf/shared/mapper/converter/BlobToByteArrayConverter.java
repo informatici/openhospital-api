@@ -40,7 +40,7 @@ public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
 	protected byte[] convert(Blob data){
         byte[] blobAsBytes = new byte[0];
         try {
-            if(data != null) {
+            if (data != null) {
                 int blobLength = (int) data.length();
                 blobAsBytes = data.getBytes(1, blobLength);
                 data.free();

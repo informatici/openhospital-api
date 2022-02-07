@@ -21,7 +21,6 @@
  */
 package org.isf.visits.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,8 +34,13 @@ import org.isf.ward.data.WardHelper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class VisitHelper {
+
+	private  static ObjectMapper objectMapper;
 
 	public static Visit setup(int id) throws OHException {
 		TestVisit testVisits = new TestVisit();
@@ -47,7 +51,7 @@ public class VisitHelper {
 
 	public static String asJsonString(VisitDTO visitDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(visitDTO);
+			return getObjectMapper().writeValueAsString(visitDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -56,15 +60,15 @@ public class VisitHelper {
 
 	public static String asJsonString(List<VisitDTO> visitDTOList) {
 		try {
-			return new ObjectMapper().writeValueAsString(visitDTOList);
+			return getObjectMapper().writeValueAsString(visitDTOList);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static ArrayList<Visit> setupVisitList(int size) {
-		return (ArrayList<Visit>) IntStream.range(0, size)
+	public static List<Visit> setupVisitList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return VisitHelper.setup(i);
@@ -73,6 +77,16 @@ public class VisitHelper {
 					}
 					return null;
 				}).collect(Collectors.toList());
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }

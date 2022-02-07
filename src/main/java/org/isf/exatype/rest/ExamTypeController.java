@@ -78,7 +78,7 @@ public class ExamTypeController {
     }
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
+    public ResponseEntity<Boolean> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
 
         if (!updateExamType.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType code mismatch", OHSeverityLevel.ERROR));
@@ -108,7 +108,7 @@ public class ExamTypeController {
     }
 
     @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteExamType(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Delete exams code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!examType.isPresent()) {
@@ -119,4 +119,5 @@ public class ExamTypeController {
         }
         return ResponseEntity.ok(true);
     }
+
 }

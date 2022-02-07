@@ -67,7 +67,7 @@ public class DeliveryResultTypeController {
 	/**
 	 * Create a new {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
-	 * @return <code>true</code> if the {@link DeliveryResultType} has been stored, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DeliveryResultType} has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,7 +94,7 @@ public class DeliveryResultTypeController {
 	/**
 	 * Update the specified {@link DeliveryResultType}.
 	 * @param dlvrrestTypeDTO
-	 * @return <code>true</code> if the {@link DeliveryResultType} has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DeliveryResultType} has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -102,14 +102,16 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
-		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode()))
+		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
+		}
 		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
-		if (!isUpdated)
+		if (!isUpdated) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return ResponseEntity.ok(dlvrrestType.getCode());
 	}
 
@@ -133,7 +135,7 @@ public class DeliveryResultTypeController {
 	/**
 	 * Delete {@link DeliveryResultType} for the specified code.
 	 * @param code
-	 * @return <code>true</code> if the {@link DeliveryResultType} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DeliveryResultType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

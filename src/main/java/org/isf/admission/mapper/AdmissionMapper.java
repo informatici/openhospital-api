@@ -28,7 +28,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdmissionMapper extends GenericMapper<Admission, AdmissionDTO> {
+
 	public AdmissionMapper() {
 		super(Admission.class, AdmissionDTO.class);
 	}
+
 }

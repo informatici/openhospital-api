@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.distype.data.DiseaseTypeHelper;
@@ -42,8 +41,8 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -53,8 +52,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseTypeControllerTest {
 
@@ -67,9 +64,9 @@ public class DiseaseTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DiseaseTypeController(diseaseTypeBrowserManager, diseaseTypeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -84,7 +81,7 @@ public class DiseaseTypeControllerTest {
 	public void testGetAllDiseaseTypes_200() throws Exception {
 		String request = "/diseasetypes";
 
-		ArrayList<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
+		List<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
 
 		List<DiseaseTypeDTO> parsedResults = diseaseTypeMapper.map2DTOList(results);
 
@@ -96,7 +93,7 @@ public class DiseaseTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(parsedResults))))
+				.andExpect(content().string(containsString(DiseaseTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

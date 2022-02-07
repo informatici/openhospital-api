@@ -65,7 +65,7 @@ public class MalnutritionController {
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
 	 * @param malnutritionDTO the malnutrition to store.
-	 * @return {@link ResponseEntity} with status <code>HttpStatus.CREATED</code> if the malnutrition has been stored
+	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the malnutrition has been stored
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,11 +90,11 @@ public class MalnutritionController {
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
-		if(malnutritions == null) {
+		if (malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
-		if(mappedMalnutritions.isEmpty()) {
+		if (mappedMalnutritions.isEmpty()) {
 			LOGGER.info("No malnutrition control found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
 		} else {
@@ -112,7 +112,7 @@ public class MalnutritionController {
 	@GetMapping(value = "/malnutritions/last/{id_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MalnutritionDTO> getLastMalnutrition(@PathVariable("id_patient") int patientID) throws OHServiceException {
 		Malnutrition foundMalnutrition = manager.getLastMalnutrition(patientID);
-		if(foundMalnutrition == null) {
+		if (foundMalnutrition == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "No malnutrition found!", OHSeverityLevel.ERROR));
 		} else {
 			return ResponseEntity.ok(mapper.map2DTO(foundMalnutrition));
@@ -134,20 +134,20 @@ public class MalnutritionController {
 	/**
 	 * Deletes a given {@link Malnutrition}.
 	 * @param malnutritionDTO - the malnutrition to delete.
-	 * @return <code>true</code> if the malnutrition has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the malnutrition has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
 		List<Malnutrition> malnutritions = manager.getMalnutrition(malnutritionDTO.getAdmission().getId()+"");
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
-		if(malnutritions != null) {
+		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions
 					.stream()
 					.filter(malnutrition -> malnutrition.getCode() == malnutritionDTO.getCode())
 					.collect(Collectors.toList());
 		}
-		if(matchedMalnutritions.isEmpty()) {
+		if (matchedMalnutritions.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition control not found!", OHSeverityLevel.ERROR));
 		}
 		boolean isDeleted = manager.deleteMalnutrition(matchedMalnutritions.get(0));

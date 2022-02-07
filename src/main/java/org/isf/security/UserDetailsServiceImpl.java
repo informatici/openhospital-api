@@ -22,6 +22,7 @@
 package org.isf.security;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
@@ -54,7 +55,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username + " was not found");
         }
-        ArrayList<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getUserGroupName().getCode()));
         org.springframework.security.core.userdetails.User userDetails =
                 new org.springframework.security.core.userdetails.User(

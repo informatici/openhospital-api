@@ -67,7 +67,7 @@ public class DischargeTypeController {
 	/**
 	 * Create a new {@link DischargeType}
 	 * @param dischTypeDTO
-	 * @return <code>true</code> if the {@link DischargeType} has been stored, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DischargeType} has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -91,20 +91,22 @@ public class DischargeTypeController {
 	/**
 	 * Update the specified {@link DischargeType}
 	 * @param dischTypeDTO
-	 * @return <code>true</code> if the {@link DischargeType} has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DischargeType} has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<String> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
-		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode()))
+		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
+		}
 		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
-		if (!isUpdated)
+		if (!isUpdated) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "discharge type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return ResponseEntity.ok(dischType.getCode());
 	}
 
@@ -128,7 +130,7 @@ public class DischargeTypeController {
 	/**
 	 * Delete {@link DischargeType} for the specified code.
 	 * @param code
-	 * @return <code>true</code> if the {@link DischargeType} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link DischargeType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

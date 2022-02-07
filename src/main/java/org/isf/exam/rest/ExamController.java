@@ -88,7 +88,7 @@ public class ExamController {
     }
 
     @PutMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
+    public ResponseEntity<Boolean> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam code mismatch", OHSeverityLevel.ERROR));
@@ -135,7 +135,7 @@ public class ExamController {
     }
 
     @DeleteMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteExam(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteExam(@PathVariable String code) throws OHServiceException {
         Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!exam.isPresent()) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam not Found!", OHSeverityLevel.WARNING));

@@ -90,8 +90,8 @@ public class VaccineTypeController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
-        LOGGER.info("Create vaccine type: {}", newVaccineType.toString());
+    public ResponseEntity<Boolean> newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
+        LOGGER.info("Create vaccine type: {}", newVaccineType);
         boolean isCreated;
         try {
             isCreated = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
@@ -112,8 +112,8 @@ public class VaccineTypeController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
-        LOGGER.info("Update vaccine type: {}", updateVaccineType.toString());
+    public ResponseEntity<Boolean> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
+        LOGGER.info("Update vaccine type: {}", updateVaccineType);
         boolean isUpdated = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (!isUpdated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
@@ -130,9 +130,9 @@ public class VaccineTypeController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccinetype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteVaccineType(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteVaccineType(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete vaccine type code: {}", code);
-        boolean isDeleted = false;
+        boolean isDeleted;
         VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
         if (vaccineType!=null){
             isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
@@ -140,9 +140,8 @@ public class VaccineTypeController {
                 throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not deleted!", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     /**

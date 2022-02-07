@@ -21,7 +21,7 @@
  */
 package org.isf.operation.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,8 +44,8 @@ public class OperationHelper {
 		return testOperation.setup(operationType, false);
 	}
 
-	public static ArrayList<Operation> setupOperationList(int size) {
-		return (ArrayList<Operation>) IntStream.range(0, size)
+	public static List<Operation> setupOperationList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return OperationHelper.setup();

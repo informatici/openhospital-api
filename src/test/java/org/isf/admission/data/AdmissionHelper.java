@@ -21,7 +21,7 @@
  */
 package org.isf.admission.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,8 +51,13 @@ import org.isf.ward.test.TestWard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class AdmissionHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static Admission setup() throws OHException {
 		TestAdmission testAdmission = new TestAdmission();
@@ -82,8 +87,8 @@ public class AdmissionHelper {
 				deliveryType, deliveryResult, false);
 	}
 
-	public static ArrayList<Admission> setupAdmissionList(int size) {
-		return (ArrayList<Admission>) IntStream.range(1, size + 1)
+	public static List<Admission> setupAdmissionList(int size) {
+		return IntStream.range(1, size + 1)
 				.mapToObj(i -> {
 							Admission ep = null;
 							try {
@@ -98,7 +103,7 @@ public class AdmissionHelper {
 
 	public static String asJsonString(AdmissionDTO admissionDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(admissionDTO);
+			return getObjectMapper().writeValueAsString(admissionDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -107,6 +112,16 @@ public class AdmissionHelper {
 
 	public static AdmissionDTO setup(AdmissionMapper admissionMapper) throws OHException {
 		return admissionMapper.map2DTO(AdmissionHelper.setup());
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }

@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.admtype.data.AdmissionTypeDTOHelper;
 import org.isf.admtype.dto.AdmissionTypeDTO;
@@ -39,8 +40,8 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -62,9 +63,9 @@ public class AdmissionTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new AdmissionTypeController(admtManagerMock, admissionTypemapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -85,7 +86,7 @@ public class AdmissionTypeControllerTest {
 				.thenReturn(isCreated);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
+		List<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);
@@ -133,7 +134,7 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
+		List<AdmissionType> admtFounds = new ArrayList<>();
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);

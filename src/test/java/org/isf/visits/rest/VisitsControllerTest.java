@@ -30,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
@@ -41,8 +40,8 @@ import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -52,8 +51,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VisitsControllerTest {
 
@@ -66,9 +63,9 @@ public class VisitsControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VisitsController(visitManagerMock, visitMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -84,7 +81,7 @@ public class VisitsControllerTest {
 		String request = "/visit/{patID}";
 
 		int patID = 0;
-		ArrayList<Visit> visitsList = VisitHelper.setupVisitList(4);
+		List<Visit> visitsList = VisitHelper.setupVisitList(4);
 
 		when(visitManagerMock.getVisits(patID))
 				.thenReturn(visitsList);
@@ -96,7 +93,7 @@ public class VisitsControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVisitsDTOs))))
+				.andExpect(content().string(containsString(VisitHelper.getObjectMapper().writeValueAsString(expectedVisitsDTOs))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -128,7 +125,7 @@ public class VisitsControllerTest {
 	public void testNewVisits_201() throws Exception {
 		String request = "/visits";
 
-		ArrayList<Visit> visitsList = VisitHelper.setupVisitList(4);
+		List<Visit> visitsList = VisitHelper.setupVisitList(4);
 
 		List<VisitDTO> body = visitMapper.map2DTOList(visitsList);
 
