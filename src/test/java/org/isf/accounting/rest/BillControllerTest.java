@@ -26,10 +26,10 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,10 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,16 +70,18 @@ import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
+import org.isf.shared.Constants;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.testing.rest.ControllerBaseTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.module.jsr310.Jsr310Module;
 import org.slf4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -89,8 +90,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author Emerson Castaneda
@@ -118,16 +117,19 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
+
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
+		modelMapper.registerModule(new Jsr310Module());
+
 		ReflectionTestUtils.setField(billMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billItemsMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billPaymentsMapper, "modelMapper", modelMapper);
@@ -149,8 +151,8 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
-		exception.ifPresent((se) -> assertThat(se, notNullValue()));
-		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
+		exception.ifPresent(se -> assertThat(se, notNullValue()));
+		exception.ifPresent(se -> assertThat(se, instanceOf(HttpMediaTypeNotSupportedException.class)));
 
 	}
 
@@ -173,8 +175,8 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
-		exception.ifPresent((se) -> assertThat(se, notNullValue()));
-		exception.ifPresent((se) -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
+		exception.ifPresent(se -> assertThat(se, notNullValue()));
+		exception.ifPresent(se -> assertThat(se, instanceOf(HttpMessageNotReadableException.class)));
 	}
 
 	@Test
@@ -205,8 +207,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 	@Test
@@ -220,9 +222,9 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().getPatient().setCode(code);
 		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
-		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
-		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		when(billManagerMock.deleteBill(eq(bill))).thenReturn(true);
+		when(patientManagerMock.getPatientByName(bill.getPatName())).thenReturn(null); //FIXME: why we were searching by name?
+		when(billManagerMock.getBill(id)).thenReturn(bill);
+		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -239,8 +241,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
-		oHAPIException.ifPresent((se) -> assertThat(se, notNullValue()));
-		oHAPIException.ifPresent((se) -> assertThat(se, instanceOf(OHAPIException.class)));
+		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
+		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
 
 	@Test
@@ -258,8 +260,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		//Patient patient = bill.getPatient();
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
-		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
-		ArrayList<PriceList> priceListList = new ArrayList<>();
+		when(billManagerMock.getBill(id)).thenReturn(bill);
+		List<PriceList> priceListList = new ArrayList<>();
 
 		PriceList priceList = bill.getPriceList();
 
@@ -272,16 +274,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		// public boolean updateBill(Bill updateBill,
 		//		List<BillItems> billItems, 
 		//		List<BillPayments> billPayments) throws OHServiceException 
-		//ArrayList<BillItems> billItemsArrayList = new ArrayList(newFullBillDTO.getBillItems());
-		//billItemsArrayList.addAll(newFullBillDTO.getBillItems());
+		//List<BillItems> billItemsList = new ArrayList(newFullBillDTO.getBillItems());
+		//billItemsList.addAll(newFullBillDTO.getBillItems());
 
-		ArrayList<BillItems> billItemsArrayList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItems(), billItemsMapper);
+		List<BillItems> billItemsList = BillItemsDTOHelper.toModelList(newFullBillDTO.getBillItems(), billItemsMapper);
 
-		ArrayList<BillPayments> billPaymentsArrayList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPayments(), billPaymentsMapper);
+		List<BillPayments> billPaymentsList = BillPaymentsDTOHelper.toModelList(newFullBillDTO.getBillPayments(), billPaymentsMapper);
 
 		//TODO  check eq(bill) case
-		//when(billManagerMock.updateBill(eq(bill), eq(billItemsArrayList), eq(billPaymentsArrayList)))
-		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsArrayList), eq(billPaymentsArrayList)))
+		//when(billManagerMock.updateBill(bill, billItemsArrayList, billPaymentsList))
+		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsList), eq(billPaymentsList)))
 				.thenReturn(true);
 
 		this.mockMvc
@@ -304,10 +306,10 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		ArrayList<BillItems> itemsDTOSExpected = new ArrayList<>();
+		List<BillItems> itemsDTOSExpected = new ArrayList<>();
 		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
-		when(billManagerMock.getItems(eq(id))).thenReturn(itemsDTOSExpected);
+		when(billManagerMock.getItems(id)).thenReturn(itemsDTOSExpected);
 
 		this.mockMvc
 				.perform(
@@ -316,7 +318,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
+				.andExpect(content().string(containsString(BillHelper.getObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
 				.andReturn();
 	}
 
@@ -342,7 +344,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Bill bill = BillHelper.setup();
 		bill.setId(id);
 
-		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
+		when(billManagerMock.getBill(id)).thenReturn(bill);
 
 		this.mockMvc
 				.perform(
@@ -362,9 +364,9 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		Bill bill = BillHelper.setup();
 
-		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
+		when(billManagerMock.getBill(id)).thenReturn(bill);
 
-		when(billManagerMock.deleteBill(eq(bill))).thenReturn(true);
+		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		this.mockMvc
 				.perform(
@@ -381,11 +383,11 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer code = 123;
 		String request = "/bills/pending/affiliate?patient_code={code}";
 
-		ArrayList<Bill> billList = BillHelper.genArrayList(2);
+		List<Bill> billList = BillHelper.genList(2);
 		BillDTO expectedBillDTO1 = billMapper.map2DTO(billList.get(0));
 		BillDTO expectedBillDTO2 = billMapper.map2DTO(billList.get(1));
 
-		when(billManagerMock.getPendingBillsAffiliate(eq(code))).thenReturn(billList);
+		when(billManagerMock.getPendingBillsAffiliate(code)).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -403,14 +405,14 @@ public class BillControllerTest extends ControllerBaseTest {
 	public void when_post_searchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
 		String request = "/bills/search/by/payments";
 
-		ArrayList<BillPayments> billsPaymentsList = BillPaymentsDTOHelper.genListModel(2, billPaymentsMapper);
-		ArrayList<BillPaymentsDTO> billsPaymentsDTOList = BillPaymentsDTOHelper.genArrayList(2, billPaymentsMapper);
+		List<BillPayments> billsPaymentsList = BillPaymentsDTOHelper.genListModel(2, billPaymentsMapper);
+		List<BillPaymentsDTO> billsPaymentsDTOList = BillPaymentsDTOHelper.genList(2, billPaymentsMapper);
 
-		ArrayList<Bill> billList = BillHelper.genArrayList(2);
+		List<Bill> billList = BillHelper.genList(2);
 		BillDTO expectedBillDTO1 = billMapper.map2DTO(billList.get(0));
 		BillDTO expectedBillDTO2 = billMapper.map2DTO(billList.get(1));
 
-		when(billManagerMock.getBills(eq(billsPaymentsList))).thenReturn(billList);
+		when(billManagerMock.getBills(billsPaymentsList)).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -430,13 +432,13 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer code = 123;
 		String request = "/bills/pending?patient_code={code}";
 
-		ArrayList<Bill> billList = BillHelper.genArrayList(2);
+		List<Bill> billList = BillHelper.genList(2);
 		BillDTO expectedBillDTO1 = billMapper.map2DTO(billList.get(0));
 		BillDTO expectedBillDTO2 = billMapper.map2DTO(billList.get(1));
 
 		List<BillDTO> billDTOS = billList.stream().map(b -> billMapper.map2DTO(b)).collect(Collectors.toList());
 
-		when(billManagerMock.getPendingBills(eq(code))).thenReturn(billList);
+		when(billManagerMock.getPendingBills(code)).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -455,13 +457,13 @@ public class BillControllerTest extends ControllerBaseTest {
 	public void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK()
 			throws Exception {
 		String request = "/bills/search/by/item?datefrom={dateFrom}&dateto={dateTo}";
-		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
-		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		String dateFrom = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
+		String dateTo = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
 
 		BillItemsDTO billItemsDTO = BillItemsDTOHelper.setup(billItemsMapper);
 		BillItems billItem = billItemsMapper.map2Model(billItemsDTO);
 
-		ArrayList<Bill> billList = new ArrayList<>();
+		List<Bill> billList = new ArrayList<>();
 		Integer id = 0;
 		Bill bill = BillHelper.setup(id);
 		billList.add(bill);
@@ -469,7 +471,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO add test(s) with incorrect formatted dates returning an exception
 		//TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
 		//TODO add test(s) with different BillItem returning an empty list and asserting  HttpStatus.NO_CONTENT
-		when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(billItem))).thenReturn(billList);
+		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(billItem))).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -487,20 +489,20 @@ public class BillControllerTest extends ControllerBaseTest {
 	@Test
 	public void when_get_searchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
 		String request = "/bills?datefrom={dateFrom}&dateto={dateTo}&patient_code={patient_code}";
-		String dateFrom = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
-		String dateTo = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
+		String dateFrom = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
+		String dateTo = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
 		Integer patientCode = 1;
 
-		ArrayList<Bill> billList = BillHelper.genArrayList(1);
+		List<Bill> billList = BillHelper.genList(1);
 
 		Patient patient = new TestPatient().setup(true);
 
-		when(patientManagerMock.getPatientById(eq(patientCode))).thenReturn(patient);
+		when(patientManagerMock.getPatientById(patientCode)).thenReturn(patient);
 
 		//TODO add test(s) with incorrect formatted dates returning an exception
 		//TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
 		//TODO add test(s) with a different patient returning an empty list and asserting  HttpStatus.NO_CONTENT
-		when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(patient))).thenReturn(billList);
+		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(patient))).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -523,7 +525,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		TestBillItems tbi = new TestBillItems();
 		BillItems billItems1 = tbi.setup(bill, false);
 		BillItems billItems2 = tbi.setup(bill, false);
-		ArrayList<BillItems> billItemsList = new ArrayList<>();
+		List<BillItems> billItemsList = new ArrayList<>();
 		billItemsList.add(billItems1);
 		billItemsList.add(billItems2);
 
@@ -551,7 +553,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		List<BillPaymentsDTO> billPaymentsDTOList = BillPaymentsDTOHelper.genList(3, billPaymentsMapper);
 
-		when(billManagerMock.getPayments(eq(billId))).thenReturn(BillPaymentsDTOHelper.toModelList(billPaymentsDTOList, billPaymentsMapper));
+		when(billManagerMock.getPayments(billId)).thenReturn(BillPaymentsDTOHelper.toModelList(billPaymentsDTOList, billPaymentsMapper));
 
 		this.mockMvc
 				.perform(

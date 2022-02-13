@@ -40,8 +40,8 @@ import org.isf.agetype.model.AgeType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -51,8 +51,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AgeTypeControllerTest {
 
@@ -65,9 +63,9 @@ public class AgeTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new AgeTypeController(ageTypeManagerMock, ageTypeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -82,7 +80,7 @@ public class AgeTypeControllerTest {
 	public void testGetAllAgeTypes_200() throws Exception {
 		String request = "/agetypes";
 
-		ArrayList<AgeType> results = AgeTypeHelper.genArrayList(5);
+		List<AgeType> results = AgeTypeHelper.genArrayList(5);
 		List<AgeTypeDTO> parsedResults = ageTypeMapper.map2DTOList(results);
 
 		when(ageTypeManagerMock.getAgeType())
@@ -93,7 +91,7 @@ public class AgeTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(parsedResults))))
+				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -104,7 +102,7 @@ public class AgeTypeControllerTest {
 		String request = "/agetypes";
 		AgeTypeDTO body = ageTypeMapper.map2DTO(AgeTypeHelper.setup());
 
-		ArrayList<AgeType> ageTypes = new ArrayList<>();
+		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(AgeTypeHelper.setup());
 
 		when(ageTypeManagerMock.updateAgeType(ageTypes))
@@ -159,7 +157,7 @@ public class AgeTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(ageType))))
+				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageType))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

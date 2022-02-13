@@ -21,7 +21,7 @@
  */
 package org.isf.pregtreattype.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -36,8 +36,8 @@ public class PregnantTreatmentTypeHelper {
 		return testPregnantTreatmentType.setup(false);
 	}
 
-	public static ArrayList<PregnantTreatmentType> setupPregnantTreatmentTypeList(int size) {
-		return (ArrayList<PregnantTreatmentType>) IntStream.range(0, size)
+	public static List<PregnantTreatmentType> setupPregnantTreatmentTypeList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return PregnantTreatmentTypeHelper.setup();

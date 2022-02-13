@@ -67,7 +67,7 @@ public class AdmissionTypeController {
 	/**
 	 * Create a new {@link AdmissionType}
 	 * @param admissionTypeDTO
-	 * @return <code>true</code> if the admission type has been stored, <code>false</code> otherwise.
+	 * @return {@code true} if the admission type has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,7 +92,7 @@ public class AdmissionTypeController {
 	/**
 	 * Updates the specified {@link AdmissionType}.
 	 * @param admissionTypeDTO
-	 * @return <code>true</code> if the admission type has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the admission type has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,13 +100,15 @@ public class AdmissionTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		if (!admtManager.isCodePresent(admt.getCode()))
+		if (!admtManager.isCodePresent(admt.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
+		}
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
-		if (!isUpdated)
+		if (!isUpdated) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Admission Type is not updated!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return ResponseEntity.ok(admt.getCode());
 	}
 
@@ -130,7 +132,7 @@ public class AdmissionTypeController {
 	/**
 	 * Delete {@link AdmissionType} for specified code.
 	 * @param code
-	 * @return <code>true</code> if the {@link AdmissionType} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link AdmissionType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

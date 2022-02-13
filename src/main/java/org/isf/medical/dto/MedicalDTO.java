@@ -21,9 +21,9 @@
  */
 package org.isf.medical.dto;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotEmpty;
 import org.isf.medtype.dto.MedicalTypeDTO;
 
 import io.swagger.annotations.ApiModelProperty;

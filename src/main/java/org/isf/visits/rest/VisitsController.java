@@ -21,7 +21,6 @@
  */
 package org.isf.visits.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -104,9 +103,9 @@ public class VisitsController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
+    public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
         LOGGER.info("Create Visits");
-        ArrayList<Visit> listVisits = (ArrayList<Visit>) mapper.map2ModelList(newVisits);
+        List<Visit> listVisits = mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));
@@ -122,7 +121,7 @@ public class VisitsController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {

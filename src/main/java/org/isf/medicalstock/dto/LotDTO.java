@@ -22,7 +22,7 @@
 package org.isf.medicalstock.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
@@ -37,13 +37,11 @@ public class LotDTO {
 
 	@NotNull(message="The preparation date is required")
 	@ApiModelProperty(notes="The preparation date", example = "2020-06-24", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date preparationDate;
+	private LocalDate preparationDate;
 
 	@NotNull(message="The due date is required")
 	@ApiModelProperty(notes="The due date", example = "2021-06-24", position = 3)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date dueDate;
+	private LocalDate dueDate;
 
 	@ApiModelProperty(notes="The lot's code", example = "750", position = 4)
 	private BigDecimal cost;
@@ -51,7 +49,7 @@ public class LotDTO {
 	public LotDTO() {
 	}
 	
-	public LotDTO(String code, Date preparationDate, Date dueDate, BigDecimal cost) {
+	public LotDTO(String code, LocalDate preparationDate, LocalDate dueDate, BigDecimal cost) {
 		this.code = code;
 		this.preparationDate = preparationDate;
 		this.dueDate = dueDate;
@@ -62,11 +60,11 @@ public class LotDTO {
 		return this.code;
 	}
 
-	public Date getPreparationDate() {
+	public LocalDate getPreparationDate() {
 		return this.preparationDate;
 	}
 
-	public Date getDueDate() {
+	public LocalDate getDueDate() {
 		return this.dueDate;
 	}
 
@@ -78,11 +76,11 @@ public class LotDTO {
 		this.code = code;
 	}
 
-	public void setPreparationDate(Date preparationDate) {
+	public void setPreparationDate(LocalDate preparationDate) {
 		this.preparationDate = preparationDate;
 	}
 
-	public void setDueDate(Date dueDate) {
+	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
 

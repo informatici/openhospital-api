@@ -21,7 +21,6 @@
  */
 package org.isf.patient.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -37,8 +36,13 @@ import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class PatientHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static PatientDTO setup(PatientMapper patientMapper) throws OHException {
 		Patient patient = setup();
@@ -47,7 +51,7 @@ public class PatientHelper {
 
 	public static String asJsonString(PatientDTO patientDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(patientDTO);
+			return getObjectMapper().writeValueAsString(patientDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -58,8 +62,8 @@ public class PatientHelper {
 		return new TestPatient().setup(true);
 	}
 
-	public static ArrayList<Patient> setupPatientList(int size) {
-		return (ArrayList<Patient>) IntStream.range(1, size + 1)
+	public static List<Patient> setupPatientList(int size) {
+		return IntStream.range(1, size + 1)
 				.mapToObj(i -> {
 							Patient ep = null;
 							try {
@@ -73,22 +77,31 @@ public class PatientHelper {
 				).collect(Collectors.toList());
 	}
 
-	public static ArrayList<AdmittedPatient> setupAdmittedPatientList(int size) {
-		ArrayList<Patient> patientList = setupPatientList(size);
-		ArrayList<Admission> admissionList = AdmissionHelper.setupAdmissionList(size);
-		return (ArrayList<AdmittedPatient>) IntStream.range(0, size)
-
-				.mapToObj(i -> new AdmittedPatient(patientList.get(i), admissionList.get(i))
-
-				).collect(Collectors.toList());
+	public static List<AdmittedPatient> setupAdmittedPatientList(int size) {
+		List<Patient> patientList = setupPatientList(size);
+		List<Admission> admissionList = AdmissionHelper.setupAdmissionList(size);
+		return IntStream.range(0, size)
+				.mapToObj(i -> new AdmittedPatient(patientList.get(i), admissionList.get(i)))
+				.collect(Collectors.toList());
 	}
 
 	public static String asJsonString(List<?> list) {
 		try {
-			return new ObjectMapper().writeValueAsString(list);
+			return getObjectMapper().writeValueAsString(list);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
+	}
+
 }

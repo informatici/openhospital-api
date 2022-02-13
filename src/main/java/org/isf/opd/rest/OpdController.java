@@ -21,8 +21,7 @@
  */
 package org.isf.opd.rest;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.isf.opd.dto.OpdDTO;
@@ -78,7 +77,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
+	public ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		LOGGER.info("store Out patient {}", code);
 		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
@@ -102,7 +101,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOpd(@PathVariable Integer code, @RequestBody OpdDTO opdDTO)
+	public ResponseEntity<Integer> updateOpd(@PathVariable Integer code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
@@ -118,8 +117,9 @@ public class OpdController {
 		opdToUpdate.setPatient(patient);
 
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
-		if(updatedOpd == null)
+		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
+		}
 		return ResponseEntity.ok(updatedOpd.getCode());
 	}
 
@@ -131,7 +131,7 @@ public class OpdController {
 	@GetMapping(value = "/opds/weekly", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdToDayOrWeek(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
 		LOGGER.info("Get all today or since one week opd");
-		if(oneWeek == null) {
+		if (oneWeek == null) {
 			oneWeek = false;
 		}		
 		List<Opd> opds = opdManager.getOpd(oneWeek);
@@ -150,16 +150,11 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
-			@RequestParam Date dateFrom, @RequestParam Date dateTo, @RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
+			@RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo, @RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
 			@RequestParam char newPatient) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
-		
-		GregorianCalendar datefrom = new GregorianCalendar();
-		GregorianCalendar dateto = new GregorianCalendar();
-        dateto.setTime(dateTo);
-        datefrom.setTime(dateFrom);
-        
-		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, datefrom, dateto, ageFrom,  ageTo, sex, newPatient);
+
+		List<Opd> opds = opdManager.getOpd(null, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
@@ -188,7 +183,7 @@ public class OpdController {
 	/**
 	 * Delete {@link Opd} for specified code.
 	 * @param code
-	 * @return <code>true</code> if the {@link Opd} has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the {@link Opd} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -204,7 +199,7 @@ public class OpdController {
 	}
 	
 	/**
-	 * Get the maximum progressive number within specified year or within current year if <code>0</code>.
+	 * Get the maximum progressive number within specified year or within current year if {@code 0}.
 	 * @return the max progressive number
 	 * @throws OHServiceException
 	 */
@@ -217,7 +212,7 @@ public class OpdController {
 	
 	/**
 	 * Get the last {@link Opd} in time associated with specified patient ID.
-	 * @return last Opd associated with specified patient ID or <code>null</code>
+	 * @return last Opd associated with specified patient ID or {@code null}
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/last/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -228,8 +223,8 @@ public class OpdController {
 	}
 	
 	/**
-	 * Check if the given <code>opdNum</code> does already exist for the given <code>year</code>.
-	 * @return <code>true</code> if the given number exists in year, <code>false</code> otherwise
+	 * Check if the given {@code opdNum} does already exist for the given {@code year}.
+	 * @return {@code true} if the given number exists in year, {@code false} otherwise
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/check/progyear", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -42,8 +42,8 @@ import org.isf.disctype.model.DischargeType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -53,8 +53,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DischargeTypeControllerTest {
 
@@ -67,9 +65,9 @@ public class DischargeTypeControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DischargeTypeController(discTypeManagerMock, dischargeTypeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -91,7 +89,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(isCreated);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
+		List<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
@@ -140,7 +138,7 @@ public class DischargeTypeControllerTest {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypes = new ArrayList<>();
+		List<DischargeType> dischTypes = new ArrayList<>();
 		dischTypes.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypes);
@@ -152,7 +150,7 @@ public class DischargeTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedDischTypeDTOs))))
+				.andExpect(content().string(containsString(DischargeTypeHelper.getObjectMapper().writeValueAsString(expectedDischTypeDTOs))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -168,7 +166,7 @@ public class DischargeTypeControllerTest {
 				.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		ArrayList<DischargeType> dischTypeFounds = new ArrayList<>();
+		List<DischargeType> dischTypeFounds = new ArrayList<>();
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);

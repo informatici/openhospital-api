@@ -22,6 +22,7 @@
 package org.isf.shared.mapper.converter;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.module.jsr310.Jsr310Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,6 +41,7 @@ public class ModelMapperConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.addConverter(blobToByteArrayConverter);
         modelMapper.addConverter(byteArrayToBlobConverter);
+        modelMapper.registerModule(new Jsr310Module());
         return modelMapper;
     }
 }

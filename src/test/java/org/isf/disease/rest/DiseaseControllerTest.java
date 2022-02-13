@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.dto.DiseaseDTO;
@@ -41,8 +41,8 @@ import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -52,8 +52,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class DiseaseControllerTest {
 
@@ -66,9 +64,9 @@ public class DiseaseControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new DiseaseController(diseaseBrowserManagerMock, diseaseMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -83,7 +81,7 @@ public class DiseaseControllerTest {
 	public void testGetDiseasesOpd_200() throws Exception {
 		String request = "/diseases/opd";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
 				.thenReturn(diseases);
 
@@ -103,7 +101,7 @@ public class DiseaseControllerTest {
 
 		String typeCode = "1";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
 				.thenReturn(diseases);
 
@@ -112,7 +110,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -122,7 +120,7 @@ public class DiseaseControllerTest {
 	public void testGetDiseasesIpdOut_200() throws Exception {
 		String request = "/diseases/ipd/out";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
 				.thenReturn(diseases);
 
@@ -131,7 +129,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -143,7 +141,7 @@ public class DiseaseControllerTest {
 
 		String typeCode = "1";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
 				.thenReturn(diseases);
 
@@ -152,7 +150,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -163,7 +161,7 @@ public class DiseaseControllerTest {
 
 		String request = "/diseases/ipd/in";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
 				.thenReturn(diseases);
 
@@ -172,7 +170,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -184,7 +182,7 @@ public class DiseaseControllerTest {
 
 		String typeCode = "1";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
 				.thenReturn(diseases);
 
@@ -193,7 +191,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -203,7 +201,7 @@ public class DiseaseControllerTest {
 	public void testGetDiseases_200() throws Exception {
 		String request = "/diseases/both";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDisease())
 				.thenReturn(diseases);
 
@@ -212,7 +210,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -224,7 +222,7 @@ public class DiseaseControllerTest {
 
 		String typeCode = "1";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDisease(typeCode))
 				.thenReturn(diseases);
 
@@ -233,7 +231,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -244,7 +242,7 @@ public class DiseaseControllerTest {
 	public void testGetAllDiseases_200() throws Exception {
 		String request = "/diseases/all";
 
-		ArrayList<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
+		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseAll())
 				.thenReturn(diseases);
 
@@ -253,7 +251,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -274,7 +272,7 @@ public class DiseaseControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
+				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

@@ -21,7 +21,7 @@
  */
 package org.isf.accounting.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -40,8 +40,7 @@ public class BillPaymentsDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "date of payment", example="2020-03-19T14:58:00.000Z", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date date;
+	private LocalDateTime date;
 
 	@NotNull
 	@ApiModelProperty(notes = "the payment amount", example="500", position = 3)
@@ -51,7 +50,7 @@ public class BillPaymentsDTO {
 	@ApiModelProperty(notes = "the current user", example="admin", position = 4)
 	private String user;
 
-	private volatile int hashCode = 0;
+	private volatile int hashCode;
 
 	public Integer getId() {
 		return this.id;
@@ -61,7 +60,7 @@ public class BillPaymentsDTO {
 		return this.billId;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 
@@ -86,7 +85,7 @@ public class BillPaymentsDTO {
 		this.billId = billId;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

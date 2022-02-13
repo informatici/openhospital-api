@@ -21,7 +21,7 @@
  */
 package org.isf.examination.dto;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,8 +32,7 @@ public class PatientExaminationDTO {
     private int pex_ID;
 
     @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date pex_date;
+    private LocalDateTime pex_date;
 
     @ApiModelProperty(notes = "Patient Examination Code", position = 3)
     private Integer patientCode;
@@ -66,7 +65,7 @@ public class PatientExaminationDTO {
 		return this.pex_ID;
 	}
 
-	public Date getPex_date() {
+	public LocalDateTime getPex_date() {
 		return this.pex_date;
 	}
 
@@ -110,7 +109,7 @@ public class PatientExaminationDTO {
 		this.pex_ID = pex_ID;
 	}
 
-	public void setPex_date(Date pex_date) {
+	public void setPex_date(LocalDateTime pex_date) {
 		this.pex_date = pex_date;
 	}
 

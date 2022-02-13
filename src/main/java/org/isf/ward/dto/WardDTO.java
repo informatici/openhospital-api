@@ -54,6 +54,9 @@ public class WardDTO {
 	@NotNull
 	private boolean isFemale;
 
+	@NotNull
+	private int visitDuration;
+
 	private Integer lock;
 
 	public String getCode() {
@@ -98,6 +101,10 @@ public class WardDTO {
 
 	public boolean isFemale() {
 		return this.isFemale;
+	}
+
+	public Integer getVisitDuration() {
+		return this.visitDuration;
 	}
 
 	public Integer getLock() {
@@ -146,6 +153,10 @@ public class WardDTO {
 
 	public void setFemale(boolean isFemale) {
 		this.isFemale = isFemale;
+	}
+
+	public void setVisitDuration(Integer visitDuration) {
+		this.visitDuration = visitDuration;
 	}
 
 	public void setLock(Integer lock) {

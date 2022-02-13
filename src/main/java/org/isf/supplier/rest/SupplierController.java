@@ -63,7 +63,7 @@ public class SupplierController {
 	/**
 	 * Saves the specified {@link SupplierDTO}.
 	 * @param supplierDTO
-	 * @return <code>true</code> if the supplier was saved
+	 * @return {@code true} if the supplier was saved
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -81,12 +81,12 @@ public class SupplierController {
 	/**
 	 * Updates the specified {@link SupplierDTO}.
 	 * @param supplierDTO
-	 * @return <code>true</code> if the supplier was updated
+	 * @return {@code true} if the supplier was updated
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
-		if(supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
+		if (supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Updating supplier...");
@@ -111,7 +111,7 @@ public class SupplierController {
 		LOGGER.info("Loading suppliers...");
 		List<Supplier> suppliers = excludeDeleted? manager.getList() : manager.getAll();
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
-		if(mappedSuppliers.isEmpty()) {
+		if (mappedSuppliers.isEmpty()) {
 			LOGGER.info("No supplier found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
@@ -130,7 +130,7 @@ public class SupplierController {
 	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
-		if(supplier == null) {
+		if (supplier == null) {
 			LOGGER.info("Supplier not found");
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		} else {

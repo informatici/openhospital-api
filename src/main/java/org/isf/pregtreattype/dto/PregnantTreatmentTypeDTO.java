@@ -35,7 +35,7 @@ public class PregnantTreatmentTypeDTO {
 	@ApiModelProperty(notes = "the description", position = 1)
 	private String description;
 	
-	private int hashCode = 0;
+	private int hashCode;
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {

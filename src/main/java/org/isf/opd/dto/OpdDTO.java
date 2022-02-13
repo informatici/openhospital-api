@@ -21,7 +21,8 @@
  */
 package org.isf.opd.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -38,17 +39,14 @@ public class OpdDTO {
     private int code;
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date date;
+    private LocalDateTime date;
 
     @NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date visitDate;
+    private LocalDate visitDate;
 
     @ApiModelProperty(notes = "the next visit date", position = 4)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date nextVisitDate;
+    private LocalDateTime nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;
@@ -94,7 +92,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "opd lock column", position = 16)
     private int lock;
 
-    private int hashCode = 0;
+    private int hashCode;
 
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
@@ -110,15 +108,15 @@ public class OpdDTO {
 		return this.code;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 
-	public Date getVisitDate() {
+	public LocalDate getVisitDate() {
 		return this.visitDate;
 	}
 
-	public Date getNextVisitDate() {
+	public LocalDateTime getNextVisitDate() {
 		return this.nextVisitDate;
 	}
 
@@ -174,15 +172,15 @@ public class OpdDTO {
 		this.code = code;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
-	public void setVisitDate(Date visitDate) {
+	public void setVisitDate(LocalDate visitDate) {
 		this.visitDate = visitDate;
 	}
 
-	public void setNextVisitDate(Date nextVisitDate) {
+	public void setNextVisitDate(LocalDateTime nextVisitDate) {
 		this.nextVisitDate = nextVisitDate;
 	}
 

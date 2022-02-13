@@ -21,7 +21,7 @@
  */
 package org.isf.admission.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -66,8 +66,7 @@ public class AdmissionDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "admission date", position = 7)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date admDate;
+	private LocalDateTime admDate;
 
 	@ApiModelProperty(notes = "admission type", position = 8)
 	private AdmissionTypeDTO admType;
@@ -91,15 +90,13 @@ public class AdmissionDTO {
 	private OperationDTO operation;
 
 	@ApiModelProperty(notes = "operation date", position = 15)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date opDate;
+	private LocalDateTime opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date disDate;
+	private LocalDateTime disDate;
 
 	@ApiModelProperty(notes = "disChargeType ", position = 18)
 	private DischargeTypeDTO disType;
@@ -111,15 +108,13 @@ public class AdmissionDTO {
 	private Float transUnit;
 
 	@ApiModelProperty(notes = "visit date", position = 21)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date visitDate;
+	private LocalDateTime visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date deliveryDate;
+	private LocalDateTime deliveryDate;
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
 	private DeliveryTypeDTO deliveryType;
@@ -130,18 +125,18 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "weight", position = 26)
 	private Float weight;
 
-	private Date ctrlDate1;
+	private LocalDateTime ctrlDate1;
 
-	private Date ctrlDate2;
+	private LocalDateTime ctrlDate2;
 
-	private Date abortDate;
+	private LocalDateTime abortDate;
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
 
 	private int lock;
 	
-	private int hashCode = 0;
+	private int hashCode;
 
 	@NotNull
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
@@ -171,7 +166,7 @@ public class AdmissionDTO {
 		return this.patient;
 	}
 
-	public Date getAdmDate() {
+	public LocalDateTime getAdmDate() {
 		return this.admDate;
 	}
 
@@ -203,7 +198,7 @@ public class AdmissionDTO {
 		return this.operation;
 	}
 
-	public Date getOpDate() {
+	public LocalDateTime getOpDate() {
 		return this.opDate;
 	}
 
@@ -211,7 +206,7 @@ public class AdmissionDTO {
 		return this.opResult;
 	}
 
-	public Date getDisDate() {
+	public LocalDateTime getDisDate() {
 		return this.disDate;
 	}
 
@@ -227,7 +222,7 @@ public class AdmissionDTO {
 		return this.transUnit;
 	}
 
-	public Date getVisitDate() {
+	public LocalDateTime getVisitDate() {
 		return this.visitDate;
 	}
 
@@ -235,7 +230,7 @@ public class AdmissionDTO {
 		return this.pregTreatmentType;
 	}
 
-	public Date getDeliveryDate() {
+	public LocalDateTime getDeliveryDate() {
 		return this.deliveryDate;
 	}
 
@@ -251,15 +246,15 @@ public class AdmissionDTO {
 		return this.weight;
 	}
 
-	public Date getCtrlDate1() {
+	public LocalDateTime getCtrlDate1() {
 		return this.ctrlDate1;
 	}
 
-	public Date getCtrlDate2() {
+	public LocalDateTime getCtrlDate2() {
 		return this.ctrlDate2;
 	}
 
-	public Date getAbortDate() {
+	public LocalDateTime getAbortDate() {
 		return this.abortDate;
 	}
 
@@ -305,7 +300,7 @@ public class AdmissionDTO {
 		this.patient = patient;
 	}
 
-	public void setAdmDate(Date admDate) {
+	public void setAdmDate(LocalDateTime admDate) {
 		this.admDate = admDate;
 	}
 
@@ -337,7 +332,7 @@ public class AdmissionDTO {
 		this.operation = operation;
 	}
 
-	public void setOpDate(Date opDate) {
+	public void setOpDate(LocalDateTime opDate) {
 		this.opDate = opDate;
 	}
 
@@ -345,7 +340,7 @@ public class AdmissionDTO {
 		this.opResult = opResult;
 	}
 
-	public void setDisDate(Date disDate) {
+	public void setDisDate(LocalDateTime disDate) {
 		this.disDate = disDate;
 	}
 
@@ -361,7 +356,7 @@ public class AdmissionDTO {
 		this.transUnit = transUnit;
 	}
 
-	public void setVisitDate(Date visitDate) {
+	public void setVisitDate(LocalDateTime visitDate) {
 		this.visitDate = visitDate;
 	}
 
@@ -369,7 +364,7 @@ public class AdmissionDTO {
 		this.pregTreatmentType = pregTreatmentType;
 	}
 
-	public void setDeliveryDate(Date deliveryDate) {
+	public void setDeliveryDate(LocalDateTime deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
 
@@ -385,15 +380,15 @@ public class AdmissionDTO {
 		this.weight = weight;
 	}
 
-	public void setCtrlDate1(Date ctrlDate1) {
+	public void setCtrlDate1(LocalDateTime ctrlDate1) {
 		this.ctrlDate1 = ctrlDate1;
 	}
 
-	public void setCtrlDate2(Date ctrlDate2) {
+	public void setCtrlDate2(LocalDateTime ctrlDate2) {
 		this.ctrlDate2 = ctrlDate2;
 	}
 
-	public void setAbortDate(Date abortDate) {
+	public void setAbortDate(LocalDateTime abortDate) {
 		this.abortDate = abortDate;
 	}
 

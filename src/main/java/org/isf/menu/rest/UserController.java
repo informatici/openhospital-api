@@ -97,13 +97,13 @@ public class UserController {
 	public ResponseEntity<List<UserDTO>> getUser(@RequestParam(name="group_id", required=false) String groupID) throws OHServiceException {
 		LOGGER.info("Fetching the list of users");
 		List<User> users;
-		if(groupID != null) {
+		if (groupID != null) {
 			users = userManager.getUser(groupID);
 		} else {
 			users = userManager.getUser();
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
-		if(mappedUsers.isEmpty()) {
+		if (mappedUsers.isEmpty()) {
 			LOGGER.info("No user found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
@@ -120,7 +120,7 @@ public class UserController {
 	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		User user = userManager.getUserByName(userName);
-		if(user == null) {
+		if (user == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(userMapper.map2DTO(user));
@@ -129,7 +129,7 @@ public class UserController {
 	/**
 	 * Creates a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
-	 * @return <code>true</code> if the user has been inserted, <code>false</code> otherwise.
+	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -149,7 +149,7 @@ public class UserController {
 	 * Updates an existing {@link User}.
 	 * @param userDTO - the {@link User} to update
 	 * @param updatePassword - indicates if it is the password that need to be updated
-	 * @return <code>true</code> if the user has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the user has been updated, {@code false} otherwise.
 	 */
 	@PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateUser(
@@ -157,16 +157,16 @@ public class UserController {
 			@RequestParam(name="password", defaultValue="false") boolean updatePassword) throws OHServiceException {
 		User user = userMapper.map2Model(userDTO);
 		User foundUser = userManager.getUserByName(user.getUserName());
-		if(foundUser == null) {
+		if (foundUser == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated;
-		if(updatePassword) {
+		if (updatePassword) {
 			isUpdated = userManager.updatePassword(user);
 		} else {
 			isUpdated = userManager.updateUser(user);
 		}
-		if(isUpdated) {
+		if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "User is not updated!", OHSeverityLevel.ERROR));
@@ -176,16 +176,16 @@ public class UserController {
 	/**
 	 * Deletes an existing {@link User}.
 	 * @param username - the name of the {@link User} to delete
-	 * @return <code>true</code> if the user has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the user has been deleted, {@code false} otherwise.
 	 */
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
-		if(foundUser == null) {
+		if (foundUser == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
 		}
 		boolean isDelete = userManager.deleteUser(foundUser);
-		if(isDelete) {
+		if (isDelete) {
 			return ResponseEntity.ok(isDelete);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "User is not deleted!", OHSeverityLevel.ERROR));
@@ -201,7 +201,7 @@ public class UserController {
 		LOGGER.info("Attempting to fetch the list of user groups");
         List<UserGroup> groups = userManager.getUserGroup();
         List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
-        if(mappedGroups.isEmpty()) {
+        if (mappedGroups.isEmpty()) {
 			LOGGER.info("No group found");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
@@ -218,12 +218,12 @@ public class UserController {
 	@GetMapping(value = "/users/menus/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserMenuItemDTO>> getMenu(@PathVariable String username) throws OHServiceException {
 		User user = userManager.getUserByName(username);
-		if(user == null) {
+		if (user == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
 		}
         List<UserMenuItem> menuItems = userManager.getMenu(user);
         List<UserMenuItemDTO> mappedMenuItems = userMenuItemMapper.map2DTOList(menuItems);
-        if(mappedMenuItems.isEmpty()) {
+        if (mappedMenuItems.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMenuItems);
 		} else {
 			return ResponseEntity.ok(mappedMenuItems);
@@ -239,7 +239,7 @@ public class UserController {
 	public ResponseEntity<List<UserMenuItemDTO>> getGroupMenu(@PathVariable("group_code") String code) throws OHServiceException {
         UserGroup group = loadUserGroup(code);
         List<UserMenuItemDTO> menus = userMenuItemMapper.map2DTOList(userManager.getGroupMenu(group));
-        if(menus.isEmpty()) {
+        if (menus.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(menus);
 		} else {
 			return ResponseEntity.ok(menus);
@@ -250,17 +250,17 @@ public class UserController {
 	 * Replaces the {@link UserGroup} rights.
 	 * @param code - the {@link UserGroup}'s code
 	 * @param menusDTO - the list of {@link UserMenuItem}s
-	 * @return <code>true</code> if the menu has been replaced, <code>false</code> otherwise.
+	 * @return {@code true} if the menu has been replaced, {@code false} otherwise.
 	 */
 	@PostMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> setGroupMenu(
 			@PathVariable("group_code") String code, 
 			@Valid @RequestBody List<UserMenuItemDTO> menusDTO) throws OHServiceException {
 		UserGroup group = loadUserGroup(code);
-        ArrayList<UserMenuItem> menus = new ArrayList<>();
+        List<UserMenuItem> menus = new ArrayList<>();
 		menus.addAll(userMenuItemMapper.map2ModelList(menusDTO));
         boolean done = userManager.setGroupMenu(group, menus);
-        if(done) {
+        if (done) {
         	return ResponseEntity.ok(done);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, "Group rights hasn't been updated!", OHSeverityLevel.ERROR));
@@ -270,13 +270,13 @@ public class UserController {
 	/**
 	 * Deletes a {@link UserGroup}.
 	 * @param code - the code of the {@link UserGroup} to delete
-	 * @return <code>true</code> if the group has been deleted, <code>false</code> otherwise.
+	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
 	@DeleteMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		UserGroup group = loadUserGroup(code);
 		boolean isDeleted = userManager.deleteGroup(group);
-		if(isDeleted) {
+		if (isDeleted) {
 			return ResponseEntity.ok(isDeleted);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "User group is not deleted!", OHSeverityLevel.ERROR));
@@ -286,7 +286,7 @@ public class UserController {
 	/**
 	 * Create a new {@link UserGroup} with a minimum set of rights.
 	 * @param aGroup - the {@link UserGroup} to insert
-	 * @return <code>true</code> if the group has been inserted, <code>false</code> otherwise.
+	 * @return {@code true} if the group has been inserted, {@code false} otherwise.
 	 */
 	@PostMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
@@ -301,7 +301,7 @@ public class UserController {
 	/**
 	 * Updates an existing {@link UserGroup}.
 	 * @param aGroup - the {@link UserGroup} to update
-	 * @return <code>true</code> if the group has been updated, <code>false</code> otherwise.
+	 * @return {@code true} if the group has been updated, {@code false} otherwise.
 	 */
 	@PutMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
@@ -310,7 +310,7 @@ public class UserController {
         	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
         }
         boolean isUpdated = userManager.updateUserGroup(group);
-        if(isUpdated) {
+        if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "User group is not updated!", OHSeverityLevel.ERROR));
@@ -319,7 +319,7 @@ public class UserController {
 	
 	private UserGroup loadUserGroup(String code) throws OHServiceException {
 		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
-        if(group.isEmpty()) {
+        if (group.isEmpty()) {
         	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
         }
         return group.get(0);

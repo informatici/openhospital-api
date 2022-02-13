@@ -21,7 +21,7 @@
  */
 package org.isf.disease.data;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,8 +34,13 @@ import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class DiseaseHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static Disease setup() throws OHException {
 		TestDiseaseType testDiseaseType = new TestDiseaseType();
@@ -49,8 +54,8 @@ public class DiseaseHelper {
 		return td.setup(diseaseType, false);
 	}
 
-	public static ArrayList<Disease> setupDiseaseList(int size) {
-		return (ArrayList<Disease>) IntStream.range(0, size)
+	public static List<Disease> setupDiseaseList(int size) {
+		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
 						return DiseaseHelper.setup();
@@ -63,11 +68,21 @@ public class DiseaseHelper {
 
 	public static String asJsonString(DiseaseDTO diseaseDTO) {
 		try {
-			return new ObjectMapper().writeValueAsString(diseaseDTO);
+			return getObjectMapper().writeValueAsString(diseaseDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }

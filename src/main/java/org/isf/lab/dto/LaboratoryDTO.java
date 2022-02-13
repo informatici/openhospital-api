@@ -21,7 +21,7 @@
  */
 package org.isf.lab.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.exam.dto.ExamDTO;
@@ -40,12 +40,10 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date registrationDate;
+    private LocalDateTime registrationDate;
 
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date examDate;
+    private LocalDateTime examDate;
 
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
@@ -87,11 +85,11 @@ public class LaboratoryDTO {
 		return this.exam;
 	}
 
-	public Date getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return this.registrationDate;
 	}
 
-	public Date getExamDate() {
+	public LocalDateTime getExamDate() {
 		return this.examDate;
 	}
 
@@ -135,11 +133,11 @@ public class LaboratoryDTO {
 		this.exam = exam;
 	}
 
-	public void setRegistrationDate(Date registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
-	public void setExamDate(Date examDate) {
+	public void setExamDate(LocalDateTime examDate) {
 		this.examDate = examDate;
 	}
 

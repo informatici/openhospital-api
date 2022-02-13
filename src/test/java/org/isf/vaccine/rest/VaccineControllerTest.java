@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
@@ -42,8 +41,8 @@ import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -53,8 +52,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VaccineControllerTest {
 
@@ -67,9 +64,9 @@ public class VaccineControllerTest {
 
 	private MockMvc mockMvc;
 
-	@Before
+	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.initMocks(this);
+		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineController(vaccineBrowserManagerMock, vaccineMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -85,7 +82,7 @@ public class VaccineControllerTest {
 		String request = "/vaccines";
 
 		String code = "AA";
-		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
+		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
 
 		when(vaccineBrowserManagerMock.getVaccine())
 				.thenReturn(vaccinesList);
@@ -97,7 +94,7 @@ public class VaccineControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(expectedVaccineDTOs))))
+				.andExpect(content().string(containsString(VaccineHelper.getObjectMapper().writeValueAsString(expectedVaccineDTOs))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -107,7 +104,7 @@ public class VaccineControllerTest {
 	public void testGetVaccinesByVaccineTypeCode_200() throws Exception {
 		String request = "/vaccines/type-code/{vaccineTypeCode}";
 
-		ArrayList<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
+		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
 		String vaccineTypeCode = vaccinesList.get(0).getVaccineType().getCode();
 
 		when(vaccineBrowserManagerMock.getVaccine(vaccineTypeCode))
@@ -118,7 +115,7 @@ public class VaccineControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(new ObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))))
+				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

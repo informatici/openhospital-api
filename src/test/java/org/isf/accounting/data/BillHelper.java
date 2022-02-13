@@ -21,7 +21,6 @@
  */
 package org.isf.accounting.data;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,8 +35,13 @@ import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class BillHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static Bill setup() throws OHException {
 		TestPatient testPatient = new TestPatient();
@@ -45,8 +49,7 @@ public class BillHelper {
 		TestPriceList testPriceList = new TestPriceList();
 		PriceList priceList = testPriceList.setup(false);
 		TestBill testBill = new TestBill();
-		Bill bill = testBill.setup(priceList, patient, false);
-		return bill;
+		return testBill.setup(priceList, patient, null, false);
 	}
 
 	public static Bill setup(Integer id) throws OHException {
@@ -57,7 +60,7 @@ public class BillHelper {
 
 	public static String asJsonString(Bill bill) {
 		try {
-			return new ObjectMapper().writeValueAsString(bill);
+			return getObjectMapper().writeValueAsString(bill);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -75,10 +78,16 @@ public class BillHelper {
 					}
 					return null;
 				}).collect(Collectors.toList());
-
 	}
 
-	public static ArrayList<Bill> genArrayList(int n) {
-		return new ArrayList<>(BillHelper.genList(n));
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
+
 }

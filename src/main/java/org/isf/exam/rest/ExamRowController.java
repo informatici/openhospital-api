@@ -126,7 +126,7 @@ public class ExamRowController {
 
     @DeleteMapping(value = "/examrows/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity deleteExam(@PathVariable Integer code) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamRows not Found!", OHSeverityLevel.WARNING));

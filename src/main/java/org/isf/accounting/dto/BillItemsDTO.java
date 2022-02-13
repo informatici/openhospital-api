@@ -61,7 +61,7 @@ public class BillItemsDTO {
 	@ApiModelProperty(notes = "item id", example="3", position = 8)
 	private String itemId;
 	
-	private volatile int hashCode = 0;
+	private volatile int hashCode;
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
