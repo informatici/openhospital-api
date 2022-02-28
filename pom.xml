@@ -190,6 +190,21 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                    <index>true</index>
+                        <!-- manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest -->
+                        <manifestEntries>
+                            <Class-Path>./rsc/</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+	      	</plugin>
+            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${license.maven.plugin.version}</version>
