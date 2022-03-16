@@ -155,10 +155,8 @@ public class AdmissionController {
 			throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
-		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		if (patient == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
