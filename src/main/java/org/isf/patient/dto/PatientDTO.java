@@ -106,6 +106,8 @@ public class PatientDTO {
 	private byte[] blobPhoto;
 
 	private int hashCode;
+	
+	private PatientSTATUS status;
 
     @ApiModelProperty(hidden = true)
     public Integer getCode() {
@@ -303,4 +305,12 @@ public class PatientDTO {
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
+	
+    public PatientSTATUS getStatus() {
+        return status;
+    }
+    
+    public PatientSTATUS setStatus(PatientSTATUS status) {
+        return this.status = status;
+    }
 }

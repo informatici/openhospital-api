@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.isf.patient.dto.PatientDTO;
+import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.model.Patient;
 import org.isf.patient.model.PatientProfilePhoto;
 import org.isf.shared.GenericMapper;
@@ -40,6 +41,16 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	@Override
 	public PatientDTO map2DTO(Patient fromObj) {
 		PatientDTO patientDTO = super.map2DTO(fromObj);
+		if (fromObj.getPatientProfilePhoto() != null) {
+			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
+		}
+		return patientDTO;
+
+	}
+	
+	@Override
+	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
+		PatientDTO patientDTO = super.map2DTOWS(fromObj, status);
 		if (fromObj.getPatientProfilePhoto() != null) {
 			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 		}
