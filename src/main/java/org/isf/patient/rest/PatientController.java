@@ -23,11 +23,14 @@ package org.isf.patient.rest;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
@@ -63,6 +66,9 @@ public class PatientController {
 
 	@Autowired
 	protected PatientBrowserManager patientManager;
+	
+	@Autowired
+	protected  AdmissionBrowserManager admissionBrowserManager = new AdmissionBrowserManager();
 
 	@Autowired
 	protected PatientMapper patientMapper;
@@ -121,19 +127,25 @@ public class PatientController {
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(patientMapper.map2DTO(patient));
+		Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+		Boolean status = admission != null ? true : false;
+		return ResponseEntity.ok(patientMapper.map2DTOWS(patient, status));
 	}
 
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> searchPatient(
-			@RequestParam(value="name", defaultValue="") String name,
-			@RequestParam(value="code", required=false) Integer code) throws OHServiceException {
-		LOGGER.info("Search patient name: {}  code: {}", name, code);
-		Patient patient = null;
-		if (code != null) {
-            patient = patientManager.getPatientById(code);
-		} else if (!name.isEmpty()) {
-            patient = patientManager.getPatientByName(name);
+	public ResponseEntity<List<PatientDTO>> searchPatient(
+			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
+			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+			@RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+			@RequestParam(value="address", defaultValue="", required = false) String address
+	) throws OHServiceException {
+
+		List<PatientDTO> patientListDTO = new ArrayList<PatientDTO>();
+		List<Patient> patientList = null;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (firstName != null && !firstName.isEmpty()) {
+			params.put("firstName", firstName);
 		}
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
@@ -160,7 +172,13 @@ public class PatientController {
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
+		for(Patient patient : patientList) {
+			Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+			Boolean status = admission != null ? true : false;
+			patientListDTO.add(patientMapper.map2DTOWS(patient, status));
+		}
+		
+		return ResponseEntity.ok(patientListDTO);
 	}
 
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
