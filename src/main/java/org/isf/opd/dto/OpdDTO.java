@@ -58,9 +58,10 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
     private char sex;
 
-    @NotNull
+    /*@NotNull
     @ApiModelProperty(notes = "the admission note", example = "", position = 8)
     private String note; // ADDED: Alex
+    */
 
     @NotNull
     @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 9)
@@ -90,8 +91,63 @@ public class OpdDTO {
 
     @ApiModelProperty(notes = "opd lock column", position = 16)
     private int lock;
+    
+    @ApiModelProperty(notes = "reasons for entry", position = 18)
+    private String reason; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "history of a medical or psychiatric patient", position = 19)
+    private String anamnesis; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "allergies of patient", position = 20)
+    private String allergies; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "Current therapies", position = 21)
+    private String therapies; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "prescription", position = 22)
+    private String prescription; // ADDED: Arnaud
+    
+    public String getReason() {
+		return reason;
+	}
 
     private int hashCode;
+
+    public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getAnamnesis() {
+		return anamnesis;
+	}
+
+	public void setAnamnesis(String anamnesis) {
+		this.anamnesis = anamnesis;
+	}
+
+	public String getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(String allergies) {
+		this.allergies = allergies;
+	}
+
+	public String getTherapies() {
+		return therapies;
+	}
+
+	public void setTherapies(String therapies) {
+		this.therapies = therapies;
+	}
+
+	public String getPrescription() {
+		return prescription;
+	}
+
+	public void setPrescription(String prescription) {
+		this.prescription = prescription;
+	}
 
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
@@ -131,9 +187,9 @@ public class OpdDTO {
 		return this.sex;
 	}
 
-	public String getNote() {
+/*	public String getNote() {
 		return this.note;
-	}
+	}*/
 
 	public int getProg_year() {
 		return this.prog_year;
@@ -195,9 +251,9 @@ public class OpdDTO {
 		this.sex = sex;
 	}
 
-	public void setNote(String note) {
+	/*public void setNote(String note) {
 		this.note = note;
-	}
+	}*/
 
 	public void setProg_year(int prog_year) {
 		this.prog_year = prog_year;
