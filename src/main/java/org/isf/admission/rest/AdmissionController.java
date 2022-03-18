@@ -282,7 +282,56 @@ public class AdmissionController {
 
 		return ResponseEntity.ok(isDeleted);
 	}
+	
+	/**
+	 * discharge the {@link Admission}s for the specified {@link Patient} code.
+	 * @param patientCode
+	 * @return <code>true</code> if the record has been set to discharge.
+	 * @throws OHServiceException
+	 */
+	@PostMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable int id, 
+			                                                  @Valid @RequestBody AdmissionDTO admissionDTO)
+			throws OHServiceException {
+		LOGGER.info("Get patient admissions by patient code: {}", id);
+		Patient patient = patientManager.getPatientById(id);
+		Boolean bol;
+		if (patient == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		
+		Admission admission = admissionManager.getCurrentAdmission(patient);
+		
+		if (admission == null) 
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		else{
+			if (admission.getAdmitted() == 0) 
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+		
+		
+		Admission adm = new Admission ();
+		if (admissionDTO != null) 
+			adm = admissionMapper.map2Model(admissionDTO);
+		if (adm.getAdmitted() == 0 ) 
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		
+		if (adm.getId() == admission.getId()) {
+			if(adm.getDisDate() == null) {
+				GregorianCalendar datefrom = new GregorianCalendar();
+				adm.setDisDate(datefrom);
+			}
+			if(adm.getDiseaseOut1() == null || adm.getDisType() == null)
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			
+			adm.setAdmitted(0);
+			bol = admissionManager.updateAdmission(adm);
+			return ResponseEntity.ok(bol);
+		}
+			
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 
+	}
+	
 	/**
 	 * Create a new {@link Admission}.
 	 * @param newAdmissionDTO
