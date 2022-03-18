@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
+import org.isf.ward.model.Ward;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -48,6 +49,15 @@ public class VisitDTO {
 
     @ApiModelProperty(notes = "Sms of the visit", position = 4)
     private boolean sms;
+    
+    @ApiModelProperty(notes = "ward of the visit", position = 5)
+    private Ward ward;
+    
+    @ApiModelProperty(notes = "duration of the visit", position = 6)
+    private Integer duration;
+    
+    @ApiModelProperty(notes = "service done during the visit", position = 7)
+    private String service;
 
     @ApiModelProperty(hidden= true)
     public int getVisitID() {
@@ -58,7 +68,31 @@ public class VisitDTO {
 		return this.patient;
 	}
 
-	public LocalDateTime getDate() {
+	public Ward getWard() {
+		return ward;
+	}
+
+	public void setWard(Ward ward) {
+		this.ward = ward;
+	}
+
+	public Integer getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+
+	public GregorianCalendar getDate() {
 		return this.date;
 	}
 
