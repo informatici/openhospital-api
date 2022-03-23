@@ -304,6 +304,33 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
+	public void testDischargeAdmissionType_200() throws Exception {
+		
+		String request = "/admissions/discharge/{id}?admissionDTO={admissionDTO}";
+		Integer id = 1;
+		Patient patient = PatientHelper.setup();
+		when(patientManagerMock.getPatientById(id))
+				.thenReturn(patient);
+
+		Admission admission = AdmissionHelper.setup();
+		when(admissionManagerMock.getCurrentAdmission(patient))
+				.thenReturn(admission);
+		admission.setAdmitted(0);
+		admission.setDisDate(any(GregorianCalendar.class));
+		when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
+		
+		this.mockMvc
+				.perform(
+						put(request, admission)
+								.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
+	}
+	
+	@Test
 	public void testNewAdmissions_201() throws Exception {
 		String request = "/admissions";
 
