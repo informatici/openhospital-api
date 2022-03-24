@@ -341,28 +341,33 @@ public class AdmissionControllerTest {
 	@Test
 	public void testDischargeAdmissionType_200() throws Exception {
 		
-		String request = "/admissions/discharge/{id}?admissionDTO={admissionDTO}";
-		Integer id = 1;
-		Patient patient = PatientHelper.setup();
-		when(patientManagerMock.getPatientById(id))
-				.thenReturn(patient);
-
-		Admission admission = AdmissionHelper.setup();
-		when(admissionManagerMock.getCurrentAdmission(patient))
-				.thenReturn(admission);
-		admission.setAdmitted(0);
-		admission.setDisDate(any(GregorianCalendar.class));
-		when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
-		
-		this.mockMvc
-				.perform(
-						put(request, admission)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+			String request = "/admissions/discharge/{id}";
+			Integer id = 1;
+			Patient patient = PatientHelper.setup();
+			patient.setCode(id);
+			when(patientManagerMock.getPatientById(id))
+					.thenReturn(patient);
+			Admission admission = AdmissionHelper.setup();
+			admission.setId(10);
+			when(admissionManagerMock.getCurrentAdmission(patient))
+					.thenReturn(admission);
+			
+			admission.setAdmitted(0);
+			admission.setDisDate(new GregorianCalendar());
+			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
+			
+			AdmissionDTO adm = admissionMapper.map2DTO(admission);
+			
+			this.mockMvc
+					.perform(
+							post(request).contentType(MediaType.APPLICATION_JSON)
+							.content(AdmissionHelper.asJsonString(adm))
+					)
+					.andDo(log())
+					.andExpect(status().isOk())
+					.andExpect(content().string(containsString("true")))
+					.andReturn();
+		}
 	}
 	
 	@Test
