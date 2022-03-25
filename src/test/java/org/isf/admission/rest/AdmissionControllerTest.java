@@ -367,7 +367,6 @@ public class AdmissionControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(content().string(containsString("true")))
 					.andReturn();
-		}
 	}
 	
 	@Test
