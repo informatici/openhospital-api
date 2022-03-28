@@ -289,8 +289,8 @@ public class AdmissionController {
 	 * @return <code>true</code> if the record has been set to discharge.
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable int id, 
+	@PutMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable Integer id, 
 			                                                  @Valid @RequestBody AdmissionDTO admissionDTO)
 			throws OHServiceException {
 		LOGGER.info("Get patient admissions by patient code: {}", id);
