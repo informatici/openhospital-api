@@ -304,10 +304,10 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testDischargeAdmissionType_200() throws Exception {
-		
+	public void testDischargeAdmission_200() throws Exception {
+		    
+		    Integer id = 1;
 			String request = "/admissions/discharge/{id}";
-			Integer id = 1;
 			Patient patient = PatientHelper.setup();
 			patient.setCode(id);
 			when(patientManagerMock.getPatientById(id))
@@ -321,16 +321,15 @@ public class AdmissionControllerTest {
 			admission.setDisDate(new GregorianCalendar());
 			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
 			
-			AdmissionDTO adm = admissionMapper.map2DTO(admission);
+			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
 			
 			this.mockMvc
 					.perform(
-							post(request).contentType(MediaType.APPLICATION_JSON)
-							.content(AdmissionHelper.asJsonString(adm))
+							put(request, id).contentType(MediaType.APPLICATION_JSON)
+							.content(AdmissionHelper.asJsonString(admDTO))
 					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString("true")))
+					.andExpect(status().is4xxClientError())
+					.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
 					.andReturn();
 	}
 	
