@@ -296,7 +296,4 @@ public class OperationController {
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
-
-	
-
 }
