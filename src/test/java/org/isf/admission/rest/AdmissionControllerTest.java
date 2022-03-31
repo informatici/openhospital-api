@@ -43,6 +43,8 @@ import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.data.AdmissionTypeDTOHelper;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.data.DischargeTypeHelper;
+import org.isf.disctype.manager.DischargeTypeBrowserManager;
+import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -110,7 +112,13 @@ public class AdmissionControllerTest {
 
 	@Autowired
 	private AdmittedPatientMapper admittedMapper = new AdmittedPatientMapper();
-
+	
+	@Autowired
+	private DischargeTypeBrowserManager dischargeManager =  new DischargeTypeBrowserManager();
+	
+	@Autowired
+	private DischargeTypeMapper dischargeMapper = new DischargeTypeMapper();
+	
 	private MockMvc mockMvc;
 
 	@BeforeEach
@@ -120,7 +128,7 @@ public class AdmissionControllerTest {
 				.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
 						diseaseManagerMock, operationManagerMock, pregTraitTypeManagerMock,
 						dlvrTypeManagerMock, dlvrrestTypeManagerMock, admissionMapper,
-						admittedMapper))
+						admittedMapper, dischargeManager, dischargeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
@@ -348,12 +356,21 @@ public class AdmissionControllerTest {
 			when(patientManagerMock.getPatientById(id))
 					.thenReturn(patient);
 			Admission admission = AdmissionHelper.setup();
-			admission.setId(10);
+			
 			when(admissionManagerMock.getCurrentAdmission(patient))
 					.thenReturn(admission);
-			
+			Disease disease1 = DiseaseHelper.setup();
+			Disease disease2 = DiseaseHelper.setup();
+			Disease disease3 = DiseaseHelper.setup();
+			String code = "B";
+			DischargeType dischargeType = DischargeTypeHelper.setup(code);
 			admission.setAdmitted(0);
 			admission.setDisDate(new GregorianCalendar());
+			admission.setDiseaseOut1(disease1);
+			admission.setDiseaseOut1(disease2);
+			admission.setDiseaseOut1(disease3);
+			admission.setDisType(dischargeType);
+			
 			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
 			
 			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
@@ -363,8 +380,9 @@ public class AdmissionControllerTest {
 							put(request, id).contentType(MediaType.APPLICATION_JSON)
 							.content(AdmissionHelper.asJsonString(admDTO))
 					)
-					.andExpect(status().is4xxClientError())
-					.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+					.andDo(log())
+					.andExpect(status().is2xxSuccessful())
+					.andExpect(status().isOk())
 					.andReturn();
 	}
 	

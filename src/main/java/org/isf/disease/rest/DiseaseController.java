@@ -225,6 +225,7 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Get disease by code");
+        
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
 	    if (disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
