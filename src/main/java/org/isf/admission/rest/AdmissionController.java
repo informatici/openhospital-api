@@ -35,6 +35,9 @@ import org.isf.admission.mapper.AdmittedPatientMapper;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
+import org.isf.disctype.dto.DischargeTypeDTO;
+import org.isf.disctype.manager.DischargeTypeBrowserManager;
+import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
@@ -106,12 +109,17 @@ public class AdmissionController {
 	
 	@Autowired 
 	private AdmittedPatientMapper admittedMapper;
-
+	
+	@Autowired
+	private DischargeTypeBrowserManager dischargeManager;
+	
+	@Autowired
+	private DischargeTypeMapper dischargeMapper;
 
 	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
 			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
 			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
-			AdmittedPatientMapper admittedMapper) {
+			AdmittedPatientMapper admittedMapper,DischargeTypeBrowserManager dischargeManager, DischargeTypeMapper dischargeMapper) {
 		this.admissionManager = admissionManager;
 		this.patientManager = patientManager;
 		this.wardManager = wardManager;
@@ -122,6 +130,8 @@ public class AdmissionController {
 		this.dlvrrestTypeManager = dlvrrestTypeManager;
 		this.admissionMapper = admissionMapper;
 		this.admittedMapper = admittedMapper;
+		this.dischargeManager = dischargeManager;
+		this.dischargeMapper = dischargeMapper;
 	}
 
 	/**
@@ -287,47 +297,53 @@ public class AdmissionController {
 	 * @return <code>true</code> if the record has been set to discharge.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable Integer id, 
-			                                                  @Valid @RequestBody AdmissionDTO admissionDTO)
+			                                                  @RequestBody AdmissionDTO admissionDTO)
 			throws OHServiceException {
-		LOGGER.info("Get patient admissions by patient code: {}", id);
+		
+		LOGGER.info("discharge the patient");
 		Patient patient = patientManager.getPatientById(id);
-		Boolean bol;
+		Boolean bol = false;
+		
 		if (patient == null)
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage(null, "the patient does not exist!", OHSeverityLevel.ERROR));
+			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bol);
 		
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		
 		if (admission == null) 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		else{
-			if (admission.getAdmitted() == 0) 
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		}
+			throw new OHAPIException(new OHExceptionMessage(null, "the patient does not have current admission", OHSeverityLevel.ERROR));
+			//return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        
+		Admission adm = admissionMapper.map2Model(admissionDTO);
 		
+		if(adm == null || admission.getId() != adm.getId())
+			throw new OHAPIException(new OHExceptionMessage(null, "the admissionDTO is null or is not the current admission of patient", OHSeverityLevel.ERROR));
 		
-		Admission adm = new Admission ();
-		if (admissionDTO != null) 
-			adm = admissionMapper.map2Model(admissionDTO);
-		if (adm.getAdmitted() == 0 ) 
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		
-		if (adm.getId() == admission.getId()) {
-			if(adm.getDisDate() == null) {
-				GregorianCalendar datefrom = new GregorianCalendar();
-				adm.setDisDate(datefrom);
-			}
-			if(adm.getDiseaseOut1() == null || adm.getDisType() == null)
-				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-			
-			adm.setAdmitted(0);
-			bol = admissionManager.updateAdmission(adm);
-			return ResponseEntity.ok(bol);
-		}
-			
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-
+   		if(adm.getDiseaseOut1() == null) {
+   			throw new OHAPIException(new OHExceptionMessage(null, "give first out desease ", OHSeverityLevel.ERROR));
+   		}
+   		if(adm.getDisDate() == null) {
+   			throw new OHAPIException(new OHExceptionMessage(null, "discharge Date is required ", OHSeverityLevel.ERROR));
+    	}
+   		if(adm.getYProg() == 0) {
+   			throw new OHAPIException(new OHExceptionMessage(null, "number of day of admission is required ", OHSeverityLevel.ERROR));
+    	}
+   		
+   		if(adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())){
+   			 throw new OHAPIException(new OHExceptionMessage(null, "dischargeType does not exist !", OHSeverityLevel.ERROR));
+   		}
+    	
+   		bol = admissionManager.updateAdmission(admission);
+        
+   		if(bol) {
+        	return ResponseEntity.ok(bol);
+        }
+   		else {
+   		   throw new OHAPIException(new OHExceptionMessage(null, "discharge failled", OHSeverityLevel.ERROR));
+   		}
+      
 	}
 	
 	/**
