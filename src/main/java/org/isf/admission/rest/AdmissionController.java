@@ -283,7 +283,7 @@ public class AdmissionController {
 	 */
 	@PostMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable Integer id, 
-			                                                  @RequestBody AdmissionDTO admissionDTO)
+			                                                  @Valid @RequestBody AdmissionDTO admissionDTO)
 			throws OHServiceException {
 		
 		LOGGER.info("discharge the patient");
@@ -311,15 +311,14 @@ public class AdmissionController {
    		if(adm.getDisDate() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "discharge Date is required ", OHSeverityLevel.ERROR));
     	}
-   		if(adm.getYProg() == 0) {
-   			throw new OHAPIException(new OHExceptionMessage(null, "number of day of admission is required ", OHSeverityLevel.ERROR));
-    	}
-   		
+   		if(adm.getDisDate().before(adm.getAbortDate())) {
+      		 throw new OHAPIException(new OHExceptionMessage(null, "date of discharge does not be before date of admission !!", OHSeverityLevel.ERROR));
+      	}
    		if(adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())){
    			 throw new OHAPIException(new OHExceptionMessage(null, "dischargeType does not exist !", OHSeverityLevel.ERROR));
    		}
-    	
-   		bol = admissionManager.updateAdmission(admission);
+   		adm.setAdmitted(0);
+   		bol = admissionManager.updateAdmission(adm);
         
    		if(bol) {
         	return ResponseEntity.ok(bol);
