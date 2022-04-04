@@ -338,15 +338,13 @@ public class AdmissionControllerTest {
 			
 			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
 			
-			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
-			
+			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);	
 			this.mockMvc
 					.perform(
-							put(request, id).contentType(MediaType.APPLICATION_JSON)
+							post(request, id).contentType(MediaType.APPLICATION_JSON)
 							.content(AdmissionHelper.asJsonString(admDTO))
 					)
 					.andDo(log())
-					.andExpect(status().is2xxSuccessful())
 					.andExpect(status().isOk())
 					.andReturn();
 	}
