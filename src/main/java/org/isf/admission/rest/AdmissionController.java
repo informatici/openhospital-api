@@ -35,7 +35,6 @@ import org.isf.admission.mapper.AdmittedPatientMapper;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
@@ -299,52 +298,44 @@ public class AdmissionController {
 	 * @return <code>true</code> if the record has been set to discharge.
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value = "/admissions/discharge/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> dischargePatientAdmissions(@PathVariable Integer id, 
-			                                                  @Valid @RequestBody AdmissionDTO admissionDTO)
+	@PostMapping(value = "/admissions/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> dischargePatient(@RequestParam Integer patientCode, 
+			                                        @Valid @RequestBody AdmissionDTO currentAdmissionDTO)
 			throws OHServiceException {
 		
 		LOGGER.info("discharge the patient");
-		Patient patient = patientManager.getPatientById(id);
+		Patient patient = patientManager.getPatientById(patientCode);
 		Boolean bol = false;
 		
 		if (patient == null)
-			throw new OHAPIException(new OHExceptionMessage(null, "the patient does not exist!", OHSeverityLevel.ERROR));
-			//return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bol);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bol);
 		
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		
-		if (admission == null) 
-			throw new OHAPIException(new OHExceptionMessage(null, "the patient does not have current admission", OHSeverityLevel.ERROR));
-			//return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		if (admission == null)
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         
-		Admission adm = admissionMapper.map2Model(admissionDTO);
+		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 		
 		if(adm == null || admission.getId() != adm.getId())
-			throw new OHAPIException(new OHExceptionMessage(null, "the admissionDTO is null or is not the current admission of patient", OHSeverityLevel.ERROR));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
 		
    		if(adm.getDiseaseOut1() == null) {
-   			throw new OHAPIException(new OHExceptionMessage(null, "give first out desease ", OHSeverityLevel.ERROR));
+   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);	
    		}
    		if(adm.getDisDate() == null) {
-   			throw new OHAPIException(new OHExceptionMessage(null, "discharge Date is required ", OHSeverityLevel.ERROR));
+   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
     	}
-   		if(adm.getDisDate().before(adm.getAbortDate())) {
-      		 throw new OHAPIException(new OHExceptionMessage(null, "date of discharge does not be before date of admission !!", OHSeverityLevel.ERROR));
+   		if(adm.getDisDate().before(adm.getAdmDate())) {
+   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
       	}
    		if(adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())){
-   			 throw new OHAPIException(new OHExceptionMessage(null, "dischargeType does not exist !", OHSeverityLevel.ERROR));
+   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
    		}
    		adm.setAdmitted(0);
    		bol = admissionManager.updateAdmission(adm);
         
-   		if(bol) {
-        	return ResponseEntity.ok(bol);
-        }
-   		else {
-   		   throw new OHAPIException(new OHExceptionMessage(null, "discharge failled", OHSeverityLevel.ERROR));
-   		}
-      
+        return ResponseEntity.status(HttpStatus.OK).body(bol);
 	}
 	
 	/**
