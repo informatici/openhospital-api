@@ -22,6 +22,7 @@
 package org.isf.lab.rest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,8 +257,8 @@ public class LaboratoryController {
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(@RequestParam String examName,
-			@RequestParam(value = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDate dateFrom,
-			@RequestParam(value = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDate dateTo) throws OHServiceException {
+			@RequestParam(value = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime dateFrom,
+			@RequestParam(value = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime dateTo) throws OHServiceException {
 
 		List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateFrom, dateTo);
 		if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
