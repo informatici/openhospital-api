@@ -59,10 +59,9 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
     private char sex;
 
-    /*@NotNull
+    @NotNull
     @ApiModelProperty(notes = "the admission note", example = "", position = 8)
     private String note; // ADDED: Alex
-    */
 
     @NotNull
     @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 9)
@@ -93,7 +92,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "opd lock column", position = 16)
     private int lock;
     
-    @ApiModelProperty(notes = "reasons for entry", position = 18)
+    /*@ApiModelProperty(notes = "reasons for entry", position = 18)
     private String reason; // ADDED: Arnaud
     
     @ApiModelProperty(notes = "history of a medical or psychiatric patient", position = 19)
@@ -146,7 +145,7 @@ public class OpdDTO {
 
 	public void setPrescription(String prescription) {
 		this.prescription = prescription;
-	}
+	}*/
 
 	private int hashCode = 0;
 
