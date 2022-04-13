@@ -60,7 +60,7 @@ public class OpdDTO {
     private char sex;
 
     @NotNull
-    @ApiModelProperty(notes = "the admission note", example = "", position = 8)
+    @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 8)
     private String note; // ADDED: Alex
 
     @NotNull
@@ -89,7 +89,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "user id", position = 16)
     private String userID;
 
-    @ApiModelProperty(notes = "opd lock column", position = 16)
+    @ApiModelProperty(notes = "opd lock column", position = 17)
     private int lock;
     
     /*@ApiModelProperty(notes = "reasons for entry", position = 18)
@@ -187,9 +187,9 @@ public class OpdDTO {
 		return this.sex;
 	}
 
-/*	public String getNote() {
+	public String getNote() {
 		return this.note;
-	}*/
+	}
 
 	public int getProg_year() {
 		return this.prog_year;
@@ -251,9 +251,9 @@ public class OpdDTO {
 		this.sex = sex;
 	}
 
-	/*public void setNote(String note) {
+	public void setNote(String note) {
 		this.note = note;
-	}*/
+	}
 
 	public void setProg_year(int prog_year) {
 		this.prog_year = prog_year;
