@@ -160,7 +160,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientcode") Integer patientCode)
+	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") Integer patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -205,7 +205,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
+	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientCode") Integer patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get patient admissions by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
