@@ -309,7 +309,6 @@ public class PatientDTO {
     public PatientSTATUS getStatus() {
         return status;
     }
-    
     public PatientSTATUS setStatus(PatientSTATUS status) {
         return this.status = status;
     }

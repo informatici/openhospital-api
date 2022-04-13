@@ -69,13 +69,14 @@ public class PatientController {
 	protected PatientBrowserManager patientManager;
 	
 	@Autowired
-	protected  AdmissionBrowserManager admissionBrowserManager = new AdmissionBrowserManager();
+	protected  AdmissionBrowserManager admissionManager;
 
 	@Autowired
 	protected PatientMapper patientMapper;
 
-	public PatientController(PatientBrowserManager patientManager, PatientMapper patientMapper) {
+	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper) {
 		this.patientManager = patientManager;
+		this.admissionManager = admissionManager;
 		this.patientMapper = patientMapper;
 	}
 
@@ -125,10 +126,14 @@ public class PatientController {
 	public ResponseEntity<PatientDTO> getPatient(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get patient code: {}", code);
 		Patient patient = patientManager.getPatientById(code);
+		LOGGER.info("Patient retrieved: {}", patient);
 		if (patient == null) {
+			
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+		LOGGER.info("admissionBrowserManager injected: {}", admissionManager);
+		Admission admission = admissionManager.getCurrentAdmission(patient);
+		LOGGER.info("admission retrieved: {}", admission);
 		Boolean status = admission != null ? true : false;
 		return ResponseEntity.ok(patientMapper.map2DTOWS(patient, status));
 	}
@@ -173,8 +178,8 @@ public class PatientController {
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		for (Patient patient : patientList) {
-			Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+		for(Patient patient : patientList) {
+			Admission admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
 			patientListDTO.add(patientMapper.map2DTOWS(patient, status));
 		}
@@ -198,50 +203,6 @@ public class PatientController {
         int nextCode = patientManager.getNextPatientCode();
         return ResponseEntity.ok(nextCode);
 	}
-
-//    @GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<List<PatientDTO>> searchPatient(
-//            @RequestParam(value="firstName", defaultValue="", required = false) String firstName,
-//            @RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-//            @RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
-//            @RequestParam(value="address", defaultValue="", required = false) String address
-//    ) throws OHServiceException {
-//
-//
-//        List<Patient> patientList = null;
-//
-//        Map<String, Object> params = new HashMap<String, Object>();
-//        if (firstName != null && !firstName.isEmpty()) {
-//            params.put("firstName", firstName);
-//        }
-//        if (secondName != null && !secondName.isEmpty()) {
-//            params.put("secondName", secondName);
-//        }
-//        if (birthDate != null && !birthDate.isEmpty()) {
-//            try {
-//
-//                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//                Date birthDateDate = df.parse(birthDate);
-//                params.put("birthDate", birthDateDate);
-//
-//            } catch (Exception e) {
-//                // TODO: fixme
-//            }
-//        }
-//        if (address != null && !address.isEmpty()) {
-//            params.put("address", address);
-//        }
-//
-//
-//        if (params.entrySet().size() > 0) {
-//            patientList = patientManager.getPatients(params);
-//        }
-//        if (patientList == null) {
-//            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-//        }
-//        return ResponseEntity.ok(patientMapper.map2DTOList(patientList));
-//    }
-
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {

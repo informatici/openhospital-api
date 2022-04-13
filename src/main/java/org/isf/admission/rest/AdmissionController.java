@@ -110,7 +110,7 @@ public class AdmissionController {
 	private AdmittedPatientMapper admittedMapper;
 	
 	@Autowired
-	private DischargeTypeBrowserManager dischargeManager;
+	private DischargeTypeBrowserManager dischargeTypeManager;
 	
 	@Autowired
 	private DischargeTypeMapper dischargeMapper;
@@ -118,7 +118,7 @@ public class AdmissionController {
 	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
 			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
 			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
-			AdmittedPatientMapper admittedMapper,DischargeTypeBrowserManager dischargeManager, DischargeTypeMapper dischargeMapper) {
+			AdmittedPatientMapper admittedMapper,DischargeTypeBrowserManager dischargeTypeManager, DischargeTypeMapper dischargeMapper) {
 		this.admissionManager = admissionManager;
 		this.patientManager = patientManager;
 		this.wardManager = wardManager;
@@ -129,7 +129,7 @@ public class AdmissionController {
 		this.dlvrrestTypeManager = dlvrrestTypeManager;
 		this.admissionMapper = admissionMapper;
 		this.admittedMapper = admittedMapper;
-		this.dischargeManager = dischargeManager;
+		this.dischargeTypeManager = dischargeTypeManager;
 		this.dischargeMapper = dischargeMapper;
 	}
 
@@ -160,7 +160,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientcode") Integer patientCode)
+	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") Integer patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -222,7 +222,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientcode") Integer patientCode)
+	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientCode") Integer patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get patient admissions by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -240,11 +240,11 @@ public class AdmissionController {
 	/**
 	 * Get the next prog in the year for specified {@link Ward} code.
 	 * @param wardCode
-	 * @return the next prog.
+	 * @return the next prog.<
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/getNextProgressiveIdInYear", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode)
+	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardCode") String wardCode)
 			throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 		
@@ -278,13 +278,13 @@ public class AdmissionController {
 	 * @return {@code true} if the record has been set to delete.
 	 * @throws OHServiceException
 	 */
-	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int id) throws OHServiceException {
-		LOGGER.info("setting admission to deleted: {}", id);
-		boolean isDeleted;
-		Admission admission = admissionManager.getAdmission(id);
+	@DeleteMapping(value = "/admissions/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int code) throws OHServiceException {
+		LOGGER.info("setting admission to deleted: {}", code);
+		boolean isDeleted = false;
+		Admission admission = admissionManager.getAdmission(code);
 		if (admission != null) {
-			isDeleted = admissionManager.setDeleted(id);
+			isDeleted = admissionManager.setDeleted(code);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -299,43 +299,43 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissions/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> dischargePatient(@RequestParam Integer patientCode, 
+	public ResponseEntity<Boolean> dischargePatient(@RequestParam("patientCode") Integer patientCode, 
 			                                        @Valid @RequestBody AdmissionDTO currentAdmissionDTO)
 			throws OHServiceException {
 		
 		LOGGER.info("discharge the patient");
 		Patient patient = patientManager.getPatientById(patientCode);
-		Boolean bol = false;
+		Admission admissionUpdated = null;
 		
-		if (patient == null)
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bol);
-		
+		if (patient == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		
-		if (admission == null)
+		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        
+		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 		
-		if(adm == null || admission.getId() != adm.getId())
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
-		
+		if(adm == null || admission.getId() != adm.getId()) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+		}
    		if(adm.getDiseaseOut1() == null) {
-   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);	
+   			throw new OHAPIException( new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
    		}
    		if(adm.getDisDate() == null) {
-   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
+   			throw new OHAPIException( new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
     	}
-   		if(adm.getDisDate().before(adm.getAdmDate())) {
-   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
+   		if(adm.getDisDate().isBefore(adm.getAdmDate())) {
+   			throw new OHAPIException( new OHExceptionMessage(null, "the exit date must be after the entry date!", OHSeverityLevel.ERROR));
       	}
-   		if(adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())){
-   			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
+   		if(adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())){
+   			throw new OHAPIException( new OHExceptionMessage(null, "the type of output is mandatory or does not exist!", OHSeverityLevel.ERROR));
    		}
    		adm.setAdmitted(0);
-   		bol = admissionManager.updateAdmission(adm);
+   		admissionUpdated = admissionManager.updateAdmission(adm);
         
-        return ResponseEntity.status(HttpStatus.OK).body(bol);
+        return ResponseEntity.status(HttpStatus.OK).body(admissionUpdated != null);
 	}
 	
 	/**
