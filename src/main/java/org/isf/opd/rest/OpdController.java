@@ -104,7 +104,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOpd(@PathVariable("code") Integer code, @RequestBody OpdDTO opdDTO)
+	ResponseEntity<Integer> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
@@ -131,7 +131,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/weekly", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdToDayOrWeek(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
+	public ResponseEntity<List<OpdDTO>> getOpdToDayOrWeek(@RequestParam(name="oneWeek", required=false) Boolean oneWeek) throws OHServiceException {
 		LOGGER.info("Get all today or since one week opd");
 		if(oneWeek == null) {
 			oneWeek = false;
@@ -211,7 +211,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/ProgYear/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
+	public ResponseEntity<Integer> getProgYear(@PathVariable("year") int year) throws OHServiceException {
 		LOGGER.info("Get progressive number within specified year");
 		int yProg = opdManager.getProgYear(year);
 		return ResponseEntity.ok(yProg);
@@ -223,7 +223,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/last/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable int code) throws OHServiceException {
+	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("code") int code) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", code);
 		Opd lastOpd = opdManager.getLastOpd(code);
 		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
