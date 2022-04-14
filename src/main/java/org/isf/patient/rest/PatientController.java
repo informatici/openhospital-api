@@ -123,7 +123,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> getPatient(@PathVariable Integer code) throws OHServiceException {
+	public ResponseEntity<PatientDTO> getPatient(@PathVariable("code") int code) throws OHServiceException {
 		LOGGER.info("Get patient code: {}", code);
 		Patient patient = patientManager.getPatientById(code);
 		LOGGER.info("Patient retrieved: {}", patient);
