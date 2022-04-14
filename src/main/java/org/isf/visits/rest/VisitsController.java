@@ -72,7 +72,7 @@ public class VisitsController {
      * @throws OHServiceException
      */
     @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable int patID) throws OHServiceException {
+    public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
         List<VisitDTO> listVisit = mapper.map2DTOList(visit);
@@ -123,7 +123,7 @@ public class VisitsController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable int patID) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
@@ -140,7 +140,7 @@ public class VisitsController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/visit/{visitID}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VisitDTO> updateVisit(@PathVariable int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
+    public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
         if(visit == null)

@@ -141,7 +141,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getAdmissions(@PathVariable int id) throws OHServiceException {
+	public ResponseEntity<AdmissionDTO> getAdmissions(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("Get admission by id: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission == null) {
@@ -160,7 +160,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") Integer patientCode)
+	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -222,7 +222,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientCode") Integer patientCode)
+	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientCode") int patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get patient admissions by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -278,8 +278,8 @@ public class AdmissionController {
 	 * @return {@code true} if the record has been set to delete.
 	 * @throws OHServiceException
 	 */
-	@DeleteMapping(value = "/admissions/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int code) throws OHServiceException {
+	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int code) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", code);
 		boolean isDeleted = false;
 		Admission admission = admissionManager.getAdmission(code);
@@ -299,7 +299,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissions/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> dischargePatient(@RequestParam("patientCode") Integer patientCode, 
+	public ResponseEntity<Boolean> dischargePatient(@RequestParam("patientCode") int patientCode, 
 			                                        @Valid @RequestBody AdmissionDTO currentAdmissionDTO)
 			throws OHServiceException {
 		
