@@ -33,33 +33,34 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Class representing a vaccine type")
 public class VisitDTO {
-
+    
+	@ApiModelProperty(notes = "The visit's ID",  position = 1)
     private int visitID;
 
     @NotNull
-    @ApiModelProperty(notes = "Patient related to visitor", position = 1)
+    @ApiModelProperty(notes = "Patient related to visitor", position = 2)
     PatientDTO patient;
 
     @NotNull
-    @ApiModelProperty(notes = "Date of the visit", position = 2)
+    @ApiModelProperty(notes = "Date of the visit", position = 3)
     private GregorianCalendar date;
 
-    @ApiModelProperty(notes = "Note of the visit", position = 3)
+    @ApiModelProperty(notes = "Note of the visit", position = 4)
     private String note;
 
-    @ApiModelProperty(notes = "Sms of the visit", position = 4)
+    @ApiModelProperty(notes = "Sms of the visit", position = 5)
     private boolean sms;
     
-    @ApiModelProperty(notes = "ward of the visit", position = 5)
+    @ApiModelProperty(notes = "ward of the visit", position = 6)
     private Ward ward;
     
-    @ApiModelProperty(notes = "duration of the visit", position = 6)
+    @ApiModelProperty(notes = "duration of the visit", position = 7)
     private Integer duration;
     
-    @ApiModelProperty(notes = "service done during the visit", position = 7)
+    @ApiModelProperty(notes = "service done during the visit", position = 8)
     private String service;
 
-    @ApiModelProperty(hidden= true)
+    //@ApiModelProperty(hidden= true)
     public int getVisitID() {
         return visitID;
     }
