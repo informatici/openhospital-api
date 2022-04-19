@@ -39,11 +39,11 @@ public class TherapyRowDTO {
 	PatientDTO patID;
 
 	@NotNull(message="the start date is require")
-	@ApiModelProperty(notes="The start date of therapy", example = "2020-07-16", position = 3)
+	@ApiModelProperty(notes="The start date of therapy", example = "2020-07-16T00:00:00", position = 3)
 	private LocalDateTime startDate;
 
 	@NotNull(message="the end date is required")
-	@ApiModelProperty(notes="The end date of the therapy", example = "2020-07-30", position = 4)
+	@ApiModelProperty(notes="The end date of the therapy", example = "2020-07-30T00:00:00", position = 4)
 	private LocalDateTime endDate;
 
 	@NotNull(message="the medical's ID is required")
