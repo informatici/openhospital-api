@@ -21,12 +21,14 @@
  */
 package org.isf.visits.dto;
 
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.model.Ward;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,8 +44,9 @@ public class VisitDTO {
     PatientDTO patient;
 
     @NotNull
-    @ApiModelProperty(notes = "Date of the visit", position = 3)
-    private GregorianCalendar date;
+    @ApiModelProperty(notes = "Date of the visit", example="2020-03-19T14:58:00.000Z", position = 3)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private Date date;
 
     @ApiModelProperty(notes = "Note of the visit", position = 4)
     private String note;
@@ -93,7 +96,7 @@ public class VisitDTO {
 		this.service = service;
 	}
 
-	public GregorianCalendar getDate() {
+	public Date getDate() {
 		return this.date;
 	}
 
@@ -113,7 +116,7 @@ public class VisitDTO {
 		this.patient = patient;
 	}
 
-	public void setDate(GregorianCalendar date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
