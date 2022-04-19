@@ -28,6 +28,8 @@ import javax.validation.constraints.NotNull;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.model.Ward;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -42,7 +44,7 @@ public class VisitDTO {
     PatientDTO patient;
 
     @NotNull
-    @ApiModelProperty(notes = "Date of the visit", position = 3)
+    @ApiModelProperty(notes = "Date of the visit", example="2020-03-19T14:58:00", position = 3)
     private LocalDateTime date;
 
     @ApiModelProperty(notes = "Note of the visit", position = 4)
