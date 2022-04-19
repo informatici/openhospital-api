@@ -36,12 +36,12 @@ public class LotDTO {
 	private String code;
 
 	@NotNull(message="The preparation date is required")
-	@ApiModelProperty(notes="The preparation date", example = "2020-06-24", position = 2)
+	@ApiModelProperty(notes="The preparation date", example="2021-05-01T00:00:00.000Z", position = 2)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date preparationDate;
 
 	@NotNull(message="The due date is required")
-	@ApiModelProperty(notes="The due date", example = "2021-06-24", position = 3)
+	@ApiModelProperty(notes="The due date", example="2021-06-24T00:00:00.000Z", position = 3)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date dueDate;
 

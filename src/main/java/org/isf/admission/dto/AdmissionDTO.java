@@ -65,7 +65,7 @@ public class AdmissionDTO {
 	private PatientDTO patient;
 
 	@NotNull
-	@ApiModelProperty(notes = "admission date", position = 7)
+	@ApiModelProperty(notes = "admission date", example="2020-03-19T14:58:00.000Z", position = 7)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date admDate;
 
@@ -90,14 +90,14 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "operation ", position = 14)
 	private OperationDTO operation;
 
-	@ApiModelProperty(notes = "operation date", position = 15)
+	@ApiModelProperty(notes = "operation date", example="2020-03-19T14:58:00.000Z", position = 15)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
-	@ApiModelProperty(notes = "discharge date", position = 17)
+	@ApiModelProperty(notes = "discharge date", example="2020-03-19T14:58:00.000Z", position = 17)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date disDate;
 
@@ -110,14 +110,14 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "transfusional unit", position = 20)
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visit date", position = 21)
+	@ApiModelProperty(notes = "visit date", example="2020-03-19T13:58:00.000Z", position = 21)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@ApiModelProperty(notes = "delivery date", position = 23)
+	@ApiModelProperty(notes = "delivery date", example="2020-03-19T16:58:00.000Z", position = 23)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date deliveryDate;
 

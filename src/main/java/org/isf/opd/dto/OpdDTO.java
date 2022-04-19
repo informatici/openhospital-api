@@ -37,16 +37,16 @@ public class OpdDTO {
 
     private int code;
 
-    @ApiModelProperty(notes = "the date of the admission", position = 2)
+    @ApiModelProperty(notes = "the date of the admission", example="2021-05-01T07:30:00.000Z", position = 2)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date date;
 
     @NotNull
-    @ApiModelProperty(notes = "the visit date", position = 3)
+    @ApiModelProperty(notes = "the visit date", example="2021-05-01T08:35:00.000Z", position = 3)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date visitDate;
 
-    @ApiModelProperty(notes = "the next visit date", position = 4)
+    @ApiModelProperty(notes = "the next visit date", example="2021-06-01T07:00:00.000Z", position = 4)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date nextVisitDate;
 

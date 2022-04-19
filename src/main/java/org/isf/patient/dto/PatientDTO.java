@@ -45,7 +45,7 @@ public class PatientDTO {
 
 	private String name;
 
-	@ApiModelProperty(notes = "Birth date", example="1979-05-01", position = 4)
+	@ApiModelProperty(notes = "Birth date", example="1979-05-01T00:00:00.000Z", position = 4)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date birthDate;
 
