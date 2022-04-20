@@ -196,6 +196,7 @@ public class VisitsControllerTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
+
 		LOGGER.debug("result: {}", result);
 	}
 }
