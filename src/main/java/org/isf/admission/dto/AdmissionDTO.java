@@ -79,55 +79,49 @@ public class AdmissionDTO {
 	private DiseaseDTO diseaseIn;
 
 	@ApiModelProperty(notes = "disease out ", position = 11)
-	private DiseaseDTO diseaseOut1;
+	private DiseaseDTO diseaseOut;
 
-	@ApiModelProperty(notes = "disease out ", position = 12)
-	private DiseaseDTO diseaseOut2;
-
-	@ApiModelProperty(notes = "disease out ",  position = 13)
-	private DiseaseDTO diseaseOut3;
-
-	@ApiModelProperty(notes = "operation ", position = 14)
+	@ApiModelProperty(notes = "operation ", position = 12)
 	private OperationDTO operation;
 
-	@ApiModelProperty(notes = "operation date", example="2020-03-19T14:58:00.000Z", position = 15)
+	@ApiModelProperty(notes = "operation date", example="2020-03-19T14:58:00.000Z", position = 13)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date opDate;
 
-	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
+	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 14)
 	private String opResult;
 
-	@ApiModelProperty(notes = "discharge date", example="2020-03-19T14:58:00.000Z", position = 17)
+	@ApiModelProperty(notes = "discharge date", example="2020-03-19T14:58:00.000Z", position = 15)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date disDate;
 
-	@ApiModelProperty(notes = "disChargeType ", position = 18)
+	@ApiModelProperty(notes = "disChargeType ", position = 16)
 	private DischargeTypeDTO disType;
 
-	@ApiModelProperty(notes = "free note", position = 19)
+	@ApiModelProperty(notes = "free note", position = 17)
 	private String note;
 
-	@ApiModelProperty(notes = "transfusional unit", position = 20)
+	@ApiModelProperty(notes = "transfusional unit", position = 18)
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visit date", example="2020-03-19T13:58:00.000Z", position = 21)
+	@ApiModelProperty(notes = "visit date", example="2020-03-19T13:58:00.000Z", position = 19)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date visitDate;
 
-	@ApiModelProperty(notes = "treatmentType ", position = 22)
+	@ApiModelProperty(notes = "treatmentType ", position = 20)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@ApiModelProperty(notes = "delivery date", example="2020-03-19T16:58:00.000Z", position = 23)
+	@ApiModelProperty(notes = "delivery date", example="2020-03-19T16:58:00.000Z", position = 21)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date deliveryDate;
 
-	@ApiModelProperty(notes = "delivery type", position = 24)
+	@ApiModelProperty(notes = "delivery type", position = 22)
 	private DeliveryTypeDTO deliveryType;
 
-	@ApiModelProperty(notes = "delivery type ", position = 25)
+	@ApiModelProperty(notes = "delivery type ", position = 23)
 	private DeliveryResultTypeDTO deliveryResult;
 
-	@ApiModelProperty(notes = "weight", position = 26)
+	@ApiModelProperty(notes = "weight", position = 24)
 	private Float weight;
 
 	private Date ctrlDate1;
@@ -136,7 +130,7 @@ public class AdmissionDTO {
 
 	private Date abortDate;
 
-	@ApiModelProperty(notes = "weight", position = 30)
+	@ApiModelProperty(notes = "weight", position = 28)
 	private String userID;
 
 	private int lock;
@@ -144,7 +138,7 @@ public class AdmissionDTO {
 	private int hashCode = 0;
 
 	@NotNull
-	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
+	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 30)
 	private String deleted;
 
 	public int getId() {
@@ -187,16 +181,8 @@ public class AdmissionDTO {
 		return this.diseaseIn;
 	}
 
-	public DiseaseDTO getDiseaseOut1() {
-		return this.diseaseOut1;
-	}
-
-	public DiseaseDTO getDiseaseOut2() {
-		return this.diseaseOut2;
-	}
-
-	public DiseaseDTO getDiseaseOut3() {
-		return this.diseaseOut3;
+	public DiseaseDTO getDiseaseOut() {
+		return this.diseaseOut;
 	}
 
 	public OperationDTO getOperation() {
@@ -321,16 +307,8 @@ public class AdmissionDTO {
 		this.diseaseIn = diseaseIn;
 	}
 
-	public void setDiseaseOut1(DiseaseDTO diseaseOut1) {
-		this.diseaseOut1 = diseaseOut1;
-	}
-
-	public void setDiseaseOut2(DiseaseDTO diseaseOut2) {
-		this.diseaseOut2 = diseaseOut2;
-	}
-
-	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
-		this.diseaseOut3 = diseaseOut3;
+	public void setDiseaseOut(DiseaseDTO diseaseOut) {
+		this.diseaseOut = diseaseOut;
 	}
 
 	public void setOperation(OperationDTO operation) {

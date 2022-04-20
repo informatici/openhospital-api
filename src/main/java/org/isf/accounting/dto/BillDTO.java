@@ -60,7 +60,7 @@ public class BillDTO {
 	
 	@NotNull
 	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
-	private boolean patientTrue;
+	private boolean isPatient;
 	
 	@NotNull
 	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
@@ -108,10 +108,6 @@ public class BillDTO {
 
 	public String getListName() {
 		return this.listName;
-	}
-
-	public boolean isPatientTrue() {
-		return this.patientTrue;
 	}
 
 	public String getPatName() {
@@ -162,8 +158,12 @@ public class BillDTO {
 		this.listName = listName;
 	}
 
-	public void setPatientTrue(boolean isPatientBill) {
-		this.patientTrue = isPatientBill;
+	public boolean isPatient() {
+		return isPatient;
+	}
+
+	public void setPatient(boolean isPatient) {
+		this.isPatient = isPatient;
 	}
 
 	public void setPatName(String patName) {

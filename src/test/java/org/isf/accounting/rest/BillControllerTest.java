@@ -186,7 +186,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Integer code = 0;
 		newFullBillDTO.getBill().getPatient().setCode(code);
 
-		newFullBillDTO.getBill().setPatientTrue(true);
+		newFullBillDTO.getBill().setPatient(true);
 
 		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
 
@@ -218,7 +218,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatient().setCode(code);
-		newFullBillDTO.getBill().setPatientTrue(true);
+		newFullBillDTO.getBill().setPatient(true);
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientByName(eq(bill.getPatName()))).thenReturn(null); //FIXME: why we were searching by name?
 		when(billManagerMock.getBill(eq(id))).thenReturn(bill);
@@ -251,7 +251,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().setId(id);
 		Integer code = 111;
 		newFullBillDTO.getBill().getPatient().setCode(code);
-		newFullBillDTO.getBill().setPatientTrue(true);
+		newFullBillDTO.getBill().setPatient(true);
 		Bill bill = BillHelper.setup();
 
 		Patient patient = bill.getBillPatient();
