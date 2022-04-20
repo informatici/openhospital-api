@@ -99,7 +99,7 @@ public class VisitsController {
 
     /**
      * Create new visitors.
-     *
+     * 
      * @param newVisits a list with all the visitors
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
@@ -114,7 +114,7 @@ public class VisitsController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
-
+    
     /**
      * Delete all the visits related to a patient.
      *
