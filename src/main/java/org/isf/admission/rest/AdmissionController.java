@@ -370,20 +370,20 @@ public class AdmissionController {
 		}
 		List<Disease> diseases = null;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
-			diseases = diseaseManager.getDisease();
-			List<Disease> dIns = diseases.stream()
+			Disease disease = diseaseManager.getDiseaseByCode(Integer.parseInt(newAdmissionDTO.getDiseaseIn().getCode()));
+			/*List<Disease> dIns = diseases.stream()
 					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
-					.collect(Collectors.toList());
-			if (dIns.isEmpty()) {
+					.collect(Collectors.toList());*/
+			if (disease == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
-			newAdmission.setDiseaseIn(dIns.get(0));
+			newAdmission.setDiseaseIn(disease);
 		} 
 		
-		if (newAdmissionDTO.getDiseaseOut() != null && newAdmissionDTO.getDiseaseOut().getCode() != null) {
+		if (newAdmissionDTO.getDiseaseOut1() != null && newAdmissionDTO.getDiseaseOut1().getCode() != null) {
 			if (diseases == null) diseases = diseaseManager.getDisease();
 			List<Disease> dOut1s = diseases.stream()
-					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut().getCode()))
+					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut1().getCode()))
 					.collect(Collectors.toList());
 			if (dOut1s.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
@@ -524,10 +524,10 @@ public class AdmissionController {
 			updAdmission.setDiseaseIn(dIns.get(0));
 		} 
 		
-		if (updAdmissionDTO.getDiseaseOut() != null && updAdmissionDTO.getDiseaseOut().getCode() != null) {
+		if (updAdmissionDTO.getDiseaseOut1() != null && updAdmissionDTO.getDiseaseOut1().getCode() != null) {
 			if (diseases == null) diseases = diseaseManager.getDisease();
 			List<Disease> dOut1s = diseases.stream()
-					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut().getCode()))
+					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut1().getCode()))
 					.collect(Collectors.toList());
 			if (dOut1s.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));

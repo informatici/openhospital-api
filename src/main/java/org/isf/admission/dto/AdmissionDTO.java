@@ -79,7 +79,7 @@ public class AdmissionDTO {
 	private DiseaseDTO diseaseIn;
 
 	@ApiModelProperty(notes = "disease out ", position = 11)
-	private DiseaseDTO diseaseOut;
+	private DiseaseDTO diseaseOut1;
 
 	@ApiModelProperty(notes = "operation ", position = 12)
 	private OperationDTO operation;
@@ -181,8 +181,8 @@ public class AdmissionDTO {
 		return this.diseaseIn;
 	}
 
-	public DiseaseDTO getDiseaseOut() {
-		return this.diseaseOut;
+	public DiseaseDTO getDiseaseOut1() {
+		return this.diseaseOut1;
 	}
 
 	public OperationDTO getOperation() {
@@ -307,8 +307,8 @@ public class AdmissionDTO {
 		this.diseaseIn = diseaseIn;
 	}
 
-	public void setDiseaseOut(DiseaseDTO diseaseOut) {
-		this.diseaseOut = diseaseOut;
+	public void setDiseaseOut(DiseaseDTO diseaseOut1) {
+		this.diseaseOut1 = diseaseOut1;
 	}
 
 	public void setOperation(OperationDTO operation) {

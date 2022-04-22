@@ -46,8 +46,8 @@ public class AdmissionMapper extends GenericMapper<Admission, AdmissionDTO> {
 
 		Admission admission = super.map2Model(toObj);
 
-		if (toObj.getDiseaseOut() != null) {
-			Disease disease = mapper.map2Model(toObj.getDiseaseOut());
+		if (toObj.getDiseaseOut1() != null) {
+			Disease disease = mapper.map2Model(toObj.getDiseaseOut1());
 			admission.setDiseaseOut1(disease);
 		}
 
