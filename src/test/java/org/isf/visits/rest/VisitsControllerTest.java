@@ -143,7 +143,6 @@ public class VisitsControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(content().string(containsString(isCreated.toString())))
 				.andReturn();
-
 		LOGGER.debug("result: {}", result);
 	}
 

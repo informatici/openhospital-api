@@ -326,7 +326,6 @@ public class AdmissionDTO {
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
 	}
-
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}
