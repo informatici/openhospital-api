@@ -24,6 +24,7 @@ package org.isf.admission.rest;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -149,7 +150,8 @@ public class AdmissionControllerTest {
 				.thenReturn(admission);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, id)
+				.perform(
+						get(request, id)
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
@@ -331,7 +333,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testDeleteAdmissionType_200() throws Exception {
+	public void testDeleteAdmission_200() throws Exception {
 		Integer id = 123;
 		String request = "/admissions/{id}";
 
@@ -342,7 +344,8 @@ public class AdmissionControllerTest {
 		when(admissionManagerMock.setDeleted(id)).thenReturn(true);
 
 		this.mockMvc
-				.perform(get(request, id)
+				.perform(
+						delete(request, id)
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
@@ -415,9 +418,6 @@ public class AdmissionControllerTest {
 
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
-		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
-				.thenReturn(patient);
-
 		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
 				.thenReturn(patient);
 

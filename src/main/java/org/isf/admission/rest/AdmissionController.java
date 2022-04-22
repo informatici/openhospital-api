@@ -39,6 +39,7 @@ import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
+import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
 import org.isf.dlvrrestype.model.DeliveryResultType;
@@ -114,7 +115,7 @@ public class AdmissionController {
 	
 	@Autowired
 	private DischargeTypeMapper dischargeMapper;
-
+	
 	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
 			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
 			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
