@@ -106,17 +106,20 @@ public class OpdController {
 	ResponseEntity<Integer> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-		if (opdManager.getOpdList(opdDTO.getPatientCode()).stream().noneMatch(r -> r.getCode() == code)) {
+		if (opdManager.getOpdByCode(code) == null) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 
+		if(opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
+		}
+		
 		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
-		opdToUpdate.setPatient(patient);
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
