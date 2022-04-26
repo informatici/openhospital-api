@@ -34,7 +34,8 @@ import io.swagger.annotations.ApiModelProperty;
  * @author gildas
  */
 public class OpdDTO {
-
+	
+	@ApiModelProperty(notes = "the code of the opd", example="3", position = 1)
     private int code;
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
