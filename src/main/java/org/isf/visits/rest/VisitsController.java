@@ -149,7 +149,9 @@ public class VisitsController {
         if(visit.getVisitID() != updateVisit.getVisitID())
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         
-        Visit visitUpdate = visitManager.updateVisit(mapper.map2Model(updateVisit));
+        Visit visitUp = mapper.map2Model(updateVisit);
+        
+        Visit visitUpdate = visitManager.updateVisit(visitUp);
         
         if(visitUpdate == null)
         	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
