@@ -371,6 +371,9 @@ public class AdmissionController {
 		
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
 			Disease disease = diseaseManager.getDiseaseByCode(Integer.parseInt(newAdmissionDTO.getDiseaseIn().getCode()));
+			/*List<Disease> dIns = diseases.stream()
+					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
+					.collect(Collectors.toList());*/
 			if (disease == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
