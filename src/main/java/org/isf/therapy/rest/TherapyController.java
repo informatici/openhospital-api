@@ -72,6 +72,7 @@ public class TherapyController {
 	@Autowired
 	private MedicalMapper medicalMapper;
 	
+	
 	/**
 	 * Creates a new therapy for related Patient.
 	 * @param thRowDTO - the therapy

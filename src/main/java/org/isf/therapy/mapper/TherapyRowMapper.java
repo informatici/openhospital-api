@@ -23,6 +23,9 @@ package org.isf.therapy.mapper;
 
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medicals.model.Medical;
+import org.isf.patient.dto.PatientDTO;
+import org.isf.patient.mapper.PatientMapper;
+import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
 import org.isf.therapy.dto.TherapyRowDTO;
 import org.isf.therapy.model.TherapyRow;
@@ -39,6 +42,8 @@ public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
 	public TherapyRowMapper() {
 		super(TherapyRow.class, TherapyRowDTO.class);
 	}
+	@Autowired
+	private PatientMapper patientMapper;
 
 	@Override
 	public TherapyRow map2Model(TherapyRowDTO toObj) {
@@ -48,7 +53,8 @@ public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
 		Medical medical = new Medical();
 		medical.setCode(toObj.getMedicalId());
 		therapyRow.setMedical(medical);
-
+		Patient patient = patientMapper.map2Model(toObj.getPatID());
+		therapyRow.setPatient(patient);
 		return therapyRow;
 	}
 
@@ -58,7 +64,9 @@ public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
 
 		// map medical
 		therapyRowDTO.setMedicalId(fromObj.getMedical());
-
+		PatientDTO patID = patientMapper.map2DTO(fromObj.getPatient());
+		therapyRowDTO.setPatID(patID);
+		
 		return therapyRowDTO;
 	}
 
