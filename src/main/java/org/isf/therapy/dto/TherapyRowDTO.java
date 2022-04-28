@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class TherapyRowDTO {
 
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
-	private Integer therapyID;
+	private int therapyID;
 
 	@NotNull(message="the patient is required")
 	@ApiModelProperty(notes="The patient", position = 2)
@@ -48,7 +48,7 @@ public class TherapyRowDTO {
 
 	@NotNull(message="the medical's ID is required")
 	@ApiModelProperty(notes="The ID of the medical concerned by the therapy", example = "1", position = 5)
-	private Integer medicalId;
+	private int medicalId;
 
 	@NotNull(message="the quantity is required")
 	@ApiModelProperty(notes="The quantity of medicals", example = "48", position = 6)
@@ -56,26 +56,26 @@ public class TherapyRowDTO {
 
 	@NotNull(message="the unit's ID is required")
 	@ApiModelProperty(notes="The unit's ID", example = "1", position = 7)
-	private Integer unitID;
+	private int unitID;
 
 	@NotNull(message="the frequency in day is required")
 	@ApiModelProperty(notes="The frequency in day", example = "2", position = 8)
-	private Integer freqInDay;
+	private int freqInDay;
 
 	@NotNull(message="the frequency in period is required")
 	@ApiModelProperty(notes="The frequency in period", example = "1", position = 9)
-	private Integer freqInPeriod;
+	private int freqInPeriod;
 	
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 10)		
 	private String note;
 
 	@NotNull(message="the notify flag is required")
 	@ApiModelProperty(notes="the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0", position = 11)	
-	private Integer notifyInt;
+	private int notifyInt;
 
 	@NotNull(message="the sms flag is required")
 	@ApiModelProperty(notes="the sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0", position = 12)	
-	private Integer smsInt;
+	private int smsInt;
 
 	public TherapyRowDTO() {
 	}
@@ -97,7 +97,7 @@ public class TherapyRowDTO {
 		this.smsInt = smsInt;
 	}
 
-	public Integer getTherapyID() {
+	public int getTherapyID() {
 		return this.therapyID;
 	}
 
@@ -113,7 +113,7 @@ public class TherapyRowDTO {
 		return this.endDate;
 	}
 
-	public Integer getMedicalId() {
+	public int getMedicalId() {
 		return this.medicalId;
 	}
 
@@ -121,15 +121,15 @@ public class TherapyRowDTO {
 		return this.qty;
 	}
 
-	public Integer getUnitID() {
+	public int getUnitID() {
 		return this.unitID;
 	}
 
-	public Integer getFreqInDay() {
+	public int getFreqInDay() {
 		return this.freqInDay;
 	}
 
-	public Integer getFreqInPeriod() {
+	public int getFreqInPeriod() {
 		return this.freqInPeriod;
 	}
 
@@ -137,11 +137,11 @@ public class TherapyRowDTO {
 		return this.note;
 	}
 
-	public Integer getNotifyInt() {
+	public int getNotifyInt() {
 		return this.notifyInt;
 	}
 
-	public Integer getSmsInt() {
+	public int getSmsInt() {
 		return this.smsInt;
 	}
 
