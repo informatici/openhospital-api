@@ -21,7 +21,9 @@
  */
 package org.isf.therapy.mapper;
 
-import org.isf.medical.dto.MedicalDTO;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.isf.medicals.model.Medical;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
@@ -29,12 +31,8 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
 import org.isf.therapy.dto.TherapyRowDTO;
 import org.isf.therapy.model.TherapyRow;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
