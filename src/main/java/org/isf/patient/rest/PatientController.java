@@ -100,10 +100,15 @@ public class PatientController {
 	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: {}", code);
-        Patient patient = patientMapper.map2Model(updatePatient);
-        patient.setCode(code);
-        patient = patientManager.savePatient(patient);
-        if (patient.getCode() == code){
+		Patient patientRead = patientManager.getPatientById(code);
+		if (patientRead == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
+		updatePatientModel.setCode(code);
+		updatePatientModel.setLock(patientRead.getLock());
+		Patient patient = patientManager.savePatient(updatePatientModel);
+		if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(patient.getCode());

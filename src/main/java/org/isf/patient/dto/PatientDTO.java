@@ -126,11 +126,6 @@ public class PatientDTO {
     }
 
     @ApiModelProperty(hidden = true)
-    public int getLock() {
-        return lock;
-    }
-
-    @ApiModelProperty(hidden = true)
     public int getHashCode() {
         return hashCode;
     }
