@@ -219,10 +219,10 @@ public class OpdController {
 	 * @return last Opd associated with specified patient ID or {@code null}
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/opds/last/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("code") int code) throws OHServiceException {
-		LOGGER.info("Get the last opp for patient code: {}", code);
-		Opd lastOpd = opdManager.getLastOpd(code);
+	@GetMapping(value = "/opds/last/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
+		LOGGER.info("Get the last opp for patient code: {}", patientCode);
+		Opd lastOpd = opdManager.getLastOpd(patientCode);
 		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
 	}
 	

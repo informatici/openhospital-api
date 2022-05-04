@@ -54,10 +54,9 @@ public class OperationRowDTO {
 
     private String remarks;
 
-    @NotNull
+  
     private AdmissionDTO admission;
 
-    @NotNull
     private OpdDTO opd;
 
     private BillDTO bill;
