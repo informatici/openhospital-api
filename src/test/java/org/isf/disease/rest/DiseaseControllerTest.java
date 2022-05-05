@@ -263,7 +263,7 @@ public class DiseaseControllerTest {
 	public void testGetDiseaseByCode() throws Exception {
 		String request = "/diseases/{code}";
 
-		Integer code = 1;
+		String code = "1";
 
 		Disease disease = DiseaseHelper.setup();
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
@@ -339,7 +339,7 @@ public class DiseaseControllerTest {
 	public void testDeleteDisease() throws Exception {
 		String request = "/diseases/{code}";
 
-		Integer code = 1;
+		String code = "1";
 
 		Disease disease = DiseaseHelper.setup();
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
