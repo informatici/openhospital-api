@@ -39,7 +39,6 @@ import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
-import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
 import org.isf.dlvrrestype.model.DeliveryResultType;
@@ -398,9 +397,11 @@ public class AdmissionController {
 		List<Disease> diseases = null;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
 			Disease disease = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseIn().getCode());
-			/*List<Disease> dIns = diseases.stream()
-					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
-					.collect(Collectors.toList());*/
+			/*
+			 * List<Disease> dIns = diseases.stream() .filter(d -> 
+			 * d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
+			 * .collect(Collectors.toList());
+			 */
 			if (disease == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
