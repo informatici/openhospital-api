@@ -117,9 +117,11 @@ public class LaboratoryController {
 
         ArrayList<String> labRows = new ArrayList<>();
         if (labRow != null) {
-            labRows = new ArrayList<>(labRow);
+            labRows = new ArrayList<String>(labRow);
         }
-
+        if (labToInsert.getRegistrationDate() == null)
+        	labToInsert.setRegistrationDate(new GregorianCalendar());
+        
         boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
         if (!inserted) {
@@ -130,7 +132,7 @@ public class LaboratoryController {
     }
 
     @PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
+    public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
 
         List<Laboratory> labsToInsert = new ArrayList<>();
         ArrayList<ArrayList<LaboratoryRow>> labsRowsToInsert = new ArrayList<>();
@@ -173,7 +175,7 @@ public class LaboratoryController {
     }
 
     @PutMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateLaboratory(@PathVariable Integer code, @RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
+    public ResponseEntity<Boolean> updateLaboratory(@PathVariable Integer code, @RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 
         LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
         List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
@@ -213,7 +215,7 @@ public class LaboratoryController {
     }
 
     @DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteExam(@PathVariable Integer code) throws OHServiceException {
+    public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
         Laboratory labToDelete = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
         if (labToDelete == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
