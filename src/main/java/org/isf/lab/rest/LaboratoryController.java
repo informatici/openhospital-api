@@ -113,13 +113,13 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 
-		List<String> labRows = new ArrayList<>();
-		if (labRow != null) {
-			labRows = new ArrayList<>(labRow);
-		}
+		ArrayList<String> labRows = new ArrayList<>();
+        if (labRow != null) {
+            labRows = new ArrayList<String>(labRow);
+        }
 
-		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
-
+        boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
+        
 		if (!inserted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
 		}
