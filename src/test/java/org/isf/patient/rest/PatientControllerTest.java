@@ -251,6 +251,8 @@ public class PatientControllerTest {
 		newPatientDTO.setCode(code);
 		Patient newPatient = PatientHelper.setup();
 		newPatient.setCode(code);
+		
+		//when(patientBrowserManagerMock.getPatientById(code)).thenReturn(newPatient);
 
 		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
 
