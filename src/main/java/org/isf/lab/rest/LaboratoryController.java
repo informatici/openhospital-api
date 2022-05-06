@@ -179,7 +179,6 @@ public class LaboratoryController {
 
         LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
         List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
-
         if (!code.equals(laboratoryDTO.getCode())) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch!", OHSeverityLevel.ERROR));
         }
@@ -205,6 +204,7 @@ public class LaboratoryController {
         if (labRow != null) {
             labRows = new ArrayList<>(labRow);
         }
+        labToInsert.setLock(0);
 
         boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
 

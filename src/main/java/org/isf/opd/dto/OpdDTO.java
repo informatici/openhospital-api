@@ -92,8 +92,6 @@ public class OpdDTO {
     @ApiModelProperty(notes = "user id", position = 16)
     private String userID;
 
-    @ApiModelProperty(notes = "opd lock column", position = 17)
-    private int lock;
     
     /*@ApiModelProperty(notes = "reasons for entry", position = 18)
     private String reason; // ADDED: Arnaud
@@ -151,11 +149,6 @@ public class OpdDTO {
 	}*/
 
 	private int hashCode = 0;
-
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
 
     @ApiModelProperty(hidden = true)
     public int getHashCode() {
@@ -290,9 +283,6 @@ public class OpdDTO {
 		this.userID = userID;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;

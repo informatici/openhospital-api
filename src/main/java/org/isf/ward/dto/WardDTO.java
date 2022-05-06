@@ -54,8 +54,6 @@ public class WardDTO {
 	@NotNull
 	private boolean isFemale;
 
-	private Integer lock;
-
 	public String getCode() {
 		return this.code;
 	}
@@ -100,9 +98,6 @@ public class WardDTO {
 		return this.isFemale;
 	}
 
-	public Integer getLock() {
-		return this.lock;
-	}
 
 	public void setCode(String code) {
 		this.code = code;
@@ -148,7 +143,4 @@ public class WardDTO {
 		this.isFemale = isFemale;
 	}
 
-	public void setLock(Integer lock) {
-		this.lock = lock;
-	}
 }

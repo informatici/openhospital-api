@@ -70,6 +70,7 @@ public class HospitalController {
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);
+        hospital.setLock(0);
         hospitalBrowsingManager.updateHospital(hospital);
 
         return ResponseEntity.ok(true);

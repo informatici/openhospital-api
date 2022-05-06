@@ -672,6 +672,7 @@ public class AdmissionController {
 				? updAdmission.getPatient().getFirstName() + " " + updAdmission.getPatient().getSecondName()
 				: updAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
+		updAdmission.setLock(old.getLock());
 		boolean isUpdated = admissionManager.updateAdmission(updAdmission);
 		if (isUpdated) {
 			return ResponseEntity.ok(updAdmission.getId());
