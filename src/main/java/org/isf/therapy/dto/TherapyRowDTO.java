@@ -72,11 +72,11 @@ public class TherapyRowDTO {
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 10)		
 	private String note;
 
-	//@NotNull(message="the notify flag is required")
+	@NotNull(message="the notify flag is required")
 	@ApiModelProperty(notes="the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0", position = 11)	
 	private int notifyInt;
 
-	//@NotNull(message="the sms flag is required")
+	@NotNull(message="the sms flag is required")
 	@ApiModelProperty(notes="the sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0", position = 12)	
 	private int smsInt;
 
