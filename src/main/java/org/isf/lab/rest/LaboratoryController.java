@@ -128,7 +128,7 @@ public class LaboratoryController {
 	}
 
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
+	public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
 
 		List<Laboratory> labsToInsert = new ArrayList<>();
 		List<List<LaboratoryRow>> labsRowsToInsert = new ArrayList<>();

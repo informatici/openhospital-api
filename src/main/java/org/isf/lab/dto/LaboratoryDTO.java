@@ -47,7 +47,7 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
 
-    private int lock;
+    //private int lock;
 
     @ApiModelProperty(notes = "Laboratory Note", position = 7)
     private String note;
@@ -66,11 +66,6 @@ public class LaboratoryDTO {
 
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
-
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
 
 	public Integer getCode() {
 		return this.code;
@@ -142,10 +137,6 @@ public class LaboratoryDTO {
 
 	public void setResult(String result) {
 		this.result = result;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	public void setNote(String note) {

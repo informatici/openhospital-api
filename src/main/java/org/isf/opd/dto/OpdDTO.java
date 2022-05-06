@@ -89,7 +89,6 @@ public class OpdDTO {
     @ApiModelProperty(notes = "user id", position = 16)
     private String userID;
 
-    @ApiModelProperty(notes = "opd lock column", position = 17)
     private int lock;
     
     private int hashCode;
@@ -287,9 +286,6 @@ public class OpdDTO {
 		this.userID = userID;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;

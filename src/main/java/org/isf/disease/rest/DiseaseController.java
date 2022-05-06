@@ -269,7 +269,7 @@ public class DiseaseController {
 		if (!diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+		disease.setLock(0);
 		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {

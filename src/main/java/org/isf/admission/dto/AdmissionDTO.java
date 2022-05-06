@@ -132,8 +132,6 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
-
-	private int lock;
 	
 	private int hashCode;
 
@@ -266,11 +264,6 @@ public class AdmissionDTO {
 	}
 
 	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
-
-	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
 	}
@@ -392,10 +385,6 @@ public class AdmissionDTO {
 
 	public void setUserID(String userID) {
 		this.userID = userID;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	public void setHashCode(int hashCode) {

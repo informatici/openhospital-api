@@ -41,25 +41,19 @@ public class ExamDTO {
 
     private ExamTypeDTO examtype;
 
-    @ApiModelProperty(notes = "Exam Db Version to increment", example = "0", position = 5)
-    private Integer lock;
+
 
     public ExamDTO() {
     }
 
-    public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype, Integer lock) {
+    public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype) {
         this.code = code;
         this.description = description;
         this.procedure = procedure;
         this.defaultResult = defaultResult;
         this.examtype = examtype;
-        this.lock = lock;
     }
 
-	@ApiModelProperty(hidden= true)
-    public Integer getLock() {
-        return lock;
-    }
 
     @Override
     public String toString() {
@@ -69,7 +63,6 @@ public class ExamDTO {
                 ", procedure=" + procedure +
                 ", defaultResult='" + defaultResult + '\'' +
                 ", examtype=" + examtype +
-                ", lock=" + lock +
                 '}';
     }
 
@@ -113,7 +106,4 @@ public class ExamDTO {
 		this.examtype = examtype;
 	}
 
-	public void setLock(Integer lock) {
-		this.lock = lock;
-	}
 }

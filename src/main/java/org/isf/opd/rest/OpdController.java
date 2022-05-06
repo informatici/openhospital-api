@@ -120,6 +120,7 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
+		opdToUpdate.setLock(0);
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));

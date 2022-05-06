@@ -49,8 +49,6 @@ public class HospitalDTO {
     @ApiModelProperty(notes = "Hospital Currency Cod", example = "EUR", position = 8)
     private String currencyCod;
 
-    @ApiModelProperty(notes = "Hospital Version to increment", example = "0", position = 9)
-    private Integer lock;
 
 	public String getCode() {
 		return this.code;
@@ -84,10 +82,6 @@ public class HospitalDTO {
 		return this.currencyCod;
 	}
 
-	public Integer getLock() {
-		return this.lock;
-	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
@@ -118,9 +112,5 @@ public class HospitalDTO {
 
 	public void setCurrencyCod(String currencyCod) {
 		this.currencyCod = currencyCod;
-	}
-
-	public void setLock(Integer lock) {
-		this.lock = lock;
 	}
 }
