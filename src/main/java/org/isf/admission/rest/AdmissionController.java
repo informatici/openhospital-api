@@ -318,10 +318,6 @@ public class AdmissionController {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
 		}
-		if (adm.getDisDate().before(adm.getAdmDate())) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "the exit date must be after the entry date!", OHSeverityLevel.ERROR));
-		}
 		if (adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!",
 					OHSeverityLevel.ERROR));
