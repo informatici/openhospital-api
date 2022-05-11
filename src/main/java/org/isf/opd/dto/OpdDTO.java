@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.disease.dto.DiseaseDTO;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -34,17 +35,21 @@ import io.swagger.annotations.ApiModelProperty;
  * @author gildas
  */
 public class OpdDTO {
-
+	
+	@ApiModelProperty(notes = "the code of the opd", example="3", position = 1)
     private int code;
 
-    @ApiModelProperty(notes = "the date of the admission", position = 2)
+	@ApiModelProperty(notes = "the date of the admission", example="2021-05-01T07:30:00.000Z", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime date;
 
     @NotNull
-    @ApiModelProperty(notes = "the visit date", position = 3)
+    @ApiModelProperty(notes = "the visit date", example="2021-05-01T08:35:00.000Z", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDate visitDate;
 
-    @ApiModelProperty(notes = "the next visit date", position = 4)
+    @ApiModelProperty(notes = "the next visit date", example="2021-06-01T07:00:00.000Z", position = 4)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
@@ -59,7 +64,7 @@ public class OpdDTO {
     private char sex;
 
     @NotNull
-    @ApiModelProperty(notes = "the admission note", example = "", position = 8)
+    @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 8)
     private String note; // ADDED: Alex
 
     @NotNull
@@ -91,12 +96,67 @@ public class OpdDTO {
     @ApiModelProperty(notes = "opd lock column", position = 16)
     private int lock;
 
-    private int hashCode;
-
 	@ApiModelProperty(hidden= true)
 	public int getLock() {
 		return lock;
 	}
+    
+    /*@ApiModelProperty(notes = "reasons for entry", position = 18)
+    private String reason; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "history of a medical or psychiatric patient", position = 19)
+    private String anamnesis; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "allergies of patient", position = 20)
+    private String allergies; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "Current therapies", position = 21)
+    private String therapies; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "prescription", position = 22)
+    private String prescription; // ADDED: Arnaud
+    
+    public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getAnamnesis() {
+		return anamnesis;
+	}
+
+	public void setAnamnesis(String anamnesis) {
+		this.anamnesis = anamnesis;
+	}
+
+	public String getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(String allergies) {
+		this.allergies = allergies;
+	}
+
+	public String getTherapies() {
+		return therapies;
+	}
+
+	public void setTherapies(String therapies) {
+		this.therapies = therapies;
+	}
+
+	public String getPrescription() {
+		return prescription;
+	}
+
+	public void setPrescription(String prescription) {
+		this.prescription = prescription;
+	}*/
+
+	private int hashCode = 0;
 
     @ApiModelProperty(hidden = true)
     public int getHashCode() {
@@ -231,9 +291,6 @@ public class OpdDTO {
 		this.userID = userID;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;

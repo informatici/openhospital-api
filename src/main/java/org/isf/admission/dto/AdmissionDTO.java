@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disease.dto.DiseaseDTO;
@@ -64,7 +65,8 @@ public class AdmissionDTO {
 	private PatientDTO patient;
 
 	@NotNull
-	@ApiModelProperty(notes = "admission date", position = 7)
+	@ApiModelProperty(notes = "admission date", example="2020-03-19T14:58:00.000Z", position = 7)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime admDate;
 
 	@ApiModelProperty(notes = "admission type", position = 8)
@@ -88,13 +90,15 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "operation ", position = 14)
 	private OperationDTO operation;
 
-	@ApiModelProperty(notes = "operation date", position = 15)
+	@ApiModelProperty(notes = "operation date", example="2020-03-19T14:58:00.000Z", position = 15)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime opDate;
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
-	@ApiModelProperty(notes = "discharge date", position = 17)
+	@ApiModelProperty(notes = "discharge date", example="2020-03-19T14:58:00.000Z", position = 17)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime disDate;
 
 	@ApiModelProperty(notes = "disChargeType ", position = 18)
@@ -106,13 +110,15 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "transfusional unit", position = 20)
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visit date", position = 21)
+	@ApiModelProperty(notes = "visit date", example="2020-03-19T13:58:00.000Z", position = 21)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime visitDate;
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@ApiModelProperty(notes = "delivery date", position = 23)
+	@ApiModelProperty(notes = "delivery date", example="2020-03-19T16:58:00.000Z", position = 23)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime deliveryDate;
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
@@ -132,8 +138,6 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
-
-	private int lock;
 	
 	private int hashCode;
 
@@ -266,11 +270,6 @@ public class AdmissionDTO {
 	}
 
 	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
-
-	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
 	}
@@ -326,7 +325,6 @@ public class AdmissionDTO {
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
 	}
-
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}
@@ -393,10 +391,6 @@ public class AdmissionDTO {
 
 	public void setUserID(String userID) {
 		this.userID = userID;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	public void setHashCode(int hashCode) {

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -143,7 +144,6 @@ public class VisitsControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(content().string(containsString(isCreated.toString())))
 				.andReturn();
-
 		LOGGER.debug("result: {}", result);
 	}
 
@@ -167,5 +167,31 @@ public class VisitsControllerTest {
 
 		LOGGER.debug("result: {}", result);
 	}
+	
+	@Test
+	public void testUpdateVisit_200() throws Exception {
+		String request = "/visit/{visitID}";
+       
+		int visitID = 542;
+      
+		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(visitID));
+		body.setDuration(60);
+		Visit visit = visitMapper.map2Model(body); 
+		when(visitManagerMock.findVisit(visitID))
+				.thenReturn(visit);
+	
+		when(visitManagerMock.updateVisit(visit))
+		        .thenReturn(visit);
+		MvcResult result = this.mockMvc
+				.perform(put(request, visitID)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(VisitHelper.asJsonString(body))
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andReturn();
 
+		LOGGER.debug("result: {}", result);
+	}
 }

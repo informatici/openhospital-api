@@ -145,7 +145,9 @@ public class WardController {
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
-        Ward wardUpdated = wardManager.updateWard(mapper.map2Model(updateWard));
+	    Ward ward = mapper.map2Model(updateWard);
+	    ward.setLock(0);
+        Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
         }

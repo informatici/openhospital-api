@@ -23,6 +23,7 @@ package org.isf.examination.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
 public class PatientExaminationDTO {
@@ -31,6 +32,7 @@ public class PatientExaminationDTO {
     private int pex_ID;
 
     @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime pex_date;
 
     @ApiModelProperty(notes = "Patient Examination Code", position = 3)

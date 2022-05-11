@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.vaccine.dto.VaccineDTO;
 
@@ -39,7 +40,8 @@ public class PatientVaccineDTO
 	private int progr;
 
 	@NotNull
-	@ApiModelProperty(notes = "the vaccine date", position = 2)
+	@ApiModelProperty(notes = "the vaccine date", example="2021-05-01T00:00:00.000Z", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime vaccineDate;
 
 	@NotNull
@@ -49,15 +51,10 @@ public class PatientVaccineDTO
 	@NotNull
 	@ApiModelProperty(notes = "the vaccine", position = 4)
 	private VaccineDTO vaccine;
-	
-	private int lock;
+
 	
 	private int hashCode;
 
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
@@ -102,10 +99,6 @@ public class PatientVaccineDTO
 
 	public void setVaccine(VaccineDTO vaccine) {
 		this.vaccine = vaccine;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	public void setHashCode(int hashCode) {

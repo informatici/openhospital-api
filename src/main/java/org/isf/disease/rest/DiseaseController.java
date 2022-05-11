@@ -224,6 +224,7 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Get disease by code");
+        
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
 	    if (disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
@@ -267,7 +268,7 @@ public class DiseaseController {
 		if (!diseaseManager.isCodePresent(disease.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+		disease.setLock(0);
 		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {

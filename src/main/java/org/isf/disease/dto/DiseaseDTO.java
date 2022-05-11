@@ -57,12 +57,6 @@ public class DiseaseDTO {
 	
 	private int hashCode;
 
-	private int lock;
-
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
@@ -121,7 +115,4 @@ public class DiseaseDTO {
 		this.hashCode = hashCode;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
 }

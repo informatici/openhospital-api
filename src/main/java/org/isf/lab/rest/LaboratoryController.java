@@ -118,17 +118,21 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 
-		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
+        if (labToInsert.getDate() == null) {
+        	labToInsert.setDate(LocalDateTime.now());
+        }
+        
+        boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
-		if (!inserted) {
+        if (!inserted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
 		}
-
+        
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
+	public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
 
 		List<Laboratory> labsToInsert = new ArrayList<>();
 		List<List<LaboratoryRow>> labsRowsToInsert = new ArrayList<>();
@@ -202,8 +206,10 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 
-		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
+        labToInsert.setLock(0); //TOFIX: are we sure??
 
+        boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
+        
 		if (!updated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));
 		}

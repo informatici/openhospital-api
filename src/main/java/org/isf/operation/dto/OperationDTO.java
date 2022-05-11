@@ -43,12 +43,6 @@ public class OperationDTO {
 	@ApiModelProperty(notes = "the operation major", position = 4)
 	private Integer major;
 
-	private Integer lock;
-
-	@ApiModelProperty(hidden= true)
-	public Integer getLock() {
-		return lock;
-	}
 
 	public String getCode() {
 		return this.code;
@@ -82,7 +76,4 @@ public class OperationDTO {
 		this.major = major;
 	}
 
-	public void setLock(Integer lock) {
-		this.lock = lock;
-	}
 }

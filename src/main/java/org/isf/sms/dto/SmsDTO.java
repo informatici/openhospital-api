@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
 public class SmsDTO {
@@ -33,11 +34,13 @@ public class SmsDTO {
 	private Integer smsId;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS Date", example="2020-07-16", position = 2)
+	@ApiModelProperty(notes = "SMS Date", example="2021-05-01T00:00:00.000Z", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime smsDate;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS scheduled date", example="2020-07-28", position = 3)
+	@ApiModelProperty(notes = "SMS scheduled date", example="2021-05-01T00:00:00.000Z", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime smsDateSched;
 	
 	@NotNull
@@ -48,7 +51,8 @@ public class SmsDTO {
 	@ApiModelProperty(notes = "SMS content text", example="Hi Mario!", position = 5)
 	private String smsText;
 	
-	@ApiModelProperty(notes = "SMS sent date", example="2020-07-28", position = 6)
+	@ApiModelProperty(notes = "SMS sent date", example="2021-05-01T00:00:00.000Z", position = 6)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDateTime smsDateSent;
 	
 	@NotNull

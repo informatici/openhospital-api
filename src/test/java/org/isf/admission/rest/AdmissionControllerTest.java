@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.isf.admission.data.AdmissionHelper;
@@ -43,6 +44,8 @@ import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.data.AdmissionTypeDTOHelper;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.data.DischargeTypeHelper;
+import org.isf.disctype.manager.DischargeTypeBrowserManager;
+import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -110,7 +113,13 @@ public class AdmissionControllerTest {
 
 	@Autowired
 	private AdmittedPatientMapper admittedMapper = new AdmittedPatientMapper();
-
+	
+	@Autowired
+	private DischargeTypeBrowserManager dischargeManager =  new DischargeTypeBrowserManager();
+	
+	@Autowired
+	private DischargeTypeMapper dischargeMapper = new DischargeTypeMapper();
+	
 	private MockMvc mockMvc;
 
 	@BeforeEach
@@ -120,7 +129,7 @@ public class AdmissionControllerTest {
 				.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
 						diseaseManagerMock, operationManagerMock, pregTraitTypeManagerMock,
 						dlvrTypeManagerMock, dlvrrestTypeManagerMock, admissionMapper,
-						admittedMapper))
+						admittedMapper, dischargeManager, dischargeMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
@@ -338,6 +347,44 @@ public class AdmissionControllerTest {
 				.andReturn();
 	}
 
+	@Test
+	public void testDischargeAdmission_200() throws Exception {
+		    
+		    Integer id = 1;
+			String request = "/admissions/discharge/{id}";
+			Patient patient = PatientHelper.setup();
+			patient.setCode(id);
+			when(patientManagerMock.getPatientById(id))
+					.thenReturn(patient);
+			Admission admission = AdmissionHelper.setup();
+			
+			when(admissionManagerMock.getCurrentAdmission(patient))
+					.thenReturn(admission);
+			Disease disease1 = DiseaseHelper.setup();
+			Disease disease2 = DiseaseHelper.setup();
+			Disease disease3 = DiseaseHelper.setup();
+			String code = "B";
+			DischargeType dischargeType = DischargeTypeHelper.setup(code);
+			admission.setAdmitted(0);
+			admission.setDisDate(LocalDateTime.now());
+			admission.setDiseaseOut1(disease1);
+			admission.setDiseaseOut1(disease2);
+			admission.setDiseaseOut1(disease3);
+			admission.setDisType(dischargeType);
+			
+			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
+			
+			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);	
+			this.mockMvc
+					.perform(
+							post(request, id).contentType(MediaType.APPLICATION_JSON)
+							.content(AdmissionHelper.asJsonString(admDTO))
+					)
+					.andDo(log())
+					.andExpect(status().isOk())
+					.andReturn();
+	}
+	
 	@Test
 	public void testNewAdmissions_201() throws Exception {
 		String request = "/admissions";

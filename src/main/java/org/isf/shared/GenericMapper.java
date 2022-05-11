@@ -25,6 +25,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.patient.dto.PatientDTO;
+import org.isf.patient.dto.PatientSTATUS;
+import org.isf.patient.model.Patient;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -58,5 +61,17 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 	@Override
 	public List<SourceType> map2ModelList(List<DestType> list) {
 		return (List<SourceType>) list.stream().map(it -> modelMapper.map(it, sourceClass)).collect(Collectors.toList());
+	}
+
+	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
+		// TODO Auto-generated method stub
+		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
+		
+		if(status)
+			patientDTO.setStatus(PatientSTATUS.I);
+		else 
+			patientDTO.setStatus(PatientSTATUS.O);
+		
+		return patientDTO;
 	}
 }

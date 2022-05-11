@@ -21,8 +21,16 @@
  */
 package org.isf.patient.rest;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
@@ -36,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,6 +67,9 @@ public class PatientController {
 
 	@Autowired
 	protected PatientBrowserManager patientManager;
+	
+	@Autowired
+	protected  AdmissionBrowserManager admissionBrowserManager = new AdmissionBrowserManager();
 
 	@Autowired
 	protected PatientMapper patientMapper;
@@ -75,7 +87,7 @@ public class PatientController {
      */
 	@PostMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
-        String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + ' ' + newPatient.getSecondName() : newPatient.getName();
+        String name = ObjectUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + ' ' + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
         Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
         if (patient == null){
@@ -87,10 +99,17 @@ public class PatientController {
 	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Integer> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: {}", code);
-        Patient patient = patientMapper.map2Model(updatePatient);
-        patient.setCode(code);
-        patient = patientManager.savePatient(patient);
-        if (patient.getCode() == code){
+		if (!updatePatient.getCode().equals(code)) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
+		}
+		Patient patientRead = patientManager.getPatientById(code);
+		if (patientRead == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
+		updatePatientModel.setLock(patientRead.getLock());
+		Patient patient = patientManager.savePatient(updatePatientModel);
+		if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(patient.getCode());
@@ -110,33 +129,66 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> getPatient(@PathVariable Integer code) throws OHServiceException {
+	public ResponseEntity<PatientDTO> getPatient(@PathVariable("code") int code) throws OHServiceException {
 		LOGGER.info("Get patient code: {}", code);
 		Patient patient = patientManager.getPatientById(code);
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(patientMapper.map2DTO(patient));
+		Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+		Boolean status = admission != null ? true : false;
+		return ResponseEntity.ok(patientMapper.map2DTOWS(patient, status));
 	}
-
 
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> searchPatient(
-			@RequestParam(value="name", defaultValue="") String name,
-			@RequestParam(value="code", required=false) Integer code) throws OHServiceException {
-		LOGGER.info("Search patient name: {}  code: {}", name, code);
-		Patient patient = null;
-		if (code != null) {
-            patient = patientManager.getPatientById(code);
-		} else if (!name.isEmpty()) {
-            patient = patientManager.getPatientByName(name);
+	public ResponseEntity<List<PatientDTO>> searchPatient( //TODO: are we sure we want to search by birthDate and/or address??
+			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
+			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
+			@RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+			@RequestParam(value="address", defaultValue="", required = false) String address
+	) throws OHServiceException {
+
+		List<PatientDTO> patientListDTO = new ArrayList<PatientDTO>();
+		List<Patient> patientList = null;
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (firstName != null && !firstName.isEmpty()) {
+			params.put("firstName", firstName);
 		}
-        if (patient == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.ok(patientMapper.map2DTO(patient));
+		if (secondName != null && !secondName.isEmpty()) {
+			params.put("secondName", secondName);
+		}
+		if (birthDate != null && !birthDate.isEmpty()) {
+			try {
+
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				Date birthDateDate = df.parse(birthDate);
+				params.put("birthDate", birthDateDate);
+
+			} catch (Exception e) {
+				// TODO: fixme
+			}
+		}
+		if (address != null && !address.isEmpty()) {
+			params.put("address", address);
+		}
+
+
+		if (params.entrySet().size() > 0) {
+			patientList = patientManager.getPatients(params);
+		}
+		if (patientList == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		for(Patient patient : patientList) {
+			Admission admission = admissionBrowserManager.getCurrentAdmission(patient);
+			Boolean status = admission != null ? true : false;
+			patientListDTO.add(patientMapper.map2DTOWS(patient, status));
+		}
+		
+		return ResponseEntity.ok(patientListDTO);
 	}
-	
+
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam Integer code) throws OHServiceException {
 		LOGGER.info("get patient for provided code even if logically deleted: {}", code);

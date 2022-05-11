@@ -25,6 +25,7 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.dto.WardDTO;
@@ -41,7 +42,8 @@ public class MovementWardDTO {
 	private WardDTO ward;
 	
 	@NotNull
-	@ApiModelProperty(notes="The movement ward's date", example="2020-06-07", position = 3)
+	@ApiModelProperty(notes="The movement ward's date", example="2020-06-07T00:00:00.000Z", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private LocalDate date;
 	
 	@NotNull
