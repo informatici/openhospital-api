@@ -25,6 +25,8 @@ import java.util.Arrays;
 
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
+import org.isf.security.jwt.JWTAuthenticationFilter;
+import org.isf.security.jwt.JWTAuthorizationFilter;
 import org.isf.security.jwt.JWTConfigurer;
 import org.isf.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+	
 	@Autowired
     private UserDetailsService userDetailsService;
 	
@@ -110,6 +113,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.disable()
 					.authorizeRequests()
             .and()
+            .addFilter(new JWTAuthenticationFilter(authenticationManager()))
+            .addFilter(new JWTAuthorizationFilter(authenticationManager()))
             .exceptionHandling()
             	//.accessDeniedHandler(accessDeniedHandler)
             	.authenticationEntryPoint(restAuthenticationEntryPoint)
@@ -255,11 +260,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("admin", "guest")
             .and()
-          	.formLogin()
-          		.loginPage("/auth/login")
-            		.successHandler(successHandler())
-            		.failureHandler(failureHandler())
-            .and()
+          //	.formLogin()
+          	//	.loginPage("/auth/login")
+            //		.successHandler(successHandler())
+            //		.failureHandler(failureHandler())
+           // .and()
 			.apply(securityConfigurerAdapter())
 			.and()
             .httpBasic()
