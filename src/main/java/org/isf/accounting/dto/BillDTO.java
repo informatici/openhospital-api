@@ -41,13 +41,13 @@ public class BillDTO {
 	private Integer listId;
 
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00.000Z", position = 1)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00", position = 1)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime date;
 	
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill updated", example="2020-03-19T14:58:00.000Z", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@ApiModelProperty(notes = "Date of bill updated", example="2020-03-19T14:58:00", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime update;
 	
 	@NotNull

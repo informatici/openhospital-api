@@ -40,8 +40,8 @@ public class PatientVaccineDTO
 	private int progr;
 
 	@NotNull
-	@ApiModelProperty(notes = "the vaccine date", example="2021-05-01T00:00:00.000Z", position = 2)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@ApiModelProperty(notes = "the vaccine date", example="2021-05-01T00:00:00", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	private LocalDateTime vaccineDate;
 
 	@NotNull
