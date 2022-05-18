@@ -2,7 +2,7 @@ package org.isf.login.rest;
 
 import javax.validation.Valid;
 
-import org.isf.login.dto.JwtResponse;
+import org.isf.login.dto.LoginResponse;
 import org.isf.login.dto.LoginRequest;
 import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.JwtUtils;
@@ -42,7 +42,7 @@ public class LoginController {
 		
 		User userDetails = (User) authentication.getPrincipal();		
 	
-		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername()));
+		return ResponseEntity.ok(new LoginResponse(jwt, userDetails.getUsername()));
 	}
 	/*@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

@@ -1,11 +1,11 @@
 package org.isf.login.dto;
 
 
-public class JwtResponse {
+public class LoginResponse {
 	  private String token;
 	  private String type = "Bearer";
 	  private String username;
-	  public JwtResponse(String accessToken, String username) {
+	  public LoginResponse(String accessToken, String username) {
 	    this.token = accessToken;
 	    this.username = username;
 	  }
