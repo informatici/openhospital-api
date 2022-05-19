@@ -54,7 +54,7 @@ public class MovementDTO {
 
 	@NotNull(message="the movement's date is required")
 	@ApiModelProperty(notes="The movement date", example = "2020-06-24", position = 6)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date date;
 
 	@NotNull(message="the movement's medical quantity is required")

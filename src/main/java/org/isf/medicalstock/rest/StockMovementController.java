@@ -42,6 +42,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -130,8 +131,8 @@ public class StockMovementController {
 	@GetMapping(value = "/stockmovements/filter/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementDTO>> getMovements(
 			@RequestParam("ward_id") String wardId,
-			@RequestParam("from") Date dateFrom,
-			@RequestParam("to") Date dateTo) throws OHServiceException {
+			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
+			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
 		GregorianCalendar dateFrom_ = new GregorianCalendar();
 		dateFrom_.setTime(dateFrom);
 		GregorianCalendar dateTo_ = new GregorianCalendar();
@@ -173,12 +174,12 @@ public class StockMovementController {
 			@RequestParam(name="med_type", required=false) String medicalType,
 			@RequestParam(name="ward_id", required=false) String wardId,
 			@RequestParam(name="mov_type", required=false) String movType,
-			@RequestParam(name="mov_from", required=false) Date movFrom,
-			@RequestParam(name="mov_to", required=false) Date movTo,
-			@RequestParam(name="lot_prep_from", required=false) Date lotPrepFrom,
-			@RequestParam(name="lot_prep_to", required=false) Date lotPrepTo,
-			@RequestParam(name="lot_due_from", required=false) Date lotDueFrom,
-			@RequestParam(name="lot_due_to", required=false) Date lotDueTo) throws OHServiceException {
+			@RequestParam(name="mov_from", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date movFrom,
+			@RequestParam(name="mov_to", required=false)  @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date movTo,
+			@RequestParam(name="lot_prep_from", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotPrepFrom,
+			@RequestParam(name="lot_prep_to", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotPrepTo,
+			@RequestParam(name="lot_due_from", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotDueFrom,
+			@RequestParam(name="lot_due_to", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotDueTo) throws OHServiceException {
 		GregorianCalendar movFrom_ = null;
 		if(movFrom != null) {
 			movFrom_ = new GregorianCalendar();

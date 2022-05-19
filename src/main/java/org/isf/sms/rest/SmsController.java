@@ -38,6 +38,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,13 +74,13 @@ public class SmsController {
 			@RequestParam(required=true) String dateFrom, 
 			@RequestParam(required=true) String dateTo) throws OHServiceException {
 		LOGGER.info("Fetching the list of sms");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		Date from, to;
 		try {
 			from = format.parse(dateFrom);
 			to = format.parse(dateTo);
 		} catch (ParseException e) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Invalid date! Format is yyyy-MM-dd", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Invalid date! Format is yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", OHSeverityLevel.ERROR));
 		}
 		List<Sms> smsList = smsManager.getAll(from, to);
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);

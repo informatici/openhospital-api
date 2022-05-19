@@ -21,12 +21,15 @@
  */
 package org.isf.admission.rest;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
+import org.hibernate.mapping.Array;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.dto.AdmittedPatientDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -56,6 +59,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -176,13 +180,30 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
-			@RequestParam(name = "admissionrange", required = false) GregorianCalendar[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) GregorianCalendar[] dischargeRange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
+		GregorianCalendar[] admissionR = new GregorianCalendar[admissionRange.length];
+		GregorianCalendar[] dischargeR = new GregorianCalendar[admissionRange.length];
+		int i = 0;
+		for(Date date :admissionRange) {
+			GregorianCalendar datep = new GregorianCalendar();
+			datep.setTime(date);
+			admissionR[i]=datep;
+			i++;
+		}
+		
+		int j = 0;
+		for(Date date :dischargeRange) {
+			GregorianCalendar dated = new GregorianCalendar();
+			dated.setTime(date);
+			dischargeR[j]=dated;
+			j++;
+		}
 		
 		List<AdmittedPatient> admittedPatients = admissionManager
-				.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
+				.getAdmittedPatients(admissionR, dischargeR, searchTerms);
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
