@@ -40,13 +40,16 @@ public class OpdDTO {
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
     private LocalDateTime date;
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     @NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
     private LocalDate visitDate;
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     @ApiModelProperty(notes = "the next visit date", position = 4)
     private LocalDateTime nextVisitDate;
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;

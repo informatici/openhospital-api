@@ -46,6 +46,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -188,17 +189,7 @@ public class MedicalStockWardController {
 			@RequestParam("from") LocalDateTime dateFrom,
 			@RequestParam("to") LocalDateTime dateTo) throws OHServiceException {
 
-		LocalDateTime dateFromTime = null;
-		if (dateFrom != null) {
-			dateFromTime = dateFrom;
-		}
-
-		LocalDateTime dateToTime = null;
-		if (dateTo != null) {
-			dateToTime = dateTo;
-		}
-
-		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFromTime, dateToTime);
+		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if (mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
