@@ -1,10 +1,19 @@
 package org.isf.login.dto;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import io.swagger.annotations.ApiModelProperty;
+
 public class LoginRequest {
+  
+	@NotNull
+	@ApiModelProperty(notes = "user name", example = "admin", position = 1)
+    private String username;
 
-  private String username;
-
-
+	@NotNull
+	@ApiModelProperty(notes = "password of user", example = "admin", position = 2)
 	private String password;
 
 	public String getUsername() {
