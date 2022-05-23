@@ -143,8 +143,7 @@ public class BillController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
-	}
-
+	 }
 	 /**
      * Update bill with the list of billItems and the list of billPayments
      * @param odBillDto
@@ -273,6 +272,7 @@ public class BillController {
 	 * @return a list of {@link BillPayments} or {@code null} if an error occurred.
 	 * @throws OHServiceException
 	 */
+	
 	@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
