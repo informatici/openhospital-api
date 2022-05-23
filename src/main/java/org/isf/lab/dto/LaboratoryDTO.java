@@ -39,12 +39,12 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Exam", position = 3)
     private ExamDTO exam;
 
-    @ApiModelProperty(notes = "Laboratory Registration Date", example="2020-03-19T14:58:00.000Z", position = 4)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date registrationDate;
 
-    @ApiModelProperty(notes = "Laboratory Exam Date", example="2020-03-19T14:58:00.000Z", position = 5)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date examDate;
 
     @ApiModelProperty(notes = "Laboratory Result", position = 6)

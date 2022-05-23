@@ -46,6 +46,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -147,8 +148,8 @@ public class MedicalStockWardController {
 	@GetMapping(value = "/medicalstockward/movements/{ward_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementWardDTO>> getMovementWard(
 			@PathVariable("ward_code") String wardId, 
-			@RequestParam("from") Date dateFrom, 
-			@RequestParam("to") Date dateTo) throws OHServiceException {
+			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
+			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
 		GregorianCalendar dateFrom_ = null;
 		if(dateFrom != null) {
 			dateFrom_ = new GregorianCalendar();
@@ -181,8 +182,8 @@ public class MedicalStockWardController {
 	@GetMapping(value = "/medicalstockward/movements/to/{target_ward_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementWardDTO>> getWardMovementsToWard(
 			@PathVariable("target_ward_code") String idwardTo, 
-			@RequestParam("from") Date dateFrom, 
-			@RequestParam("to") Date dateTo) throws OHServiceException {
+			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
+			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
 		GregorianCalendar dateFrom_ = null;
 		if(dateFrom != null) {
 			dateFrom_ = new GregorianCalendar();
