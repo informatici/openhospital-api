@@ -117,6 +117,10 @@ public class LaboratoryController {
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
         }
+        
+        if (labToInsert.getDate() == null) {
+        	labToInsert.setDate(LocalDateTime.now());
+        }
 
         boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
         

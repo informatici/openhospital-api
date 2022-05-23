@@ -151,8 +151,8 @@ public class VisitsController {
         
         Visit visitUp = mapper.map2Model(updateVisit);
         
-        Visit visitUpdate = visitManager.updateVisit(visitUp);
-        
+        //Visit visitUpdate = visitManager.updateVisit(visitUp);
+        Visit visitUpdate = visitManager.newVisit(visitUp);
         if(visitUpdate == null)
         	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
         
