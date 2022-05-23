@@ -103,8 +103,8 @@ public class BillController {
      * @return {@link FullBillDTO}
      * @throws OHServiceException
      */
-	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
+	 @PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
+	 ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill is null!", OHSeverityLevel.ERROR));
@@ -144,8 +144,7 @@ public class BillController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
-	}
-
+	 }
 	 /**
      * Update bill with the list of billItems and the list of billPayments
      * @param odBillDto
@@ -251,7 +250,7 @@ public class BillController {
 	@GetMapping(value = "/bills/payments", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> searchBillsPayments(
 			@RequestParam(value="datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
-			@RequestParam(value="dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
+			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
 
 		List<BillPayments> payments;
@@ -288,6 +287,7 @@ public class BillController {
 	 * @return a list of {@link BillPayments} or <code>null</code> if an error occurred.
 	 * @throws OHServiceException 
 	 */
+	
 	@GetMapping(value = "/bills/payments/{bill_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
