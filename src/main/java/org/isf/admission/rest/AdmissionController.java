@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
-import org.hibernate.mapping.Array;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.dto.AdmittedPatientDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -38,6 +36,8 @@ import org.isf.admission.mapper.AdmittedPatientMapper;
 import org.isf.admission.model.Admission;
 import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
+import org.isf.disctype.manager.DischargeTypeBrowserManager;
+import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.model.Disease;
@@ -110,12 +110,18 @@ public class AdmissionController {
 	
 	@Autowired 
 	private AdmittedPatientMapper admittedMapper;
+	@Autowired
+	private DischargeTypeBrowserManager dischargeManager;
 
+	@Autowired
+	private DischargeTypeMapper dischargeMapper;
 
-	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
-			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
-			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
-			AdmittedPatientMapper admittedMapper) {
+	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager,
+			WardBrowserManager wardManager, DiseaseBrowserManager diseaseManager,
+			OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager,
+			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager,
+			AdmissionMapper admissionMapper, AdmittedPatientMapper admittedMapper,
+			DischargeTypeBrowserManager dischargeManager, DischargeTypeMapper dischargeMapper) {
 		this.admissionManager = admissionManager;
 		this.patientManager = patientManager;
 		this.wardManager = wardManager;
@@ -126,8 +132,9 @@ public class AdmissionController {
 		this.dlvrrestTypeManager = dlvrrestTypeManager;
 		this.admissionMapper = admissionMapper;
 		this.admittedMapper = admittedMapper;
+		this.dischargeManager = dischargeManager;
+		this.dischargeMapper = dischargeMapper;
 	}
-
 	/**
 	 * Get {@link Admission} for the specified id.
 	 * 
@@ -286,6 +293,51 @@ public class AdmissionController {
 		}
 
 		return ResponseEntity.ok(isDeleted);
+	}
+	/**
+	 * discharge the {@link Admission}s for the specified {@link Patient} code.
+	 * 
+	 * @param patientCode
+	 * @return <code>true</code> if the record has been set to discharge.
+	 * @throws OHServiceException
+	 */
+	@PostMapping(value = "/admissions/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> dischargePatient(@RequestParam("patientCode") int patientCode,
+			@Valid @RequestBody AdmissionDTO currentAdmissionDTO) throws OHServiceException {
+
+		LOGGER.info("discharge the patient");
+		Patient patient = patientManager.getPatientById(patientCode);
+		Boolean bol = false;
+
+		if (patient == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(bol);
+
+		Admission admission = admissionManager.getCurrentAdmission(patient);
+
+		if (admission == null)
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+
+		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
+
+		if (adm == null || admission.getId() != adm.getId())
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(bol);
+
+		if (adm.getDiseaseOut1() == null) {
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));
+		}
+		if (adm.getDisDate() == null) {
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
+		}
+		if (adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())) {
+			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!",
+					OHSeverityLevel.ERROR));
+		}
+		adm.setAdmitted(0);
+		bol = admissionManager.updateAdmission(adm);
+
+		return ResponseEntity.status(HttpStatus.OK).body(bol);
 	}
 
 	/**

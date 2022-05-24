@@ -183,7 +183,7 @@ public class VisitsControllerTest {
 		when(visitManagerMock.findVisit(visitID))
 				.thenReturn(visit);
 	
-		when(visitManagerMock.updateVisit(visit))
+		when(visitManagerMock.newVisit(visit))// updateVisit
 		        .thenReturn(visit);
 		MvcResult result = this.mockMvc
 				.perform(put(request, visitID)

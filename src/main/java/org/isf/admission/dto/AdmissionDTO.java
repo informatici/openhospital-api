@@ -66,7 +66,7 @@ public class AdmissionDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "admission date", example="2020-03-19T14:58:00.000Z", position = 7)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date admDate;
 
 	@ApiModelProperty(notes = "admission type", position = 8)
@@ -129,11 +129,14 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "weight", position = 26)
 	private Float weight;
-
+	@ApiModelProperty(notes = "delivery date", position = 27)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date ctrlDate1;
-
+	@ApiModelProperty(notes = "delivery date", position = 28) 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date ctrlDate2;
-
+	@ApiModelProperty(notes = "delivery date", position = 29)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date abortDate;
 
 	@ApiModelProperty(notes = "weight", position = 30)
