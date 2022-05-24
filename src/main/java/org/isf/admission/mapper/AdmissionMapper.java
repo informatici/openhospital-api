@@ -26,11 +26,7 @@ import java.util.stream.Collectors;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.model.Admission;
-import org.isf.disease.dto.DiseaseDTO;
-import org.isf.disease.mapper.DiseaseMapper;
-import org.isf.disease.model.Disease;
 import org.isf.shared.GenericMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,34 +36,6 @@ public class AdmissionMapper extends GenericMapper<Admission, AdmissionDTO> {
 		super(Admission.class, AdmissionDTO.class);
 	}
 
-	@Autowired
-	protected DiseaseMapper diseaseMapper;
-	
-	@Override
-	public Admission map2Model(AdmissionDTO toObj) {
-
-		Admission admission = super.map2Model(toObj);
-
-		if (toObj.getDiseaseOut1() != null) {
-			Disease disease = diseaseMapper.map2Model(toObj.getDiseaseOut1());
-			admission.setDiseaseOut1(disease);
-		}
-
-		return admission;
-	 }
-	
-	@Override
-	public AdmissionDTO map2DTO(Admission toObj) {
-
-		AdmissionDTO admissionDTO = super.map2DTO(toObj);
-
-		if (toObj.getDiseaseOut1() != null) {
-			DiseaseDTO disease = diseaseMapper.map2DTO(toObj.getDiseaseOut1());
-			admissionDTO.setDiseaseOut1(disease);
-		}
-
-		return admissionDTO;
-	 }
 	@Override
 	public List<AdmissionDTO> map2DTOList(List<Admission> list) {
 		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());

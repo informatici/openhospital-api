@@ -36,7 +36,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,11 +63,12 @@ public class OpdController {
 	protected OpdMapper mapper;
 	
 	@Autowired
-	protected PatientBrowserManager patientBrowserManager;
+	protected PatientBrowserManager patientManager;
 
-	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper) {
+	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper, PatientBrowserManager patientManager) {
 		this.opdManager = opdManager;
 		this.mapper = opdmapper;
+		this.patientManager = patientManager;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class OpdController {
 	public ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		LOGGER.info("store Out patient {}", code);
-		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
+		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
@@ -94,7 +94,7 @@ public class OpdController {
 		if (isCreatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 		
-		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
+		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}

@@ -223,7 +223,7 @@ public class DiseaseController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") int code) throws OHServiceException {
+	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Get disease by code");
         
 	    Disease disease = diseaseManager.getDiseaseByCode(code);
@@ -284,7 +284,7 @@ public class DiseaseController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") int code) throws OHServiceException {
+	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();

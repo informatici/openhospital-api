@@ -27,8 +27,10 @@ public class LoginController {
 	
 	@Autowired
 	AuthenticationManager authenticationManager;
+	
 	@Autowired
 	UserDetailsServiceImpl userDetailsServiceImpl;
+	
 	@Autowired
 	JwtUtils jwtUtils;
 	

@@ -245,16 +245,19 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
-		Integer code = 12345;
 		String request = "/patients/{code}";
+		
+		Integer code = 12345;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient newPatient = PatientHelper.setup();
-		newPatient.setCode(code);
 		
-		//when(patientBrowserManagerMock.getPatientById(code)).thenReturn(newPatient);
+		Patient updatedAfterReadPatient = PatientHelper.setup();
+		updatedAfterReadPatient.setCode(code);
+		updatedAfterReadPatient.setLock(3);
+		
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(updatedAfterReadPatient);
 
-		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
+		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(null);
 
 		this.mockMvc
 				.perform(
@@ -302,14 +305,13 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
-		Integer code = 12345;
 		String request = "/patients/{code}";
+
+		Integer code = 123;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient newPatient = PatientHelper.setup();
-		newPatient.setCode(code);
-
-		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
+		
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
@@ -317,7 +319,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
-				.andExpect(content().string(containsString("Patient is not updated!"))).andReturn();
+				.andExpect(content().string(containsString("Patient not found!"))).andReturn();
 
 		//TODO Create OHUpdateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
