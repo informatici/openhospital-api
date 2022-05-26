@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class LoginRequest {
   
 	@NotNull
-	@ApiModelProperty(notes = "user name", example = "admin", position = 1)
+	@ApiModelProperty(notes = "username", example = "admin", position = 1)
     private String username;
 
 	@NotNull

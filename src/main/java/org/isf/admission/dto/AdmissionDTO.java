@@ -99,7 +99,7 @@ public class AdmissionDTO {
 	private LocalDateTime disDate;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-	@ApiModelProperty(notes = "disChargeType ", position = 18)
+	@ApiModelProperty(notes = "disChargeType", position = 18)
 	private DischargeTypeDTO disType;
 
 	@ApiModelProperty(notes = "free note", position = 19)
