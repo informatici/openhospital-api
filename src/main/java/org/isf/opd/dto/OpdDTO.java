@@ -92,11 +92,12 @@ public class OpdDTO {
     @ApiModelProperty(notes = "user id", position = 16)
     private String userID;
 
-    private int lock;
+    @ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
     
     private int hashCode;
     
-    /*@ApiModelProperty(notes = "reasons for entry", position = 18)
+    @ApiModelProperty(notes = "reasons for entry", position = 18)
     private String reason; // ADDED: Arnaud
     
     @ApiModelProperty(notes = "history of a medical or psychiatric patient", position = 19)
@@ -149,17 +150,21 @@ public class OpdDTO {
 
 	public void setPrescription(String prescription) {
 		this.prescription = prescription;
-	}*/
+	}
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getLock() {
 		return lock;
 	}
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(hidden=true)
     public int getHashCode() {
         return hashCode;
     }
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	public int getCode() {
 		return this.code;

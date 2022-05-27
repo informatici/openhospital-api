@@ -40,10 +40,19 @@ public class ExamDTO {
     private String defaultResult;
 
     private ExamTypeDTO examtype;
+    
+    @ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
 
+    public int getLock() {
+		return lock;
+	}
 
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public ExamDTO() {
+	public ExamDTO() {
     }
 
     public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype) {

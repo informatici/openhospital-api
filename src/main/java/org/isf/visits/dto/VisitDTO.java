@@ -62,7 +62,7 @@ public class VisitDTO {
     @ApiModelProperty(notes = "service done during the visit", position = 8)
     private String service;
 
-    //@ApiModelProperty(hidden= true)
+    //@ApiModelProperty(hidden=true)
     public int getVisitID() {
         return visitID;
     }

@@ -48,8 +48,9 @@ public class LaboratoryDTO {
 
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
-
-    //private int lock;
+    
+    @ApiModelProperty(notes = "lock", example = "0")
+    private int lock;
 
     @ApiModelProperty(notes = "Laboratory Note", position = 7)
     private String note;
@@ -60,7 +61,7 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
     private String patName;
 
-    @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
+	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
     private String inOutPatient;
 
     @ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
@@ -68,6 +69,14 @@ public class LaboratoryDTO {
 
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
+
+    public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	public Integer getCode() {
 		return this.code;

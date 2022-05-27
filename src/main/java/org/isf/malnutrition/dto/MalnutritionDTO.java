@@ -56,6 +56,10 @@ public class MalnutritionDTO {
 	@ApiModelProperty(notes="The weight of the patient", example="65", position = 6)
 	private float weight;
 	
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+	
+	
 	public MalnutritionDTO() { }
 	
 	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp,
@@ -67,6 +71,14 @@ public class MalnutritionDTO {
 		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
+	}
+
+    public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 
 	public int getCode() {

@@ -43,6 +43,9 @@ public class VaccineDTO {
     @ApiModelProperty(notes = "Type of the vaccine", position = 3)
     private VaccineTypeDTO vaccineType;
 
+    @ApiModelProperty(notes = "lock", example = "0")
+    private int lock;
+    
     @Override
     public String toString() {
         return "VaccineDTO{" +
@@ -51,6 +54,14 @@ public class VaccineDTO {
                 ", vaccineType=" + vaccineType +
                 '}';
     }
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	public String getCode() {
 		return this.code;

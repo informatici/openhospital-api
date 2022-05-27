@@ -56,7 +56,7 @@ public class PricesOthersDTO
     
 	private int hashCode;
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}
