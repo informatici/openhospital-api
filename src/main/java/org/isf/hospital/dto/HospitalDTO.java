@@ -48,7 +48,17 @@ public class HospitalDTO {
 
     @ApiModelProperty(notes = "Hospital Currency Cod", example = "EUR", position = 8)
     private String currencyCod;
+    
+    @ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
 
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	public String getCode() {
 		return this.code;

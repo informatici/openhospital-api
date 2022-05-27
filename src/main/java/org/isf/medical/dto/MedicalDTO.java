@@ -65,6 +65,9 @@ public class MedicalDTO {
 	@ApiModelProperty(notes="The min quantity of the medical", example = "15", position = 9)
 	private double minqty;
 	
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+	
 	public MedicalDTO() { }
 	
 	/**
@@ -81,6 +84,15 @@ public class MedicalDTO {
 		this.minqty=minqty;
 		this.inqty = inqty;
 		this.outqty = outqty;
+	}
+
+	
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 
 	public Integer getCode() {

@@ -56,7 +56,17 @@ public class DiseaseDTO {
 	private boolean ipdOutInclude;
 	
 	private int hashCode = 0;
+	
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+	
+	public int getLock() {
+		return lock;
+	}
 
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {

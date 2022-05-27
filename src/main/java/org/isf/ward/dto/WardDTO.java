@@ -23,6 +23,8 @@ package org.isf.ward.dto;
 
 import javax.validation.constraints.NotNull;
 
+import io.swagger.annotations.ApiModelProperty;
+
 public class WardDTO {
 
 	private String code;
@@ -53,6 +55,18 @@ public class WardDTO {
 
 	@NotNull
 	private boolean isFemale;
+
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+	
+	
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
 	public String getCode() {
 		return this.code;

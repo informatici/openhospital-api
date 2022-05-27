@@ -52,10 +52,20 @@ public class PatientVaccineDTO
 	@ApiModelProperty(notes = "the vaccine", position = 4)
 	private VaccineDTO vaccine;
 
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
 	
 	private int hashCode = 0;
 
 
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+	
 	@ApiModelProperty(hidden= true)
 	public int getHashCode() {
 		return hashCode;
