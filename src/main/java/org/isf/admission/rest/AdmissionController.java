@@ -21,6 +21,8 @@
  */
 package org.isf.admission.rest;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -191,21 +193,19 @@ public class AdmissionController {
 			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
-		GregorianCalendar[] admissionR = new GregorianCalendar[admissionRange.length];
-		GregorianCalendar[] dischargeR = new GregorianCalendar[admissionRange.length];
+		LocalDateTime[] admissionR = new LocalDateTime[admissionRange.length];
+		LocalDateTime[] dischargeR = new LocalDateTime[admissionRange.length];
 		int i = 0;
 		for(Date date :admissionRange) {
-			GregorianCalendar datep = new GregorianCalendar();
-			datep.setTime(date);
-			admissionR[i]=datep;
+			LocalDateTime dateR  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			admissionR[i]=dateR;
 			i++;
 		}
 		
 		int j = 0;
 		for(Date date :dischargeRange) {
-			GregorianCalendar dated = new GregorianCalendar();
-			dated.setTime(date);
-			dischargeR[j]=dated;
+			LocalDateTime dateD  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			dischargeR[j]=dateD;
 			j++;
 		}
 		
@@ -347,7 +347,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> newAdmissions(@Valid @RequestBody AdmissionDTO newAdmissionDTO)
+	ResponseEntity<AdmissionDTO> newAdmissions(@Valid @RequestBody AdmissionDTO newAdmissionDTO)
 			throws OHServiceException {
 
 		Admission newAdmission = admissionMapper.map2Model(newAdmissionDTO);
@@ -390,9 +390,9 @@ public class AdmissionController {
 		}
 		List<Disease> diseases = null;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
-			diseases = diseaseManager.getDisease();
+			//diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseIn().getCode());
 			List<Disease> dIns = diseases.stream()
-					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
+					.filter(d -> d.getCode()==newAdmissionDTO.getDiseaseIn().getCode())
 					.collect(Collectors.toList());
 			if (dIns.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
@@ -498,7 +498,9 @@ public class AdmissionController {
 		LOGGER.info("Create admission for patient {}", name);
 		int aId = admissionManager.newAdmissionReturnKey(newAdmission);
 		if (aId > 0) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(aId);
+			System.out.println(aId);
+			Admission ad = admissionManager.getAdmission(aId);
+			return ResponseEntity.status(HttpStatus.CREATED).body(admissionMapper.map2DTO(ad));
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "Admission is not created!", OHSeverityLevel.ERROR));
 	}
@@ -510,7 +512,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateAdmissions(@RequestBody AdmissionDTO updAdmissionDTO) throws OHServiceException {
+	ResponseEntity<AdmissionDTO> updateAdmissions(@RequestBody AdmissionDTO updAdmissionDTO) throws OHServiceException {
 		
 		Admission old = admissionManager.getAdmission(updAdmissionDTO.getId());
 		if (old == null) {
@@ -664,7 +666,7 @@ public class AdmissionController {
 		LOGGER.info("update admission for patient {}", name);
 		boolean isUpdated = admissionManager.updateAdmission(updAdmission);
 		if (isUpdated) {
-			return ResponseEntity.ok(updAdmission.getId());
+			return ResponseEntity.ok(admissionMapper.map2DTO(updAdmission));
 		}
 		throw new OHAPIException(new OHExceptionMessage(null, "Admission is not updated!", OHSeverityLevel.ERROR));
 	}

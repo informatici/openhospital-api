@@ -21,7 +21,6 @@
  */
 package org.isf.pricesothers.dto;
 
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModel;
@@ -30,7 +29,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Class representing a price others")
 public class PricesOthersDTO
 {
-	@Id 
+	
     private int id;
 
 	@NotNull 

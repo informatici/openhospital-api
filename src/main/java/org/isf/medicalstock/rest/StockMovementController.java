@@ -21,6 +21,8 @@
  */
 package org.isf.medicalstock.rest;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -133,11 +135,16 @@ public class StockMovementController {
 			@RequestParam("ward_id") String wardId,
 			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom,
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
-		GregorianCalendar dateFrom_ = new GregorianCalendar();
-		dateFrom_.setTime(dateFrom);
-		GregorianCalendar dateTo_ = new GregorianCalendar();
-		dateTo_.setTime(dateTo);
-		List<Movement> movements = movManager.getMovements(wardId, dateFrom_, dateTo_);
+		LocalDateTime dateF = null;
+		if(dateFrom != null) {
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime dateT = null;
+		if(dateTo != null) {
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		List<Movement> movements = movManager.getMovements(wardId, dateF, dateT);
 		return collectResults(movements);
 	}
 	
@@ -180,38 +187,37 @@ public class StockMovementController {
 			@RequestParam(name="lot_prep_to", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotPrepTo,
 			@RequestParam(name="lot_due_from", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotDueFrom,
 			@RequestParam(name="lot_due_to", required=false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date lotDueTo) throws OHServiceException {
-		GregorianCalendar movFrom_ = null;
+		LocalDateTime movF = null;
 		if(movFrom != null) {
-			movFrom_ = new GregorianCalendar();
-			movFrom_.setTime(movFrom);
-		}
-		GregorianCalendar movTo_ = null;
-		if(movTo != null) {
-			movTo_ = new GregorianCalendar();
-			movTo_.setTime(movTo);
-		}
-		GregorianCalendar lotPrepFrom_ = null;
-		if(lotPrepFrom != null) {
-			lotPrepFrom_ = new GregorianCalendar();
-			lotPrepFrom_.setTime(lotPrepFrom);
-		}
-		GregorianCalendar lotPrepTo_ = null;
-		if(lotPrepTo != null) {
-			lotPrepTo_ = new GregorianCalendar();
-			lotPrepTo_.setTime(lotPrepTo);
-		}
-		GregorianCalendar lotDueFrom_ = null;
-		if(lotDueFrom != null) {
-			lotDueFrom_ = new GregorianCalendar();
-			lotDueFrom_.setTime(lotDueFrom);
-		}
-		GregorianCalendar lotDueTo_ = null;
-		if(lotDueTo != null) {
-			lotDueTo_ = new GregorianCalendar();
-			lotDueTo_.setTime(lotDueTo);
+			movF  = movFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
 		
-		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom_, movTo_, lotPrepFrom_, lotPrepTo_, lotDueFrom_, lotDueTo_);
+		LocalDateTime movT = null;
+		if(movTo != null) {
+			movT  = movTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime lotPrepF = null;
+		if(lotPrepFrom != null) {
+			lotPrepF  = lotPrepFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime lotPrepT = null;
+		if(lotPrepTo != null) {
+			lotPrepT  = lotPrepTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime lotDueF = null;
+		if(lotDueFrom != null) {
+			lotDueF  = lotDueFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime lotDueT = null;
+		if(lotDueTo != null) {
+			lotDueT  = lotDueTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movF, movT, lotPrepF, lotPrepT, lotDueF, lotDueT);
 		return collectResults(movements);
 	}
 	

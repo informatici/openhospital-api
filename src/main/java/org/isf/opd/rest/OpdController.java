@@ -21,8 +21,10 @@
  */
 package org.isf.opd.rest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -168,13 +170,17 @@ public class OpdController {
 			@RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
 			@RequestParam char newPatient) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
+		LocalDate dateF = null;
+		if(dateFrom != null) {
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		}
 		
-		GregorianCalendar datefrom = new GregorianCalendar();
-		GregorianCalendar dateto = new GregorianCalendar();
-        dateto.setTime(dateTo);
-        datefrom.setTime(dateFrom);
+		LocalDate dateT = null;
+		if(dateTo != null) {
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		}
         
-		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, datefrom, dateto, ageFrom,  ageTo, sex, newPatient);
+		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);

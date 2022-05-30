@@ -21,6 +21,8 @@
  */
 package org.isf.accounting.rest;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -209,25 +211,30 @@ public class BillController {
 			@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
 			@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
 
-		GregorianCalendar datefrom = new GregorianCalendar();
-		datefrom.setTime(dateFrom);
-
-		GregorianCalendar dateto = new GregorianCalendar();
-		dateto.setTime(dateTo);
+		
+		LocalDateTime dateF = null;
+		if(dateFrom != null) {
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime dateT = null;
+		if(dateTo != null) {
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
 
 		List<Bill> bills;
 
 		List<BillDTO> billDTOS;
 
 		if (code == null) {
-			LOGGER.info("Get payments datefrom: {}  dateTo: {}", datefrom, dateto);
-			bills = billManager.getBills(datefrom, dateto);
+			LOGGER.info("Get payments datefrom: {}  dateTo: {}", dateF, dateT);
+			bills = billManager.getBills(dateF, dateT);
 		} else {
 			Patient pat = patientManager.getPatientById(code);
 
-			LOGGER.info("Get Bills datefrom: {}  dateTo: {} patient: {}", datefrom, dateto, pat);
+			LOGGER.info("Get Bills datefrom: {}  dateTo: {} patient: {}", dateF, dateT, pat);
 
-			bills = billManager.getBills(datefrom, dateto, pat);
+			bills = billManager.getBills(dateF, dateT, pat);
 		}
 
 		billDTOS = billMapper.map2DTOList(bills);
@@ -257,19 +264,23 @@ public class BillController {
         
         List<BillPaymentsDTO> paymentsDTOS;
         
-        GregorianCalendar datefrom = new GregorianCalendar();
-        datefrom.setTime(dateFrom);
-        
-        GregorianCalendar dateto = new GregorianCalendar();
-        dateto.setTime(dateTo);
+        LocalDateTime dateF = null;
+		if(dateFrom != null) {
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime dateT = null;
+		if(dateTo != null) {
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
 
-		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", datefrom, dateto);
+		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", dateF, dateT);
         
         if (code == null) {
-        	payments = billManager.getPayments(datefrom, dateto);
+        	payments = billManager.getPayments(dateF, dateT);
         } else {
         	 Patient pat = patientManager.getPatientById(code);             
-             payments = billManager.getPayments(datefrom, dateto, pat);
+             payments = billManager.getPayments(dateF, dateT, pat);
         }
         
         paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
@@ -401,17 +412,21 @@ public class BillController {
 			@RequestParam(value="dateto")@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo,
 			@RequestBody BillItemsDTO billItemDTO) throws OHServiceException {
         
-        GregorianCalendar datefrom = new GregorianCalendar();
-        datefrom.setTime(dateFrom);
-        
-        GregorianCalendar dateto = new GregorianCalendar();
-        dateto.setTime(dateTo);
+		LocalDateTime dateF = null;
+		if(dateFrom != null) {
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+		
+		LocalDateTime dateT = null;
+		if(dateTo != null) {
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
                
         BillItems billItem = billItemsMapper.map2Model(billItemDTO);
 
-		LOGGER.info("Get Bills datefrom: {}  dateTo: {}  Bill ITEM ID: {}", datefrom, dateto, billItem.getId());
+		LOGGER.info("Get Bills datefrom: {}  dateTo: {}  Bill ITEM ID: {}", dateF, dateT, billItem.getId());
 
-		List<Bill> bills = billManager.getBills(datefrom, dateto, billItem);
+		List<Bill> bills = billManager.getBills(dateF, dateT, billItem);
         
         List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
         

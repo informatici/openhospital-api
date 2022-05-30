@@ -23,6 +23,8 @@ package org.isf.sms.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -76,13 +78,24 @@ public class SmsController {
 		LOGGER.info("Fetching the list of sms");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		Date from, to;
+		LocalDateTime dateT = null;
+		LocalDateTime dateF = null;
 		try {
 			from = format.parse(dateFrom);
 			to = format.parse(dateTo);
+			if(dateFrom != null) {
+				dateF  = from.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			}
+			
+			
+			if(dateTo != null) {
+				dateT  = to.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			}
 		} catch (ParseException e) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Invalid date! Format is yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", OHSeverityLevel.ERROR));
 		}
-		List<Sms> smsList = smsManager.getAll(from, to);
+		
+		List<Sms> smsList = smsManager.getAll(dateF, dateT);
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);
 		if(mappedSmsList.isEmpty()){
 			LOGGER.info("No sms found");

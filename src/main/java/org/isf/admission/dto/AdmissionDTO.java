@@ -147,7 +147,6 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "lock", example = "0", position = 31)
 	private int lock;
 
-	@NotNull
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
 	private String deleted;
 

@@ -21,6 +21,9 @@
  */
 package org.isf.medicalstockward.rest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -150,19 +153,17 @@ public class MedicalStockWardController {
 			@PathVariable("ward_code") String wardId, 
 			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
-		GregorianCalendar dateFrom_ = null;
+		LocalDateTime dateF = null;
 		if(dateFrom != null) {
-			dateFrom_ = new GregorianCalendar();
-			dateFrom_.setTime(dateFrom);
+			dateF = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
 		
-		GregorianCalendar dateTo_ = null;
+		LocalDateTime dateT = null;
 		if(dateTo != null) {
-			dateTo_ = new GregorianCalendar();
-			dateTo_.setTime(dateTo);
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
 		
-		List<MovementWard> movs = movWardBrowserManager.getMovementWard(wardId, dateFrom_, dateTo_);
+		List<MovementWard> movs = movWardBrowserManager.getMovementWard(wardId, dateF, dateT);
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if(mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
@@ -184,19 +185,17 @@ public class MedicalStockWardController {
 			@PathVariable("target_ward_code") String idwardTo, 
 			@RequestParam("from") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
-		GregorianCalendar dateFrom_ = null;
+		LocalDateTime dateF = null;
 		if(dateFrom != null) {
-			dateFrom_ = new GregorianCalendar();
-			dateFrom_.setTime(dateFrom);
+			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
 		
-		GregorianCalendar dateTo_ = null;
+		LocalDateTime dateT = null;
 		if(dateTo != null) {
-			dateTo_ = new GregorianCalendar();
-			dateTo_.setTime(dateTo);
+			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
 		
-		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFrom_, dateTo_);
+		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateF, dateT);
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if(mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);

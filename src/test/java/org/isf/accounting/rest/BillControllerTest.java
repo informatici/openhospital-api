@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -469,7 +470,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO add test(s) with incorrect formatted dates returning an exception
 		//TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
 		//TODO add test(s) with different BillItem returning an empty list and asserting  HttpStatus.NO_CONTENT
-		when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(billItem))).thenReturn(billList);
+		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(billItem))).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
@@ -500,7 +501,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO add test(s) with incorrect formatted dates returning an exception
 		//TODO add test(s) with specific dates returning an empty list and asserting  HttpStatus.NO_CONTENT
 		//TODO add test(s) with a different patient returning an empty list and asserting  HttpStatus.NO_CONTENT
-		when(billManagerMock.getBills(any(GregorianCalendar.class), any(GregorianCalendar.class), eq(patient))).thenReturn(billList);
+		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(patient))).thenReturn(billList);
 
 		this.mockMvc
 				.perform(
