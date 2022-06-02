@@ -102,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control", "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
         config.setAllowedMethods(Arrays.asList("*"));
         // config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        config.setAllowCredentials(true);
+        //config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList("*"));
         config.setMaxAge(3600L);
 

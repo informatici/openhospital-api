@@ -39,8 +39,8 @@ import io.swagger.annotations.ApiResponses;
  *
  * @author antonio
  */
-@Api("Login")
-@RestController
+//@Api("Login")
+//@RestController
 public class LoginApi {
     /**
      * Implemented by Spring Security
