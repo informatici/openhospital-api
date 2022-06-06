@@ -1,0 +1,13 @@
+### Deploy OH2 API in docker environmenet
+
+1. DOCKER_BUILDKIT=0 docker-compose build [--no-cache]
+2. docker-compose up
+
+3. docker-compose  exec database /bin/bash
+4. cd sql/
+5. mysql -u isf -p
+9. source create_all_demo.sql;
+
+When done successfully, head over at http://localhost:8080/oh-api/swagger-ui.html
+
+You can change the deployment branch and the repository organization in the .env file.
