@@ -38,6 +38,21 @@ For the moment, to build this project you should
 
 Service available on localhost:8080
 
+## How to deploy backend in docker environment
+
+Make sure you have docker with docker-compose installed, then run the following commands:
+
+    - DOCKER_BUILDKIT=0 docker-compose build [--no-cache]
+    - docker-compose up
+    - docker-compose  exec database /bin/bash
+    - cd sql/
+    - mysql -u isf -p
+    - source create_all_demo.sql;
+
+When done successfully, head over at http://localhost:[API_PORT]/oh-api/swagger-ui.html
+
+You can change the deployment branch and the repository organization in the .env file.
+
 ## How to contribute
 
 You can find the contribution guidelines in the [Open Hospital wiki][contribution-guide].  
