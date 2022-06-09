@@ -390,7 +390,7 @@ public class AdmissionController {
 		}
 		List<Disease> diseases = null;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
-			//diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseIn().getCode());
+			diseases = diseaseManager.getDiseaseAll();
 			List<Disease> dIns = diseases.stream()
 					.filter(d -> d.getCode()==newAdmissionDTO.getDiseaseIn().getCode())
 					.collect(Collectors.toList());
