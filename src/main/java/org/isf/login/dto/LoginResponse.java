@@ -5,25 +5,25 @@ public class LoginResponse {
 	  private String token;
 	  private String type = "Bearer";
 	  private String username;
-	  public LoginResponse(String accessToken, String username) {
-	    this.token = accessToken;
+	  public LoginResponse(String token, String username) {
+	    this.token = token;
 	    this.username = username;
 	  }
 
-	  public String getAccessToken() {
+	  public String getToken() {
 	    return token;
 	  }
 
-	  public void setAccessToken(String accessToken) {
-	    this.token = accessToken;
+	  public void setToken(String token) {
+	    this.token = token;
 	  }
 
-	  public String getTokenType() {
+	  public String getType() {
 	    return type;
 	  }
 
-	  public void setTokenType(String tokenType) {
-	    this.type = tokenType;
+	  public void setType(String type) {
+	    this.type = type;
 	  }
 	  
 	  public String getUsername() {
