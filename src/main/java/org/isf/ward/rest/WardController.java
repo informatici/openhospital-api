@@ -126,13 +126,13 @@ public class WardController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newWard(@RequestBody WardDTO newWard) throws OHServiceException {
+    public ResponseEntity<WardDTO> newWard(@RequestBody WardDTO newWard) throws OHServiceException {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (wardCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(wardCreated));
     }
 
     /**
@@ -143,7 +143,7 @@ public class WardController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
+    public ResponseEntity<WardDTO> updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
 	    Ward ward = mapper.map2Model(updateWard);
 	    ward.setLock(0);
@@ -151,7 +151,7 @@ public class WardController {
         if (wardUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(mapper.map2DTO(wardUpdated));
 
     }
 

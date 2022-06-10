@@ -71,7 +71,7 @@ public class DeliveryResultTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
+	ResponseEntity<DeliveryResultTypeDTO> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
 		LOGGER.info("Create Delivery result type {}", code);
@@ -88,7 +88,7 @@ public class DeliveryResultTypeController {
 					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(dlvrrestTypeCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dlvrrestTypeCreated));
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class DeliveryResultTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
+	ResponseEntity<DeliveryResultTypeDTO> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
@@ -110,7 +110,7 @@ public class DeliveryResultTypeController {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
-		return ResponseEntity.ok(dlvrrestType.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(dlvrrestType));
 	}
 
 	/**

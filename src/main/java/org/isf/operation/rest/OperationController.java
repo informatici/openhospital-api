@@ -94,18 +94,17 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
+	ResponseEntity<OperationDTO> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}", code);
 		if(operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "another operation has already been created with provided description and types!", OHSeverityLevel.ERROR));
 		}
-		boolean isCreated = operationManager.newOperation(mapper.map2Model(operationDTO));
-		Operation operationCreated = operationManager.getOperationByCode(code);
-		if (!isCreated || operationCreated == null) {
+		Operation isCreated = operationManager.newOperation(mapper.map2Model(operationDTO));
+		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(operationCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreated));
 	}
 
 	/**
@@ -115,17 +114,17 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
+	ResponseEntity<OperationDTO> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
 			throws OHServiceException {
 		LOGGER.info("Update operations code: {}", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		operation.setLock(0);
-		boolean isUpdated = operationManager.updateOperation(operation);
-		if (!isUpdated)
+		Operation isUpdated = operationManager.updateOperation(operation);
+		if (isUpdated == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
-		return ResponseEntity.ok(operation.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 	}
 
 	/**

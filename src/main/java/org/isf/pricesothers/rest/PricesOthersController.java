@@ -71,13 +71,13 @@ public class PricesOthersController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+	ResponseEntity<PricesOthersDTO> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
-		boolean isCreated = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
-		if (!isCreated) {
+		PricesOthers isCreated = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
+		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(pricesOthersDTO.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreated));
 	}
 
 	/**
@@ -87,17 +87,17 @@ public class PricesOthersController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
+	ResponseEntity<PricesOthersDTO> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
 			throws OHServiceException {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
 		if (pricesOthersFounds.isEmpty())
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		boolean isUpdated = pricesOthersManager.updateOther(pricesOthers);
-		if (!isUpdated)
+		PricesOthers isUpdated = pricesOthersManager.updateOther(pricesOthers);
+		if (isUpdated == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not updated!", OHSeverityLevel.ERROR));
-		return ResponseEntity.ok(pricesOthers.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 	}
 
 	/**

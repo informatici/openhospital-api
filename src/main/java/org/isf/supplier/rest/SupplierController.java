@@ -67,15 +67,15 @@ public class SupplierController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	public ResponseEntity<SupplierDTO> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
-		boolean isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
-		if (!isCreated) {
+		Supplier isCreated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+		if (isCreated == null) {
 			LOGGER.error("Supplier is not created!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
         }
 		LOGGER.info("Supplier saved successfully");
-        return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreated));
 	}
 	
 	/**
@@ -85,18 +85,18 @@ public class SupplierController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	public ResponseEntity<SupplierDTO> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		if(supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Updating supplier...");
-		boolean isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
-		if (!isUpdated) {
+		Supplier isUpdated = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+		if (isUpdated == null) {
 			LOGGER.error("Supplier is not updated!");
             throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));
         }
 		LOGGER.info("Supplier updated successfully");
-        return ResponseEntity.ok(isUpdated);
+        return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 	}
 	
 	/**

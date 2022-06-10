@@ -71,7 +71,7 @@ public class ExamRowController {
     }
 
     @PostMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
+    public ResponseEntity<ExamRowDTO> newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
         Exam exam = examManager.getExams().stream().filter(e -> examRowDTO.getExam().getCode().equals(e.getCode())).findFirst().orElse(null);
 
         if (exam == null) {
@@ -81,11 +81,11 @@ public class ExamRowController {
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
         examRow.setExamCode(exam);
 
-        boolean isCreated = examRowBrowsingManager.newExamRow(examRow);
-        if (!isCreated) {
+        ExamRow isCreated = examRowBrowsingManager.newExamRow(examRow);
+        if (isCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(true);
+        return ResponseEntity.status(HttpStatus.CREATED).body(examRowMapper.map2DTO(isCreated));
     }
 
     @GetMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)

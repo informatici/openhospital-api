@@ -71,7 +71,7 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
+	ResponseEntity<DeliveryTypeDTO> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		String code = dlvrTypeDTO.getCode();
 		LOGGER.info("Create Delivery type {}", code);
 		boolean isCreated = dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
@@ -85,7 +85,7 @@ public class DeliveryTypeController {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery type is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(dlvrTypeCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
+	ResponseEntity<DeliveryTypeDTO> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		LOGGER.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode()))
@@ -105,7 +105,7 @@ public class DeliveryTypeController {
 		if (!isUpdated)
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Delivery type is not updated!", OHSeverityLevel.ERROR));
-		return ResponseEntity.ok(dlvrType.getCode());
+		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}
 
 	/**

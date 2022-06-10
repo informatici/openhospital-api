@@ -87,12 +87,12 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
-		boolean isCreated = medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(medicalTypeDTO));
-		if (!isCreated) {
+	public ResponseEntity<MedicalTypeDTO> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+		MedicalType isCreated = medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(medicalTypeDTO));
+		if (isCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(medicalTypeMapper.map2DTO(isCreated));
 	}
 	
 	/**
@@ -102,15 +102,15 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+	public ResponseEntity<MedicalTypeDTO> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
 		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode()))
 			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
-		boolean isUpdated = medicalTypeBrowserManager.updateMedicalType(medicalType);
-		if (!isUpdated) {
+		MedicalType isUpdated = medicalTypeBrowserManager.updateMedicalType(medicalType);
+		if (isUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not updated!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(medicalTypeMapper.map2DTO(isUpdated));
 	}
 	
 	/**

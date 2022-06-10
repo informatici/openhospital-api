@@ -74,14 +74,14 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Boolean> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
+	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		LOGGER.info("Create patient vaccine {}", code);
-		boolean isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
-		if (!isCreated) {
+		PatientVaccine isCreated = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
+		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreated));
 	}
 
 	/**
@@ -91,15 +91,15 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
+	ResponseEntity<PatientVaccineDTO> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
 		patvac.setLock(0);
-		boolean isUpdated = patVacManager.updatePatientVaccine(patvac);
-		if (!isUpdated)
+		PatientVaccine isUpdated = patVacManager.updatePatientVaccine(patvac);
+		if (isUpdated == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not updated!", OHSeverityLevel.ERROR));
-		return ResponseEntity.ok(patientVaccineDTO.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 	}
 
 	/**

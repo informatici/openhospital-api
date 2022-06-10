@@ -109,18 +109,18 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
+    public ResponseEntity<VaccineDTO> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
         LOGGER.info("Create vaccine: {}", newVaccine.toString());
-        boolean isCreated;
+        Vaccine isCreated;
         try {
-             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine)) != null;
+             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
         }
-        if (!isCreated) {
+        if (isCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreated));
     }
 
     /**
@@ -131,13 +131,13 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
+    public ResponseEntity<VaccineDTO> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         LOGGER.info("Update vaccine: {}", updateVaccine.toString());
-        boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine)) != null;
-        if (!isUpdated) {
+        Vaccine isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+        if (isUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 
     }
 

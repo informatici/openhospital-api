@@ -85,7 +85,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Boolean> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
+	ResponseEntity<OpdDTO> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		LOGGER.info("store Out patient {}", code);
 		Patient patient = patientBrowserManager.getPatientById(opdDTO.getPatientCode());
@@ -99,11 +99,11 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
-		boolean isCreated = opdManager.newOpd(opdToInsert);
-		if (!isCreated) {
+		Opd isCreated = opdManager.newOpd(opdToInsert);
+		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(true);
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(isCreated));
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
+	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 	/*	if(opdManager.getOpdByCode(code) == null ) {	
@@ -135,7 +135,7 @@ public class OpdController {
 		
 		if(updatedOpd == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
-		return ResponseEntity.ok(updatedOpd.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(updatedOpd));
 	}
 
 	/**
