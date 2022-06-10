@@ -71,7 +71,7 @@ public class ExamController {
     }
 
     @PostMapping(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newExam(@RequestBody ExamDTO newExam) throws OHServiceException {
+    public ResponseEntity<ExamDTO> newExam(@RequestBody ExamDTO newExam) throws OHServiceException {
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> newExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
 
         if (examType == null) {
@@ -85,11 +85,11 @@ public class ExamController {
         if (!isCreated) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(exam.getCode());
+        return ResponseEntity.ok(examMapper.map2DTO(exam));
     }
 
     @PutMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
+    public ResponseEntity<ExamDTO> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam code mismatch", OHSeverityLevel.ERROR));
@@ -105,11 +105,12 @@ public class ExamController {
 
         Exam exam = examMapper.map2Model(updateExam);
         exam.setExamtype(examType);
-        if (examManager.updateExam(exam) == null) {
+        Exam ex = examManager.updateExam(exam);
+        if (ex == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam is not updated!", OHSeverityLevel.ERROR));
         }
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(examMapper.map2DTO(ex));
     }
 
 
