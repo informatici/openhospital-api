@@ -173,9 +173,9 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		AdmissionDTO admDTO =admissionMapper.map2DTO(admission);
-		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
-		Date date = Date.from(instant);
-		admDTO.setAdmDate(date);
+//		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//		Date date = Date.from(instant);
+//		admDTO.setAdmDate(date);
 		return ResponseEntity.ok(admDTO);
 	}
 
@@ -329,6 +329,7 @@ public class AdmissionController {
    		if(adm.getDiseaseOut1() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
    		}
+		//adm.setDisDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
    		if(adm.getDisDate() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
     	}
