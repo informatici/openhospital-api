@@ -176,7 +176,11 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
+		AdmissionDTO admDTO =admissionMapper.map2DTO(admission);
+		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+		Date date = Date.from(instant);
+		admDTO.setAdmDate(date);
+		return ResponseEntity.ok(admDTO);
 	}
 
 	/**
