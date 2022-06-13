@@ -332,12 +332,11 @@ public class AdmissionController {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));
 		}
-		
+		adm.setDisDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		if (adm.getDisDate() == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
 		}
-		adm.setAdmDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		if (adm.getDisDate() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!",
 					OHSeverityLevel.ERROR));
