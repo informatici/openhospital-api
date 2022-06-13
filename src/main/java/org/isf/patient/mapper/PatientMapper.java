@@ -21,6 +21,7 @@
  */
 package org.isf.patient.mapper;
 
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,10 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	@Override
 	public PatientDTO map2DTO(Patient fromObj) {
 		PatientDTO patientDTO = super.map2DTO(fromObj);
+		if(fromObj.getBirthDate() != null) {
+			patientDTO.setBirthDate(java.sql.Date.valueOf(fromObj.getBirthDate()));
+		}
+		
 		if (fromObj.getPatientProfilePhoto() != null) {
 			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 		}
@@ -61,7 +66,10 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	public Patient map2Model(PatientDTO toObj) {
 
 		Patient patient = super.map2Model(toObj);
-
+		if(patient.getBirthDate() != null) {
+			patient.setBirthDate(toObj.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		}
+		
 		if (toObj.getBlobPhoto() != null) {
 			PatientProfilePhoto photo = new PatientProfilePhoto();
 			photo.setPatient(patient);

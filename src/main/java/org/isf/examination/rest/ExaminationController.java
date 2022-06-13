@@ -21,6 +21,9 @@
  */
 package org.isf.examination.rest;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.isf.examination.dto.PatientExaminationDTO;
@@ -79,7 +82,7 @@ public class ExaminationController {
 
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
-
+        patientExamination.setPex_date(newPatientExamination.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -87,7 +90,7 @@ public class ExaminationController {
 
     @PutMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity updateExamination(@PathVariable Integer id, @RequestBody PatientExaminationDTO dto) throws OHServiceException {
+    public ResponseEntity<Boolean> updateExamination(@PathVariable Integer id, @RequestBody PatientExaminationDTO dto) throws OHServiceException {
         if (dto.getPex_ID() != id) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient examination id mismatch", OHSeverityLevel.ERROR));
         }
@@ -102,6 +105,7 @@ public class ExaminationController {
 
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
+        patientExamination.setPex_date(dto.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.ok(true);
@@ -114,10 +118,15 @@ public class ExaminationController {
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
-        PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(examinationBrowserManager.getDefaultPatientExamination(patient));
+        PatientExamination patientExamination = examinationBrowserManager.getDefaultPatientExamination(patient);
+        PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
         if (patientExaminationDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
+        	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+    		Date date = (Date) Date.from(instant);
+    		patientExaminationDTO.setPex_date(date);
+    		
             return ResponseEntity.ok(patientExaminationDTO);
         }
     }
@@ -130,6 +139,9 @@ public class ExaminationController {
         if (patientExaminationDTO == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
+        	Instant instant = lastPatientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+    		Date date = (Date) Date.from(instant);
+    		patientExaminationDTO.setPex_date(date);
             return ResponseEntity.ok(patientExaminationDTO);
         }
     }
@@ -142,7 +154,12 @@ public class ExaminationController {
         if (patientExamination == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(patientExaminationMapper.map2DTO(patientExamination));
+        	PatientExaminationDTO patienE = patientExaminationMapper.map2DTO(patientExamination);
+        	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+    		Date date = (Date) Date.from(instant);
+    		patienE.setPex_date(date);
+            return ResponseEntity.ok(patienE);
+            
         }
     }
 
@@ -154,7 +171,11 @@ public class ExaminationController {
         if (patientExamination == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(patientExaminationMapper.map2DTO(patientExamination));
+        	PatientExaminationDTO patienE = patientExaminationMapper.map2DTO(patientExamination);
+        	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+    		Date date = (Date) Date.from(instant);
+    		patienE.setPex_date(date);
+            return ResponseEntity.ok(patienE);
         }
     }
 

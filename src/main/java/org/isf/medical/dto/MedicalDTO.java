@@ -33,35 +33,35 @@ public class MedicalDTO {
 	@ApiModelProperty(notes="The id of the medical", example = "1", position = 1)
 	private Integer code;
 	
-	@NotEmpty(message="The product code is required")
+	//@NotEmpty(message="The product code is required")
 	@ApiModelProperty(notes="The product code", example = "PARA", position = 2)
 	private String prod_code;
 	
-	@NotNull(message="The medical type is required")
+	//@NotNull(message="The medical type is required")
 	@ApiModelProperty(notes="The medical type", position = 3)
 	private MedicalTypeDTO type;
 	
-	@NotEmpty(message="The description of the medical is required")
+	//@NotEmpty(message="The description of the medical is required")
 	@ApiModelProperty(notes="The description of the medical", example = "Paracétamol", position = 4)
 	private String description;
 	
-	@NotNull(message="Initial quantity is required")
+	//@NotNull(message="Initial quantity is required")
 	@ApiModelProperty(notes="The initial quantity of the medical", example = "21", position = 5)
 	private double initialqty;
 	
-	@NotNull(message="The number of pieces per packet is required")
+	//@NotNull(message="The number of pieces per packet is required")
 	@ApiModelProperty(notes="The number of pieces per packet", example = "100", position = 6)
 	private Integer pcsperpck;
 	
-	@NotNull(message="The input quantity is required")
+	//@NotNull(message="The input quantity is required")
 	@ApiModelProperty(notes="The input quantity of the medical", example = "340", position = 7)
 	private double inqty;
 	
-	@NotNull(message="The out quantity is required")
+	//@NotNull(message="The out quantity is required")
 	@ApiModelProperty(notes="The out quantity of the medical", example = "8", position = 8)
 	private double outqty;
 	
-	@NotNull(message="The min quantity is required")
+	//@NotNull(message="The min quantity is required")
 	@ApiModelProperty(notes="The min quantity of the medical", example = "15", position = 9)
 	private double minqty;
 	

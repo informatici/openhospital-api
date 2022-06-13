@@ -320,6 +320,7 @@ public class AdmissionController {
 
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 		adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		
 		if (adm == null || admission.getId() != adm.getId())
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 
@@ -327,11 +328,13 @@ public class AdmissionController {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));
 		}
+		
 		if (adm.getDisDate() == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
 		}
-		if (adm.getDisType() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())) {
+		adm.setAdmDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		if (adm.getDisDate() == null || !dischargeManager.isCodePresent(adm.getDisType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!",
 					OHSeverityLevel.ERROR));
 		}
@@ -356,7 +359,18 @@ public class AdmissionController {
 
 		Admission newAdmission = admissionMapper.map2Model(newAdmissionDTO);
 		newAdmission.setAdmDate(newAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-
+       if(newAdmissionDTO.getAbortDate() != null) {
+    	   newAdmission.setAbortDate(newAdmissionDTO.getAbortDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+       }
+       if(newAdmissionDTO.getCtrlDate1() != null) {
+    	   newAdmission.setCtrlDate1(newAdmissionDTO.getCtrlDate1().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+       }
+       if(newAdmissionDTO.getCtrlDate2() != null) {
+    	   newAdmission.setCtrlDate2(newAdmissionDTO.getCtrlDate2().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+       }
+       if(newAdmissionDTO.getOpDate() != null) {
+    	   newAdmission.setOpDate(newAdmissionDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+       }
 		if (newAdmissionDTO.getWard() != null && newAdmissionDTO.getWard().getCode() != null
 				&& !newAdmissionDTO.getWard().getCode().trim().isEmpty()) {
 			List<Ward> wards = wardManager.getWards().stream()
@@ -516,7 +530,8 @@ public class AdmissionController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission not found!", OHSeverityLevel.ERROR));
 		}
 		Admission updAdmission = admissionMapper.map2Model(updAdmissionDTO);
-
+		updAdmission.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		
 		if (updAdmissionDTO.getWard() != null && updAdmissionDTO.getWard().getCode() != null
 				&& !updAdmissionDTO.getWard().getCode().trim().isEmpty()) {
 			List<Ward> wards = wardManager.getWards().stream()
@@ -671,6 +686,27 @@ public class AdmissionController {
 		Instant instant = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		admDTO.setAdmDate(date);
+		
+		if(admDTO.getAbortDate() != null) {
+			Instant instant1 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date1 = Date.from(instant1);
+			admDTO.setAbortDate(date1);
+	       }
+	       if(admDTO.getCtrlDate1() != null) {
+	    	   Instant instant2 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+				Date date1 = Date.from(instant2);
+				admDTO.setAbortDate(date1);
+	       }
+	       if(admDTO.getCtrlDate2() != null) {
+	    	   Instant instant3 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+				Date date2 = Date.from(instant3);
+				admDTO.setAbortDate(date2);
+	       }
+	       if(admDTO.getOpDate() != null) {
+	    	    Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+				Date date3 = Date.from(instant4);
+				admDTO.setAbortDate(date3);
+	       }
 		return ResponseEntity.ok(admDTO);
 	}
 

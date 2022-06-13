@@ -23,6 +23,7 @@ package org.isf.patient.rest;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,8 +89,9 @@ public class PatientController {
     ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
         String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
-        Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
-        if(patient == null){
+		Patient patient = patientMapper.map2Model(newPatient);
+        Patient pat = patientManager.savePatient(patient);
+        if(pat == null){
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
