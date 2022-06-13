@@ -22,7 +22,6 @@
 package org.isf.permissions.rest;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.isf.menu.manager.UserGroupManager;
 import org.isf.menu.model.UserGroup;

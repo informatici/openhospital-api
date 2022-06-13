@@ -2,8 +2,8 @@ package org.isf.login.rest;
 
 import javax.validation.Valid;
 
-import org.isf.login.dto.LoginResponse;
 import org.isf.login.dto.LoginRequest;
+import org.isf.login.dto.LoginResponse;
 import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;

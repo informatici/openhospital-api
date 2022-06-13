@@ -21,9 +21,7 @@
  */
 package org.isf.admission.rest;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -319,21 +317,22 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
+		//adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		
 		if(adm == null || admission.getId() != adm.getId()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
    		if(adm.getDiseaseOut1() == null) {
-   			throw new OHAPIException( new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
+   			throw new OHAPIException(new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
    		}
    		if(adm.getDisDate() == null) {
-   			throw new OHAPIException( new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
+   			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
     	}
    		if(adm.getDisDate().isBefore(adm.getAdmDate())) {
-   			throw new OHAPIException( new OHExceptionMessage(null, "the exit date must be after the entry date!", OHSeverityLevel.ERROR));
+   			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be after the entry date!", OHSeverityLevel.ERROR));
       	}
    		if(adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())){
-   			throw new OHAPIException( new OHExceptionMessage(null, "the type of output is mandatory or does not exist!", OHSeverityLevel.ERROR));
+   			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!", OHSeverityLevel.ERROR));
    		}
    		adm.setAdmitted(0);
    		admissionUpdated = admissionManager.updateAdmission(adm);
@@ -534,7 +533,7 @@ public class AdmissionController {
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission not found!", OHSeverityLevel.ERROR));
 		}
-		Admission updAdmission = admissionMapper.map2Model(updAdmissionDTO);
+		Admission updateAdmission = admissionMapper.map2Model(updAdmissionDTO);
 //		updAdmission.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 //		if(updAdmissionDTO.getDisDate()!= null) {
 //			updAdmission.setDisDate(updAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
@@ -547,7 +546,7 @@ public class AdmissionController {
 			if (wards.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Ward not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setWard(wards.get(0));
+			updateAdmission.setWard(wards.get(0));
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Ward field is required!", OHSeverityLevel.ERROR));
 		}
@@ -561,7 +560,7 @@ public class AdmissionController {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Admission type not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setAdmType(types.get(0));
+			updateAdmission.setAdmType(types.get(0));
 		} else {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "Admission type field is required!", OHSeverityLevel.ERROR));
@@ -572,7 +571,7 @@ public class AdmissionController {
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setPatient(patient);
+			updateAdmission.setPatient(patient);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
@@ -585,7 +584,7 @@ public class AdmissionController {
 			if (dIns.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseIn(dIns.get(0));
+			updateAdmission.setDiseaseIn(dIns.get(0));
 		} 
 		
 		if (updAdmissionDTO.getDiseaseOut1() != null && updAdmissionDTO.getDiseaseOut1().getCode() != null) {
@@ -598,7 +597,7 @@ public class AdmissionController {
 			if (dOut1s.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut1(dOut1s.get(0));
+			updateAdmission.setDiseaseOut1(dOut1s.get(0));
 		} 
 		
 		if (updAdmissionDTO.getDiseaseOut2() != null && updAdmissionDTO.getDiseaseOut2().getCode() != null) {
@@ -611,7 +610,7 @@ public class AdmissionController {
 			if (dOut2s.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 2 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut2(dOut2s.get(0));
+			updateAdmission.setDiseaseOut2(dOut2s.get(0));
 		} 
 		
 		if (updAdmissionDTO.getDiseaseOut3() != null && updAdmissionDTO.getDiseaseOut3().getCode() != null) {
@@ -624,7 +623,7 @@ public class AdmissionController {
 			if (dOut3s.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 3 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut3(dOut3s.get(0));
+			updateAdmission.setDiseaseOut3(dOut3s.get(0));
 		} 
 	
 		if (updAdmissionDTO.getOperation() != null && updAdmissionDTO.getOperation().getCode() != null && !updAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
@@ -635,7 +634,7 @@ public class AdmissionController {
 			if (opFounds.isEmpty()) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Operation not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setOperation(opFounds.get(0));
+			updateAdmission.setOperation(opFounds.get(0));
 		}
 
 		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null && !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
@@ -647,7 +646,7 @@ public class AdmissionController {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Discharge type not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDisType(disTypesF.get(0));
+			updateAdmission.setDisType(disTypesF.get(0));
 		}
 
 		if (updAdmissionDTO.getPregTreatmentType() != null && updAdmissionDTO.getPregTreatmentType().getCode() != null && !updAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
@@ -659,7 +658,7 @@ public class AdmissionController {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Pregnant treatment type not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setPregTreatmentType(pregTTypesF.get(0));
+			updateAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
 
 		if (updAdmissionDTO.getDeliveryType() != null && updAdmissionDTO.getDeliveryType().getCode() != null && !updAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
@@ -671,7 +670,7 @@ public class AdmissionController {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Delivery type not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDeliveryType(dlvrTypesF.get(0));
+			updateAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
 
 		if (updAdmissionDTO.getDeliveryResult() != null && updAdmissionDTO.getDeliveryResult().getCode() != null && !updAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
@@ -683,14 +682,14 @@ public class AdmissionController {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
+			updateAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}
 
-		String name = StringUtils.hasLength(updAdmission.getPatient().getName())
-				? updAdmission.getPatient().getFirstName() + ' ' + updAdmission.getPatient().getSecondName()
-				: updAdmission.getPatient().getName();
+		String name = StringUtils.hasLength(updateAdmission.getPatient().getName())
+				? updateAdmission.getPatient().getFirstName() + ' ' + updateAdmission.getPatient().getSecondName()
+				: updateAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
-		Admission isUpdatedAdmission = admissionManager.updateAdmission(updAdmission);
+		Admission isUpdatedAdmission = admissionManager.updateAdmission(updateAdmission);
 		if (isUpdatedAdmission == null) {
 			throw new OHAPIException(
 						new OHExceptionMessage(null, "Admission not updated!", OHSeverityLevel.ERROR));
@@ -700,6 +699,26 @@ public class AdmissionController {
 //		Instant instant = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //		Date date = Date.from(instant);
 //		admDTO.setAdmDate(date);
+//		if (admDTO.getAbortDate() != null) {
+//			Instant instant1 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date1 = Date.from(instant1);
+//			admDTO.setAbortDate(date1);
+//		}
+//		if (admDTO.getCtrlDate1() != null) {
+//			Instant instant2 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date1 = Date.from(instant2);
+//			admDTO.setAbortDate(date1);
+//		}
+//		if (admDTO.getCtrlDate2() != null) {
+//			Instant instant3 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date2 = Date.from(instant3);
+//			admDTO.setAbortDate(date2);
+//		}
+//		if (admDTO.getOpDate() != null) {
+//			Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date3 = Date.from(instant4);
+//			admDTO.setAbortDate(date3);
+//		}
 		return ResponseEntity.ok(admDTO);
 	}
 

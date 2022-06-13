@@ -88,7 +88,7 @@ public class PatientController {
      */
 	@PostMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
-        String name = StringUtils.isEmpty(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
+        String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
         Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
         if (patient == null){

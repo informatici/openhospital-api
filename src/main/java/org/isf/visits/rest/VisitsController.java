@@ -93,7 +93,9 @@ public class VisitsController {
     @PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 	    LOGGER.info("Create Visit: {}", newVisit);
-        Visit visit = visitManager.newVisit(mapper.map2Model(newVisit));
+	    Visit visitD = mapper.map2Model(newVisit);
+	    //visitD.setDate(newVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        Visit visit = visitManager.newVisit(visitD);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); //TODO: verify if it's correct
     }
 
@@ -150,7 +152,7 @@ public class VisitsController {
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         
         Visit visitUp = mapper.map2Model(updateVisit);
-        
+        //visitUp.setDate(updateVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         //Visit visitUpdate = visitManager.updateVisit(visitUp);
         Visit visitUpdate = visitManager.newVisit(visitUp);
         if(visitUpdate == null)

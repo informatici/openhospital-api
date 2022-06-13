@@ -1,8 +1,5 @@
 package org.isf.menu.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class UserProfileDTO {

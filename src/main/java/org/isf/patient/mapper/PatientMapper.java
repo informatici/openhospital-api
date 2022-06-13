@@ -40,6 +40,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	@Override
 	public PatientDTO map2DTO(Patient fromObj) {
 		PatientDTO patientDTO = super.map2DTO(fromObj);
+		
 		if (fromObj.getPatientProfilePhoto() != null) {
 			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 		}
@@ -60,7 +61,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	public Patient map2Model(PatientDTO toObj) {
 
 		Patient patient = super.map2Model(toObj);
-
+		
 		if (toObj.getBlobPhoto() != null) {
 			PatientProfilePhoto photo = new PatientProfilePhoto();
 			photo.setPatient(patient);

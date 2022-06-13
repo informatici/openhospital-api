@@ -37,7 +37,6 @@ import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.operation.model.Operation;
 import org.isf.operation.model.OperationRow;
 import org.isf.opetype.model.OperationType;
-import org.isf.patient.dto.PatientSTATUS;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -206,12 +205,14 @@ public class OperationController {
 	 */
 	@PostMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
-		int code = operationRowDTO.getId();
+		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
 		if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+		//opRow.setOpDate(operationRowDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		
 		boolean isCreated = operationRowManager.newOperationRow(opRow);
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == code)
 				.collect(Collectors.toList());
@@ -239,6 +240,8 @@ public class OperationController {
 		   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 	    }
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+		//opRow.setOpDate(operationRowDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 				.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {

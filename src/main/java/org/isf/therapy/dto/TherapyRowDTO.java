@@ -34,11 +34,11 @@ public class TherapyRowDTO {
 	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
 	private int therapyID;
 
-	@NotNull(message="the patient is required")
+	//@NotNull(message="the patient is required")
 	@ApiModelProperty(notes="The patient", position = 2)
 	PatientDTO patID;
 
-	@NotNull(message="the start date is require")
+	@NotNull(message="the start date is required")
 	@ApiModelProperty(notes="The start date of therapy", example = "2020-07-16T00:00:00", position = 3)
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime startDate;
@@ -48,34 +48,34 @@ public class TherapyRowDTO {
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime endDate;
 
-	@NotNull(message="the medical's ID is required")
+	//@NotNull(message="the medical's ID is required")
 	@ApiModelProperty(notes="The ID of the medical concerned by the therapy", example = "1", position = 5)
 	private int medicalId;
 
-	@NotNull(message="the quantity is required")
+	//@NotNull(message="the quantity is required")
 	@ApiModelProperty(notes="The quantity of medicals", example = "48", position = 6)
 	private Double qty;
 
-	@NotNull(message="the unit's ID is required")
+	//@NotNull(message="the unit's ID is required")
 	@ApiModelProperty(notes="The unit's ID", example = "1", position = 7)
 	private int unitID;
 
-	@NotNull(message="the frequency in day is required")
+	//@NotNull(message="the frequency in day is required")
 	@ApiModelProperty(notes="The frequency in day", example = "2", position = 8)
 	private int freqInDay;
 
-	@NotNull(message="the frequency in period is required")
+	//@NotNull(message="the frequency in period is required")
 	@ApiModelProperty(notes="The frequency in period", example = "1", position = 9)
 	private int freqInPeriod;
 	
 	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 10)		
 	private String note;
 
-	@NotNull(message="the notify flag is required")
+	//@NotNull(message="the notify flag is required")
 	@ApiModelProperty(notes="the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0", position = 11)	
 	private int notifyInt;
 
-	@NotNull(message="the sms flag is required")
+	//@NotNull(message="the sms flag is required")
 	@ApiModelProperty(notes="the sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0", position = 12)	
 	private int smsInt;
 
