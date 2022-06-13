@@ -66,7 +66,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	public Patient map2Model(PatientDTO toObj) {
 
 		Patient patient = super.map2Model(toObj);
-		if(patient.getBirthDate() != null) {
+		if(toObj.getBirthDate() != null) {
 			patient.setBirthDate(toObj.getBirthDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 		}
 		
