@@ -21,6 +21,8 @@
  */
 package org.isf.visits.rest;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -75,7 +77,15 @@ public class VisitsController {
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
-        List<VisitDTO> listVisit = mapper.map2DTOList(visit);
+        List<VisitDTO> listVisit = new ArrayList<VisitDTO>();
+        for(Visit visitP : visit) {	
+			VisitDTO visitDTO =  mapper.map2DTO(visitP);
+//    		Instant instant = visitP.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//        	Date date = (Date) Date.from(instant);
+//        	visitDTO.setDate(date);
+        	listVisit.add(visitDTO);
+    			
+    	}
         if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
