@@ -211,6 +211,12 @@ public class LaboratoryController {
         if (labRow != null) {
             labRows = new ArrayList<>(labRow);
         }
+        if (labToInsert.getDate() == null) {
+        	Calendar cal = Calendar.getInstance();
+            Date input = cal.getTime();
+            LocalDateTime la = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            labToInsert.setDate(la);
+        }
         labToInsert.setLock(0);
 
         boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
