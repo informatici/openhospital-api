@@ -21,6 +21,7 @@
  */
 package org.isf.lab.rest;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -49,6 +50,8 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.visits.dto.VisitDTO;
+import org.isf.visits.model.Visit;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -257,10 +260,20 @@ public class LaboratoryController {
         }
 
         List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
+        List<LaboratoryDTO> listLab = new ArrayList<LaboratoryDTO>();
         if (labList == null || labList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
+        	
+             for(Laboratory lab : labList) {	
+            	 LaboratoryDTO labDTO =  laboratoryMapper.map2DTO(lab);
+         		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+             	Date date = (Date) Date.from(instant);
+             	labDTO.setExamDate(date);
+             	listLab.add(labDTO);
+         			
+         	}
+            return ResponseEntity.ok(listLab);
         }
     }
 

@@ -24,6 +24,7 @@ package org.isf.examination.rest;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.examination.dto.PatientExaminationDTO;
@@ -195,11 +196,20 @@ public class ExaminationController {
     public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
         List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
-
+        List<PatientExaminationDTO> listePExam = new ArrayList<PatientExaminationDTO>();
         if (patientExamination == null || patientExamination.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(patientExaminationMapper.map2DTOList(patientExamination));
-        }
+        		for(PatientExamination patienExam : patientExamination) {	
+        			PatientExaminationDTO patientExamDTO = patientExaminationMapper.map2DTO(patienExam);
+            		Instant instant = patienExam.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+                	Date date = (Date) Date.from(instant);
+                	patientExamDTO.setPex_date(date);
+                	listePExam.add(patientExamDTO);
+            			
+            	}
+        		
+        	}
+            return ResponseEntity.ok(listePExam);
     }
 }
