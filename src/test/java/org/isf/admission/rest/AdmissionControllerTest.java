@@ -342,7 +342,7 @@ public class AdmissionControllerTest {
 			admission.setDiseaseOut1(disease3);
 			admission.setDisType(dischargeType);
 			
-			when(admissionManagerMock.updateAdmission(admission)).thenReturn(true);
+			when(admissionManagerMock.updateAdmission(admission));
 			
 			AdmissionDTO admDTO = admissionMapper.map2DTO(admission);	
 			this.mockMvc
@@ -458,8 +458,7 @@ public class AdmissionControllerTest {
 
 		boolean isUpdated = true;
 
-		when(admissionManagerMock.updateAdmission(update))
-				.thenReturn(isUpdated);
+		when(admissionManagerMock.updateAdmission(update));
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)

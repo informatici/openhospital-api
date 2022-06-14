@@ -58,8 +58,7 @@ public class OpdControllerTest {
 		OpdDTO body = opdMapper.map2DTO(opd);
 
 		boolean isCreated = true;
-		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body)))
-				.thenReturn(isCreated);
+		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body)));
 		MvcResult result = this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
