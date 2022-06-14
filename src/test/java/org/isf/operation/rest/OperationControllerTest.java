@@ -72,8 +72,10 @@ public class OperationControllerTest {
 
 		when(operationBrowserManagerMock.newOperation(operationMapper.map2Model(body)))
 				.thenReturn(operation);
+
 		when(operationBrowserManagerMock.getOperationByCode(code))
-		    .thenReturn(operation);
+		    	.thenReturn(operation);
+		
 		MvcResult result = this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
