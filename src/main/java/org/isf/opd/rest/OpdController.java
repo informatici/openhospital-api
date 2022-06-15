@@ -90,7 +90,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
-		//opdToInsert.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+//		opdToInsert.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
@@ -127,7 +127,7 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
-		//opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+//		opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
