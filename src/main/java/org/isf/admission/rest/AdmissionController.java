@@ -24,6 +24,7 @@ package org.isf.admission.rest;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -58,6 +59,8 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.visits.dto.VisitDTO;
+import org.isf.visits.model.Visit;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -242,7 +245,22 @@ public class AdmissionController {
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionMapper.map2DTOList(admissions));
+		List<AdmissionDTO> listAdmission = new ArrayList<AdmissionDTO>();
+		 for(Admission adm : admissions) {	
+	        	AdmissionDTO admission =  admissionMapper.map2DTO(adm);
+	    		Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+	        	Date date = (Date) Date.from(instant);
+	        	admission.setAdmDate(date);
+	        	
+	        	if(adm.getDisDate() != null) {
+	        		Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+		        	Date date1 = (Date) Date.from(instant1);
+		        	admission.setDisDate(date1);
+	        	}
+	        	listAdmission.add(admission);	
+	    	}
+		 
+		return ResponseEntity.ok(listAdmission);
 	}
 
 	/**
