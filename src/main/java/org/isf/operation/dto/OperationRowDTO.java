@@ -41,16 +41,16 @@ public class OperationRowDTO {
 
     private int id;
 
-    @NotNull
+    //@NotNull
     private OperationDTO operation;
 
-    @NotNull
+    //@NotNull
     private String prescriber;
 
-    @NotNull
+    //@NotNull
     private String opResult;
 
-    @NotNull
+    //@NotNull
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date opDate;
 
