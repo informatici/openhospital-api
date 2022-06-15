@@ -22,6 +22,7 @@
 package org.isf.opd.rest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.opd.dto.OpdDTO;
@@ -89,11 +90,16 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
+		//opdToInsert.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
+//		OpdDTO opdDTOs = mapper.map2DTO(isCreated);
+//		Instant instant = isCreated.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//		Date date = Date.from(instant);
+//		opdDTOs.setDate(date);
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
 
@@ -121,10 +127,15 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
+		//opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
 		}
+//		OpdDTO opdDTOs = mapper.map2DTO(updatedOpd);
+//		Instant instant = updatedOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//		Date date = Date.from(instant);
+//		opdDTOs.setDate(date);
 		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedOpd));
 	}
 
@@ -174,10 +185,19 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/patient/{pcode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByPatient(@PathVariable("pcode") int patientcode) throws OHServiceException {
-		LOGGER.info("Get opd associated to specified patient CODE: {}", patientcode);
-		List<Opd> opds = opdManager.getOpdList(patientcode);
-		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
+	public ResponseEntity<List<OpdDTO>> getOpdByPatient(@PathVariable("pcode") int pcode) throws OHServiceException {
+		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
+		
+		List<Opd> opds = opdManager.getOpdList(pcode);
+		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
+		for (Opd opd : opds) {
+			OpdDTO admission = mapper.map2DTO(opd);
+//			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date = (Date) Date.from(instant);
+//			admission.setDate(date);
+
+			opdDTOs.add(admission);
+		}
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {

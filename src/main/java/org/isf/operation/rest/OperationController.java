@@ -21,9 +21,14 @@
  */
 package org.isf.operation.rest;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
 import org.isf.opd.dto.OpdDTO;
@@ -204,7 +209,7 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
+	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
 		if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
@@ -223,7 +228,11 @@ public class OperationController {
 		if (!isCreated || opCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(opCreated.getId());
+		OperationRowDTO opR =  opRowMapper.map2DTO(opCreated);
+//		 Instant instant = opRow.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
+//         Date date = (Date) Date.from(instant);
+//         opR.setOpDate(date);
+		return ResponseEntity.status(HttpStatus.CREATED).body(opR);
 	}
 	
 	/**
@@ -264,7 +273,17 @@ public class OperationController {
 		LOGGER.info("Get operations row for provided admission");
 		Admission adm = admissionManager.getAdmission(id);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByAdmission(adm);
-		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
+		List<OperationRowDTO> operationRowDTOs = new ArrayList<OperationRowDTO>();
+		for (OperationRow opRow : operationRows) {
+			OperationRowDTO opR = opRowMapper.map2DTO(opRow);
+//			 if(opRow.getOpDate() != null) {
+//		    	 Instant instant = opRow.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
+//		         Date date = (Date) Date.from(instant);
+//		         opR.setOpDate(date); 
+//			 }
+
+			operationRowDTOs.add(opR);
+		}
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {

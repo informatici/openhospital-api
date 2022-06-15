@@ -58,7 +58,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the patient age", example = "18", position = 6)
     private int age;
 
-    @NotNull
+   // @NotNull
     @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
     private char sex;
 

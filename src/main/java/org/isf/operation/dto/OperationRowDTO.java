@@ -40,21 +40,21 @@ public class OperationRowDTO {
 
     private int id;
 
-    @NotNull
+    //@NotNull
     private OperationDTO operation;
 
-    @NotNull
+    //@NotNull
     private String prescriber;
 
-    @NotNull
+    //@NotNull
     private String opResult;
 
     @NotNull
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime opDate;
 
     private String remarks;
 
-  
     private AdmissionDTO admission;
 
     private OpdDTO opd;
