@@ -42,7 +42,7 @@ public class OpdDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date date;
 
-    @NotNull
+    //@NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date visitDate;
@@ -58,7 +58,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the patient age", example = "18", position = 6)
     private int age;
 
-   // @NotNull
+   //@NotNull
     @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
     private char sex;
 
@@ -66,7 +66,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 8)
     private String note; // ADDED: Alex
 
-    @NotNull
+   // @NotNull
     @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 9)
     private int prog_year;
 
