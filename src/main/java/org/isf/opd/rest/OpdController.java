@@ -129,9 +129,9 @@ public class OpdController {
 	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-	/*	if(opdManager.getOpdByCode(code) == null ) {	
+		if(opdManager.getOpdByCode(code) == null ) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
-		}*/
+		}
 
 		if(opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
@@ -144,7 +144,7 @@ public class OpdController {
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
 		opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-		opdToUpdate.setLock(0);
+		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		
 		if(updatedOpd == null)
