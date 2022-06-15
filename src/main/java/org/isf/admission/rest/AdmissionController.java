@@ -22,6 +22,7 @@
 package org.isf.admission.rest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -239,7 +240,22 @@ public class AdmissionController {
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionMapper.map2DTOList(admissions));
+		List<AdmissionDTO> listAdmission = new ArrayList<AdmissionDTO>();
+		 for(Admission adm : admissions) {	
+	        	AdmissionDTO admission =  admissionMapper.map2DTO(adm);
+//	    		Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//	        	Date date = (Date) Date.from(instant);
+//	        	admission.setAdmDate(date);
+	        	
+//	        	if(adm.getDisDate() != null) {
+//	        		Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+//		        	Date date1 = (Date) Date.from(instant1);
+//		        	admission.setDisDate(date1);
+//	        	}
+	        	listAdmission.add(admission);	
+	    	}
+		 
+		return ResponseEntity.ok(listAdmission);
 	}
 
 	/**
