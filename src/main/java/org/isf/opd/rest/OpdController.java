@@ -186,9 +186,11 @@ public class OpdController {
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
 			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
 			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, 
-			@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
-			@RequestParam Integer ageFrom, @RequestParam Integer ageTo, @RequestParam char sex,
-			@RequestParam char newPatient) throws OHServiceException {
+			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode, @RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
+			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, @RequestParam(value = "ageTo", required = false, defaultValue = "0") Integer ageTo,
+			@RequestParam(value = "sex", required = false, defaultValue = "A") char sex,
+			@RequestParam(value = "newPatient", required = false, defaultValue = "A") char newPatient,
+			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
 		LocalDate dateF = null;
 		if(dateFrom != null) {
@@ -199,8 +201,7 @@ public class OpdController {
 		if(dateTo != null) {
 			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
-		
-		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient);
+		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient, patientCode);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
