@@ -183,10 +183,11 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByDates(@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
+	public ResponseEntity<List<OpdDTO>> getOpdByDates(
 			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, 
 			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, 
-			@RequestParam int ageFrom, @RequestParam int ageTo, @RequestParam char sex,
+			@RequestParam String diseaseTypeCode, @RequestParam String diseaseCode,
+			@RequestParam Integer ageFrom, @RequestParam Integer ageTo, @RequestParam char sex,
 			@RequestParam char newPatient) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
 		LocalDate dateF = null;
@@ -198,7 +199,7 @@ public class OpdController {
 		if(dateTo != null) {
 			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
-        
+		
 		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.isEmpty()) {
