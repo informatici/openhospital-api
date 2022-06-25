@@ -62,14 +62,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -103,11 +106,11 @@ public class AdmissionController {
 
 	@Autowired
 	private DeliveryResultTypeBrowserManager dlvrrestTypeManager;
-	
+
 	@Autowired
 	private AdmissionMapper admissionMapper;
-	
-	@Autowired 
+
+	@Autowired
 	private AdmittedPatientMapper admittedMapper;
 
 	@Autowired
@@ -173,7 +176,7 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		AdmissionDTO admDTO =admissionMapper.map2DTO(admission);
+		AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
 //		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //		Date date = Date.from(instant);
 //		admDTO.setAdmDate(date);
@@ -199,6 +202,7 @@ public class AdmissionController {
 
 	/**
 	 * Get all admitted {@link Patient}s based on the applied filters.
+	 * 
 	 * @param searchTerms
 	 * @param admissionRange
 	 * @param dischargeRange
@@ -211,17 +215,32 @@ public class AdmissionController {
 			@RequestParam(name = "admissionrange", required = false) LocalDateTime[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange) throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
-		
+//		LocalDateTime[] admissionR = new LocalDateTime[admissionRange.length];
+//		LocalDateTime[] dischargeR = new LocalDateTime[admissionRange.length];
+//		int i = 0;
+//		for (Date date : admissionRange) {
+//			LocalDateTime dateR = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//			admissionR[i] = dateR;
+//			i++;
+//		}
+//
+//		int j = 0;
+//		for (Date date : dischargeRange) {
+//			LocalDateTime dateD = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//			dischargeR[j] = dateD;
+//			j++;
+//		}
 		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		
+
 		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
 	}
 
 	/**
 	 * Get all the {@link Admission}s for the specified {@link Patient} code.
+	 * 
 	 * @param patientCode
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
@@ -241,25 +260,26 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<AdmissionDTO> listAdmission = new ArrayList<AdmissionDTO>();
-		 for(Admission adm : admissions) {	
-	        	AdmissionDTO admission =  admissionMapper.map2DTO(adm);
+		for (Admission adm : admissions) {
+			AdmissionDTO admission = admissionMapper.map2DTO(adm);
 //	    		Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //	        	Date date = (Date) Date.from(instant);
 //	        	admission.setAdmDate(date);
-	        	
+
 //	        	if(adm.getDisDate() != null) {
 //	        		Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
 //		        	Date date1 = (Date) Date.from(instant1);
 //		        	admission.setDisDate(date1);
 //	        	}
-	        	listAdmission.add(admission);	
-	    	}
+			listAdmission.add(admission);
+		}
 		 
 		return ResponseEntity.ok(listAdmission);
 	}
 
 	/**
 	 * Get the next prog in the year for specified {@link Ward} code.
+	 * 
 	 * @param wardCode
 	 * @return the next prog.<
 	 * @throws OHServiceException
@@ -268,16 +288,18 @@ public class AdmissionController {
 	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardCode") String wardCode)
 			throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
-		
+
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
-		
+
 		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
 	}
-	
+
 	/**
 	 * Get the number of used beds for the specified {@link Ward} code.
+	 * 
 	 * @param wardCode
 	 * @return the number of used beds.
 	 * @throws OHServiceException
@@ -287,14 +309,16 @@ public class AdmissionController {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 
 		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
 	}
-	
+
 	/**
 	 * Set an {@link Admission} record to deleted.
+	 * 
 	 * @param id
 	 * @return {@code true} if the record has been set to delete.
 	 * @throws OHServiceException
@@ -337,15 +361,15 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
-		//adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-		
+//		adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
 		if(adm == null || admission.getId() != adm.getId()) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
    		if(adm.getDiseaseOut1() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
    		}
-		//adm.setDisDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+//		adm.setDisDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
    		if(adm.getDisDate() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
     	}
@@ -363,6 +387,7 @@ public class AdmissionController {
 
 	/**
 	 * Create a new {@link Admission}.
+	 * 
 	 * @param newAdmissionDTO
 	 * @return the generated id or {@code null} for the created {@link Admission}.
 	 * @throws OHServiceException
@@ -478,7 +503,8 @@ public class AdmissionController {
 			newAdmission.setOperation(opFounds.get(0));
 		}
 
-		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null && !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null
+				&& !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(newAdmissionDTO.getDisType().getCode()))
@@ -490,7 +516,8 @@ public class AdmissionController {
 			newAdmission.setDisType(disTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getPregTreatmentType() != null && newAdmissionDTO.getPregTreatmentType().getCode() != null && !newAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getPregTreatmentType() != null && newAdmissionDTO.getPregTreatmentType().getCode() != null
+				&& !newAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
 			List<PregnantTreatmentType> pregTTypes = pregTraitTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTTypesF = pregTTypes.stream()
 					.filter(pregtt -> pregtt.getCode().equals(newAdmissionDTO.getPregTreatmentType().getCode()))
@@ -502,7 +529,8 @@ public class AdmissionController {
 			newAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getDeliveryType() != null && newAdmissionDTO.getDeliveryType().getCode() != null && !newAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDeliveryType() != null && newAdmissionDTO.getDeliveryType().getCode() != null
+				&& !newAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
 			List<DeliveryType> dlvrTypes = dlvrTypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypesF = dlvrTypes.stream()
 					.filter(dlvrType -> dlvrType.getCode().equals(newAdmissionDTO.getDeliveryType().getCode()))
@@ -514,10 +542,11 @@ public class AdmissionController {
 			newAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getDeliveryResult() != null && newAdmissionDTO.getDeliveryResult().getCode() != null && !newAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDeliveryResult() != null && newAdmissionDTO.getDeliveryResult().getCode() != null
+				&& !newAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestTypeManager.getDeliveryResultType();
-			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream()
-					.filter(dlvrrestType -> dlvrrestType.getCode().equals(newAdmissionDTO.getDeliveryResult().getCode()))
+			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream().filter(
+					dlvrrestType -> dlvrrestType.getCode().equals(newAdmissionDTO.getDeliveryResult().getCode()))
 					.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
 				throw new OHAPIException(
@@ -541,8 +570,15 @@ public class AdmissionController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admDTO);
 	}
 
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handle(HttpMessageNotReadableException e) {
+		e.printStackTrace();
+	}
+
 	/**
 	 * Updates the specified {@link Admission} object.
+	 * 
 	 * @param updAdmissionDTO
 	 * @return {@code true} if has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -596,9 +632,8 @@ public class AdmissionController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
-		List<Disease> diseases = null;
-		if (updAdmissionDTO.getDiseaseIn() != null && updAdmissionDTO.getDiseaseIn().getCode() != null ) {
-			diseases = diseaseManager.getDisease();
+		List<Disease> diseases = diseaseManager.getDiseaseAll();
+		if (updAdmissionDTO.getDiseaseIn() != null && updAdmissionDTO.getDiseaseIn().getCode() != null) {
 			List<Disease> dIns = diseases.stream()
 					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseIn().getCode()))
 					.collect(Collectors.toList());
@@ -609,9 +644,6 @@ public class AdmissionController {
 		} 
 		
 		if (updAdmissionDTO.getDiseaseOut1() != null && updAdmissionDTO.getDiseaseOut1().getCode() != null) {
-			if (diseases == null) {
-				diseases = diseaseManager.getDisease();
-			}
 			List<Disease> dOut1s = diseases.stream()
 					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut1().getCode()))
 					.collect(Collectors.toList());
@@ -658,7 +690,8 @@ public class AdmissionController {
 			updateAdmission.setOperation(opFounds.get(0));
 		}
 
-		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null && !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null
+				&& !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(updAdmissionDTO.getDisType().getCode()))
@@ -670,7 +703,8 @@ public class AdmissionController {
 			updateAdmission.setDisType(disTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getPregTreatmentType() != null && updAdmissionDTO.getPregTreatmentType().getCode() != null && !updAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getPregTreatmentType() != null && updAdmissionDTO.getPregTreatmentType().getCode() != null
+				&& !updAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
 			List<PregnantTreatmentType> pregTTypes = pregTraitTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTTypesF = pregTTypes.stream()
 					.filter(pregtt -> pregtt.getCode().equals(updAdmissionDTO.getPregTreatmentType().getCode()))
@@ -682,7 +716,8 @@ public class AdmissionController {
 			updateAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getDeliveryType() != null && updAdmissionDTO.getDeliveryType().getCode() != null && !updAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDeliveryType() != null && updAdmissionDTO.getDeliveryType().getCode() != null
+				&& !updAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
 			List<DeliveryType> dlvrTypes = dlvrTypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypesF = dlvrTypes.stream()
 					.filter(dlvrType -> dlvrType.getCode().equals(updAdmissionDTO.getDeliveryType().getCode()))
@@ -694,10 +729,11 @@ public class AdmissionController {
 			updateAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getDeliveryResult() != null && updAdmissionDTO.getDeliveryResult().getCode() != null && !updAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDeliveryResult() != null && updAdmissionDTO.getDeliveryResult().getCode() != null
+				&& !updAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestTypeManager.getDeliveryResultType();
-			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream()
-					.filter(dlvrrestType -> dlvrrestType.getCode().equals(updAdmissionDTO.getDeliveryResult().getCode()))
+			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream().filter(
+					dlvrrestType -> dlvrrestType.getCode().equals(updAdmissionDTO.getDeliveryResult().getCode()))
 					.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
 				throw new OHAPIException(
@@ -742,6 +778,5 @@ public class AdmissionController {
 //		}
 		return ResponseEntity.ok(admDTO);
 	}
-
 
 }
