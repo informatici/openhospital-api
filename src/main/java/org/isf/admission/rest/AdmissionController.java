@@ -69,14 +69,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
@@ -110,11 +113,11 @@ public class AdmissionController {
 
 	@Autowired
 	private DeliveryResultTypeBrowserManager dlvrrestTypeManager;
-	
+
 	@Autowired
 	private AdmissionMapper admissionMapper;
-	
-	@Autowired 
+
+	@Autowired
 	private AdmittedPatientMapper admittedMapper;
 	@Autowired
 	private DischargeTypeBrowserManager dischargeManager;
@@ -141,6 +144,7 @@ public class AdmissionController {
 		this.dischargeManager = dischargeManager;
 		this.dischargeMapper = dischargeMapper;
 	}
+
 	/**
 	 * Get {@link Admission} for the specified id.
 	 * 
@@ -179,7 +183,7 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		AdmissionDTO admDTO =admissionMapper.map2DTO(admission);
+		AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
 		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		admDTO.setAdmDate(date);
@@ -188,6 +192,7 @@ public class AdmissionController {
 
 	/**
 	 * Get all admitted {@link Patient}s based on the applied filters.
+	 * 
 	 * @param searchTerms
 	 * @param admissionRange
 	 * @param dischargeRange
@@ -204,30 +209,31 @@ public class AdmissionController {
 		LocalDateTime[] admissionR = new LocalDateTime[admissionRange.length];
 		LocalDateTime[] dischargeR = new LocalDateTime[admissionRange.length];
 		int i = 0;
-		for(Date date :admissionRange) {
-			LocalDateTime dateR  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			admissionR[i]=dateR;
+		for (Date date : admissionRange) {
+			LocalDateTime dateR = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			admissionR[i] = dateR;
 			i++;
 		}
-		
+
 		int j = 0;
-		for(Date date :dischargeRange) {
-			LocalDateTime dateD  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			dischargeR[j]=dateD;
+		for (Date date : dischargeRange) {
+			LocalDateTime dateD = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			dischargeR[j] = dateD;
 			j++;
 		}
-		
-		List<AdmittedPatient> admittedPatients = admissionManager
-				.getAdmittedPatients(admissionR, dischargeR, searchTerms);
+
+		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR,
+				searchTerms);
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		
+
 		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
 	}
 
 	/**
 	 * Get all the {@link Admission}s for the specified {@link Patient} code.
+	 * 
 	 * @param patientCode
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
@@ -246,43 +252,45 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<AdmissionDTO> listAdmission = new ArrayList<AdmissionDTO>();
-		 for(Admission adm : admissions) {	
-	        	AdmissionDTO admission =  admissionMapper.map2DTO(adm);
-	    		Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
-	        	Date date = (Date) Date.from(instant);
-	        	admission.setAdmDate(date);
-	        	
-	        	if(adm.getDisDate() != null) {
-	        		Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
-		        	Date date1 = (Date) Date.from(instant1);
-		        	admission.setDisDate(date1);
-	        	}
-	        	listAdmission.add(admission);	
-	    	}
-		 
+		for (Admission adm : admissions) {
+			AdmissionDTO admission = admissionMapper.map2DTO(adm);
+			Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date = (Date) Date.from(instant);
+			admission.setAdmDate(date);
+
+			if (adm.getDisDate() != null) {
+				Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+				Date date1 = (Date) Date.from(instant1);
+				admission.setDisDate(date1);
+			}
+			listAdmission.add(admission);
+		}
+
 		return ResponseEntity.ok(listAdmission);
 	}
 
 	/**
 	 * Get the next prog in the year for specified {@link Ward} code.
+	 * 
 	 * @param wardCode
 	 * @return the next prog.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/getNextProgressiveIdInYear", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode)
-			throws OHServiceException {
+	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode) throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
-		
+
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
-		
+
 		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
 	}
-	
+
 	/**
 	 * Get the number of used beds for the specified {@link Ward} code.
+	 * 
 	 * @param wardCode
 	 * @return the number of used beds.
 	 * @throws OHServiceException
@@ -292,14 +300,16 @@ public class AdmissionController {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException( new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
+			throw new OHAPIException(
+					new OHExceptionMessage(null, "Ward not found for code:" + wardCode, OHSeverityLevel.ERROR));
 		}
 
 		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
 	}
-	
+
 	/**
 	 * Set an {@link Admission} record to deleted.
+	 * 
 	 * @param id
 	 * @return <code>true</code> if the record has been set to delete.
 	 * @throws OHServiceException
@@ -317,6 +327,7 @@ public class AdmissionController {
 
 		return ResponseEntity.ok(isDeleted);
 	}
+
 	/**
 	 * discharge the {@link Admission}s for the specified {@link Patient} code.
 	 * 
@@ -342,7 +353,7 @@ public class AdmissionController {
 
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 		adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-		
+
 		if (adm == null || admission.getId() != adm.getId())
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 
@@ -360,18 +371,20 @@ public class AdmissionController {
 					OHSeverityLevel.ERROR));
 		}
 		adm.setAdmitted(0);
-		if(admissionManager.updateAdmission(adm)!= null) {
-			
+		if (admissionManager.updateAdmission(adm) != null) {
+
 			bol = true;
 		}
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(bol);
 	}
 
 	/**
 	 * Create a new {@link Admission}.
+	 * 
 	 * @param newAdmissionDTO
-	 * @return the generated id or <code>null</code> for the created {@link Admission}.
+	 * @return the generated id or <code>null</code> for the created
+	 *         {@link Admission}.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -379,19 +392,24 @@ public class AdmissionController {
 			throws OHServiceException {
 
 		Admission newAdmission = admissionMapper.map2Model(newAdmissionDTO);
-		newAdmission.setAdmDate(newAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-       if(newAdmissionDTO.getAbortDate() != null) {
-    	   newAdmission.setAbortDate(newAdmissionDTO.getAbortDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-       }
-       if(newAdmissionDTO.getCtrlDate1() != null) {
-    	   newAdmission.setCtrlDate1(newAdmissionDTO.getCtrlDate1().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-       }
-       if(newAdmissionDTO.getCtrlDate2() != null) {
-    	   newAdmission.setCtrlDate2(newAdmissionDTO.getCtrlDate2().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-       }
-       if(newAdmissionDTO.getOpDate() != null) {
-    	   newAdmission.setOpDate(newAdmissionDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-       }
+		newAdmission
+				.setAdmDate(newAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		if (newAdmissionDTO.getAbortDate() != null) {
+			newAdmission.setAbortDate(
+					newAdmissionDTO.getAbortDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
+		if (newAdmissionDTO.getCtrlDate1() != null) {
+			newAdmission.setCtrlDate1(
+					newAdmissionDTO.getCtrlDate1().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
+		if (newAdmissionDTO.getCtrlDate2() != null) {
+			newAdmission.setCtrlDate2(
+					newAdmissionDTO.getCtrlDate2().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
+		if (newAdmissionDTO.getOpDate() != null) {
+			newAdmission.setOpDate(
+					newAdmissionDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
 		if (newAdmissionDTO.getWard() != null && newAdmissionDTO.getWard().getCode() != null
 				&& !newAdmissionDTO.getWard().getCode().trim().isEmpty()) {
 			List<Ward> wards = wardManager.getWards().stream()
@@ -431,39 +449,46 @@ public class AdmissionController {
 		Disease diseases = null;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
 			diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseIn().getCode());
-			
+
 			if (diseases == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
 			newAdmission.setDiseaseIn(diseases);
-		} 
-		
+		}
+
 		if (newAdmissionDTO.getDiseaseOut1() != null && newAdmissionDTO.getDiseaseOut1().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut1().getCode());
-			
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut1().getCode());
+
 			if (diseases == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
 			newAdmission.setDiseaseOut1(diseases);
-		} 
-		
+		}
+
 		if (newAdmissionDTO.getDiseaseOut2() != null && newAdmissionDTO.getDiseaseOut2().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut2().getCode());
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut2().getCode());
 			if (diseases == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 2 not found!", OHSeverityLevel.ERROR));
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 2 not found!", OHSeverityLevel.ERROR));
 			}
 			newAdmission.setDiseaseOut2(diseases);
-		} 
-		
+		}
+
 		if (newAdmissionDTO.getDiseaseOut3() != null && newAdmissionDTO.getDiseaseOut3().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut3().getCode());
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut3().getCode());
 			if (diseases == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 3 not found!", OHSeverityLevel.ERROR));
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 3 not found!", OHSeverityLevel.ERROR));
 			}
 			newAdmission.setDiseaseOut3(diseases);
-		} 
-	
-		if (newAdmissionDTO.getOperation() != null && newAdmissionDTO.getOperation().getCode() != null && !newAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
+		}
+
+		if (newAdmissionDTO.getOperation() != null && newAdmissionDTO.getOperation().getCode() != null
+				&& !newAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
 			List<Operation> operations = operationManager.getOperation();
 			List<Operation> opFounds = operations.stream()
 					.filter(op -> op.getCode().equals(newAdmissionDTO.getOperation().getCode()))
@@ -474,7 +499,8 @@ public class AdmissionController {
 			newAdmission.setOperation(opFounds.get(0));
 		}
 
-		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null && !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null
+				&& !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(newAdmissionDTO.getDisType().getCode()))
@@ -486,7 +512,8 @@ public class AdmissionController {
 			newAdmission.setDisType(disTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getPregTreatmentType() != null && newAdmissionDTO.getPregTreatmentType().getCode() != null && !newAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getPregTreatmentType() != null && newAdmissionDTO.getPregTreatmentType().getCode() != null
+				&& !newAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
 			List<PregnantTreatmentType> pregTTypes = pregTraitTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTTypesF = pregTTypes.stream()
 					.filter(pregtt -> pregtt.getCode().equals(newAdmissionDTO.getPregTreatmentType().getCode()))
@@ -498,7 +525,8 @@ public class AdmissionController {
 			newAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getDeliveryType() != null && newAdmissionDTO.getDeliveryType().getCode() != null && !newAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDeliveryType() != null && newAdmissionDTO.getDeliveryType().getCode() != null
+				&& !newAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
 			List<DeliveryType> dlvrTypes = dlvrTypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypesF = dlvrTypes.stream()
 					.filter(dlvrType -> dlvrType.getCode().equals(newAdmissionDTO.getDeliveryType().getCode()))
@@ -510,10 +538,11 @@ public class AdmissionController {
 			newAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
 
-		if (newAdmissionDTO.getDeliveryResult() != null && newAdmissionDTO.getDeliveryResult().getCode() != null && !newAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDeliveryResult() != null && newAdmissionDTO.getDeliveryResult().getCode() != null
+				&& !newAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestTypeManager.getDeliveryResultType();
-			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream()
-					.filter(dlvrrestType -> dlvrrestType.getCode().equals(newAdmissionDTO.getDeliveryResult().getCode()))
+			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream().filter(
+					dlvrrestType -> dlvrrestType.getCode().equals(newAdmissionDTO.getDeliveryResult().getCode()))
 					.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
 				throw new OHAPIException(
@@ -537,22 +566,30 @@ public class AdmissionController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(admDTO);
 	}
 
+	@ExceptionHandler
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handle(HttpMessageNotReadableException e) {
+		e.printStackTrace();
+	}
+
 	/**
 	 * Updates the specified {@link Admission} object.
+	 * 
 	 * @param updAdmissionDTO
 	 * @return <code>true</code> if has been updated, <code>false</code> otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AdmissionDTO> updateAdmissions(@RequestBody AdmissionDTO updAdmissionDTO) throws OHServiceException {
-		
+
 		Admission old = admissionManager.getAdmission(updAdmissionDTO.getId());
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission not found!", OHSeverityLevel.ERROR));
 		}
 		Admission updAdmission = admissionMapper.map2Model(updAdmissionDTO);
-		updAdmission.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-		
+		updAdmission
+				.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
 		if (updAdmissionDTO.getWard() != null && updAdmissionDTO.getWard().getCode() != null
 				&& !updAdmissionDTO.getWard().getCode().trim().isEmpty()) {
 			List<Ward> wards = wardManager.getWards().stream()
@@ -589,52 +626,51 @@ public class AdmissionController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
-		List<Disease> diseases = null;
-		if (updAdmissionDTO.getDiseaseIn() != null && updAdmissionDTO.getDiseaseIn().getCode() != null ) {
-			diseases = diseaseManager.getDisease();
-			List<Disease> dIns = diseases.stream()
-					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseIn().getCode()))
-					.collect(Collectors.toList());
-			if (dIns.isEmpty()) {
+		Disease diseases = null;
+		if (updAdmissionDTO.getDiseaseIn() != null && updAdmissionDTO.getDiseaseIn().getCode() != null) {
+			diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseIn().getCode());
+
+			if (diseases == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Disease in not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseIn(dIns.get(0));
-		} 
-		
+			updAdmission.setDiseaseIn(diseases);
+		}
+
 		if (updAdmissionDTO.getDiseaseOut1() != null && updAdmissionDTO.getDiseaseOut1().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDisease();
-			List<Disease> dOut1s = diseases.stream()
-					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut1().getCode()))
-					.collect(Collectors.toList());
-			if (dOut1s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut1().getCode());
+
+			if (diseases == null) {
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut1(dOut1s.get(0));
-		} 
-		
+			updAdmission.setDiseaseOut1(diseases);
+		}
+
 		if (updAdmissionDTO.getDiseaseOut2() != null && updAdmissionDTO.getDiseaseOut2().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDisease();
-			List<Disease> dOut2s = diseases.stream()
-					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut2().getCode()) )
-					.collect(Collectors.toList());
-			if (dOut2s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 2 not found!", OHSeverityLevel.ERROR));
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
+
+			if (diseases == null) {
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut2(dOut2s.get(0));
-		} 
-		
+			updAdmission.setDiseaseOut2(diseases);
+		}
+
 		if (updAdmissionDTO.getDiseaseOut3() != null && updAdmissionDTO.getDiseaseOut3().getCode() != null) {
-			if (diseases == null) diseases = diseaseManager.getDisease();
-			List<Disease> dOut3s = diseases.stream()
-					.filter(d -> d.getCode().equals(updAdmissionDTO.getDiseaseOut3().getCode()))
-					.collect(Collectors.toList());
-			if (dOut3s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Disease out 3 not found!", OHSeverityLevel.ERROR));
+			if (diseases == null)
+				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
+
+			if (diseases == null) {
+				throw new OHAPIException(
+						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut3(dOut3s.get(0));
-		} 
-	
-		if (updAdmissionDTO.getOperation() != null && updAdmissionDTO.getOperation().getCode() != null && !updAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
+			updAdmission.setDiseaseOut3(diseases);
+		}
+
+		if (updAdmissionDTO.getOperation() != null && updAdmissionDTO.getOperation().getCode() != null
+				&& !updAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
 			List<Operation> operations = operationManager.getOperation();
 			List<Operation> opFounds = operations.stream()
 					.filter(op -> op.getCode().equals(updAdmissionDTO.getOperation().getCode()))
@@ -645,7 +681,8 @@ public class AdmissionController {
 			updAdmission.setOperation(opFounds.get(0));
 		}
 
-		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null && !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null
+				&& !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(updAdmissionDTO.getDisType().getCode()))
@@ -657,7 +694,8 @@ public class AdmissionController {
 			updAdmission.setDisType(disTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getPregTreatmentType() != null && updAdmissionDTO.getPregTreatmentType().getCode() != null && !updAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getPregTreatmentType() != null && updAdmissionDTO.getPregTreatmentType().getCode() != null
+				&& !updAdmissionDTO.getPregTreatmentType().getCode().trim().isEmpty()) {
 			List<PregnantTreatmentType> pregTTypes = pregTraitTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTTypesF = pregTTypes.stream()
 					.filter(pregtt -> pregtt.getCode().equals(updAdmissionDTO.getPregTreatmentType().getCode()))
@@ -669,7 +707,8 @@ public class AdmissionController {
 			updAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getDeliveryType() != null && updAdmissionDTO.getDeliveryType().getCode() != null && !updAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDeliveryType() != null && updAdmissionDTO.getDeliveryType().getCode() != null
+				&& !updAdmissionDTO.getDeliveryType().getCode().trim().isEmpty()) {
 			List<DeliveryType> dlvrTypes = dlvrTypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypesF = dlvrTypes.stream()
 					.filter(dlvrType -> dlvrType.getCode().equals(updAdmissionDTO.getDeliveryType().getCode()))
@@ -681,10 +720,11 @@ public class AdmissionController {
 			updAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
 
-		if (updAdmissionDTO.getDeliveryResult() != null && updAdmissionDTO.getDeliveryResult().getCode() != null && !updAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
+		if (updAdmissionDTO.getDeliveryResult() != null && updAdmissionDTO.getDeliveryResult().getCode() != null
+				&& !updAdmissionDTO.getDeliveryResult().getCode().trim().isEmpty()) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestTypeManager.getDeliveryResultType();
-			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream()
-					.filter(dlvrrestType -> dlvrrestType.getCode().equals(updAdmissionDTO.getDeliveryResult().getCode()))
+			List<DeliveryResultType> dlvrrestTypesF = dlvrrestTypes.stream().filter(
+					dlvrrestType -> dlvrrestType.getCode().equals(updAdmissionDTO.getDeliveryResult().getCode()))
 					.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
 				throw new OHAPIException(
@@ -698,38 +738,37 @@ public class AdmissionController {
 				: updAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
 		Admission isUpdated = admissionManager.updateAdmission(updAdmission);
-		
+
 		if (isUpdated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Admission is not updated!", OHSeverityLevel.ERROR));
 		}
-		
-		AdmissionDTO admDTO= admissionMapper.map2DTO(isUpdated);
+
+		AdmissionDTO admDTO = admissionMapper.map2DTO(isUpdated);
 		Instant instant = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		admDTO.setAdmDate(date);
-		
-		if(admDTO.getAbortDate() != null) {
+
+		if (admDTO.getAbortDate() != null) {
 			Instant instant1 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date1 = Date.from(instant1);
 			admDTO.setAbortDate(date1);
-	       }
-	       if(admDTO.getCtrlDate1() != null) {
-	    	   Instant instant2 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
-				Date date1 = Date.from(instant2);
-				admDTO.setAbortDate(date1);
-	       }
-	       if(admDTO.getCtrlDate2() != null) {
-	    	   Instant instant3 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
-				Date date2 = Date.from(instant3);
-				admDTO.setAbortDate(date2);
-	       }
-	       if(admDTO.getOpDate() != null) {
-	    	    Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
-				Date date3 = Date.from(instant4);
-				admDTO.setAbortDate(date3);
-	       }
+		}
+		if (admDTO.getCtrlDate1() != null) {
+			Instant instant2 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date1 = Date.from(instant2);
+			admDTO.setAbortDate(date1);
+		}
+		if (admDTO.getCtrlDate2() != null) {
+			Instant instant3 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date2 = Date.from(instant3);
+			admDTO.setAbortDate(date2);
+		}
+		if (admDTO.getOpDate() != null) {
+			Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date3 = Date.from(instant4);
+			admDTO.setAbortDate(date3);
+		}
 		return ResponseEntity.ok(admDTO);
 	}
-
 
 }
