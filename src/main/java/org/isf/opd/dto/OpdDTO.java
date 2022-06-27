@@ -58,9 +58,14 @@ public class OpdDTO {
     @ApiModelProperty(notes = "the patient age", example = "18", position = 6)
     private int age;
 
-   //@NotNull
+    @NotNull
     @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
     private char sex;
+    
+    //@NotNull
+    @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
+    private String patientName;
+    
 
     @NotNull
     @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 8)
@@ -176,6 +181,14 @@ public class OpdDTO {
 
 	public LocalDate getVisitDate() {
 		return this.visitDate;
+	}
+
+	public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
 	}
 
 	public LocalDateTime getNextVisitDate() {
