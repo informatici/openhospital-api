@@ -47,6 +47,7 @@ public class OpdMapper extends GenericMapper<Opd, OpdDTO> {
 		OpdDTO opdDTO = super.map2DTO(fromObj);
 		if (fromObj.getPatient() != null) {
 			opdDTO.setPatientCode(fromObj.getPatient().getCode());
+			opdDTO.setPatientName(fromObj.getFullName());
 		}
 		return opdDTO;
 
