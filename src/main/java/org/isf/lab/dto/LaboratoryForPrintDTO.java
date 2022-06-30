@@ -30,6 +30,8 @@ public class LaboratoryForPrintDTO {
     private String result;
 
     private Integer code;
+    
+    private String patName;
 
 	public String getExam() {
 		return this.exam;
@@ -62,4 +64,13 @@ public class LaboratoryForPrintDTO {
 	public void setCode(Integer code) {
 		this.code = code;
 	}
+
+	public String getPatName() {
+		return patName;
+	}
+
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+	
 }
