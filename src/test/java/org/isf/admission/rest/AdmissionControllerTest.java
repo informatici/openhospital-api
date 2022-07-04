@@ -477,7 +477,7 @@ public class AdmissionControllerTest {
 				.thenReturn(patient);
 
 		List<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);
-		when(diseaseManagerMock.getDisease())
+		when(diseaseManagerMock.getDiseaseAll())
 				.thenReturn(diseaseList);
 
 		List<Operation> operationsList = OperationHelper.setupOperationList(3);

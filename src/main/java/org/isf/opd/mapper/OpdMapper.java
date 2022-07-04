@@ -27,9 +27,7 @@ import java.util.stream.Collectors;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.model.Opd;
 import org.isf.patient.manager.PatientBrowserManager;
-import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
-import org.isf.utils.exception.OHServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,24 +52,6 @@ public class OpdMapper extends GenericMapper<Opd, OpdDTO> {
 
 	}
 	
-	@Override
-	public Opd map2Model(OpdDTO toObj) {
-
-		Opd opd = super.map2Model(toObj);
-
-		if (toObj.getPatientCode()!= null) {
-			Patient patient =null;
-			try {
-				patient = patientManager.getPatientById(toObj.getPatientCode());
-			} catch (OHServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			opd.setPatient(patient);
-		}
-		return opd;
-	}
-
 	@Override
 	public List<OpdDTO> map2DTOList(List<Opd> list) {
 		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
