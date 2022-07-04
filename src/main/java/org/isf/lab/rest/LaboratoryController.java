@@ -306,5 +306,12 @@ public class LaboratoryController {
             return ResponseEntity.ok(laboratoryForPrintMapper.map2DTOList(laboratoryForPrintList));
         }
     }
-
+    @GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
+        Laboratory lab = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
+        if (lab == null) {
+            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+        }
+        return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
+    }
 }
