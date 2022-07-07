@@ -32,6 +32,8 @@ public class LaboratoryForPrintDTO {
     private Integer code;
     
     private String patName;
+    
+    private Integer patientCode;
 
 	public String getExam() {
 		return this.exam;
@@ -72,5 +74,14 @@ public class LaboratoryForPrintDTO {
 	public void setPatName(String patName) {
 		this.patName = patName;
 	}
+
+	public Integer getPatientCode() {
+		return patientCode;
+	}
+
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
+	
 	
 }
