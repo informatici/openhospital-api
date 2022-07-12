@@ -288,8 +288,9 @@ public class LaboratoryController {
     }
 
     @GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(@RequestParam String examName, @RequestParam(value = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, @RequestParam(value = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo) throws OHServiceException {
+    public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(@RequestParam(required = false, defaultValue = "") String examName, @RequestParam(value = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateFrom, @RequestParam(value = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date dateTo, @RequestParam(value = "patientCode",required = false, defaultValue = "0") int patientCode) throws OHServiceException {
     	LocalDateTime dateF = null;
+    	Patient patient = null ;
 		if(dateFrom != null) {
 			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
@@ -298,8 +299,13 @@ public class LaboratoryController {
 		if(dateTo != null) {
 			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
-
-        List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateF, dateT);
+		if(patientCode != 0) {
+			 patient = patientBrowserManager.getPatientById(patientCode);
+			 if(patient == null || laboratoryManager.getLaboratory(patient)==null) 
+				 throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
+							HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+        List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateF, dateT,patient);
         if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
