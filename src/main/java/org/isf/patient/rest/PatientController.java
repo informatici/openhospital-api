@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
@@ -237,5 +238,17 @@ public class PatientController {
         	throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged!", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(merged);
+	}
+	
+	@GetMapping(value = "/patient/cities", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<String>> getPatientCities() throws OHServiceException {
+		LOGGER.info("get all cities of patient");
+		List<String> cities = new ArrayList<String>();
+		List<Patient> patients = patientManager.getPatient();
+		
+		for(Patient pat: patients) {
+			cities.add(pat.getCity());
+		}
+        return ResponseEntity.ok(cities.stream().distinct().collect(Collectors.toList()));
 	}
 }
