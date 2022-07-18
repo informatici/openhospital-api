@@ -245,12 +245,6 @@ public class PatientController {
 	@GetMapping(value = "/patient/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getPatientCities() throws OHServiceException {
 		LOGGER.info("get all cities of patient");
-		List<String> cities = new ArrayList<String>();
-		List<Patient> patients = patientManager.getPatient();
-		
-		for(Patient pat: patients) {
-			cities.add(pat.getCity());
-		}
-        return ResponseEntity.ok(cities.stream().distinct().collect(Collectors.toList()));
+        return ResponseEntity.ok(patientManager.getCities());
 	}
 }
