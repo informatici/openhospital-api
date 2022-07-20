@@ -43,6 +43,8 @@ import org.isf.operation.model.Operation;
 import org.isf.operation.model.OperationRow;
 import org.isf.opetype.model.OperationType;
 import org.isf.patient.dto.PatientSTATUS;
+import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -77,6 +79,9 @@ public class OperationController {
 	
 	@Autowired
 	protected OperationRowBrowserManager operationRowManager;
+	
+	@Autowired
+	protected PatientBrowserManager patientBrowserManager;
 	
 	@Autowired
 	protected OperationMapper mapper;
@@ -290,6 +295,24 @@ public class OperationController {
 		}
 	}
 
+	/**
+	 * Get {@link OperationRow}s for specified patient.
+	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/operations/rows/search/patient", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByPatient(@RequestParam int patientCode) throws OHServiceException {
+		LOGGER.info("Get operations row for provided patient");
+		Patient patient = patientBrowserManager.getPatientById(patientCode);
+		List<OperationRow> operationRows = operationRowManager.getOperationRowByPatientCode(patient);
+		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
+		if (operationRowDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
+		} else {
+			return ResponseEntity.ok(operationRowDTOs);
+		}
+	}
+	
 	/**
 	 * Get {@link OperationRow}s for specified {@link OpdDTO}.
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
