@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
@@ -325,11 +326,18 @@ public class LaboratoryController {
     
     @GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
-        Laboratory lab = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
+        Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+        Laboratory lab = labo.get();
         if (lab == null) {
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
-        return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
+        Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+	    Date date = Date.from(instant);
+	    LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+
+	    laboratoryDTO.setExamDate(date);
+	    
+        return ResponseEntity.ok(laboratoryDTO);
     }
 
 }
