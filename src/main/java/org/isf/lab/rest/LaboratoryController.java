@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -309,7 +310,16 @@ public class LaboratoryController {
         if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(laboratoryForPrintMapper.map2DTOList(laboratoryForPrintList));
+        	List<LaboratoryForPrintDTO> laboratoryForPrintDTOList = new ArrayList<LaboratoryForPrintDTO>();
+        	LaboratoryForPrintDTO laboratoryForPrintDTO = new LaboratoryForPrintDTO();
+        	for(LaboratoryForPrint lab: laboratoryForPrintList) {
+        		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+    		    Date date = Date.from(instant);
+    		    laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
+    		    laboratoryForPrintDTO.setDate(date);
+    		    laboratoryForPrintDTOList.add(laboratoryForPrintDTO);
+    		    };
+            return ResponseEntity.ok(laboratoryForPrintDTOList);
         }
     }
     
@@ -317,7 +327,7 @@ public class LaboratoryController {
     public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
         Laboratory lab = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
         if (lab == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
     }
