@@ -284,19 +284,18 @@ public class LaboratoryController {
 	}
 	
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
-        Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-        Laboratory lab = labo.get();
-        if (lab == null) {
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
-	    Date date = Date.from(instant);
-	    LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+	public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
+		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+		Laboratory lab = labo.get();
+		if (lab == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+//		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//		Date date = Date.from(instant);
+//		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+//		laboratoryDTO.setExamDate(date);
 
-	    laboratoryDTO.setExamDate(date);
-	    
-        return ResponseEntity.ok(laboratoryDTO);
-    }
-
+		return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
+	}
+ 
 }
