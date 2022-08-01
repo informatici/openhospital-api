@@ -128,13 +128,8 @@ public class LaboratoryController {
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
         }
-        if (labToInsert.getDate() == null) {
-        	Calendar cal = Calendar.getInstance();
-            Date input = cal.getTime();
-            LocalDateTime la = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            labToInsert.setDate(la);
-        }
-        	
+        
+        labToInsert.setCreatedDate(laboratoryDTO.getExamDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         
         boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
@@ -212,17 +207,14 @@ public class LaboratoryController {
         labToInsert.setExam(exam);
         labToInsert.setPatient(patient);
 
-        ArrayList<String> labRows = new ArrayList<>();
+        ArrayList<String> labRows = new ArrayList<String>();
         if (labRow != null) {
-            labRows = new ArrayList<>(labRow);
+            labRows = new ArrayList<String>(labRow);
         }
-        if (labToInsert.getDate() == null) {
-        	Calendar cal = Calendar.getInstance();
-            Date input = cal.getTime();
-            LocalDateTime la = input.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            labToInsert.setDate(la);
-        }
-        labToInsert.setLock(0);
+        
+        labToInsert.setDate(laboratoryDTO.getExamDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        System.out.println(laboratoryDTO.getLock()+" "+labRow);
+        labToInsert.setLock(laboratoryDTO.getLock());
 
         boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
 
