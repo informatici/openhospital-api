@@ -226,9 +226,12 @@ public class LaboratoryController {
 
     @DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
-        Laboratory labToDelete = laboratoryManager.getLaboratory().stream().filter(l -> l.getCode().equals(code)).findFirst().orElse(null);
-        if (labToDelete == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+    	Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
+    	Laboratory labToDelete = null;
+        if (lab.isPresent()) {
+        	labToDelete = lab.get();
+        }else {
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         if (!laboratoryManager.deleteLaboratory(labToDelete)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not deleted!", OHSeverityLevel.ERROR));
@@ -319,8 +322,10 @@ public class LaboratoryController {
     @GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
         Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-        Laboratory lab = labo.get();
-        if (lab == null) {
+        Laboratory lab = null;
+        if (labo.isPresent()) {
+        	lab = labo.get();
+        }else {
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
