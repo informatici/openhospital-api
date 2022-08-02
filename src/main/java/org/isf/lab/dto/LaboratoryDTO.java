@@ -23,6 +23,7 @@ package org.isf.lab.dto;
 
 import java.util.Date;
 
+import com.drew.lang.annotations.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.exam.dto.ExamDTO;
 
@@ -43,6 +44,7 @@ public class LaboratoryDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date registrationDate;
 
+    @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date examDate;
