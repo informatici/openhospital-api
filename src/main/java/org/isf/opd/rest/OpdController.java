@@ -165,9 +165,16 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByDates(@RequestParam("diseaseTypeCode") String diseaseTypeCode, @RequestParam("diseaseCode") String diseaseCode,
-			@RequestParam("dateFrom") LocalDate dateFrom, @RequestParam("dateTo") LocalDate dateTo, @RequestParam("ageFrom") int ageFrom, @RequestParam("ageTo") int ageTo, @RequestParam("sex") char sex,
-			@RequestParam("newPatient") char newPatient) throws OHServiceException {
+	public ResponseEntity<List<OpdDTO>> getOpdByDates(
+			@RequestParam(value = "dateFrom") LocalDate dateFrom, 
+			@RequestParam(value = "dateFrom") LocalDate dateTo, 
+			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode,
+			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
+			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
+			@RequestParam(value = "ageTo", required = false, defaultValue = "200") Integer ageTo,
+			@RequestParam(value = "sex", required = false, defaultValue = "A") char sex,
+			@RequestParam(value = "newPatient", required = false, defaultValue = "A") char newPatient,
+			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
 
 		List<Opd> opds = opdManager.getOpd(null, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, 0);

@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
 
+import com.drew.lang.annotations.NotNull;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class LaboratoryDTO {
@@ -39,13 +41,15 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
+	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime registrationDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
+    @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private LocalDateTime examDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
+    private LocalDateTime examDate;
+	
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
     
