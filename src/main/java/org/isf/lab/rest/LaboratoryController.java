@@ -40,6 +40,7 @@ import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryForPrint;
+import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -373,4 +374,37 @@ public class LaboratoryController {
         return ResponseEntity.ok(laboratoryDTO);
     }
 
+    @GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
+    	LabWithRowsDTO lab = new LabWithRowsDTO();
+    	Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+    	List<String> labDescription = new ArrayList<String>();
+        Laboratory laboratory = null;
+        if (labo.isPresent()) {
+        	laboratory = labo.get();
+        }else {
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+        Instant instant = laboratory.getDate().atZone(ZoneId.systemDefault()).toInstant();
+	    Date date = Date.from(instant);
+	    
+	    Instant instant1 = laboratory.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
+     	Date date1 = (Date) Date.from(instant1);
+     	labDTO.setExamDate(date);
+ 	    labDTO.setRegistrationDate(date1);
+        lab.setLaboratoryDTO(labDTO);
+        
+        if (laboratory.getExam().getProcedure() == 2) {
+        	List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
+        	if(!labDes.isEmpty()) {
+        		for(LaboratoryRow laboratoryRow : labDes) {
+        			labDescription.add(laboratoryRow.getDescription());
+        		}
+        		lab.setLaboratoryRowList(labDescription);
+        	}
+        	
+		}
+        return  ResponseEntity.ok(lab);
+    }
 }
