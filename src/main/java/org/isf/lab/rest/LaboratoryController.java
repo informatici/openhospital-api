@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -288,17 +289,50 @@ public class LaboratoryController {
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-		Laboratory lab = labo.get();
-		if (lab == null) {
+		Laboratory lab = null;
+		if (labo.isPresent()) {
+			lab = labo.get();
+		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 //		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
 //		Date date = Date.from(instant);
 //		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
-//
 //		laboratoryDTO.setExamDate(date);
 
 		return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
 	}
+	
+	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
+    	LabWithRowsDTO lab = new LabWithRowsDTO();
+    	Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+    	List<String> labDescription = new ArrayList<String>();
+        Laboratory laboratory = null;
+        if (labo.isPresent()) {
+        	laboratory = labo.get();
+        } else {
+        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+//        if(laboratory.getDate()!=null) {
+//        	Instant instant1 = laboratory.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//          	Date date1 = (Date) Date.from(instant1);
+//          	labDTO.setExamDate(date1);
+//        }
+        lab.setLaboratoryDTO(labDTO);
+        
+        if (laboratory.getExam().getProcedure() == 2) {
+        	List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
+        	if(!labDes.isEmpty()) {
+        		for(LaboratoryRow laboratoryRow : labDes) {
+        			labDescription.add(laboratoryRow.getDescription());
+        		}
+        	}
+        	
+		}
+        lab.setLaboratoryRowList(labDescription);
+        return  ResponseEntity.ok(lab);
+    }
  
 }
