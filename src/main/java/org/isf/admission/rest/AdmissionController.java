@@ -159,8 +159,35 @@ public class AdmissionController {
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
 		LOGGER.info("admissiontype code: {}", admission.getAdmType().getCode());
-		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
+		if (admission.getAbortDate() != null) {
+			Instant instant1 = admission.getAbortDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date1 = Date.from(instant1);
+			admDTO.setAbortDate(date1);
+		}
+		if (admission.getCtrlDate1() != null) {
+			Instant instant2 = admission.getCtrlDate1().atZone(ZoneId.systemDefault()).toInstant();
+			Date date1 = Date.from(instant2);
+			admDTO.setCtrlDate1(date1);
+		}
+		if (admission.getCtrlDate2() != null) {
+			Instant instant3 = admission.getCtrlDate2().atZone(ZoneId.systemDefault()).toInstant();
+			Date date2 = Date.from(instant3);
+			admDTO.setCtrlDate2(date2);
+		}
+		if (admission.getOpDate() != null) {
+			Instant instant4 = admission.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date3 = Date.from(instant4);
+			admDTO.setOpDate(date3);
+		}
+
+		if (admission.getDisDate()!= null) {
+			Instant instant5 = admission.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date4 = Date.from(instant5);
+			admDTO.setOpDate(date4);
+		}
+		return ResponseEntity.ok(admDTO);
 	}
 
 	/**
