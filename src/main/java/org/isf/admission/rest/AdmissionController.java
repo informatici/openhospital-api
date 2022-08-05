@@ -749,24 +749,24 @@ public class AdmissionController {
 		admDTO.setAdmDate(date);
 
 		if (admDTO.getAbortDate() != null) {
-			Instant instant1 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Instant instant1 = isUpdated.getAbortDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date1 = Date.from(instant1);
 			admDTO.setAbortDate(date1);
 		}
 		if (admDTO.getCtrlDate1() != null) {
-			Instant instant2 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Instant instant2 = isUpdated.getCtrlDate1().atZone(ZoneId.systemDefault()).toInstant();
 			Date date1 = Date.from(instant2);
-			admDTO.setAbortDate(date1);
+			admDTO.setCtrlDate1(date1);
 		}
 		if (admDTO.getCtrlDate2() != null) {
-			Instant instant3 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Instant instant3 = isUpdated.getCtrlDate2().atZone(ZoneId.systemDefault()).toInstant();
 			Date date2 = Date.from(instant3);
-			admDTO.setAbortDate(date2);
+			admDTO.setCtrlDate2(date2);
 		}
 		if (admDTO.getOpDate() != null) {
-			Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+			Instant instant4 = isUpdated.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date3 = Date.from(instant4);
-			admDTO.setAbortDate(date3);
+			admDTO.setOpDate(date3);
 		}
 		return ResponseEntity.ok(admDTO);
 	}
