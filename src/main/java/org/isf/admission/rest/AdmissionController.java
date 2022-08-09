@@ -278,8 +278,8 @@ public class AdmissionController {
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		List<AdmissionDTO> listAdmission = new ArrayList<AdmissionDTO>();
-		for (Admission adm : admissions) {
+
+		return ResponseEntity.ok(admissions.stream().map(adm -> {
 			AdmissionDTO admission = admissionMapper.map2DTO(adm);
 			Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date = (Date) Date.from(instant);
@@ -290,10 +290,8 @@ public class AdmissionController {
 				Date date1 = (Date) Date.from(instant1);
 				admission.setDisDate(date1);
 			}
-			listAdmission.add(admission);
-		}
-
-		return ResponseEntity.ok(listAdmission);
+			return admission;
+		}).collect(Collectors.toList()));
 	}
 
 	/**

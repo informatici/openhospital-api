@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
@@ -218,16 +219,12 @@ public class LaboratoryController {
         if(laboratoryDTO.getExamDate() == null) {
         	labToInsert.setExamDate(LocalDateTime.now());
         } else {
-
-        	System.out.println(laboratoryDTO.getExamDate());
         	 labToInsert.setExamDate(laboratoryDTO.getExamDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
        
         if(laboratoryDTO.getRegistrationDate() == null) {
         	labToInsert.setLabDate(LocalDateTime.now());
         } else {
-
-        	System.out.println(laboratoryDTO.getRegistrationDate());
         	 labToInsert.setLabDate(laboratoryDTO.getRegistrationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
         labToInsert.setLock(laboratoryDTO.getLock());
@@ -258,11 +255,11 @@ public class LaboratoryController {
     @GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<LaboratoryDTO>> getLaboratory() throws OHServiceException {
         List<Laboratory> labList = laboratoryManager.getLaboratory();
-        List<LaboratoryDTO> labListDTO = new ArrayList<LaboratoryDTO>();
         if (labList == null || labList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-        	for(Laboratory lab : labList) {
+        	
+            return ResponseEntity.ok(labList.stream().map(lab -> {
         		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
         		if(lab.getDate()!= null) {
         			 Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
@@ -273,11 +270,9 @@ public class LaboratoryController {
         			Instant instant2 = lab.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
             	    Date date2 = Date.from(instant2); 
             	    labDTO.setRegistrationDate(date2);
-       		     }  
-        		
-        	    labListDTO.add(labDTO);
-        	}
-            return ResponseEntity.ok(labListDTO);
+       		     } 
+        		return labDTO;
+        	}).collect(Collectors.toList()));
         }
     }
 
@@ -289,14 +284,11 @@ public class LaboratoryController {
         }
 
         List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
-        List<LaboratoryDTO> listLab = new ArrayList<LaboratoryDTO>();
         if (labList == null || labList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-        	
-             for(Laboratory lab : labList) {	
-            	LaboratoryDTO labDTO =  laboratoryMapper.map2DTO(lab);
-            	
+            return ResponseEntity.ok(labList.stream().map(lab -> {
+        		LaboratoryDTO labDTO =  laboratoryMapper.map2DTO(lab);
             	if(lab.getDate()!= null) {
        			 	Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
             	    Date date = Date.from(instant);
@@ -307,9 +299,8 @@ public class LaboratoryController {
             		Date date2 = Date.from(instant2); 
             		labDTO.setRegistrationDate(date2);
       		     }  
-             	listLab.add(labDTO);		
-         	}
-            return ResponseEntity.ok(listLab);
+            	return labDTO;
+        	}).collect(Collectors.toList()));
         }
     }
 
@@ -345,16 +336,14 @@ public class LaboratoryController {
         if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-        	List<LaboratoryForPrintDTO> laboratoryForPrintDTOList = new ArrayList<LaboratoryForPrintDTO>();
-        	LaboratoryForPrintDTO laboratoryForPrintDTO = new LaboratoryForPrintDTO();
-        	for(LaboratoryForPrint lab: laboratoryForPrintList) {
+            return ResponseEntity.ok(laboratoryForPrintList.stream().map(lab -> {
+        		LaboratoryForPrintDTO laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
         		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
     		    Date date = Date.from(instant);
-    		    laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
+    		   
     		    laboratoryForPrintDTO.setDate(date);
-    		    laboratoryForPrintDTOList.add(laboratoryForPrintDTO);
-    		    };
-            return ResponseEntity.ok(laboratoryForPrintDTOList);
+    		    return laboratoryForPrintDTO;
+        	}).collect(Collectors.toList()));
         }
     }
     
@@ -378,7 +367,6 @@ public class LaboratoryController {
          	Date date1 = (Date) Date.from(instant1);
             laboratoryDTO.setRegistrationDate(date1);
         }
-        System.out.println(laboratoryDTO.getExamDate()+" "+laboratoryDTO.getRegistrationDate());
         return ResponseEntity.ok(laboratoryDTO);
     }
 
