@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
+import org.isf.generaldata.MessageBundle;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryForPrintDTO;
@@ -340,7 +341,6 @@ public class LaboratoryController {
         		LaboratoryForPrintDTO laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
         		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
     		    Date date = Date.from(instant);
-    		   
     		    laboratoryForPrintDTO.setDate(date);
     		    return laboratoryForPrintDTO;
         	}).collect(Collectors.toList()));
