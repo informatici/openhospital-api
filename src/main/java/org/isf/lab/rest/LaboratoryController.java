@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
+import org.isf.generaldata.MessageBundle;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryForPrintDTO;
@@ -265,10 +266,13 @@ public class LaboratoryController {
 	}
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(@RequestParam String examName,
-			@RequestParam(value = "dateFrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime dateFrom,
-			@RequestParam(value = "dateTo") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") LocalDateTime dateTo) throws OHServiceException {
-
+	public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(
+			@RequestParam String examName,
+			@RequestParam(value = "dateFrom") LocalDateTime dateFrom,
+			@RequestParam(value = "dateTo") LocalDateTime dateTo,
+			@RequestParam(value = "patientCode",required = false, defaultValue = "0") int patientCode) throws OHServiceException {
+		
+		Patient patient = null ;
 //    	LocalDateTime dateF = null;
 //		if(dateFrom != null) {
 //			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -278,12 +282,24 @@ public class LaboratoryController {
 //		if(dateTo != null) {
 //			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 //		}
-		
-		List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateFrom, dateTo);
+
+		if (patientCode != 0) {
+			patient = patientBrowserManager.getPatientById(patientCode);
+			if (patient == null || laboratoryManager.getLaboratory(patient) == null)
+				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateFrom, dateTo, patient);
 		if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(laboratoryForPrintList.stream().map(lab -> {
+				LaboratoryForPrintDTO laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
+//				Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//				Date date = Date.from(instant);
+//				laboratoryForPrintDTO.setDate(date);
+				return laboratoryForPrintDTO;
+			}).collect(Collectors.toList()));
 		}
-		return ResponseEntity.ok(laboratoryForPrintMapper.map2DTOList(laboratoryForPrintList));
 	}
 	
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
