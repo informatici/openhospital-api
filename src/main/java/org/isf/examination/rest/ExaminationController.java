@@ -21,8 +21,13 @@
  */
 package org.isf.examination.rest;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
@@ -184,7 +189,14 @@ public class ExaminationController {
         if (patientExaminationList == null || patientExaminationList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-            return ResponseEntity.ok(patientExaminationMapper.map2DTOList(patientExaminationList));
+        	List<PatientExaminationDTO> patientExamList=patientExaminationList.stream().map(pat -> {
+        		PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
+//            	Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+//        		Date date = (Date) Date.from(instant);
+//        		patienE.setPex_date(date);
+        		return patientExaminationDTO;
+        	}).collect(Collectors.toList());
+            return ResponseEntity.ok(patientExamList);
         }
     }
 
@@ -192,18 +204,18 @@ public class ExaminationController {
     public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
         List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
-        List<PatientExaminationDTO> listePExam = new ArrayList<PatientExaminationDTO>();
+        List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<PatientExaminationDTO>();
         if (patientExamination == null || patientExamination.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-        		for(PatientExamination patienExam : patientExamination) {	
-        			PatientExaminationDTO patientExamDTO = patientExaminationMapper.map2DTO(patienExam);
-//            		Instant instant = patienExam.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//                	Date date = (Date) Date.from(instant);
-//                	patientExamDTO.setPex_date(date);
-                	listePExam.add(patientExamDTO);
-            	}
+        		listPatientExaminationDTO = patientExamination.stream().map(pat -> {
+            		PatientExaminationDTO patienE = patientExaminationMapper.map2DTO(pat);
+//                	Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
+//            		Date date = (Date) Date.from(instant);
+//            		patienE.setPex_date(date);
+            		return patienE;
+            	}).collect(Collectors.toList());
         	}
-            return ResponseEntity.ok(listePExam);
+            return ResponseEntity.ok(listPatientExaminationDTO);
     }
 }

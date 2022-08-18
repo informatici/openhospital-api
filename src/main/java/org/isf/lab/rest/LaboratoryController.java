@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
-import org.isf.generaldata.MessageBundle;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryForPrintDTO;
@@ -48,7 +47,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -113,10 +111,11 @@ public class LaboratoryController {
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
-		labToInsert.setExam(exam);
-		labToInsert.setPatient(patient);
-
-		ArrayList<String> labRows = new ArrayList<>();
+        labToInsert.setExam(exam);
+        labToInsert.setPatient(patient);
+        labToInsert.setCode(null);
+        labToInsert.setLock(0);
+        ArrayList<String> labRows = new ArrayList<>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
         }
@@ -232,38 +231,67 @@ public class LaboratoryController {
         return ResponseEntity.ok(true);
 	}
 
-	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LaboratoryDTO>> getLaboratory() throws OHServiceException {
-		List<Laboratory> labList = laboratoryManager.getLaboratory();
-		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		} else {
-			return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
-		}
-	}
+    @GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<LaboratoryDTO>> getLaboratory() throws OHServiceException {
+        List<Laboratory> labList = laboratoryManager.getLaboratory();
+        if (labList == null || labList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+        	
+			return ResponseEntity.ok(labList.stream().map(lab -> {
+				LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
+//				if (lab.getExamDate() != null) {
+//					Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date = Date.from(instant);
+//					labDTO.setExamDate(date);
+//				}
+//				if (lab.getLabDate() != null) {
+//					Instant instant2 = lab.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date2 = Date.from(instant2);
+//					labDTO.setRegistrationDate(date2);
+//				}
+				return labDTO;
+			}).collect(Collectors.toList()));
+        }
+    }
 
-	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LaboratoryDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
-		Patient patient = patientBrowserManager.getPatientById(patId);
-		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
-		}
+    @GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<LaboratoryDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
+        Patient patient = patientBrowserManager.getPatientById(patId);
+        if (patient == null) {
+            throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+        }
 
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
-		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
-	}
+        List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
+        if (labList == null || labList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+			return ResponseEntity.ok(labList.stream().map(lab -> {
+				LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
+//				if (lab.getExamDate() != null) {
+//					Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date = Date.from(instant);
+//					labDTO.setExamDate(date);
+//				}
+//				if (lab.getLabDate() != null) {
+//					Instant instant2 = lab.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date2 = Date.from(instant2);
+//					labDTO.setRegistrationDate(date2);
+//				}
+				return labDTO;
+			}).collect(Collectors.toList()));
+        }
+    }
 
-	@GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
-		List<String> materialList = laboratoryManager.getMaterialList();
-		if (materialList == null || materialList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(materialList);
-	}
+    @GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
+        List<String> materialList = laboratoryManager.getMaterialList();
+        if (materialList == null || materialList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } else {
+            return ResponseEntity.ok(materialList);
+        }
+    }
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(

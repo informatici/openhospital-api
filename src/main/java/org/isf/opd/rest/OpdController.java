@@ -22,8 +22,8 @@
 package org.isf.opd.rest;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -178,7 +178,15 @@ public class OpdController {
 		LOGGER.info("Get opd within specified dates");
 
 		List<Opd> opds = opdManager.getOpd(null, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, 0);
-		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
+		
+		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
+			OpdDTO opdDTO = mapper.map2DTO(opd);
+//			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date = Date.from(instant);
+//			opdDTO.setVisitDate(date);
+			return opdDTO;
+		}).collect(Collectors.toList());
+		
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
@@ -196,15 +204,13 @@ public class OpdController {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 		
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
-		for (Opd opd : opds) {
-			OpdDTO admission = mapper.map2DTO(opd);
+		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
+			OpdDTO opdDTO = mapper.map2DTO(opd);
 //			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
-//			admission.setDate(date);
-
-			opdDTOs.add(admission);
-		}
+//			opdDTO.setVisitDate(date);
+			return opdDTO;
+		}).collect(Collectors.toList());
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
@@ -251,7 +257,12 @@ public class OpdController {
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
-		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
+		OpdDTO opdDTO =  mapper.map2DTO(lastOpd);
+//		Instant instant = lastOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//    	Date date = (Date) Date.from(instant);
+//    	opdDTO.setVisitDate(date);
+    	
+		return ResponseEntity.ok(opdDTO);
 	}
 	
 	/**

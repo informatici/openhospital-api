@@ -31,8 +31,8 @@ public class PatientExaminationDTO {
     private int pex_ID;
 
     @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
-    private LocalDateTime pex_date;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    private LocalDateTime pex_date;
 
     @ApiModelProperty(notes = "Patient Examination Code", position = 3)
     private Integer patientCode;
