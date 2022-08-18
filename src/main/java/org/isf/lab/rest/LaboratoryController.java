@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
-import org.isf.generaldata.MessageBundle;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryForPrintDTO;
@@ -118,7 +117,8 @@ public class LaboratoryController {
         Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
         labToInsert.setExam(exam);
         labToInsert.setPatient(patient);
-
+        labToInsert.setCode(null);
+        labToInsert.setLock(0);
         ArrayList<String> labRows = new ArrayList<>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);

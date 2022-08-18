@@ -27,8 +27,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.model.Admission;
@@ -107,7 +109,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
-		opdToInsert.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		opdToInsert.setDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		Opd isCreated = opdManager.newOpd(opdToInsert);
 		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
@@ -143,7 +145,7 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
-		opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		opdToUpdate.setDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		
@@ -202,7 +204,15 @@ public class OpdController {
 			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 		List<Opd> opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient, patientCode);
-		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
+		
+		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
+			OpdDTO opdDTO = mapper.map2DTO(opd);
+			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date = Date.from(instant);
+			opdDTO.setVisitDate(date);
+			return opdDTO;
+		}).collect(Collectors.toList());
+		
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
@@ -222,12 +232,12 @@ public class OpdController {
 		List<Opd> opds = opdManager.getOpdList(pcode);
 		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
 		 for(Opd opd : opds) {	
-			 OpdDTO admission =  mapper.map2DTO(opd);
+			 OpdDTO opdDTO =  mapper.map2DTO(opd);
 	    		Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 	        	Date date = (Date) Date.from(instant);
-	        	admission.setDate(date);
+	        	opdDTO.setVisitDate(date);
 	       
-	        	opdDTOs.add(admission);	
+	        	opdDTOs.add(opdDTO);	
 	    	}
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
@@ -275,7 +285,12 @@ public class OpdController {
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
-		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
+		OpdDTO opdDTO =  mapper.map2DTO(lastOpd);
+		Instant instant = lastOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+    	Date date = (Date) Date.from(instant);
+    	opdDTO.setVisitDate(date);
+    	
+		return ResponseEntity.ok(opdDTO);
 	}
 	
 	/**

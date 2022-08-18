@@ -240,7 +240,7 @@ public class PatientController {
         return ResponseEntity.ok(merged);
 	}
 	
-	@GetMapping(value = "/patient/cities", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/patients/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getPatientCities() throws OHServiceException {
 		LOGGER.info("get all cities of patient");
         return ResponseEntity.ok(patientManager.getCities());
