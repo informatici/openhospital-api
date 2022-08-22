@@ -230,15 +230,14 @@ public class OpdController {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 		
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
-		 for(Opd opd : opds) {	
+		List<OpdDTO> opdDTOs = opds.stream().map(opd-> {
 			 OpdDTO opdDTO =  mapper.map2DTO(opd);
 	    		Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 	        	Date date = (Date) Date.from(instant);
 	        	opdDTO.setVisitDate(date);
-	       
-	        	opdDTOs.add(opdDTO);	
-	    	}
+	        	//System.out.println(opd.getDisease().getCode());
+	        	return opdDTO;
+		}).collect(Collectors.toList());
 		if (opdDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {

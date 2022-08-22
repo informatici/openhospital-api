@@ -222,12 +222,6 @@ public class LaboratoryController {
         } else {
         	 labToInsert.setExamDate(laboratoryDTO.getExamDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
-       
-        if(laboratoryDTO.getRegistrationDate() == null) {
-        	labToInsert.setLabDate(LocalDateTime.now());
-        } else {
-        	 labToInsert.setLabDate(laboratoryDTO.getRegistrationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        }
         labToInsert.setLock(laboratoryDTO.getLock());
        
         boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
@@ -262,8 +256,8 @@ public class LaboratoryController {
         	
             return ResponseEntity.ok(labList.stream().map(lab -> {
         		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
-        		if(lab.getDate()!= null) {
-        			 Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+        		if(lab.getExamDate()!= null) {
+        			 Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
              	    Date date = Date.from(instant);
              	   labDTO.setExamDate(date);
         		}
@@ -290,8 +284,8 @@ public class LaboratoryController {
         } else {
             return ResponseEntity.ok(labList.stream().map(lab -> {
         		LaboratoryDTO labDTO =  laboratoryMapper.map2DTO(lab);
-            	if(lab.getDate()!= null) {
-       			 	Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
+            	if(lab.getExamDate()!= null) {
+       			 	Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
             	    Date date = Date.from(instant);
             	    labDTO.setExamDate(date);
        		     }

@@ -21,7 +21,9 @@
  */
 package org.isf.examination.dto;
 
-import java.sql.Date;
+
+
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
