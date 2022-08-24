@@ -211,7 +211,9 @@ public class LaboratoryController {
         Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
         labToInsert.setExam(exam);
         labToInsert.setPatient(patient);
-
+        if (labo.isPresent()) {
+        	labToInsert.setLabDate(labo.get().getLabDate());
+        }
         ArrayList<String> labRows = new ArrayList<String>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
