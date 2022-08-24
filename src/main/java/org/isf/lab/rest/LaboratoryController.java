@@ -119,6 +119,7 @@ public class LaboratoryController {
         labToInsert.setPatient(patient);
         labToInsert.setCode(null);
         labToInsert.setLock(0);
+        labToInsert.setLabDate(LocalDateTime.now());
         ArrayList<String> labRows = new ArrayList<>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
@@ -127,13 +128,6 @@ public class LaboratoryController {
         	labToInsert.setExamDate(LocalDateTime.now());
         } else {
         	 labToInsert.setExamDate(laboratoryDTO.getExamDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        }
-       
-        if(laboratoryDTO.getRegistrationDate() == null) {
-        	labToInsert.setLabDate(LocalDateTime.now());
-        } else {
-        	 System.out.println(laboratoryDTO.getExamDate());
-        	 labToInsert.setLabDate(laboratoryDTO.getRegistrationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         }
         boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
@@ -211,9 +205,7 @@ public class LaboratoryController {
         Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
         labToInsert.setExam(exam);
         labToInsert.setPatient(patient);
-        if (labo.isPresent()) {
-        	labToInsert.setLabDate(labo.get().getLabDate());
-        }
+        labToInsert.setLabDate(LocalDateTime.now());
         ArrayList<String> labRows = new ArrayList<String>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
