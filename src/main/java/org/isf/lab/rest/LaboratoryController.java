@@ -115,6 +115,7 @@ public class LaboratoryController {
         labToInsert.setPatient(patient);
         labToInsert.setCode(null);
         labToInsert.setLock(0);
+        labToInsert.setDate(LocalDateTime.now());
         ArrayList<String> labRows = new ArrayList<>();
         if (labRow != null) {
             labRows = new ArrayList<String>(labRow);
@@ -204,9 +205,7 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-		if (labo.isPresent()) {
-        	labToInsert.setDate(labo.get().getDate());
-        }
+		labToInsert.setDate(LocalDateTime.now());
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
