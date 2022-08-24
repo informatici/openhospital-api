@@ -186,9 +186,11 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch!", OHSeverityLevel.ERROR));
 		}
 
-		if (laboratoryManager.getLaboratory().stream().noneMatch(l -> l.getCode().equals(code))) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
-		}
+		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+        if (!labo.isPresent()) {
+        	System.out.println(!labo.isPresent());
+            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+        }
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
@@ -202,12 +204,13 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-
+		if (labo.isPresent()) {
+        	labToInsert.setDate(labo.get().getDate());
+        }
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-
 		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
 
 		if (!updated) {
