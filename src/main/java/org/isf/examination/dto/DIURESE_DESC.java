@@ -1,0 +1,5 @@
+package org.isf.examination.dto;
+
+public enum DIURESE_DESC {
+	PHYSIOLOGICAL, OLIGURIA, ANURIA, FEQUENT, NOCTURIA, STRANGURIA, HEMATURIA, PYURIA
+}

@@ -207,6 +207,11 @@ public class AdmissionController {
 //		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //		Date date = Date.from(instant);
 //		admDTO.setAdmDate(date);
+//		if (admDTO.getDisDate() != null) {
+//			Instant instant5 = admission.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date4 = Date.from(instant5);
+//			admDTO.setDisDate(date4);
+//		}
 		return ResponseEntity.ok(admDTO);
 	}
 
@@ -300,7 +305,6 @@ public class AdmissionController {
 //	        	}
 			listAdmission.add(admission);
 		}
-		 
 		return ResponseEntity.ok(listAdmission);
 	}
 
@@ -775,8 +779,7 @@ public class AdmissionController {
 		LOGGER.info("update admission for patient {}", name);
 		Admission isUpdatedAdmission = admissionManager.updateAdmission(updateAdmission);
 		if (isUpdatedAdmission == null) {
-			throw new OHAPIException(
-						new OHExceptionMessage(null, "Admission not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Admission not updated!", OHSeverityLevel.ERROR));
 		}
 		
 		AdmissionDTO admDTO = admissionMapper.map2DTO(isUpdatedAdmission);
@@ -802,6 +805,16 @@ public class AdmissionController {
 //			Instant instant4 = isUpdated.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date3 = Date.from(instant4);
 //			admDTO.setAbortDate(date3);
+//		}
+//		if (isUpdated.getOpDate() != null) {
+//			Instant instant4 = isUpdated.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date3 = Date.from(instant4);
+//			admDTO.setOpDate(date3);
+//		}
+//		if (isUpdated.getDisDate() != null) {
+//			Instant instant5 = isUpdated.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+//			Date date4 = Date.from(instant5);
+//			admDTO.setDisDate(date4);
 //		}
 		return ResponseEntity.ok(admDTO);
 	}
