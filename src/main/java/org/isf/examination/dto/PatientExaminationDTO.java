@@ -25,6 +25,8 @@ package org.isf.examination.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -33,10 +35,12 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Patient Examination Id", example = "1", position = 1)
     private int pex_ID;
 
+    @NotNull
     @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date pex_date;
 
+    @NotNull
     @ApiModelProperty(notes = "Patient Examination Code", position = 3)
     private Integer patientCode;
 
@@ -47,22 +51,40 @@ public class PatientExaminationDTO {
     private Double pex_weight;
 
     @ApiModelProperty(notes = "Blood Pressure MIN in mmHg", position = 6)
-    private Integer pex_pa_min;
+    private Integer pex_ap_min;
 
     @ApiModelProperty(notes = "Blood Pressure MAX in mmHg", position = 7)
-    private Integer pex_pa_max;
+    private Integer pex_ap_max;
 
-    @ApiModelProperty(notes = "Heart Rate in APm", position = 8)
-    private Integer pex_fc;
+    @ApiModelProperty(notes = "Respiratory Rate in bpm", position = 8)
+    private Integer pex_rr;
 
-    @ApiModelProperty(notes = "Patient Temperature in °C", position = 10)
+    @ApiModelProperty(notes = "Patient Temperature in °C", position = 9)
     private Double pex_temp;
 
-    @ApiModelProperty(notes = "Patient Saturation in %", position = 11)
+    @ApiModelProperty(notes = "Patient Saturation in %", position = 10)
     private Double pex_sat;
-
-    @ApiModelProperty(notes = "Examination Note", position = 12)
+    
+    @ApiModelProperty(notes = "Heart Rate in Apm", position = 11)
+    private Integer pex_hr;
+    
+    @ApiModelProperty(notes = "patient ausculation", example="normal", position = 12)
+    private AUSCULATION_TYPE pex_auscultation;
+    
+    @ApiModelProperty(notes = "Hemo Glucose Test", position = 13)
+    private Integer pex_hgt;
+    
+    @ApiModelProperty(notes = "Daily urine Volume in ml", position = 14)
+    private Integer pex_diuresis;
+    
+    @ApiModelProperty(notes = "Diuresis description", example="physiological", position = 15)
+    private DIURESE_DESC pex_diuresis_desc;
+    
+    @ApiModelProperty(notes = "Examination Note", position = 16)
     private String pex_note;
+    
+    @ApiModelProperty(notes = "Bowel Function",example="regular", position = 17)
+    private BOWEL_DESC pex_bowel_desc;
 
 	public int getPex_ID() {
 		return this.pex_ID;
@@ -70,6 +92,78 @@ public class PatientExaminationDTO {
 
 	public Date getPex_date() {
 		return this.pex_date;
+	}
+
+	public Integer getPex_ap_min() {
+		return pex_ap_min;
+	}
+
+	public void setPex_ap_min(Integer pex_ap_min) {
+		this.pex_ap_min = pex_ap_min;
+	}
+
+	public Integer getPex_ap_max() {
+		return pex_ap_max;
+	}
+
+	public void setPex_ap_max(Integer pex_ap_max) {
+		this.pex_ap_max = pex_ap_max;
+	}
+
+	public Integer getPex_rr() {
+		return pex_rr;
+	}
+
+	public void setPex_rr(Integer pex_rr) {
+		this.pex_rr = pex_rr;
+	}
+
+	public Integer getPex_hr() {
+		return pex_hr;
+	}
+
+	public void setPex_hr(Integer pex_hr) {
+		this.pex_hr = pex_hr;
+	}
+
+	public Integer getPex_hgt() {
+		return pex_hgt;
+	}
+
+	public void setPex_hgt(Integer pex_hgt) {
+		this.pex_hgt = pex_hgt;
+	}
+
+	public Integer getPex_diuresis() {
+		return pex_diuresis;
+	}
+
+	public void setPex_diuresis(Integer pex_diuresis) {
+		this.pex_diuresis = pex_diuresis;
+	}
+
+	public AUSCULATION_TYPE getPex_auscultation() {
+		return pex_auscultation;
+	}
+
+	public void setPex_auscultation(AUSCULATION_TYPE pex_auscultation) {
+		this.pex_auscultation = pex_auscultation;
+	}
+
+	public DIURESE_DESC getPex_diuresis_desc() {
+		return pex_diuresis_desc;
+	}
+
+	public void setPex_diuresis_desc(DIURESE_DESC pex_diuresis_desc) {
+		this.pex_diuresis_desc = pex_diuresis_desc;
+	}
+
+	public BOWEL_DESC getPex_bowel_desc() {
+		return pex_bowel_desc;
+	}
+
+	public void setPex_bowel_desc(BOWEL_DESC pex_bowel_desc) {
+		this.pex_bowel_desc = pex_bowel_desc;
 	}
 
 	public Integer getPatientCode() {
@@ -82,18 +176,6 @@ public class PatientExaminationDTO {
 
 	public Double getPex_weight() {
 		return this.pex_weight;
-	}
-
-	public Integer getPex_pa_min() {
-		return this.pex_pa_min;
-	}
-
-	public Integer getPex_pa_max() {
-		return this.pex_pa_max;
-	}
-
-	public Integer getPex_fc() {
-		return this.pex_fc;
 	}
 
 	public Double getPex_temp() {
@@ -126,18 +208,6 @@ public class PatientExaminationDTO {
 
 	public void setPex_weight(Double pex_weight) {
 		this.pex_weight = pex_weight;
-	}
-
-	public void setPex_pa_min(Integer pex_pa_min) {
-		this.pex_pa_min = pex_pa_min;
-	}
-
-	public void setPex_pa_max(Integer pex_pa_max) {
-		this.pex_pa_max = pex_pa_max;
-	}
-
-	public void setPex_fc(Integer pex_fc) {
-		this.pex_fc = pex_fc;
 	}
 
 	public void setPex_temp(Double pex_temp) {

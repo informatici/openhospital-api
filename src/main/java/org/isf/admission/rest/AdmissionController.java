@@ -181,7 +181,6 @@ public class AdmissionController {
 			Date date3 = Date.from(instant4);
 			admDTO.setOpDate(date3);
 		}
-
 		if (admission.getDisDate()!= null) {
 			Instant instant5 = admission.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date4 = Date.from(instant5);
@@ -214,6 +213,11 @@ public class AdmissionController {
 		Instant instant = admission.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		admDTO.setAdmDate(date);
+		if (admDTO.getDisDate() != null) {
+			Instant instant5 = admission.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date4 = Date.from(instant5);
+			admDTO.setDisDate(date4);
+		}
 		return ResponseEntity.ok(admDTO);
 	}
 
@@ -284,8 +288,8 @@ public class AdmissionController {
 			Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date = (Date) Date.from(instant);
 			admission.setAdmDate(date);
-
 			if (adm.getDisDate() != null) {
+				
 				Instant instant1 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
 				Date date1 = (Date) Date.from(instant1);
 				admission.setDisDate(date1);
@@ -614,6 +618,12 @@ public class AdmissionController {
 		Admission updAdmission = admissionMapper.map2Model(updAdmissionDTO);
 		updAdmission
 				.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		
+		if(updAdmissionDTO.getDisDate()!= null) {
+			updAdmission.setDisDate(updAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		}
+			
+
 
 		if (updAdmissionDTO.getWard() != null && updAdmissionDTO.getWard().getCode() != null
 				&& !updAdmissionDTO.getWard().getCode().trim().isEmpty()) {
@@ -762,6 +772,7 @@ public class AdmissionController {
 				? updAdmission.getPatient().getFirstName() + " " + updAdmission.getPatient().getSecondName()
 				: updAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
+		
 		Admission isUpdated = admissionManager.updateAdmission(updAdmission);
 
 		if (isUpdated == null) {
@@ -773,25 +784,30 @@ public class AdmissionController {
 		Date date = Date.from(instant);
 		admDTO.setAdmDate(date);
 
-		if (admDTO.getAbortDate() != null) {
+		if (isUpdated.getAbortDate() != null) {
 			Instant instant1 = isUpdated.getAbortDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date1 = Date.from(instant1);
 			admDTO.setAbortDate(date1);
 		}
-		if (admDTO.getCtrlDate1() != null) {
+		if (isUpdated.getCtrlDate1() != null) {
 			Instant instant2 = isUpdated.getCtrlDate1().atZone(ZoneId.systemDefault()).toInstant();
 			Date date1 = Date.from(instant2);
 			admDTO.setCtrlDate1(date1);
 		}
-		if (admDTO.getCtrlDate2() != null) {
+		if (isUpdated.getCtrlDate2() != null) {
 			Instant instant3 = isUpdated.getCtrlDate2().atZone(ZoneId.systemDefault()).toInstant();
 			Date date2 = Date.from(instant3);
 			admDTO.setCtrlDate2(date2);
 		}
-		if (admDTO.getOpDate() != null) {
+		if (isUpdated.getOpDate() != null) {
 			Instant instant4 = isUpdated.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date3 = Date.from(instant4);
 			admDTO.setOpDate(date3);
+		}
+		if (isUpdated.getDisDate() != null) {
+			Instant instant5 = isUpdated.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+			Date date4 = Date.from(instant5);
+			admDTO.setDisDate(date4);
 		}
 		return ResponseEntity.ok(admDTO);
 	}
