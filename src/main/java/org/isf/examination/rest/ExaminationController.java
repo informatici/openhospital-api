@@ -29,10 +29,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.examination.dto.AUSCULATION_TYPE;
-import org.isf.examination.dto.BOWEL_DESC;
-import org.isf.examination.dto.DIURESE_DESC;
 import org.isf.examination.dto.PatientExaminationDTO;
+import org.isf.examination.enumeration.Ausculation;
+import org.isf.examination.enumeration.Bowel;
+import org.isf.examination.enumeration.Diurese;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
@@ -152,13 +152,13 @@ public class ExaminationController {
     		Date date = (Date) Date.from(instant);
     		patientExaminationDTO.setPex_date(date);
     		if(patientExamination.getPex_auscultation() != null) {
-    			patientExaminationDTO.setPex_auscultation(AUSCULATION_TYPE.valueOf(patientExamination.getPex_auscultation()));
+    			patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
             }
             if(patientExamination.getPex_bowel_desc() != null) {
-            	patientExaminationDTO.setPex_bowel_desc(BOWEL_DESC.valueOf(patientExamination.getPex_bowel_desc()));
+            	patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
             }
             if(patientExamination.getPex_diuresis_desc() != null) {
-            	patientExaminationDTO.setPex_diuresis_desc(DIURESE_DESC.valueOf(patientExamination.getPex_diuresis_desc()));
+            	patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
             }
             return ResponseEntity.ok(patientExaminationDTO);
         }
@@ -176,13 +176,13 @@ public class ExaminationController {
     		Date date = (Date) Date.from(instant);
     		patientExaminationDTO.setPex_date(date);
     		if(lastPatientExamination.getPex_auscultation() != null) {
-    			patientExaminationDTO.setPex_auscultation(AUSCULATION_TYPE.valueOf(lastPatientExamination.getPex_auscultation()));
+    			patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(lastPatientExamination.getPex_auscultation()));
             }
             if(lastPatientExamination.getPex_bowel_desc() != null) {
-            	patientExaminationDTO.setPex_bowel_desc(BOWEL_DESC.valueOf(lastPatientExamination.getPex_bowel_desc()));
+            	patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(lastPatientExamination.getPex_bowel_desc()));
             }
             if(lastPatientExamination.getPex_diuresis_desc() != null) {
-            	patientExaminationDTO.setPex_diuresis_desc(DIURESE_DESC.valueOf(lastPatientExamination.getPex_diuresis_desc()));
+            	patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(lastPatientExamination.getPex_diuresis_desc()));
             }
             return ResponseEntity.ok(patientExaminationDTO);
         }
@@ -201,13 +201,13 @@ public class ExaminationController {
     		Date date = (Date) Date.from(instant);
     		patienE.setPex_date(date);
     		if(patientExamination.getPex_auscultation() != null) {
-    			patienE.setPex_auscultation(AUSCULATION_TYPE.valueOf(patientExamination.getPex_auscultation()));
+    			patienE.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
             }
             if(patientExamination.getPex_bowel_desc() != null) {
-            	patienE.setPex_bowel_desc(BOWEL_DESC.valueOf(patientExamination.getPex_bowel_desc()));
+            	patienE.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
             }
             if(patientExamination.getPex_diuresis_desc() != null) {
-            	patienE.setPex_diuresis_desc(DIURESE_DESC.valueOf(patientExamination.getPex_diuresis_desc()));
+            	patienE.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
             }
             return ResponseEntity.ok(patienE);
             
@@ -227,13 +227,13 @@ public class ExaminationController {
     		Date date = (Date) Date.from(instant);
     		patienE.setPex_date(date);
     		if(patientExamination.getPex_auscultation() != null) {
-    			patienE.setPex_auscultation(AUSCULATION_TYPE.valueOf(patientExamination.getPex_auscultation()));
+    			patienE.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
             }
             if(patientExamination.getPex_bowel_desc() != null) {
-            	patienE.setPex_bowel_desc(BOWEL_DESC.valueOf(patientExamination.getPex_bowel_desc()));
+            	patienE.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
             }
             if(patientExamination.getPex_diuresis_desc() != null) {
-            	patienE.setPex_diuresis_desc(DIURESE_DESC.valueOf(patientExamination.getPex_diuresis_desc()));
+            	patienE.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
             }
             return ResponseEntity.ok(patienE);
         }
@@ -253,13 +253,13 @@ public class ExaminationController {
         		Date date = (Date) Date.from(instant);
         		patienE.setPex_date(date);
         		if(pat.getPex_auscultation() != null) {
-        			patienE.setPex_auscultation(AUSCULATION_TYPE.valueOf(pat.getPex_auscultation()));
+        			patienE.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
                 }
                 if(pat.getPex_bowel_desc() != null) {
-                	patienE.setPex_bowel_desc(BOWEL_DESC.valueOf(pat.getPex_bowel_desc()));
+                	patienE.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
                 }
                 if(pat.getPex_diuresis_desc() != null) {
-                	patienE.setPex_diuresis_desc(DIURESE_DESC.valueOf(pat.getPex_diuresis_desc()));
+                	patienE.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
                 }
         		return patienE;
         	}).collect(Collectors.toList());
@@ -281,13 +281,13 @@ public class ExaminationController {
             		Date date = (Date) Date.from(instant);
             		patienE.setPex_date(date);
             		if(pat.getPex_auscultation() != null) {
-            			patienE.setPex_auscultation(AUSCULATION_TYPE.valueOf(pat.getPex_auscultation()));
+            			patienE.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
                     }
                     if(pat.getPex_bowel_desc() != null) {
-                    	patienE.setPex_bowel_desc(BOWEL_DESC.valueOf(pat.getPex_bowel_desc()));
+                    	patienE.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
                     }
                     if(pat.getPex_diuresis_desc() != null) {
-                    	patienE.setPex_diuresis_desc(DIURESE_DESC.valueOf(pat.getPex_diuresis_desc()));
+                    	patienE.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
                     }
             		return patienE;
             	}).collect(Collectors.toList());
