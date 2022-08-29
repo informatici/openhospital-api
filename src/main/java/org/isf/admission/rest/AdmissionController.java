@@ -481,9 +481,8 @@ public class AdmissionController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
-		List<Disease> diseases = null;
+		List<Disease> diseases = diseaseManager.getDiseaseAll();;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
-			diseases = diseaseManager.getDiseaseAll();
 			List<Disease> dIns = diseases.stream()
 					.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
 					.collect(Collectors.toList());
@@ -685,9 +684,6 @@ public class AdmissionController {
 		} 
 		
 		if (updateAdmissionDTO.getDiseaseOut2() != null && updateAdmissionDTO.getDiseaseOut2().getCode() != null) {
-			if (diseases == null) {
-				diseases = diseaseManager.getDisease();
-			}
 			List<Disease> dOut2s = diseases.stream()
 					.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut2().getCode()) )
 					.collect(Collectors.toList());
