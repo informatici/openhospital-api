@@ -117,7 +117,6 @@ public class ExaminationController {
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-
         patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
         patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
         patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
