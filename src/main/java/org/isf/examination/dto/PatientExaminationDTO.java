@@ -25,10 +25,6 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import org.isf.examination.enumeration.Ausculation;
-import org.isf.examination.enumeration.Bowel;
-import org.isf.examination.enumeration.Diurese;
-
 import io.swagger.annotations.ApiModelProperty;
 
 public class PatientExaminationDTO {
