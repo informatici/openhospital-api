@@ -1,4 +1,4 @@
-package org.isf.examination.enumeration;
+package org.isf.examination.dto;
 
 public enum Bowel {
 	constipation, regular, diarrheal, irregular

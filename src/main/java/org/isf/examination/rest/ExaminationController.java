@@ -29,10 +29,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.examination.dto.Ausculation;
+import org.isf.examination.dto.Bowel;
+import org.isf.examination.dto.Diurese;
 import org.isf.examination.dto.PatientExaminationDTO;
-import org.isf.examination.enumeration.Ausculation;
-import org.isf.examination.enumeration.Bowel;
-import org.isf.examination.enumeration.Diurese;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
@@ -88,15 +88,10 @@ public class ExaminationController {
 
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
-        if(newPatientExamination.getPex_auscultation() != null) {
-        	patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation().name());
-        }
-        if(newPatientExamination.getPex_bowel_desc() != null) {
-        	patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc().name());
-        }
-        if(newPatientExamination.getPex_diuresis_desc() != null) {
-        	patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc().name());
-        }
+        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation().name());
+        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc().name());
+        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc().name());
+        
         LocalDateTime date = newPatientExamination.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         patientExamination.setPex_date(date);
         examinationBrowserManager.saveOrUpdate(patientExamination);
@@ -122,15 +117,11 @@ public class ExaminationController {
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        if(dto.getPex_auscultation() != null) {
-        	patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
-        }
-        if(dto.getPex_bowel_desc() != null) {
-        	patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
-        }
-        if(dto.getPex_diuresis_desc() != null) {
-        	patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
-        }
+
+        patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
+        patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
+        patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
+        
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.ok(true);

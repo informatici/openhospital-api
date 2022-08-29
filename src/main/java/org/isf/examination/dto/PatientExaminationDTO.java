@@ -27,10 +27,6 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
-import org.isf.examination.enumeration.Ausculation;
-import org.isf.examination.enumeration.Bowel;
-import org.isf.examination.enumeration.Diurese;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
