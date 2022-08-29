@@ -475,7 +475,7 @@ public class AdmissionController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
-		Disease diseases = null;
+		Disease diseases = null, diseasesOut1=null, diseasesOut2=null, diseasesOut3=null ;
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
 			diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseIn().getCode());
 
@@ -486,34 +486,34 @@ public class AdmissionController {
 		}
 
 		if (newAdmissionDTO.getDiseaseOut1() != null && newAdmissionDTO.getDiseaseOut1().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut1().getCode());
+			if (diseasesOut1 == null)
+				diseasesOut1 = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut1().getCode());
 
-			if (diseases == null) {
+			if (diseasesOut1 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			newAdmission.setDiseaseOut1(diseases);
+			newAdmission.setDiseaseOut1(diseasesOut1);
 		}
 
 		if (newAdmissionDTO.getDiseaseOut2() != null && newAdmissionDTO.getDiseaseOut2().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut2().getCode());
-			if (diseases == null) {
+			if (diseasesOut2 == null)
+				diseasesOut2 = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut2().getCode());
+			if (diseasesOut2 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 2 not found!", OHSeverityLevel.ERROR));
 			}
-			newAdmission.setDiseaseOut2(diseases);
+			newAdmission.setDiseaseOut2(diseasesOut2);
 		}
 
 		if (newAdmissionDTO.getDiseaseOut3() != null && newAdmissionDTO.getDiseaseOut3().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut3().getCode());
-			if (diseases == null) {
+			if (diseasesOut3 == null)
+				diseasesOut3 = diseaseManager.getDiseaseByCode(newAdmissionDTO.getDiseaseOut3().getCode());
+			if (diseasesOut3 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 3 not found!", OHSeverityLevel.ERROR));
 			}
-			newAdmission.setDiseaseOut3(diseases);
+			newAdmission.setDiseaseOut3(diseasesOut3);
 		}
 
 		if (newAdmissionDTO.getOperation() != null && newAdmissionDTO.getOperation().getCode() != null
@@ -661,7 +661,8 @@ public class AdmissionController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
-		Disease diseases = null;
+		Disease diseases = null, diseasesOut1 = null, diseasesOut2 = null, diseasesOut3 = null;;
+		
 		if (updAdmissionDTO.getDiseaseIn() != null && updAdmissionDTO.getDiseaseIn().getCode() != null) {
 			diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseIn().getCode());
 
@@ -672,36 +673,36 @@ public class AdmissionController {
 		}
 
 		if (updAdmissionDTO.getDiseaseOut1() != null && updAdmissionDTO.getDiseaseOut1().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut1().getCode());
+			if (diseasesOut1 == null)
+				diseasesOut1 = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut1().getCode());
 
-			if (diseases == null) {
+			if (diseasesOut1 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut1(diseases);
+			updAdmission.setDiseaseOut1(diseasesOut1);
 		}
 
 		if (updAdmissionDTO.getDiseaseOut2() != null && updAdmissionDTO.getDiseaseOut2().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
+			if (diseasesOut2 == null)
+				diseasesOut2 = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
 
-			if (diseases == null) {
+			if (diseasesOut2 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut2(diseases);
+			updAdmission.setDiseaseOut2(diseasesOut2);
 		}
 
 		if (updAdmissionDTO.getDiseaseOut3() != null && updAdmissionDTO.getDiseaseOut3().getCode() != null) {
-			if (diseases == null)
-				diseases = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
+			if (diseasesOut3 == null)
+				diseasesOut3 = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
 
-			if (diseases == null) {
+			if (diseasesOut3 == null) {
 				throw new OHAPIException(
 						new OHExceptionMessage(null, "Disease out 1 not found!", OHSeverityLevel.ERROR));
 			}
-			updAdmission.setDiseaseOut3(diseases);
+			updAdmission.setDiseaseOut3(diseasesOut3);
 		}
 
 		if (updAdmissionDTO.getOperation() != null && updAdmissionDTO.getOperation().getCode() != null
