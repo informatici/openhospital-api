@@ -694,9 +694,6 @@ public class AdmissionController {
 		} 
 		
 		if (updateAdmissionDTO.getDiseaseOut3() != null && updateAdmissionDTO.getDiseaseOut3().getCode() != null) {
-			if (diseases == null) {
-				diseases = diseaseManager.getDisease();
-			}
 			List<Disease> dOut3s = diseases.stream()
 					.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut3().getCode()))
 					.collect(Collectors.toList());
