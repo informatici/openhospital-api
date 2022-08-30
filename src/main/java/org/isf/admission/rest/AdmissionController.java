@@ -696,7 +696,7 @@ public class AdmissionController {
 
 		if (updAdmissionDTO.getDiseaseOut3() != null && updAdmissionDTO.getDiseaseOut3().getCode() != null) {
 			if (diseasesOut3 == null)
-				diseasesOut3 = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut2().getCode());
+				diseasesOut3 = diseaseManager.getDiseaseByCode(updAdmissionDTO.getDiseaseOut3().getCode());
 
 			if (diseasesOut3 == null) {
 				throw new OHAPIException(
