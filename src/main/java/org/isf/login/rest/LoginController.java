@@ -9,7 +9,9 @@ import org.isf.security.jwt.JwtUtils;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.utils.exception.model.ErrorDescription;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,7 +41,7 @@ public class LoginController {
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		if(loginRequest.getPassword().length() < 10) {
-			throw new OHAPIException(new OHExceptionMessage(null, "password too short!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,"password too short", OHSeverityLevel.ERROR));
 		}
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
