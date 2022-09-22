@@ -147,6 +147,7 @@ public class WardController {
     public ResponseEntity<WardDTO> updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
 	    Ward ward = mapper.map2Model(updateWard);
+	    ward.setLock(updateWard.getLock());
         Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));

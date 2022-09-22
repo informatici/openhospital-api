@@ -105,12 +105,13 @@ public class ExamController {
 
         Exam exam = examMapper.map2Model(updateExam);
         exam.setExamtype(examType);
-        Exam ex = examManager.updateExam(exam);
-        if (ex == null) {
+        exam.setLock(updateExam.getLock());
+        Exam examUpdated = examManager.updateExam(exam);
+        if (examUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Exam is not updated!", OHSeverityLevel.ERROR));
         }
 
-        return ResponseEntity.ok(examMapper.map2DTO(ex));
+        return ResponseEntity.ok(examMapper.map2DTO(examUpdated));
     }
 
 

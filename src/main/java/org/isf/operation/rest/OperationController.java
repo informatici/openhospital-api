@@ -125,6 +125,7 @@ public class OperationController {
 		if (!operationManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		}
+		operation.setLock(operationDTO.getLock());
 		Operation isUpdatedOperation = operationManager.updateOperation(operation);
 		if (isUpdatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
