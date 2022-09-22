@@ -131,7 +131,7 @@ public class OperationController {
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code))
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
-		operation.setLock(0);
+		operation.setLock(operationDTO.getLock());
 		Operation isUpdated = operationManager.updateOperation(operation);
 		if (isUpdated == null)
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));

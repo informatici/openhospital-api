@@ -137,6 +137,7 @@ public class VaccineController {
         if (isUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
         }
+        
         return ResponseEntity.ok(mapper.map2DTO(isUpdated));
 
     }
