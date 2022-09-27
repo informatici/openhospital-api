@@ -110,6 +110,8 @@ public class OpdController {
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
 		opdToInsert.setDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		opdToInsert.setNextVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		opdToInsert.setVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		Opd isCreated = opdManager.newOpd(opdToInsert);
 		if (isCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
@@ -118,6 +120,7 @@ public class OpdController {
 		Instant instant = isCreated.getDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		opdDTOs.setDate(date);
+		opdDTOs.setVisitDate(date);
 		return ResponseEntity.status(HttpStatus.OK).body(opdDTOs);
 	}
 
@@ -146,6 +149,7 @@ public class OpdController {
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
 		opdToUpdate.setDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+		opdToUpdate.setVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		
@@ -156,6 +160,7 @@ public class OpdController {
 		Instant instant = updatedOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 		Date date = Date.from(instant);
 		opdDTOs.setDate(date);
+		opdDTOs.setVisitDate(date);
 		return ResponseEntity.status(HttpStatus.OK).body(opdDTOs);
 	}
 
@@ -210,6 +215,7 @@ public class OpdController {
 			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 			Date date = Date.from(instant);
 			opdDTO.setVisitDate(date);
+			opdDTO.setDate(date);
 			return opdDTO;
 		}).collect(Collectors.toList());
 		
@@ -235,6 +241,7 @@ public class OpdController {
 	    		Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
 	        	Date date = (Date) Date.from(instant);
 	        	opdDTO.setVisitDate(date);
+	        	opdDTO.setDate(date);
 	        	//System.out.println(opd.getDisease().getCode());
 	        	return opdDTO;
 		}).collect(Collectors.toList());
@@ -288,7 +295,7 @@ public class OpdController {
 		Instant instant = lastOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
     	Date date = (Date) Date.from(instant);
     	opdDTO.setVisitDate(date);
-    	
+    	opdDTO.setDate(date);
 		return ResponseEntity.ok(opdDTO);
 	}
 	

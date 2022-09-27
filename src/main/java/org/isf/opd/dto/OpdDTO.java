@@ -42,14 +42,11 @@ public class OpdDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date date;
 
-    //@NotNull
+    @NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private Date visitDate;
 
-    @ApiModelProperty(notes = "the next visit date", position = 4)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private Date nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;
@@ -191,10 +188,6 @@ public class OpdDTO {
 		this.patientName = patientName;
 	}
 
-	public Date getNextVisitDate() {
-		return this.nextVisitDate;
-	}
-
 	public Integer getPatientCode() {
 		return this.patientCode;
 	}
@@ -254,11 +247,7 @@ public class OpdDTO {
 	public void setVisitDate(Date visitDate) {
 		this.visitDate = visitDate;
 	}
-
-	public void setNextVisitDate(Date nextVisitDate) {
-		this.nextVisitDate = nextVisitDate;
-	}
-
+	
 	public void setPatientCode(Integer patientCode) {
 		this.patientCode = patientCode;
 	}
