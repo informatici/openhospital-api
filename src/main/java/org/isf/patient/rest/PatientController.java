@@ -22,6 +22,7 @@
 package org.isf.patient.rest;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -179,23 +180,11 @@ public class PatientController {
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
 		}
-		LocalDate birthDateTime = null;
+		LocalDateTime birthDateTime = null;
 		if(birthDate != null) {
-			birthDateTime  = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			birthDateTime  = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 			params.put("birthDate", birthDateTime);
 		}
-		/*if (birthDate != null && !birthDate.isEmpty()) {
-			try {
-
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-				Date birthDateDate = df.parse(birthDate);
-				params.put("birthDate", birthDateDate);
-
-			} catch (Exception e) {
-				// TODO: fixme
-			}
-		}*/
-		System.out.println("Date "+birthDateTime);
 		if (address != null && !address.isEmpty()) {
 			params.put("address", address);
 		}
@@ -208,7 +197,6 @@ public class PatientController {
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		System.out.println("Size "+patientList.size());
 		patientListDTO = patientList.stream().map(patient->{
 			Admission admission =null ;
 			try {
