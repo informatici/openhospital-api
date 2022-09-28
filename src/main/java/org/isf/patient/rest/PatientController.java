@@ -21,8 +21,8 @@
  */
 package org.isf.patient.rest;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +42,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -167,7 +168,7 @@ public class PatientController {
 	public ResponseEntity<List<PatientDTO>> searchPatient(
 			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
 			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-			@RequestParam(value="birthDate", defaultValue="", required = false) String birthDate,
+			@RequestParam(value="birthDate", defaultValue="", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date birthDate,
 			@RequestParam(value="address", defaultValue="", required = false) String address
 	) throws OHServiceException {
 
@@ -181,7 +182,12 @@ public class PatientController {
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
 		}
-		if (birthDate != null && !birthDate.isEmpty()) {
+		LocalDate birthDateTime = null;
+		if(birthDate != null) {
+			birthDateTime  = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			params.put("birthDate", birthDateTime);
+		}
+		/*if (birthDate != null && !birthDate.isEmpty()) {
 			try {
 
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -191,7 +197,8 @@ public class PatientController {
 			} catch (Exception e) {
 				// TODO: fixme
 			}
-		}
+		}*/
+		System.out.println("Date "+birthDateTime);
 		if (address != null && !address.isEmpty()) {
 			params.put("address", address);
 		}
@@ -200,6 +207,7 @@ public class PatientController {
 		if (params.entrySet().size() > 0) {
 			patientList = patientManager.getPatients(params);
 		}
+		
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -209,7 +217,7 @@ public class PatientController {
 				admission = admissionManager.getCurrentAdmission(patient);
 			} catch (OHServiceException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				 new OHExceptionMessage(null, "the Patients exist but have problems with their admissions", OHSeverityLevel.ERROR);
 			}
 			Boolean status = admission != null ? true : false;
 			PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
