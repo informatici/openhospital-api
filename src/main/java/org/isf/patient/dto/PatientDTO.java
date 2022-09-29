@@ -108,15 +108,37 @@ public class PatientDTO {
 	private byte[] blobPhoto;
 
 	private int hashCode;
-	
-	@ApiModelProperty(notes = "status", example="I", position = 23)
+
+	@ApiModelProperty(notes = "allergies of patient", position = 22)
+	private String allergies; // ADDED: Arnaud
+	    
+	@ApiModelProperty(notes = "Current anamnesis", position = 23)
+	private String anamnesis; // ADDED: Arnaud
+
+	@ApiModelProperty(notes = "status", example="I", position = 24)
 	private PatientSTATUS status;
 
 	public int getLock() {
 		return lock;
 	}
 
-    @ApiModelProperty(hidden=true)
+    public String getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(String allergies) {
+		this.allergies = allergies;
+	}
+
+	public String getAnamnesis() {
+		return anamnesis;
+	}
+
+	public void setAnamnesis(String anamnesis) {
+		this.anamnesis = anamnesis;
+	}
+
+	@ApiModelProperty(hidden = true)
     public Integer getCode() {
         return code;
     }
