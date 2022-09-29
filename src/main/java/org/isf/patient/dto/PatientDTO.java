@@ -25,6 +25,8 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
+import com.drew.lang.annotations.Nullable;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -109,9 +111,11 @@ public class PatientDTO {
 
 	private int hashCode;
 
+	@Nullable
 	@ApiModelProperty(notes = "allergies of patient", position = 22)
 	private String allergies; // ADDED: Arnaud
-	    
+	
+	@Nullable
 	@ApiModelProperty(notes = "Current anamnesis", position = 23)
 	private String anamnesis; // ADDED: Arnaud
 
