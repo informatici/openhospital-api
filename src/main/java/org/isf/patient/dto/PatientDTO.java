@@ -79,24 +79,24 @@ public class PatientDTO {
 	private String mother_name;
 
 	@ApiModelProperty(notes = "Mother's status (D=dead, A=alive)", allowableValues = "D,A", example="A", position = 13)
-	private char mother = ' ';
+	private char mother ;
 
 	@NotNull
 	@ApiModelProperty(notes = "Father's name", example="Giuseppe", position = 14)
 	private String father_name;
 
 	@ApiModelProperty(notes = "Father's status (D=dead, A=alive)", allowableValues = "D,A", example="D", position = 15)
-	private char father = ' ';
+	private char father;
 
 	@NotNull
 	@ApiModelProperty(notes = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = "0-,0+,A-,A+,B-,B+,AB-,AB+", example="A+", position = 16)
 	private String bloodType;
 
 	@ApiModelProperty(notes = "hasInsurance (Y=Yes, N=no)", allowableValues = "Y,N", example="N", position = 17)
-	private char hasInsurance = ' ';
+	private char hasInsurance;
 
 	@ApiModelProperty(notes = "Parent together (Y=Yes, N=no)", allowableValues = "Y,N", example="N", position = 18)
-	private char parentTogether = ' ';
+	private char parentTogether;
 
 	@ApiModelProperty(notes = "Tax code", example="RSSMRA79E01L781N", position = 19)
 	private String taxCode;
