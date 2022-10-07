@@ -443,7 +443,7 @@ public class AdmissionController {
 			newAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}
 
-		String name = StringUtils.isEmpty(newAdmission.getPatient().getName())
+		String name = StringUtils.hasLength(newAdmission.getPatient().getName())
 				? newAdmission.getPatient().getFirstName() + ' ' + newAdmission.getPatient().getSecondName()
 				: newAdmission.getPatient().getName();
 		LOGGER.info("Create admission for patient {}", name);
@@ -615,7 +615,7 @@ public class AdmissionController {
 			updAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}
 
-		String name = StringUtils.isEmpty(updAdmission.getPatient().getName())
+		String name = StringUtils.hasLength(updAdmission.getPatient().getName())
 				? updAdmission.getPatient().getFirstName() + ' ' + updAdmission.getPatient().getSecondName()
 				: updAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
