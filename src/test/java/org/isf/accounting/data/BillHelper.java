@@ -49,7 +49,7 @@ public class BillHelper {
 		TestPriceList testPriceList = new TestPriceList();
 		PriceList priceList = testPriceList.setup(false);
 		TestBill testBill = new TestBill();
-		return testBill.setup(priceList, patient, false);
+		return testBill.setup(priceList, patient, null, false);
 	}
 
 	public static Bill setup(Integer id) throws OHException {
