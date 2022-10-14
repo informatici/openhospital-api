@@ -61,8 +61,13 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	@Override
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
 		PatientDTO patientDTO = super.map2DTOWS(fromObj, status);
-		if (fromObj.getPatientProfilePhoto() != null) {
-			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
+		if (fromObj.getPatientProfilePhoto()!= null) {
+			try {
+				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());	
+			}catch(Exception e) {
+				
+			}
+			
 		}
 		return patientDTO;
 
