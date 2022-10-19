@@ -114,10 +114,10 @@ public class ExaminationController {
         }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
-        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation());
-        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc());
-        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc());
         patientExamination.setPex_date(newPatientExamination.getPex_date());
+        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation().name());
+        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc().name());
+        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc().name());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -173,9 +173,9 @@ public class ExaminationController {
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date());
-		patientExamination.setPex_auscultation(dto.getPex_auscultation());
-		patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc());
-		patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc());
+        patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
+        patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
+        patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.ok(true);

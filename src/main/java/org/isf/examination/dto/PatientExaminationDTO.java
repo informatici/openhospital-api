@@ -69,7 +69,7 @@ public class PatientExaminationDTO {
     
     @Nullable
     @ApiModelProperty(notes = "patient ausculation", example="normal", position = 12)
-    private String pex_auscultation;
+    private Ausculation pex_auscultation;
     
     @ApiModelProperty(notes = "Hemo Glucose Test", position = 13)
     private Integer pex_hgt;
@@ -79,14 +79,14 @@ public class PatientExaminationDTO {
     
     @Nullable
     @ApiModelProperty(notes = "Diuresis description", example="physiological", position = 15)
-    private String pex_diuresis_desc;
+    private Diurese pex_diuresis_desc;
     
     @ApiModelProperty(notes = "Examination Note", position = 16)
     private String pex_note;
     
     @Nullable
     @ApiModelProperty(notes = "Bowel Function",example="regular", position = 17)
-    private String pex_bowel_desc;
+    private Bowel pex_bowel_desc;
 
 	public int getPex_ID() {
 		return this.pex_ID;
@@ -144,27 +144,27 @@ public class PatientExaminationDTO {
 		this.pex_diuresis = pex_diuresis;
 	}
 
-	public String getPex_auscultation() {
+	public Ausculation getPex_auscultation() {
 		return pex_auscultation;
 	}
 
-	public void setPex_auscultation(String pex_auscultation) {
+	public void setPex_auscultation(Ausculation pex_auscultation) {
 		this.pex_auscultation = pex_auscultation;
 	}
 
-	public String getPex_diuresis_desc() {
+	public Diurese getPex_diuresis_desc() {
 		return pex_diuresis_desc;
 	}
 
-	public void setPex_diuresis_desc(String pex_diuresis_desc) {
+	public void setPex_diuresis_desc(Diurese pex_diuresis_desc) {
 		this.pex_diuresis_desc = pex_diuresis_desc;
 	}
 
-	public String getPex_bowel_desc() {
+	public Bowel getPex_bowel_desc() {
 		return pex_bowel_desc;
 	}
 
-	public void setPex_bowel_desc(String pex_bowel_desc) {
+	public void setPex_bowel_desc(Bowel pex_bowel_desc) {
 		this.pex_bowel_desc = pex_bowel_desc;
 	}
 
