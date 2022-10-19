@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.drew.lang.annotations.Nullable;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class PatientExaminationDTO {
@@ -65,8 +67,9 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Heart Rate in Apm", position = 11)
     private Integer pex_hr;
     
+    @Nullable
     @ApiModelProperty(notes = "patient ausculation", example="normal", position = 12)
-    private Ausculation pex_auscultation;
+    private String pex_auscultation;
     
     @ApiModelProperty(notes = "Hemo Glucose Test", position = 13)
     private Integer pex_hgt;
@@ -74,14 +77,16 @@ public class PatientExaminationDTO {
     @ApiModelProperty(notes = "Daily urine Volume in ml", position = 14)
     private Integer pex_diuresis;
     
+    @Nullable
     @ApiModelProperty(notes = "Diuresis description", example="physiological", position = 15)
-    private Diurese pex_diuresis_desc;
+    private String pex_diuresis_desc;
     
     @ApiModelProperty(notes = "Examination Note", position = 16)
     private String pex_note;
     
+    @Nullable
     @ApiModelProperty(notes = "Bowel Function",example="regular", position = 17)
-    private Bowel pex_bowel_desc;
+    private String pex_bowel_desc;
 
 	public int getPex_ID() {
 		return this.pex_ID;
@@ -139,27 +144,27 @@ public class PatientExaminationDTO {
 		this.pex_diuresis = pex_diuresis;
 	}
 
-	public Ausculation getPex_auscultation() {
+	public String getPex_auscultation() {
 		return pex_auscultation;
 	}
 
-	public void setPex_auscultation(Ausculation pex_auscultation) {
+	public void setPex_auscultation(String pex_auscultation) {
 		this.pex_auscultation = pex_auscultation;
 	}
 
-	public Diurese getPex_diuresis_desc() {
+	public String getPex_diuresis_desc() {
 		return pex_diuresis_desc;
 	}
 
-	public void setPex_diuresis_desc(Diurese pex_diuresis_desc) {
+	public void setPex_diuresis_desc(String pex_diuresis_desc) {
 		this.pex_diuresis_desc = pex_diuresis_desc;
 	}
 
-	public Bowel getPex_bowel_desc() {
+	public String getPex_bowel_desc() {
 		return pex_bowel_desc;
 	}
 
-	public void setPex_bowel_desc(Bowel pex_bowel_desc) {
+	public void setPex_bowel_desc(String pex_bowel_desc) {
 		this.pex_bowel_desc = pex_bowel_desc;
 	}
 

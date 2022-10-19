@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.examination.dto.Ausculation;
-import org.isf.examination.dto.Bowel;
-import org.isf.examination.dto.Diurese;
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
@@ -82,12 +79,44 @@ public class ExaminationController {
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
-
+        if(newPatientExamination.getPex_height() < 0 || newPatientExamination.getPex_height() > 250) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250!", OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_weight() < 0 || newPatientExamination.getPex_weight() > 200) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200!", OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_min() < 80) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_max() > 120) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The maimum blood pressure must be lower than 120!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_hr() < 0 || newPatientExamination.getPex_hr() > 240 ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Heart rate should be between 0 and 240!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_temp() < 30 || newPatientExamination.getPex_temp() > 50) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The temperature should be between 30 and 50!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_sat() < 50 || newPatientExamination.getPex_temp() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The saturation should be between 50 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_hgt() < 30 || newPatientExamination.getPex_temp() > 600) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "HGT should be between 30 and 600!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_rr() < 0 || newPatientExamination.getPex_rr() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Respiratory rate should be between 0 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_diuresis() < 0 || newPatientExamination.getPex_diuresis() > 2500) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Diuresis should be between 0 and 2500!",OHSeverityLevel.WARNING));
+        }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
-        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation().name());
-        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc().name());
-        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc().name());
+        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation());
+        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc());
+        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc());
         patientExamination.setPex_date(newPatientExamination.getPex_date());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
@@ -108,13 +137,45 @@ public class ExaminationController {
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
-
+        if(dto.getPex_height() < 0 || dto.getPex_height() > 250) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250!", OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_weight() < 0 || dto.getPex_weight() > 200) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200!", OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_ap_min() < 80) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_ap_min() > dto.getPex_ap_max() ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_ap_max() > 120) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The maimum blood pressure must be lower than 120!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_hr() < 0 || dto.getPex_hr() > 240 ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Heart rate should be between 0 and 240!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_temp() < 30 || dto.getPex_temp() > 50) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The temperature should be between 30 and 50!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_sat() < 50 || dto.getPex_temp() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The saturation should be between 50 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_hgt() < 30 || dto.getPex_temp() > 600) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "HGT should be between 30 and 600!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_rr() < 0 || dto.getPex_rr() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Respiratory rate should be between 0 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(dto.getPex_diuresis() < 0 || dto.getPex_diuresis() > 2500) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Diuresis should be between 0 and 2500!",OHSeverityLevel.WARNING));
+        }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date());
-        patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
-        patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
-        patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
+		patientExamination.setPex_auscultation(dto.getPex_auscultation());
+		patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc());
+		patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc());
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
         return ResponseEntity.ok(true);
@@ -134,18 +195,9 @@ public class ExaminationController {
 		} else {
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
-			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-			if (patientExamination.getPex_auscultation() != null) {
-				patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
-			}
-			if (patientExamination.getPex_bowel_desc() != null) {
-				patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
-			}
-			if (patientExamination.getPex_diuresis_desc() != null) {
-				patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
-			}
-			return ResponseEntity.ok(patientExaminationDTO);
-		}
+//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
+            return ResponseEntity.ok(patientExaminationDTO);
+        }
     }
 
     @GetMapping(value = "/examinations/fromLastPatientExamination/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -158,18 +210,9 @@ public class ExaminationController {
 		} else {
 //			Instant instant = lastPatientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
-			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-			if (lastPatientExamination.getPex_auscultation() != null) {
-				patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(lastPatientExamination.getPex_auscultation()));
-			}
-			if (lastPatientExamination.getPex_bowel_desc() != null) {
-				patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(lastPatientExamination.getPex_bowel_desc()));
-			}
-			if (lastPatientExamination.getPex_diuresis_desc() != null) {
-				patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(lastPatientExamination.getPex_diuresis_desc()));
-			}
-			return ResponseEntity.ok(patientExaminationDTO);
-		}
+//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
+            return ResponseEntity.ok(patientExaminationDTO);
+        }
     }
 
     @GetMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -183,18 +226,10 @@ public class ExaminationController {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
-			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-			if (patientExamination.getPex_auscultation() != null) {
-				patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
-			}
-			if (patientExamination.getPex_bowel_desc() != null) {
-				patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
-			}
-			if (patientExamination.getPex_diuresis_desc() != null) {
-				patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
-			}
-			return ResponseEntity.ok(patientExaminationDTO);
-		}
+//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
+            return ResponseEntity.ok(patientExaminationDTO);
+            
+        }
     }
 
     @GetMapping(value = "/examinations/lastByPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -208,18 +243,9 @@ public class ExaminationController {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
-			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-			if (patientExamination.getPex_auscultation() != null) {
-				patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
-			}
-			if (patientExamination.getPex_bowel_desc() != null) {
-				patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
-			}
-			if (patientExamination.getPex_diuresis_desc() != null) {
-				patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
-			}
-			return ResponseEntity.ok(patientExaminationDTO);
-		}
+//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
+            return ResponseEntity.ok(patientExaminationDTO);
+        }
     }
 
     @GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -234,18 +260,9 @@ public class ExaminationController {
 				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
 //				Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //				Date date = (Date) Date.from(instant);
-				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-				if (pat.getPex_auscultation() != null) {
-					patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
-				}
-				if (pat.getPex_bowel_desc() != null) {
-					patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
-				}
-				if (pat.getPex_diuresis_desc() != null) {
-					patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
-				}
-				return patientExaminationDTO;
-			}).collect(Collectors.toList());
+//				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
+        		return patientExaminationDTO;
+        	}).collect(Collectors.toList());
             return ResponseEntity.ok(patientExamList);
         }
     }
@@ -257,24 +274,15 @@ public class ExaminationController {
         List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<PatientExaminationDTO>();
         if (patientExamination == null || patientExamination.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
+		} else {
 			listPatientExaminationDTO = patientExamination.stream().map(pat -> {
 				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
 //				Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //				Date date = (Date) Date.from(instant);
-				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-				if (pat.getPex_auscultation() != null) {
-					patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
-				}
-				if (pat.getPex_bowel_desc() != null) {
-					patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
-				}
-				if (pat.getPex_diuresis_desc() != null) {
-					patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
-				}
+//				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
 				return patientExaminationDTO;
 			}).collect(Collectors.toList());
-        	}
-            return ResponseEntity.ok(listPatientExaminationDTO);
+			return ResponseEntity.ok(listPatientExaminationDTO);
+		}
     }
 }
