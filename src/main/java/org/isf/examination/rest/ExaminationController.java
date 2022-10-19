@@ -120,9 +120,16 @@ public class ExaminationController {
         }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
-        patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation());
-        patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc());
-        patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc());
+        if(newPatientExamination.getPex_auscultation()!= null) {
+        	patientExamination.setPex_auscultation(newPatientExamination.getPex_auscultation().name());
+        }
+        if(newPatientExamination.getPex_bowel_desc()!=null) {
+        	patientExamination.setPex_bowel_desc(newPatientExamination.getPex_bowel_desc().name());
+        }
+        if(newPatientExamination.getPex_diuresis_desc()!=null ) {
+        	patientExamination.setPex_diuresis_desc(newPatientExamination.getPex_diuresis_desc().name());
+        }
+        
         
         LocalDateTime date = newPatientExamination.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         patientExamination.setPex_date(date);
@@ -181,9 +188,15 @@ public class ExaminationController {
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        patientExamination.setPex_auscultation(dto.getPex_auscultation());
-        patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc());
-        patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc());
+        if(dto.getPex_auscultation()!= null) {
+        	patientExamination.setPex_auscultation(dto.getPex_auscultation().name());
+        }
+        if(dto.getPex_bowel_desc()!=null) {
+        	patientExamination.setPex_bowel_desc(dto.getPex_bowel_desc().name());
+        }
+        if(dto.getPex_diuresis_desc()!=null ) {
+        	patientExamination.setPex_diuresis_desc(dto.getPex_diuresis_desc().name());
+        }
         
         examinationBrowserManager.saveOrUpdate(patientExamination);
 
@@ -205,6 +218,15 @@ public class ExaminationController {
         	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
     		Date date = (Date) Date.from(instant);
     		patientExaminationDTO.setPex_date(date);
+    		if(patientExamination.getPex_auscultation() != null) {
+    			patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
+            }
+            if(patientExamination.getPex_bowel_desc() != null) {
+            	patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
+            }
+            if(patientExamination.getPex_diuresis_desc() != null) {
+            	patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
+            }
             return ResponseEntity.ok(patientExaminationDTO);
         }
     }
@@ -220,6 +242,15 @@ public class ExaminationController {
         	Instant instant = lastPatientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
     		Date date = (Date) Date.from(instant);
     		patientExaminationDTO.setPex_date(date);
+    		if(lastPatientExamination.getPex_auscultation() != null) {
+    			patientExaminationDTO.setPex_auscultation(Ausculation.valueOf(lastPatientExamination.getPex_auscultation()));
+            }
+            if(lastPatientExamination.getPex_bowel_desc() != null) {
+            	patientExaminationDTO.setPex_bowel_desc(Bowel.valueOf(lastPatientExamination.getPex_bowel_desc()));
+            }
+            if(lastPatientExamination.getPex_diuresis_desc() != null) {
+            	patientExaminationDTO.setPex_diuresis_desc(Diurese.valueOf(lastPatientExamination.getPex_diuresis_desc()));
+            }
             return ResponseEntity.ok(patientExaminationDTO);
         }
     }
@@ -236,6 +267,15 @@ public class ExaminationController {
         	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
     		Date date = (Date) Date.from(instant);
     		patienE.setPex_date(date);
+    		if(patientExamination.getPex_auscultation() != null) {
+    			patienE.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
+            }
+            if(patientExamination.getPex_bowel_desc() != null) {
+            	patienE.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
+            }
+            if(patientExamination.getPex_diuresis_desc() != null) {
+            	patienE.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
+            }
             return ResponseEntity.ok(patienE);
             
         }
@@ -253,6 +293,15 @@ public class ExaminationController {
         	Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
     		Date date = (Date) Date.from(instant);
     		patienE.setPex_date(date);
+    		if(patientExamination.getPex_auscultation() != null) {
+    			patienE.setPex_auscultation(Ausculation.valueOf(patientExamination.getPex_auscultation()));
+            }
+            if(patientExamination.getPex_bowel_desc() != null) {
+            	patienE.setPex_bowel_desc(Bowel.valueOf(patientExamination.getPex_bowel_desc()));
+            }
+            if(patientExamination.getPex_diuresis_desc() != null) {
+            	patienE.setPex_diuresis_desc(Diurese.valueOf(patientExamination.getPex_diuresis_desc()));
+            }
             return ResponseEntity.ok(patienE);
         }
     }
@@ -270,6 +319,15 @@ public class ExaminationController {
             	Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
         		Date date = (Date) Date.from(instant);
         		patienE.setPex_date(date);
+        		if(pat.getPex_auscultation() != null) {
+        			patienE.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
+                }
+                if(pat.getPex_bowel_desc() != null) {
+                	patienE.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
+                }
+                if(pat.getPex_diuresis_desc() != null) {
+                	patienE.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
+                }
         		return patienE;
         	}).collect(Collectors.toList());
             return ResponseEntity.ok(patientExamList);
@@ -289,6 +347,15 @@ public class ExaminationController {
                 	Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
             		Date date = (Date) Date.from(instant);
             		patienE.setPex_date(date);
+            		if(pat.getPex_auscultation() != null) {
+            			patienE.setPex_auscultation(Ausculation.valueOf(pat.getPex_auscultation()));
+                    }
+                    if(pat.getPex_bowel_desc() != null) {
+                    	patienE.setPex_bowel_desc(Bowel.valueOf(pat.getPex_bowel_desc()));
+                    }
+                    if(pat.getPex_diuresis_desc() != null) {
+                    	patienE.setPex_diuresis_desc(Diurese.valueOf(pat.getPex_diuresis_desc()));
+                    }
             		return patienE;
             	}).collect(Collectors.toList());
         		
