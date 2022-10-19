@@ -25,6 +25,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotNull;
 
+import com.drew.lang.annotations.Nullable;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -113,9 +114,17 @@ public class PatientDTO {
 	@ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
 	
+	@Nullable
+	@ApiModelProperty(notes = "allergies of patient", position = 22)
+	private String allergies; // ADDED: Arnaud
+	
+	@Nullable
+	@ApiModelProperty(notes = "Current anamnesis", position = 23)
+	private String anamnesis; // ADDED: Arnaud
+	
 	private int hashCode = 0;
 	
-	@ApiModelProperty(notes = "status", example="I", position = 23)
+	@ApiModelProperty(notes = "status", example="I", position = 24)
 	private PatientSTATUS status;
 
 	public int getLock() {
@@ -126,7 +135,23 @@ public class PatientDTO {
 		this.lock = lock;
 	}
 	
-    @ApiModelProperty(hidden = true)
+    public String getAllergies() {
+		return allergies;
+	}
+
+	public void setAllergies(String allergies) {
+		this.allergies = allergies;
+	}
+
+	public String getAnamnesis() {
+		return anamnesis;
+	}
+
+	public void setAnamnesis(String anamnesis) {
+		this.anamnesis = anamnesis;
+	}
+
+	@ApiModelProperty(hidden = true)
     public Integer getCode() {
         return code;
     }
