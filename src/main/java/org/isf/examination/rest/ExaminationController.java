@@ -85,6 +85,39 @@ public class ExaminationController {
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
         }
+        if(newPatientExamination.getPex_height() < 0 || newPatientExamination.getPex_height() > 250) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250!", OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_weight() < 0 || newPatientExamination.getPex_weight() > 200) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200!", OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_min() < 80) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_ap_max() > 120) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The maimum blood pressure must be lower than 120!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_hr() < 0 || newPatientExamination.getPex_hr() > 240 ) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Heart rate should be between 0 and 240!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_temp() < 30 || newPatientExamination.getPex_temp() > 50) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The temperature should be between 30 and 50!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_sat() < 50 || newPatientExamination.getPex_temp() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "The saturation should be between 50 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_hgt() < 30 || newPatientExamination.getPex_temp() > 600) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "HGT should be between 30 and 600!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_rr() < 0 || newPatientExamination.getPex_rr() > 100) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Respiratory rate should be between 0 and 100!",OHSeverityLevel.WARNING));
+        }
+        if(newPatientExamination.getPex_diuresis() < 0 || newPatientExamination.getPex_diuresis() > 2500) {
+        	throw new OHAPIException(new OHExceptionMessage(null, "Diuresis should be between 0 and 2500!",OHSeverityLevel.WARNING));
+        }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
         if(newPatientExamination.getPex_auscultation()!= null) {
