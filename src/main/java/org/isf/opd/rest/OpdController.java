@@ -236,19 +236,21 @@ public class OpdController {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 		
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdDTO> opdDTOs = opds.stream().map(opd-> {
-			 OpdDTO opdDTO =  mapper.map2DTO(opd);
-	    		Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-	        	Date date = (Date) Date.from(instant);
-	        	opdDTO.setVisitDate(date);
-	        	opdDTO.setDate(date);
-	        	//System.out.println(opd.getDisease().getCode());
-	        	return opdDTO;
-		}).collect(Collectors.toList());
-		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
-		} else {
+		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
+		if(!opds.isEmpty()) {
+			opdDTOs = opds.stream().map(opd-> {
+				 OpdDTO opdDTO =  mapper.map2DTO(opd);
+		    		Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+		        	Date date = (Date) Date.from(instant);
+		        	opdDTO.setVisitDate(date);
+		        	opdDTO.setDate(date);
+		        	return opdDTO;
+			}).collect(Collectors.toList());
 			return ResponseEntity.ok(opdDTOs);
+		}else {
+		
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+			
 		}
 	}
 
