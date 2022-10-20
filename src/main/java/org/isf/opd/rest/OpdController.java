@@ -22,6 +22,7 @@
 package org.isf.opd.rest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -209,20 +210,24 @@ public class OpdController {
 	@GetMapping(value = "/opds/patient/{pcode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByPatient(@PathVariable("pcode") int pcode) throws OHServiceException {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
-		
+
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
-			OpdDTO opdDTO = mapper.map2DTO(opd);
-//			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = (Date) Date.from(instant);
-//			opdDTO.setVisitDate(date);
-//        	opdDTO.setDate(date);
-			return opdDTO;
-		}).collect(Collectors.toList());
-		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
-		} else {
+		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
+		if (!opds.isEmpty()) {
+			opdDTOs = opds.stream().map(opd -> {
+				OpdDTO opdDTO = mapper.map2DTO(opd);
+//				Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
+//				Date date = (Date) Date.from(instant);
+//				opdDTO.setVisitDate(date);
+//				opdDTO.setDate(date);
+				return opdDTO;
+			}).collect(Collectors.toList());
 			return ResponseEntity.ok(opdDTOs);
+
+		} else {
+
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+
 		}
 	}
 
