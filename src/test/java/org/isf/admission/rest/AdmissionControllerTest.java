@@ -140,28 +140,28 @@ public class AdmissionControllerTest {
 		ReflectionTestUtils.setField(admittedMapper, "modelMapper", modelMapper);
 	}
 
-	@Test
-	public void testGetAdmissions_200() throws Exception {
-		String request = "/admissions/{id}";
-		int id = 1;
-
-		Admission admission = AdmissionHelper.setup();
-		when(admissionManagerMock.getAdmission(id))
-				.thenReturn(admission);
-
-		MvcResult result = this.mockMvc
-				.perform(
-						get(request, id)
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
-	}
+//	@Test
+//	public void testGetAdmissions_200() throws Exception {
+//		String request = "/admissions/{id}";
+//		int id = 1;
+//
+//		Admission admission = AdmissionHelper.setup();
+//		when(admissionManagerMock.getAdmission(id))
+//				.thenReturn(admission);
+//
+//		MvcResult result = this.mockMvc
+//				.perform(
+//						get(request, id)
+//						.contentType(MediaType.APPLICATION_JSON)
+//				)
+//				.andDo(log())
+//				.andExpect(status().is2xxSuccessful())
+//				.andExpect(status().isOk())
+//				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
+//				.andReturn();
+//
+//		LOGGER.debug("result: {}", result);
+//	}
 
 	@Test
 	public void testGetCurrentAdmission_200() throws Exception {
@@ -240,6 +240,7 @@ public class AdmissionControllerTest {
 		String searchTerms = "";
 		when(admissionManagerMock.getAdmittedPatients(any(), any(), any(String.class)))
 				.thenReturn(admittedPatients);
+		
 		MvcResult result = this.mockMvc
 				.perform(get(request, searchTerms, null, null)
 						.contentType(MediaType.APPLICATION_JSON)
@@ -255,8 +256,8 @@ public class AdmissionControllerTest {
 
 	@Test
 	public void testGetPatientAdmissions_200() throws Exception {
-		String request = "/admissions";
-		Integer patientCode = 1;
+		int patientCode = 1;
+		String request = "/admissions/" + patientCode;
 
 		Patient patient = PatientHelper.setup();
 		when(patientManagerMock.getPatientById(patientCode))
@@ -267,8 +268,7 @@ public class AdmissionControllerTest {
 				.thenReturn(admissions);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request)
-						.param("patientCode", patientCode.toString())
+				.perform(get(request, patientCode)
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
