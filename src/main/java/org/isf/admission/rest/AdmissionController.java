@@ -59,6 +59,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.utils.time.TimeTools;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.model.Visit;
 import org.isf.ward.manager.WardBrowserManager;
@@ -233,27 +234,25 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 			@RequestParam(name = "patientcode", defaultValue = "", required = false) int patientcode,
-			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargeRange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] admissionrange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargerange)
 			throws OHServiceException {
 		LOGGER.info("Get admissions of patients by  id: {}", patientcode);
-		LocalDateTime[] admissionR= new LocalDateTime[2];	;
-		LocalDateTime[] dischargeR = new LocalDateTime[2];	;
-		if(admissionRange != null) {
-
-			admissionR = new LocalDateTime[admissionRange.length];	
-			int i = 0;
-			for (Date date : admissionRange) {
-				LocalDateTime dateR = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		LocalDateTime[] admissionR= new LocalDateTime[2];	
+		LocalDateTime[] dischargeR = new LocalDateTime[2];
+		if(admissionrange != null) {
+			admissionR = new LocalDateTime[admissionrange.length];	
+			for (int i = 0; i < admissionrange.length; i++) {
+				LocalDateTime dateR = admissionrange[i].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				admissionR[i] = dateR;
-				i++;
+				System.out.println(dateR);
 			}
 		}
-		if(dischargeRange != null) {
+		if(dischargerange != null) {
 
-			dischargeR = new LocalDateTime[dischargeRange.length];	
+			dischargeR = new LocalDateTime[dischargerange.length];	
 			int j = 0;
-			for (Date date : dischargeRange) {
+			for (Date date : dischargerange) {
 				LocalDateTime dateD = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				dischargeR[j] = dateD;
 				j++;
@@ -267,13 +266,17 @@ public class AdmissionController {
 		if (admittedPatients.get(0).getAdmission() == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		Date[] arrayDate= new Date[100];
+		int k=0;
 		List<AdmissionDTO> adms = admittedPatients.stream().map(admP->{
+			
 			Admission adm = admP.getAdmission();
 			AdmissionDTO admissionDTO = new AdmissionDTO();
 			if(adm!= null) {
 				admissionDTO = admissionMapper.map2DTO(adm);
 				Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 				Date date = (Date) Date.from(instant);
+				arrayDate[k] =date ;
 				admissionDTO.setAdmDate(date);
 				if (adm.getDisDate() != null) {
 					
@@ -310,7 +313,7 @@ public class AdmissionController {
 			}
 			return null;
 		}).collect(Collectors.toList());
-			
+		System.out.println(arrayDate);	
 		return ResponseEntity.ok(adms);
 	}
 
