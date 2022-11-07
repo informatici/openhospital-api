@@ -258,11 +258,11 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
-			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
+	public ResponseEntity<List<AdmissionDTO>> getAdmittedPatients(
+			@RequestParam(name = "patientcode", defaultValue = "", required = false) int patientcode,
 			@RequestParam(name = "admissionrange", required = false) LocalDateTime[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange) throws OHServiceException {
-		LOGGER.info("Get admitted patients search terms: {}", searchTerms.isEmpty() ? "none" : searchTerms);
+		LOGGER.info("Get admissions of patients by id: {}", patientcode);
 //		LocalDateTime[] admissionR= new LocalDateTime[2];	;
 //		LocalDateTime[] dischargeR = new LocalDateTime[2];	;
 //		if(admissionRange != null) {
@@ -285,12 +285,59 @@ public class AdmissionController {
 //				j++;
 //			}
 //		}
-		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
+		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		
-		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
+		if (admittedPatients.get(0).getAdmission() == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		List<AdmissionDTO> adms = admittedPatients.stream().map(admP->{
+			
+			Admission adm = admP.getAdmission();
+			AdmissionDTO admissionDTO = new AdmissionDTO();
+			if(adm!= null) {
+				admissionDTO = admissionMapper.map2DTO(adm);
+//				Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
+//				Date date = (Date) Date.from(instant);
+//				arrayDate[k] =date ;
+//				admissionDTO.setAdmDate(date);
+//				if (adm.getDisDate() != null) {
+//					
+//					Instant instant0 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date1 = (Date) Date.from(instant0);
+//					admissionDTO.setDisDate(date1);
+//				}
+//				if (adm.getAbortDate() != null) {
+//					Instant instant1 = adm.getAbortDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date1 = Date.from(instant1);
+//					admissionDTO.setAbortDate(date1);
+//				}
+//				if (adm.getCtrlDate1() != null) {
+//					Instant instant2 = adm.getCtrlDate1().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date1 = Date.from(instant2);
+//					admissionDTO.setCtrlDate1(date1);
+//				}
+//				if (adm.getCtrlDate2() != null) {
+//					Instant instant3 = adm.getCtrlDate2().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date2 = Date.from(instant3);
+//					admissionDTO.setCtrlDate2(date2);
+//				}
+//				if (adm.getOpDate() != null) {
+//					Instant instant4 = adm.getOpDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date3 = Date.from(instant4);
+//					admissionDTO.setOpDate(date3);
+//				}
+//				if (adm.getDisDate()!= null) {
+//					Instant instant5 = adm.getDisDate().atZone(ZoneId.systemDefault()).toInstant();
+//					Date date4 = Date.from(instant5);
+//					admissionDTO.setOpDate(date4);
+//				}
+				return admissionDTO;
+			}
+			return null;
+		}).collect(Collectors.toList());
+		return ResponseEntity.ok(adms);
 	}
 	
 	/**
