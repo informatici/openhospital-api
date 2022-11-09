@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.isf.admission.dto.AdmissionDTO;
+import org.isf.admission.dto.AdmittedPatientDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.mapper.AdmissionMapper;
 import org.isf.admission.mapper.AdmittedPatientMapper;
@@ -62,6 +63,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -148,7 +150,7 @@ public class AdmissionController {
 	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
-	/*@GetMapping(value = "/admissions/{patientcode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/{patientcode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AdmissionDTO> getAdmissions(@RequestParam int patientcode) throws OHServiceException {
 		LOGGER.info("Get admission by id: {}", patientcode);
 		Admission admission = admissionManager.getAdmission(patientcode);
@@ -227,10 +229,49 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
+			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargeRange)
+			throws OHServiceException {
+		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
+		LocalDateTime[] admissionR = new LocalDateTime[admissionRange.length];
+		LocalDateTime[] dischargeR = new LocalDateTime[admissionRange.length];
+		int i = 0;
+		for(Date date :admissionRange) {
+			LocalDateTime dateR  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			admissionR[i]=dateR;
+			i++;
+		}
+		
+		int j = 0;
+		for(Date date :dischargeRange) {
+			LocalDateTime dateD  = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			dischargeR[j]=dateD;
+			j++;
+		}
+		
+		List<AdmittedPatient> admittedPatients = admissionManager
+				.getAdmittedPatients(admissionR, dischargeR, searchTerms);
+		if (admittedPatients.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		
+		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
+	}
+	
+	/**
+	 * Get all the {@link Admission}s for the specified {@link Patient} code.
+	 * 
+	 * @param patientCode
+	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
-			@RequestParam(name = "admissionrange", required = false)  String[] admissionrange,
-			@RequestParam(name = "dischargerange", required = false)  String[] dischargerange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] admissionrange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date[] dischargerange)
 			throws OHServiceException {
 		LOGGER.info("Get admissions of patients by  id: {}", patientcode);
 		LocalDateTime[] admissionR= new LocalDateTime[2];	
@@ -240,9 +281,7 @@ public class AdmissionController {
 		if(admissionrange != null) {
 			admissionR = new LocalDateTime[admissionrange.length];	
 			for (int i = 0; i < admissionrange.length; i++) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-				String date = admissionrange[i];
-				LocalDateTime dateR = LocalDateTime.parse(date, formatter);
+				LocalDateTime dateR  = admissionrange[i].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				admissionR[i] = dateR;
 			}
 		}
@@ -250,8 +289,7 @@ public class AdmissionController {
 
 			dischargeR = new LocalDateTime[dischargerange.length];	
 			for (int j = 0; j < dischargerange.length; j++) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-				LocalDateTime dateD = LocalDateTime.parse(dischargerange[j], formatter);
+				LocalDateTime dateD  = dischargerange[j].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				dischargeR[j] = dateD;
 			}
 		}
@@ -316,14 +354,7 @@ public class AdmissionController {
 		return ResponseEntity.ok(adms);
 	}
 
-	/**
-	 * Get all the {@link Admission}s for the specified {@link Patient} code.
-	 * 
-	 * @param patientCode
-	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
+/*
 	public ResponseEntity<List<AdmissionDTO>> getPatientAdmissions(@RequestParam("patientCode") int patientCode)
 			throws OHServiceException {
 		LOGGER.info("Get patient admissions by patient code: {}", patientCode);
