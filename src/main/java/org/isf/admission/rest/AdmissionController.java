@@ -348,9 +348,11 @@ public class AdmissionController {
 					admissionDTO.setOpDate(date4);
 				}
 				return admissionDTO;
-			}
-			return null;
+			}else {
+				return null;
+			}	
 		}).collect(Collectors.toList());
+		System.out.println(adms.size());
 		return ResponseEntity.ok(adms);
 	}
 
