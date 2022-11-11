@@ -317,13 +317,12 @@ public class AdmissionController {
 		}
 		List<AdmissionDTO> adms = admittedPatients.stream().map(admP->{
 			
-			Admission adm = admP.getAdmission();
+			Admission adm = admP!=null ? admP.getAdmission():null;
 			AdmissionDTO admissionDTO = new AdmissionDTO();
 			if(adm!= null) {
 				admissionDTO = admissionMapper.map2DTO(adm);
 //				Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //				Date date = (Date) Date.from(instant);
-//				arrayDate[k] =date ;
 //				admissionDTO.setAdmDate(date);
 //				if (adm.getDisDate() != null) {
 //					
@@ -356,10 +355,8 @@ public class AdmissionController {
 //					Date date4 = Date.from(instant5);
 //					admissionDTO.setOpDate(date4);
 //				}
-				return admissionDTO;
-			}else {
-				return null;
 			}	
+			return admissionDTO;
 		}).collect(Collectors.toList());
 		System.out.println(adms.size());
 		return ResponseEntity.ok(adms);
