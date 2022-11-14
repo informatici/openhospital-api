@@ -282,33 +282,37 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
-			@RequestParam(name = "patientcode", defaultValue = "", required = false) int patientcode,
+			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
 			@RequestParam(name = "admissionrange", required = false) LocalDateTime[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange) throws OHServiceException {
-		LOGGER.info("Get admissions of patients by id: {}", patientcode);
-//		LocalDateTime[] admissionR= new LocalDateTime[2];	;
-//		LocalDateTime[] dischargeR = new LocalDateTime[2];	;
-//		if(admissionRange != null) {
-//
-//			admissionR = new LocalDateTime[admissionRange.length];	
-//			int i = 0;
-//			for (Date date : admissionRange) {
-//				LocalDateTime dateR = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange)
+			throws OHServiceException {
+		LOGGER.info("Get admissions of patients by  id: {}", patientcode);
+//		LocalDateTime[] admissionR= new LocalDateTime[2];	
+//		LocalDateTime[] dischargeR = new LocalDateTime[2];
+//		
+//		
+//		if(admissionrange != null) {
+//			admissionR = new LocalDateTime[admissionrange.length];	
+//			for (int i = 0; i < admissionrange.length; i++) {
+//				LocalDateTime dateR  = admissionrange[i].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 //				admissionR[i] = dateR;
-//				i++;
 //			}
 //		}
-//		if(dischargeRange != null) {
+//		if(dischargerange != null) {
 //
-//			dischargeR = new LocalDateTime[dischargeRange.length];	
-//			int j = 0;
-//			for (Date date : dischargeRange) {
-//				LocalDateTime dateD = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+//			dischargeR = new LocalDateTime[dischargerange.length];	
+//			for (int j = 0; j < dischargerange.length; j++) {
+//				LocalDateTime dateD  = dischargerange[j].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 //				dischargeR[j] = dateD;
-//				j++;
 //			}
 //		}
-		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
+		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
+		if(patientcode == 0) {
+			 admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange,"");
+		}else {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange,
+					Integer.toString(patientcode));
+		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -357,8 +361,9 @@ public class AdmissionController {
 //				}
 			}	
 			return admissionDTO;
+		}).filter(adm -> {
+			return adm.getId()!=0;
 		}).collect(Collectors.toList());
-		System.out.println(adms.size());
 		return ResponseEntity.ok(adms);
 	}
 	

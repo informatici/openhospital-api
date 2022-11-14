@@ -47,7 +47,24 @@ public class OpdMapper extends GenericMapper<Opd, OpdDTO> {
 		if (fromObj.getPatient() != null) {
 			opdDTO.setPatientCode(fromObj.getPatient().getCode());
 			opdDTO.setPatientName(fromObj.getFullName());
-			opdDTO.setAgeType(fromObj.getPatient().getAgetype());
+			if(fromObj.getAge() == 0 ) {
+				opdDTO.setAgeType("d0");
+			}
+			if(fromObj.getAge() > 0 && fromObj.getAge() <= 5) {
+				opdDTO.setAgeType("d1");
+			}
+			if(fromObj.getAge() > 5 && fromObj.getAge() <= 12) {
+				opdDTO.setAgeType("d2");
+			}
+			if(fromObj.getAge() > 12 && fromObj.getAge() <= 24) {
+				opdDTO.setAgeType("d3");
+			}
+			if(fromObj.getAge() > 24 && fromObj.getAge() <= 59) {
+				opdDTO.setAgeType("d4");
+			}
+			if(fromObj.getAge() > 59 && fromObj.getAge() < 200) {
+				opdDTO.setAgeType("d5");
+			}
 		}
 		return opdDTO;
 
