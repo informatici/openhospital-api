@@ -300,7 +300,6 @@ public class AdmissionController {
 			admittedPatients = admissionManager.getAdmittedPatients2(admissionR, dischargeR,
 					Integer.toString(patientcode));
 		}
-		
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -349,8 +348,9 @@ public class AdmissionController {
 				}
 			}	
 			return admissionDTO;
+		}).filter(adm -> {
+			return adm.getId()!=0;
 		}).collect(Collectors.toList());
-		System.out.println(adms.size());
 		return ResponseEntity.ok(adms);
 	}
 
