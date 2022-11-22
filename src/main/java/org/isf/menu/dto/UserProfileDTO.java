@@ -5,8 +5,26 @@ import java.util.List;
 public class UserProfileDTO {
 
 	private String userName;
+	private String userGroupName;
+	private String userDesc;
 
-	private List<String> permission;
+	private List<String> permissions;
+
+	public String getUserGroupName() {
+		return userGroupName;
+	}
+
+	public void setUserGroupName(String userGroupName) {
+		this.userGroupName = userGroupName;
+	}
+
+	public String getUserDesc() {
+		return userDesc;
+	}
+
+	public void setUserDesc(String userDesc) {
+		this.userDesc = userDesc;
+	}
 
 	public String getUserName() {
 		return userName;
@@ -16,12 +34,12 @@ public class UserProfileDTO {
 		this.userName = userName;
 	}
 
-	public List<String> getPermission() {
-		return permission;
+	public List<String> getPermissions() {
+		return permissions;
 	}
 
-	public void setPermission(List<String> permission) {
-		this.permission = permission;
+	public void setPermissions(List<String> permission) {
+		this.permissions = permission;
 	}
 	
 }

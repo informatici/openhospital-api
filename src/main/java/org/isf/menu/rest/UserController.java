@@ -364,9 +364,12 @@ public class UserController {
 			LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
 			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
+			User user = userManager.getUserByName(currentUserName);
 			UserProfileDTO userProfileDTO = new UserProfileDTO();
 			userProfileDTO.setUserName(currentUserName);
-			userProfileDTO.setPermission(permissionsCode);
+			userProfileDTO.setPermissions(permissionsCode);
+			userProfileDTO.setUserDesc(user.getDesc());
+			userProfileDTO.setUserGroupName(user.getUserGroupName().getDesc());
 			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserProfileDTO());
