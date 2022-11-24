@@ -34,6 +34,9 @@ For the moment, to build this project you should
 
 Service available on localhost:8080
 
+You can see Swagger Api Documentation at: http://localhost:8080/oh-api/swagger-ui/
+
+
 ## How to contribute
 
 You can find the contribution guidelines in the [Open Hospital wiki][contribution-guide].  
