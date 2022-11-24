@@ -32,10 +32,9 @@ For the moment, to build this project you should
  
         java -jar openhospital-api-<version>.jar
 
-Service available on localhost:8080
-
 You can see Swagger Api Documentation at: http://localhost:8080/oh-api/swagger-ui/
 
+![image](https://user-images.githubusercontent.com/2938553/203870946-fff6166c-ac0d-43da-874d-07b5163c5184.png)
 
 ## How to contribute
 
