@@ -36,11 +36,21 @@ public class MalnutritionDTO {
 	private int code;
 
 	@NotNull(message="The date of control is required")
+<<<<<<< HEAD
 	@ApiModelProperty(notes="The date of this malnutrition control", example = "1979-05-01", position = 2)
 	private LocalDateTime dateSupp;
 
 	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01", position = 3)
 	private LocalDateTime dateConf;
+=======
+	@ApiModelProperty(notes="The date of this malnutrition control", example="2021-05-01T00:00:00.000Z", position = 2)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date dateSupp;
+
+	@ApiModelProperty(notes="The date of the next malnutrition control", example="2021-06-01T00:00:00.000Z", position = 3)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	private Date dateConf;
+>>>>>>> 73fe37d (Fix example date)
 
 	@NotNull(message="The admission is required")
 	@ApiModelProperty(notes="The admission requesting the control", position = 4)
