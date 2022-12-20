@@ -263,10 +263,9 @@ public class AdmissionControllerTest {
 		when(patientManagerMock.getPatientById(patientCode))
 				.thenReturn(patient);
 
-		Admission admission = AdmissionHelper.setup();
-		admission.setPatient(patient);
-		when(admissionManagerMock.getAdmission(patientCode))
-				.thenReturn(admission);
+		List<Admission> listAdmissions = AdmissionHelper.setupAdmissionList(2);
+		when(admissionManagerMock.getAdmissions(patient))
+				.thenReturn(listAdmissions);
 
 		MvcResult result = this.mockMvc
 				.perform(get(request, patientCode)
@@ -275,7 +274,7 @@ public class AdmissionControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
+				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTOList(listAdmissions)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -296,7 +295,7 @@ public class AdmissionControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(
 						get(request)
-							.param("wardCode", wardCode)
+							.param("wardcode", wardCode)
 							.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
