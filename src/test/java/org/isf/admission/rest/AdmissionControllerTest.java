@@ -263,9 +263,10 @@ public class AdmissionControllerTest {
 		when(patientManagerMock.getPatientById(patientCode))
 				.thenReturn(patient);
 
-		List<Admission> admissions = AdmissionHelper.setupAdmissionList(2);
-		when(admissionManagerMock.getAdmissions(patient))
-				.thenReturn(admissions);
+		Admission admission = AdmissionHelper.setup();
+		admission.setPatient(patient);
+		when(admissionManagerMock.getAdmission(patientCode))
+				.thenReturn(admission);
 
 		MvcResult result = this.mockMvc
 				.perform(get(request, patientCode)
@@ -274,7 +275,7 @@ public class AdmissionControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(admissionMapper.map2DTOList(admissions)))))
+				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
