@@ -79,7 +79,6 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
 							sessionAuditManager.newSessionAudit(new SessionAudit(authentication.getName(), LocalDateTime.now(), null)));
-			System.out.println("AuditID: " + this.httpSession.getAttribute("sessionAuditId"));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
