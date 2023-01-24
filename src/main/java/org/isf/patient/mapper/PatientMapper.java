@@ -44,12 +44,6 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 		if (fromObj.getPatientProfilePhoto() != null) {
 			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 		}
-//		if (fromObj.getFatherName() != null) {
-//			patientDTO.setFather_name(fromObj.getFatherName());
-//		}
-//		if (fromObj.getMotherName()!= null) {
-//			patientDTO.setMother_name(fromObj.getMotherName());
-//		}
 		return patientDTO;
 
 	}
@@ -78,12 +72,6 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			photo.setPatient(patient);
 			photo.setPhoto(toObj.getBlobPhoto());
 			patient.setPatientProfilePhoto(photo);
-		}
-		if (toObj.getFather_name() != null) {
-			patient.setFatherName(toObj.getFather_name());
-		}
-		if (toObj.getMother_name()!= null) {
-			patient.setMotherName(toObj.getMother_name());
 		}
 		return patient;
 	}

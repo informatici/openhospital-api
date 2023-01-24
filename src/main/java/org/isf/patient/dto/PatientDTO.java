@@ -78,14 +78,14 @@ public class PatientDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "Mother's name", example="Roberta", position = 12)
-	private String mother_name;
+	private String motherName;
 
 	@ApiModelProperty(notes = "Mother's status (D=dead, A=alive)", allowableValues = "D,A", example="A", position = 13)
 	private char mother ;
 
 	@NotNull
 	@ApiModelProperty(notes = "Father's name", example="Giuseppe", position = 14)
-	private String father_name;
+	private String fatherName;
 
 	@ApiModelProperty(notes = "Father's status (D=dead, A=alive)", allowableValues = "D,A", example="D", position = 15)
 	private char father;
@@ -202,16 +202,8 @@ public class PatientDTO {
 		return this.note;
 	}
 
-	public String getMother_name() {
-		return this.mother_name;
-	}
-
 	public char getMother() {
 		return this.mother;
-	}
-
-	public String getFather_name() {
-		return this.father_name;
 	}
 
 	public char getFather() {
@@ -290,16 +282,8 @@ public class PatientDTO {
 		this.note = note;
 	}
 
-	public void setMother_name(String mother_name) {
-		this.mother_name = mother_name;
-	}
-
 	public void setMother(char mother) {
 		this.mother = mother;
-	}
-
-	public void setFather_name(String father_name) {
-		this.father_name = father_name;
 	}
 
 	public void setFather(char father) {
@@ -340,4 +324,22 @@ public class PatientDTO {
     public PatientSTATUS setStatus(PatientSTATUS status) {
         return this.status = status;
     }
+
+	public String getMotherName() {
+		return motherName;
+	}
+
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
+	}
+
+	public String getFatherName() {
+		return fatherName;
+	}
+
+	public void setFatherName(String fatherName) {
+		this.fatherName = fatherName;
+	}
+    
+    
 }
