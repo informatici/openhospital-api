@@ -22,6 +22,7 @@
 package org.isf.lab.rest;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -234,31 +235,39 @@ public class LaboratoryController {
 	}
 
     @GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LaboratoryDTO>> getLaboratory() throws OHServiceException {
+    public ResponseEntity<List<LabWithRowsDTO>> getLaboratory() throws OHServiceException {
         List<Laboratory> labList = laboratoryManager.getLaboratory();
         if (labList == null || labList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-        	
-			return ResponseEntity.ok(labList.stream().map(lab -> {
-				LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
-//				if (lab.getExamDate() != null) {
-//					Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
-//					Date date = Date.from(instant);
-//					labDTO.setExamDate(date);
-//				}
-//				if (lab.getLabDate() != null) {
-//					Instant instant2 = lab.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
-//					Date date2 = Date.from(instant2);
-//					labDTO.setRegistrationDate(date2);
-//				}
-				return labDTO;
-			}).collect(Collectors.toList()));
+        	return ResponseEntity.ok(labList.stream().map(lab -> {
+        		LabWithRowsDTO labDTO = new LabWithRowsDTO();
+            	List<String> labDescription = new ArrayList<String>();
+        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+        		 if (lab.getExam().getProcedure() == 2) {
+        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+						try {
+							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+						} catch (OHServiceException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+        	        	if(!labDes.isEmpty()) {
+        	        		for(LaboratoryRow laboratoryRow : labDes) {
+        	        			labDescription.add(laboratoryRow.getDescription());
+        	        		}
+        	        	}
+        	        	
+        			}
+        		 labDTO.setLaboratoryDTO(laboratoryDTO);
+        		 labDTO.setLaboratoryRowList(labDescription);	
+    		    return labDTO;
+        	}).collect(Collectors.toList()));
         }
     }
 
     @GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LaboratoryDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
+    public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
         Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
@@ -268,20 +277,29 @@ public class LaboratoryController {
         if (labList == null || labList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
-			return ResponseEntity.ok(labList.stream().map(lab -> {
-				LaboratoryDTO labDTO = laboratoryMapper.map2DTO(lab);
-//				if (lab.getExamDate() != null) {
-//					Instant instant = lab.getExamDate().atZone(ZoneId.systemDefault()).toInstant();
-//					Date date = Date.from(instant);
-//					labDTO.setExamDate(date);
-//				}
-//				if (lab.getLabDate() != null) {
-//					Instant instant2 = lab.getLabDate().atZone(ZoneId.systemDefault()).toInstant();
-//					Date date2 = Date.from(instant2);
-//					labDTO.setRegistrationDate(date2);
-//				}
-				return labDTO;
-			}).collect(Collectors.toList()));
+        	return ResponseEntity.ok(labList.stream().map(lab -> {
+        		LabWithRowsDTO labDTO = new LabWithRowsDTO();
+            	List<String> labDescription = new ArrayList<String>();
+        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+        		 if (lab.getExam().getProcedure() == 2) {
+        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+						try {
+							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+						} catch (OHServiceException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+        	        	if(!labDes.isEmpty()) {
+        	        		for(LaboratoryRow laboratoryRow : labDes) {
+        	        			labDescription.add(laboratoryRow.getDescription());
+        	        		}
+        	        	}
+        	        	
+        			}
+        		 labDTO.setLaboratoryDTO(laboratoryDTO);
+        		 labDTO.setLaboratoryRowList(labDescription);	
+    		    return labDTO;
+        	}).collect(Collectors.toList()));
         }
     }
 
@@ -296,39 +314,49 @@ public class LaboratoryController {
     }
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LaboratoryForPrintDTO>> getLaboratoryForPrint(
-			@RequestParam String examName,
-			@RequestParam(value = "dateFrom") LocalDateTime dateFrom,
-			@RequestParam(value = "dateTo") LocalDateTime dateTo,
+	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
+			@RequestParam(required = false, defaultValue = "") String examName,
+			@RequestParam(value = "dateFrom") String dateFrom,
+			@RequestParam(value = "dateTo") String dateTo,
 			@RequestParam(value = "patientCode",required = false, defaultValue = "0") int patientCode) throws OHServiceException {
 		
 		Patient patient = null ;
-//    	LocalDateTime dateF = null;
-//		if(dateFrom != null) {
-//			dateF  = dateFrom.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-//		}
-//		
-//		LocalDateTime dateT = null;
-//		if(dateTo != null) {
-//			dateT  = dateTo.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-//		}
-
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
+		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
+		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
+		
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null)
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		List<LaboratoryForPrint> laboratoryForPrintList = laboratoryManager.getLaboratoryForPrint(examName, dateFrom, dateTo, patient);
-		if (laboratoryForPrintList == null || laboratoryForPrintList.isEmpty()) {
+		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT,patient);
+		if (laboratoryList == null || laboratoryList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			return ResponseEntity.ok(laboratoryForPrintList.stream().map(lab -> {
-				LaboratoryForPrintDTO laboratoryForPrintDTO = laboratoryForPrintMapper.map2DTO(lab);
-//				Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//				Date date = Date.from(instant);
-//				laboratoryForPrintDTO.setDate(date);
-				return laboratoryForPrintDTO;
-			}).collect(Collectors.toList()));
+			return ResponseEntity.ok(laboratoryList.stream().map(lab -> {
+            	LabWithRowsDTO labDTO = new LabWithRowsDTO();
+            	List<String> labDescription = new ArrayList<String>();
+        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+        		 if (lab.getExam().getProcedure() == 2) {
+        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+						try {
+							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+						} catch (OHServiceException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+        	        	if(!labDes.isEmpty()) {
+        	        		for(LaboratoryRow laboratoryRow : labDes) {
+        	        			labDescription.add(laboratoryRow.getDescription());
+        	        		}
+        	        	}
+        	        	
+        			}
+        		 labDTO.setLaboratoryDTO(laboratoryDTO);
+        		 labDTO.setLaboratoryRowList(labDescription);	
+    		    return labDTO;
+        	}).collect(Collectors.toList()));
 		}
 	}
 	
@@ -341,10 +369,6 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-//		Instant instant = lab.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//		Date date = Date.from(instant);
-//		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
-//		laboratoryDTO.setExamDate(date);
 
 		return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
 	}
@@ -361,11 +385,6 @@ public class LaboratoryController {
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
-//        if(laboratory.getDate()!=null) {
-//        	Instant instant1 = laboratory.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//          	Date date1 = (Date) Date.from(instant1);
-//          	labDTO.setExamDate(date1);
-//        }
         lab.setLaboratoryDTO(labDTO);
         
         if (laboratory.getExam().getProcedure() == 2) {

@@ -98,7 +98,7 @@ public class LaboratoryDTO {
 		return this.registrationDate;
 	}
 
-	public LocalDateTime getExamDate() {
+	public LocalDateTime getDate() {
 		return this.examDate;
 	}
 
@@ -146,7 +146,7 @@ public class LaboratoryDTO {
 		this.registrationDate = registrationDate;
 	}
 
-	public void setExamDate(LocalDateTime examDate) {
+	public void setDate(LocalDateTime examDate) {
 		this.examDate = examDate;
 	}
 
