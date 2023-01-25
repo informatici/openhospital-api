@@ -23,6 +23,7 @@ package org.isf.config;
 
 import java.util.Arrays;
 
+import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTConfigurer;
@@ -59,6 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
 	private TokenProvider tokenProvider;
+	
+	@Autowired
+	private CustomLogoutHandler customLogoutHandler;
 
 	public SecurityConfig(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
@@ -266,8 +270,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
           	.logout()
 				.logoutUrl("/auth/logout")
-				.permitAll();
-    }
+				.addLogoutHandler(customLogoutHandler)
+				.permitAll();    
+        }
 
 	private JWTConfigurer securityConfigurerAdapter() {
 		return new JWTConfigurer(tokenProvider);
