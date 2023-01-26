@@ -121,7 +121,7 @@ public class OpdDTO {
     @ApiModelProperty(notes = "prescription", position = 23)
     private String prescription; // ADDED: Arnaud
     
-    @ApiModelProperty(notes = "prescription", position = 23)
+    @ApiModelProperty(notes = "ward", position = 24)
     private WardDTO ward; // ADDED: Arnaud
     
     public String getReason() {
