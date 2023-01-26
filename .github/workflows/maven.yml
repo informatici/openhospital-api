@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Checkout core
-      run: git clone --depth=50 --branch=main https://github.com/intesys/openhospital-core.git openhospital-core
+      run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
     - name: Install core
       run: cd openhospital-core && mvn install -DskipTests=true && cd ..
     - name: Set up JDK 11
@@ -21,7 +21,7 @@ jobs:
       with:
         java-version: 11
     - name: Build with Maven
-      run: mvn -B package -DskipTests=true --file pom.xml
+      run: mvn -B package --file pom.xml
     - run: mkdir package && cp target/*.jar package
     - uses: actions/upload-artifact@v2
       with:
