@@ -91,19 +91,11 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
-//		opdToInsert.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-//		opdToInsert.setNextVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-//		opdToInsert.setVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
-//		OpdDTO opdDTOs = mapper.map2DTO(isCreated);
-//		Instant instant = isCreated.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//		Date date = Date.from(instant);
-//		opdDTOs.setDate(date);
-//		opdDTOs.setVisitDate(date);
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
 
@@ -131,18 +123,11 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
-//		opdToUpdate.setDate(opdDTO.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-//		opdToUpdate.setVisitDate(opdDTO.getVisitDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
 		}
-//		OpdDTO opdDTOs = mapper.map2DTO(updatedOpd);
-//		Instant instant = updatedOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//		Date date = Date.from(instant);
-//		opdDTOs.setDate(date);
-//		opdDTOs.setVisitDate(date);
 		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedOpd));
 	}
 
@@ -188,10 +173,6 @@ public class OpdController {
 		
 		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
 			OpdDTO opdDTO = mapper.map2DTO(opd);
-//			Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = Date.from(instant);
-//			opdDTO.setVisitDate(date);
-//			opdDTO.setDate(date);
 			return opdDTO;
 		}).collect(Collectors.toList());
 		
@@ -216,10 +197,6 @@ public class OpdController {
 		if (!opds.isEmpty()) {
 			opdDTOs = opds.stream().map(opd -> {
 				OpdDTO opdDTO = mapper.map2DTO(opd);
-//				Instant instant = opd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//				Date date = (Date) Date.from(instant);
-//				opdDTO.setVisitDate(date);
-//				opdDTO.setDate(date);
 				return opdDTO;
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(opdDTOs);
@@ -271,10 +248,6 @@ public class OpdController {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
 		OpdDTO opdDTO =  mapper.map2DTO(lastOpd);
-//		Instant instant = lastOpd.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//		opdDTO.setVisitDate(date);
-//    	Date date = (Date) Date.from(instant);
-//    	opdDTO.setVisitDate(date);
 		return ResponseEntity.ok(opdDTO);
 	}
 	

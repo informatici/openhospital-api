@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.dto.DiseaseDTO;
+import org.isf.ward.dto.WardDTO;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -119,6 +120,9 @@ public class OpdDTO {
     
     @ApiModelProperty(notes = "prescription", position = 23)
     private String prescription; // ADDED: Arnaud
+    
+    @ApiModelProperty(notes = "prescription", position = 23)
+    private WardDTO ward; // ADDED: Arnaud
     
     public String getReason() {
 		return reason;
@@ -322,6 +326,15 @@ public class OpdDTO {
 	public void setAgeType(String ageType) {
 		this.ageType = ageType;
 	}
+
+	public WardDTO getWard() {
+		return ward;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+	
 	
 	
 }
