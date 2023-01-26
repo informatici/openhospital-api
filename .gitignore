@@ -12,6 +12,7 @@ logs/
 .springBeans
 .sts4-cache
 *.class
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -25,6 +26,9 @@ logs/
 /nbdist/
 /.nb-gradle/
 /build/
+
+### VScode ###
+.vscode
 
 
 
