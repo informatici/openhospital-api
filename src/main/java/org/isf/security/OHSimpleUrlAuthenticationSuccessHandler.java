@@ -30,13 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.isf.security.jwt.TokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -64,48 +61,6 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
 	}
-
-	private final Logger logger = LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
-
-    @Override
-    public void onAuthenticationSuccess(
-      HttpServletRequest request,
-      HttpServletResponse response, 
-      Authentication authentication) 
-      throws ServletException, IOException {
-  
-        SavedRequest savedRequest
-          = requestCache.getRequest(request, response);
-
-
-        //response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
-        loginResponse.setDisplayName(authentication.getName());
-        ObjectMapper mapper = new ObjectMapper();
-
-        response.getWriter().append(mapper.writeValueAsString(loginResponse));
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(200);
-
-        if (savedRequest == null) {
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        String targetUrlParam = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl()
-          || (targetUrlParam != null
-          && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
-            requestCache.removeRequest(request, response);
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        clearAuthenticationAttributes(request);
-
-        authentication.getDetails();
-
-
-    }
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
