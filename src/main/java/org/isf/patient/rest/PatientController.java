@@ -201,12 +201,7 @@ public class PatientController {
 		}
 		patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = null;
-			try {
-				admission = admissionManager.getCurrentAdmission(patient);
-			} catch (OHServiceException e) {
-				// TODO Auto-generated catch block
-				 new OHExceptionMessage(null, "the Patients exist but have problems with their admissions", OHSeverityLevel.ERROR);
-			}
+			admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
 			PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
 //			if (patient.getBirthDate() != null) {
