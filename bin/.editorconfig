@@ -1,5 +1,0 @@
-root = true
-
-[*.java]
-indent_style = tab
-charset = utf-8
