@@ -23,6 +23,7 @@ package org.isf.lab.dto;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.exam.dto.ExamDTO;
 
 import com.drew.lang.annotations.NotNull;

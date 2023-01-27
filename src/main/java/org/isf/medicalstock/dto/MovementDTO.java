@@ -25,6 +25,7 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.supplier.dto.SupplierDTO;

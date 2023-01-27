@@ -145,7 +145,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable int patientCode) throws OHServiceException {
+	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(Integer.valueOf(patientCode));
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
@@ -211,10 +211,8 @@ public class AdmissionController {
 			throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
-		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		if (patient == null)
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -322,11 +320,10 @@ public class AdmissionController {
 //			}
 //		}
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
-		if(patientcode == 0) {
-			 admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange,"");
-		}else {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange,
-					Integer.toString(patientcode));
+		if (patientcode == 0) {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, "");
+		} else {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
 		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -377,7 +374,7 @@ public class AdmissionController {
 			}	
 			return admissionDTO;
 		}).filter(adm -> {
-			return adm.getId()!=0;
+			return adm.getId() != 0;
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(adms);
 	}
@@ -428,7 +425,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable int id) throws OHServiceException {
+	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
 		boolean isDeleted = false;
 		Admission admission = admissionManager.getAdmission(id);
@@ -440,7 +437,7 @@ public class AdmissionController {
 
 		return ResponseEntity.ok(isDeleted);
 	}
-
+	
 	/**
 	 * discharge the {@link Admission}s for the specified {@link Patient} code.
 	 * 

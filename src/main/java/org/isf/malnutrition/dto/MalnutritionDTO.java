@@ -42,7 +42,6 @@ public class MalnutritionDTO {
 	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01T11:20:33", position = 3)
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime dateConf;
-	
 
 	@NotNull(message="The admission is required")
 	@ApiModelProperty(notes="The admission requesting the control", position = 4)

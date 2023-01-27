@@ -1,8 +1,11 @@
 HELP.md
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+/oh-rest-api.log.*.gz
 logs/
 bin
+*.log
+
 
 ### STS ###
 .apt_generated
@@ -30,9 +33,3 @@ bin
 
 ### VScode ###
 .vscode
-
-
-
-*.log
-/oh-rest-api.log.*.gz
-/logs/

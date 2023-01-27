@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.vaccine.dto.VaccineDTO;
 

@@ -5,26 +5,8 @@ import java.util.List;
 public class UserProfileDTO {
 
 	private String userName;
-	private String userGroupName;
-	private String userDesc;
 
 	private List<String> permissions;
-
-	public String getUserGroupName() {
-		return userGroupName;
-	}
-
-	public void setUserGroupName(String userGroupName) {
-		this.userGroupName = userGroupName;
-	}
-
-	public String getUserDesc() {
-		return userDesc;
-	}
-
-	public void setUserDesc(String userDesc) {
-		this.userDesc = userDesc;
-	}
 
 	public String getUserName() {
 		return userName;

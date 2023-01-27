@@ -1,6 +1,10 @@
+# Warning
+|:warning: This fork is for _prototyping purpose only_. If you want to submit a PR to the Open Hospital project starts from the [official ISF (Informatici Senza Frontiere) repos](https://github.com/informatici).      |
+|:---------------------------|
+
 # Open Hospital API
 
-[![Java CI with Maven](https://github.com/informatici/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/informatici/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
+[![Java CI with Maven](https://github.com/intesys/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/intesys/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
 This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
 
@@ -10,13 +14,13 @@ For the moment, to build this project you should
 
  1. fetch and build the [core] project
     
-        git clone https://github.com/informatici/openhospital-core.git
+        git clone https://github.com/intesys/openhospital-core.git
         cd openhospital-core
         mvn clean install -DskipTests=true
         
  2. clone and build this project
  
-        git clone https://github.com/informatici/openhospital-api
+        git clone https://github.com/intesys/openhospital-api
         cd openhospital-api
         mvn clean install -DskipTests=true
         

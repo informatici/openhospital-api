@@ -22,9 +22,7 @@
 package org.isf.patient.rest;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +40,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -152,9 +149,9 @@ public class PatientController {
 			
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		LOGGER.info("admissionBrowserManager injected: {}", admissionManager);
+		LOGGER.debug("admissionBrowserManager injected: {}", admissionManager);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
-		LOGGER.info("admission retrieved: {}", admission);
+		LOGGER.debug("admission retrieved: {}", admission);
 		Boolean status = admission != null ? true : false;
 		PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
 //		if (patient.getBirthDate() != null) {
@@ -168,7 +165,7 @@ public class PatientController {
 	public ResponseEntity<List<PatientDTO>> searchPatient(
 			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
 			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-			@RequestParam(value="birthDate", defaultValue="", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date birthDate,
+			@RequestParam(value="birthDate", defaultValue="", required = false) LocalDateTime birthDate,
 			@RequestParam(value="address", defaultValue="", required = false) String address
 	) throws OHServiceException {
 
@@ -176,21 +173,22 @@ public class PatientController {
 		List<Patient> patientList = null;
 
 		Map<String, Object> params = new HashMap<String, Object>();
+		
 		if (firstName != null && !firstName.isEmpty()) {
 			params.put("firstName", firstName);
 		}
+		
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
 		}
-		LocalDateTime birthDateTime = null;
+		
 		if(birthDate != null) {
-			birthDateTime  = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			params.put("birthDate", birthDateTime);
+			params.put("birthDate", birthDate);
 		}
+		
 		if (address != null && !address.isEmpty()) {
 			params.put("address", address);
 		}
-
 
 		if (params.entrySet().size() > 0) {
 			patientList = patientManager.getPatients(params);
@@ -199,15 +197,16 @@ public class PatientController {
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		
 		patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = null;
 			admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
 			PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
-//			if (patient.getBirthDate() != null) {
-//				Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//				patientDTO.setBirthDate(date);
-//			}
+			//	if (patient.getBirthDate() != null) {
+			//		Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			//		patientDTO.setBirthDate(date);
+			//	}
 			return patientDTO;
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(patientListDTO);
