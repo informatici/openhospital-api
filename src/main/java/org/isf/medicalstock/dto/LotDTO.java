@@ -26,7 +26,6 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 
 public class LotDTO {

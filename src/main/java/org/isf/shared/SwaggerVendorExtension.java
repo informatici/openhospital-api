@@ -1,16 +1,14 @@
 package org.isf.shared;
 
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import java.util.ArrayList;
+import java.util.List;
+
 import springfox.documentation.service.ObjectVendorExtension;
 import springfox.documentation.service.VendorExtension;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.OperationBuilderPlugin;
 import springfox.documentation.spi.service.contexts.OperationContext;
 import springfox.documentation.swagger.common.SwaggerPluginSupport;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //@Component
 //@Order(SwaggerPluginSupport.SWAGGER_PLUGIN_ORDER)

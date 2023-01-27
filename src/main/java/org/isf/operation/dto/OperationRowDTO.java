@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.isf.accounting.dto.BillDTO;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.opd.dto.OpdDTO;

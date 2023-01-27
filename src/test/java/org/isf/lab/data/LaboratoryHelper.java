@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.accounting.data.BillHelper;
-import org.isf.accounting.model.Bill;
 import org.isf.exa.model.Exam;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.model.Laboratory;
