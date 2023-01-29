@@ -21,7 +21,6 @@
  */
 package org.isf.lab.rest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
