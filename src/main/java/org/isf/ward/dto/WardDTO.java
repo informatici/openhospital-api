@@ -62,7 +62,6 @@ public class WardDTO {
 	@ApiModelProperty(notes = "lock", example = "0")
 	private Integer lock;
 	
-	
 	public String getCode() {
 		return this.code;
 	}

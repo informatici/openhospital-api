@@ -31,29 +31,25 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Class representing a vaccine")
 public class VaccineDTO {
 
-    @NotNull
-    @ApiModelProperty(notes = "Code of the vaccine", example="1", position = 1)
-    private String code;
+	@NotNull
+	@ApiModelProperty(notes = "Code of the vaccine", example = "1", position = 1)
+	private String code;
 
-    @NotNull
-    @ApiModelProperty(notes = "Description of the vaccine", example="BCG", position = 2)
-    private String description;
+	@NotNull
+	@ApiModelProperty(notes = "Description of the vaccine", example = "BCG", position = 2)
+	private String description;
 
-    @NotNull
-    @ApiModelProperty(notes = "Type of the vaccine", position = 3)
-    private VaccineTypeDTO vaccineType;
+	@NotNull
+	@ApiModelProperty(notes = "Type of the vaccine", position = 3)
+	private VaccineTypeDTO vaccineType;
 
-    @ApiModelProperty(notes = "lock", example = "0")
-    private int lock;
-    
-    @Override
-    public String toString() {
-        return "VaccineDTO{" +
-                "code='" + code + '\'' +
-                ", description='" + description + '\'' +
-                ", vaccineType=" + vaccineType +
-                '}';
-    }
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+
+	@Override
+	public String toString() {
+		return "VaccineDTO{" + "code='" + code + '\'' + ", description='" + description + '\'' + ", vaccineType=" + vaccineType + '}';
+	}
 
 	public int getLock() {
 		return lock;
