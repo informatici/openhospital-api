@@ -1,4 +1,4 @@
- /*
+/*
  * Open Hospital (www.open-hospital.org)
  * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
