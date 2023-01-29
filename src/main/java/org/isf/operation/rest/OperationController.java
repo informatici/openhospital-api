@@ -213,7 +213,7 @@ public class OperationController {
 	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
-		if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
@@ -248,7 +248,7 @@ public class OperationController {
 	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO)
 			throws OHServiceException {
 		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
-	    if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+	    if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 		   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 	    }
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);

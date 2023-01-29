@@ -318,12 +318,13 @@ public class PatientDTO {
 		this.hashCode = hashCode;
 	}
 	
-    public PatientSTATUS getStatus() {
-        return status;
-    }
-    public PatientSTATUS setStatus(PatientSTATUS status) {
-        return this.status = status;
-    }
+	public PatientSTATUS getStatus() {
+		return status;
+	}
+	
+	public PatientSTATUS setStatus(PatientSTATUS status) {
+		return this.status = status;
+	}
 
 	public String getMotherName() {
 		return motherName;
