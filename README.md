@@ -20,11 +20,17 @@ For the moment, to build this project you should
         cd openhospital-api
         mvn clean install -DskipTests=true
         
- 3. set target/rsc/database.properties
+ 3. prepare settings from rsc/*.dist files
+ 
+        rsc/application.properties
+        rsc/database.properties
+        rsc/log4j.properties
+ 
+ 4. set target/rsc/database.properties
  
         DB can be created with `docker-compose up` from `openhospital-core` or using a dedicated MySQL server
         
- 4. start openhospital-api (in `target` folder)
+ 5. start openhospital-api (in `target` folder)
  
         # Windows
         java -cp "openhospital-api-0.0.2.jar;rsc/;static/" org.springframework.boot.loader.JarLauncher
@@ -32,7 +38,7 @@ For the moment, to build this project you should
         # Linux
         java -cp "openhospital-api-0.0.2.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
         
- 5. call services
+ 6. call services
     - URL base: http://localhost:8080
     - URL login: http://localhost:8080/auth/login
     - URL patients: http://localhost:8080/patients
