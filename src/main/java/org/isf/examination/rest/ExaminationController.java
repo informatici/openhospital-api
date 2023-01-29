@@ -201,79 +201,79 @@ public class ExaminationController {
     }
 
     @GetMapping(value = "/examinations/fromLastPatientExamination/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientExaminationDTO> getFromLastPatientExamination(@PathVariable Integer id) throws OHServiceException {
+	public ResponseEntity<PatientExaminationDTO> getFromLastPatientExamination(@PathVariable Integer id) throws OHServiceException {
 
-        PatientExamination lastPatientExamination = examinationBrowserManager.getByID(id);
-        PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(examinationBrowserManager.getFromLastPatientExamination(lastPatientExamination));
-        if (patientExaminationDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		PatientExamination lastPatientExamination = examinationBrowserManager.getByID(id);
+		PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(examinationBrowserManager.getFromLastPatientExamination(lastPatientExamination));
+		if (patientExaminationDTO == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 //			Instant instant = lastPatientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
 //			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-            return ResponseEntity.ok(patientExaminationDTO);
-        }
-    }
+			return ResponseEntity.ok(patientExaminationDTO);
+		}
+	}
 
-    @GetMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientExaminationDTO> getByID(@PathVariable Integer id) throws OHServiceException {
+	@GetMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PatientExaminationDTO> getByID(@PathVariable Integer id) throws OHServiceException {
 
-        PatientExamination patientExamination = examinationBrowserManager.getByID(id);
+		PatientExamination patientExamination = examinationBrowserManager.getByID(id);
 
-        if (patientExamination == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		if (patientExamination == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
 //			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-            return ResponseEntity.ok(patientExaminationDTO);
-            
-        }
-    }
+			return ResponseEntity.ok(patientExaminationDTO);
 
-    @GetMapping(value = "/examinations/lastByPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PatientExaminationDTO> getLastByPatientId(@PathVariable Integer patId) throws OHServiceException {
+		}
+	}
 
-        PatientExamination patientExamination = examinationBrowserManager.getLastByPatID(patId);
+	@GetMapping(value = "/examinations/lastByPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<PatientExaminationDTO> getLastByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
-        if (patientExamination == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		PatientExamination patientExamination = examinationBrowserManager.getLastByPatID(patId);
+
+		if (patientExamination == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
 //			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-            return ResponseEntity.ok(patientExaminationDTO);
-        }
-    }
+			return ResponseEntity.ok(patientExaminationDTO);
+		}
+	}
 
-    @GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
+	@GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
 
-        List<PatientExamination> patientExaminationList = examinationBrowserManager.getLastNByPatID(patId, limit);
+		List<PatientExamination> patientExaminationList = examinationBrowserManager.getLastNByPatID(patId, limit);
 
-        if (patientExaminationList == null || patientExaminationList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
+		if (patientExaminationList == null || patientExaminationList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
 			List<PatientExaminationDTO> patientExamList = patientExaminationList.stream().map(pat -> {
 				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
 //				Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //				Date date = (Date) Date.from(instant);
 //				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-        		return patientExaminationDTO;
-        	}).collect(Collectors.toList());
-            return ResponseEntity.ok(patientExamList);
-        }
-    }
+				return patientExaminationDTO;
+			}).collect(Collectors.toList());
+			return ResponseEntity.ok(patientExamList);
+		}
+	}
 
-    @GetMapping(value = "/examinations/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
+	@GetMapping(value = "/examinations/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
-        List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
-        List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<PatientExaminationDTO>();
-        if (patientExamination == null || patientExamination.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
+		List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<PatientExaminationDTO>();
+		if (patientExamination == null || patientExamination.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			listPatientExaminationDTO = patientExamination.stream().map(pat -> {
 				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
@@ -284,5 +284,5 @@ public class ExaminationController {
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(listPatientExaminationDTO);
 		}
-    }
+	}
 }

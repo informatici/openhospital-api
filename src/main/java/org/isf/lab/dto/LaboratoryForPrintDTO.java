@@ -27,18 +27,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class LaboratoryForPrintDTO {
 
-    private String exam;
+	private String exam;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 	private Date date;
 
-    private String result;
+	private String result;
 
-    private Integer code;
-    
-    private String patName;
-    
-    private Integer patientCode;
+	private Integer code;
+
+	private String patName;
+
+	private Integer patientCode;
 
 	public String getExam() {
 		return this.exam;
@@ -87,6 +87,5 @@ public class LaboratoryForPrintDTO {
 	public void setPatientCode(Integer patientCode) {
 		this.patientCode = patientCode;
 	}
-	
-	
+
 }

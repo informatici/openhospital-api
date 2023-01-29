@@ -65,17 +65,17 @@ public class ExamTypeController {
         this.examTypeMapper = examTypeMapper;
     }
 
-    @PostMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamTypeDTO> newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
+	@PostMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ExamTypeDTO> newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
 
-        ExamType examType = examTypeMapper.map2Model(newExamType);
-        ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
-        if (createdExamType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
-        }
+		ExamType examType = examTypeMapper.map2Model(newExamType);
+		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
+		if (createdExamType == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
+		}
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
-    }
+		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
+	}
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
