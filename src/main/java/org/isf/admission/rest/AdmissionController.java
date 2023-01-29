@@ -46,7 +46,6 @@ import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.operation.manager.OperationBrowserManager;
-import org.isf.operation.model.Operation;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
@@ -96,9 +95,6 @@ public class AdmissionController {
 	private DiseaseBrowserManager diseaseManager;
 
 	@Autowired
-	private OperationBrowserManager operationManager;
-
-	@Autowired
 	private PregnantTreatmentTypeBrowserManager pregTraitTypeManager;
 
 	@Autowired
@@ -117,17 +113,16 @@ public class AdmissionController {
 	private DischargeTypeBrowserManager dischargeTypeManager;
 	
 	@Autowired
-	private DischargeTypeMapper dischargeTypeMapper;
+	private DischargeTypeMapper dischargeTypeMapper; //not used for now, maybe in future?
 	
 	public AdmissionController(AdmissionBrowserManager admissionManager, PatientBrowserManager patientManager, WardBrowserManager wardManager, 
 			DiseaseBrowserManager diseaseManager, OperationBrowserManager operationManager, PregnantTreatmentTypeBrowserManager pregTraitTypeManager, 
 			DeliveryTypeBrowserManager dlvrTypeManager, DeliveryResultTypeBrowserManager dlvrrestTypeManager, AdmissionMapper admissionMapper,
-			AdmittedPatientMapper admittedMapper,DischargeTypeBrowserManager dischargeTypeManager, DischargeTypeMapper dischargeTypeMapper) {
+			AdmittedPatientMapper admittedMapper, DischargeTypeBrowserManager dischargeTypeManager, DischargeTypeMapper dischargeTypeMapper) {
 		this.admissionManager = admissionManager;
 		this.patientManager = patientManager;
 		this.wardManager = wardManager;
 		this.diseaseManager = diseaseManager;
-		this.operationManager = operationManager;
 		this.pregTraitTypeManager = pregTraitTypeManager;
 		this.dlvrTypeManager = dlvrTypeManager;
 		this.dlvrrestTypeManager = dlvrrestTypeManager;
@@ -592,19 +587,7 @@ public class AdmissionController {
 			newAdmission.setDiseaseOut3(dOut3.get(0));
 		} 
 	
-		if (newAdmissionDTO.getOperation() != null && newAdmissionDTO.getOperation().getCode() != null && !newAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
-			List<Operation> operations = operationManager.getOperation();
-			List<Operation> opFounds = operations.stream()
-					.filter(op -> op.getCode().equals(newAdmissionDTO.getOperation().getCode()))
-					.collect(Collectors.toList());
-			if (opFounds.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Operation not found!", OHSeverityLevel.ERROR));
-			}
-			newAdmission.setOperation(opFounds.get(0));
-		}
-
-		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null
-				&& !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null && !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(newAdmissionDTO.getDisType().getCode()))
@@ -773,19 +756,7 @@ public class AdmissionController {
 			updateAdmission.setDiseaseOut3(dOut3s.get(0));
 		} 
 	
-		if (updateAdmissionDTO.getOperation() != null && updateAdmissionDTO.getOperation().getCode() != null && !updateAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
-			List<Operation> operations = operationManager.getOperation();
-			List<Operation> opFounds = operations.stream()
-					.filter(op -> op.getCode().equals(updateAdmissionDTO.getOperation().getCode()))
-					.collect(Collectors.toList());
-			if (opFounds.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Operation not found!", OHSeverityLevel.ERROR));
-			}
-			updateAdmission.setOperation(opFounds.get(0));
-		}
-
-		if (updateAdmissionDTO.getDisType() != null && updateAdmissionDTO.getDisType().getCode() != null
-				&& !updateAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
+		if (updateAdmissionDTO.getDisType() != null && updateAdmissionDTO.getDisType().getCode() != null && !updateAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
 					.filter(dtp -> dtp.getCode().equals(updateAdmissionDTO.getDisType().getCode()))
