@@ -69,8 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.tokenProvider = tokenProvider;
     }
     
-	  @Autowired
-	  private CustomLogoutHandler customLogoutHandler;
+	@Autowired
+	private CustomLogoutHandler customLogoutHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
@@ -274,11 +274,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("admin", "guest")
             .and()
-						// .formLogin()
-						// .loginPage("/auth/login")
-						// .successHandler(successHandler())
-						// .failureHandler(failureHandler())
-						// .and()
+				// .formLogin()
+				// .loginPage("/auth/login")
+				// .successHandler(successHandler())
+				// .failureHandler(failureHandler())
+				// .and()
 			.apply(securityConfigurerAdapter())
 			.and()
             .httpBasic()

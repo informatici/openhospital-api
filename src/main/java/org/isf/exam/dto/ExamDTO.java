@@ -44,7 +44,7 @@ public class ExamDTO {
     @ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
 
-    public int getLock() {
+	public int getLock() {
 		return lock;
 	}
 
@@ -53,7 +53,7 @@ public class ExamDTO {
 	}
 
 	public ExamDTO() {
-    }
+	}
 
     public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype) {
         this.code = code;
