@@ -155,17 +155,17 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
-        if(visit == null)
+        if (visit == null)
         	throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
         
-        if(visit.getVisitID() != updateVisit.getVisitID())
+        if (visit.getVisitID() != updateVisit.getVisitID())
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         
         Visit visitUp = mapper.map2Model(updateVisit);
         //visitUp.setDate(updateVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         //Visit visitUpdate = visitManager.updateVisit(visitUp);
         Visit visitUpdate = visitManager.newVisit(visitUp);
-        if(visitUpdate == null)
+        if (visitUpdate == null)
         	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
         
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));

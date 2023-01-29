@@ -117,11 +117,11 @@ public class OpdController {
 	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-		if(opdManager.getOpdByCode(code) == null ) {	
+		if (opdManager.getOpdByCode(code) == null ) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 
-		if(opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
+		if (opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 		

@@ -126,7 +126,7 @@ public class PatientDTO {
 		return lock;
 	}
 
-    public String getAllergies() {
+	public String getAllergies() {
 		return allergies;
 	}
 

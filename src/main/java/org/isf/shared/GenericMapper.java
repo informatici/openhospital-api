@@ -67,7 +67,7 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		// TODO Auto-generated method stub
 		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
 		
-		if(status)
+		if (status)
 			patientDTO.setStatus(PatientSTATUS.I);
 		else 
 			patientDTO.setStatus(PatientSTATUS.O);

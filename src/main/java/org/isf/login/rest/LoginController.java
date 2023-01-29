@@ -62,7 +62,7 @@ public class LoginController {
 	
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
-		if(loginRequest.getPassword().length() < 10) {
+		if (loginRequest.getPassword().length() < 10) {
 			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT, "password too short", OHSeverityLevel.ERROR));
 		}
 		Authentication authentication = authenticationManager.authenticate(

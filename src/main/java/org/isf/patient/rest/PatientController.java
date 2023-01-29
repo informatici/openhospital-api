@@ -134,7 +134,7 @@ public class PatientController {
 //			}
 			return patientDTO;
 		}).collect(Collectors.toList());
-        if(patientDTOS.isEmpty()){
+        if (patientDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
         }
 		return ResponseEntity.ok(patientDTOS);
@@ -182,7 +182,7 @@ public class PatientController {
 			params.put("secondName", secondName);
 		}
 		
-		if(birthDate != null) {
+		if (birthDate != null) {
 			params.put("birthDate", birthDate);
 		}
 		
@@ -220,7 +220,7 @@ public class PatientController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        if(patient.getBirthDate() != null) {
+//        if (patient.getBirthDate() != null) {
 //        	 Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
 //             patientDTO.setBirthDate(date); 
 //        }

@@ -240,22 +240,22 @@ public class OperationController {
 	
 	/**
 	 * Updates the specified {@link OperationRow}.
+	 * 
 	 * @param operationRowDTO
 	 * @return {@code true} if the operation row has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO)
-			throws OHServiceException {
+	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
-	    if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-		   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
-	    }
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
-		//opRow.setOpDate(operationRowDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-		
+		// opRow.setOpDate(operationRowDTO.getOpDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
-				.collect(Collectors.toList());
+						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
 		}
