@@ -190,14 +190,14 @@ public class ExaminationController {
         }
         PatientExamination patientExamination = examinationBrowserManager.getDefaultPatientExamination(patient);
         PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
-        if (patientExaminationDTO == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		if (patientExaminationDTO == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 //			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
 //			Date date = (Date) Date.from(instant);
 //			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-            return ResponseEntity.ok(patientExaminationDTO);
-        }
+			return ResponseEntity.ok(patientExaminationDTO);
+		}
     }
 
     @GetMapping(value = "/examinations/fromLastPatientExamination/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
