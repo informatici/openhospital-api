@@ -299,14 +299,14 @@ public class AdmissionController {
 //		LocalDateTime[] dischargeR = new LocalDateTime[2];
 //		
 //		
-//		if(admissionrange != null) {
+//		if (admissionrange != null) {
 //			admissionR = new LocalDateTime[admissionrange.length];	
 //			for (int i = 0; i < admissionrange.length; i++) {
 //				LocalDateTime dateR  = admissionrange[i].toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 //				admissionR[i] = dateR;
 //			}
 //		}
-//		if(dischargerange != null) {
+//		if (dischargerange != null) {
 //
 //			dischargeR = new LocalDateTime[dischargerange.length];	
 //			for (int j = 0; j < dischargerange.length; j++) {
@@ -330,7 +330,7 @@ public class AdmissionController {
 			
 			Admission adm = admP!=null ? admP.getAdmission():null;
 			AdmissionDTO admissionDTO = new AdmissionDTO();
-			if(adm!= null) {
+			if (adm!= null) {
 				admissionDTO = admissionMapper.map2DTO(adm);
 //				Instant instant = adm.getAdmDate().atZone(ZoneId.systemDefault()).toInstant();
 //				Date date = (Date) Date.from(instant);
@@ -459,20 +459,20 @@ public class AdmissionController {
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 //		adm.setAdmDate(currentAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-		if(adm == null || admission.getId() != adm.getId()) {
+		if (adm == null || admission.getId() != adm.getId()) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-   		if(adm.getDiseaseOut1() == null) {
+   		if (adm.getDiseaseOut1() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "at least one disease must be give!", OHSeverityLevel.ERROR));	
    		}
 //		adm.setDisDate(currentAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-   		if(adm.getDisDate() == null) {
+   		if (adm.getDisDate() == null) {
    			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be filled in!", OHSeverityLevel.ERROR));
     	}
-   		if(adm.getDisDate().isBefore(adm.getAdmDate())) {
+   		if (adm.getDisDate().isBefore(adm.getAdmDate())) {
    			throw new OHAPIException(new OHExceptionMessage(null, "the exit date must be after the entry date!", OHSeverityLevel.ERROR));
       	}
-   		if(adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())){
+   		if (adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())){
    			throw new OHAPIException(new OHExceptionMessage(null, "the type of output is mandatory or does not exist!", OHSeverityLevel.ERROR));
    		}
    		adm.setAdmitted(0);
@@ -675,7 +675,7 @@ public class AdmissionController {
 		}
 		Admission updateAdmission = admissionMapper.map2Model(updateAdmissionDTO);
 //		updAdmission.setAdmDate(updAdmissionDTO.getAdmDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-//		if(updAdmissionDTO.getDisDate()!= null) {
+//		if (updAdmissionDTO.getDisDate()!= null) {
 //			updAdmission.setDisDate(updAdmissionDTO.getDisDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 //		}
 
