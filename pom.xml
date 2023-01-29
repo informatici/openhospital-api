@@ -162,7 +162,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
                 <configuration>
                     <release>${java.version}</release>
                 </configuration>
@@ -174,10 +173,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.0</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
+                        <id>copy-resources-rsc</id>
                         <phase>install</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -188,29 +186,27 @@
                                 <resource>
                                     <directory>rsc</directory>
                                     <filtering>true</filtering>
-                                    <includes>
-                                        <include>database.properties</include>
-                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources-static</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>static</directory>
+                                    <filtering>true</filtering>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                    <index>true</index>
-                        <!-- manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest -->
-                        <manifestEntries>
-                            <Class-Path>./rsc/</Class-Path>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
