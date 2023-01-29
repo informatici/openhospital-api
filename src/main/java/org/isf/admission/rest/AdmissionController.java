@@ -43,7 +43,6 @@ import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.operation.manager.OperationBrowserManager;
-import org.isf.operation.model.Operation;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
@@ -90,9 +89,6 @@ public class AdmissionController {
 	private DiseaseBrowserManager diseaseManager;
 
 	@Autowired
-	private OperationBrowserManager operationManager;
-
-	@Autowired
 	private PregnantTreatmentTypeBrowserManager pregTraitTypeManager;
 
 	@Autowired
@@ -116,7 +112,6 @@ public class AdmissionController {
 		this.patientManager = patientManager;
 		this.wardManager = wardManager;
 		this.diseaseManager = diseaseManager;
-		this.operationManager = operationManager;
 		this.pregTraitTypeManager = pregTraitTypeManager;
 		this.dlvrTypeManager = dlvrTypeManager;
 		this.dlvrrestTypeManager = dlvrrestTypeManager;
@@ -384,17 +379,6 @@ public class AdmissionController {
 			newAdmission.setDiseaseOut3(dOut3s.get(0));
 		} 
 	
-		if (newAdmissionDTO.getOperation() != null && newAdmissionDTO.getOperation().getCode() != null && !newAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
-			List<Operation> operations = operationManager.getOperation();
-			List<Operation> opFounds = operations.stream()
-					.filter(op -> op.getCode().equals(newAdmissionDTO.getOperation().getCode()))
-					.collect(Collectors.toList());
-			if (opFounds.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Operation not found!", OHSeverityLevel.ERROR));
-			}
-			newAdmission.setOperation(opFounds.get(0));
-		}
-
 		if (newAdmissionDTO.getDisType() != null && newAdmissionDTO.getDisType().getCode() != null && !newAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
@@ -556,17 +540,6 @@ public class AdmissionController {
 			updAdmission.setDiseaseOut3(dOut3s.get(0));
 		} 
 	
-		if (updAdmissionDTO.getOperation() != null && updAdmissionDTO.getOperation().getCode() != null && !updAdmissionDTO.getOperation().getCode().trim().isEmpty()) {
-			List<Operation> operations = operationManager.getOperation();
-			List<Operation> opFounds = operations.stream()
-					.filter(op -> op.getCode().equals(updAdmissionDTO.getOperation().getCode()))
-					.collect(Collectors.toList());
-			if (opFounds.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Operation not found!", OHSeverityLevel.ERROR));
-			}
-			updAdmission.setOperation(opFounds.get(0));
-		}
-
 		if (updAdmissionDTO.getDisType() != null && updAdmissionDTO.getDisType().getCode() != null && !updAdmissionDTO.getDisType().getCode().trim().isEmpty()) {
 			List<DischargeType> disTypes = admissionManager.getDischargeType();
 			List<DischargeType> disTypesF = disTypes.stream()
