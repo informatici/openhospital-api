@@ -46,7 +46,6 @@ public class OperationDTO {
 	@ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
 	
-	
 	public int getLock() {
 		return lock;
 	}

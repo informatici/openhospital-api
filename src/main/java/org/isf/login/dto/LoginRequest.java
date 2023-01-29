@@ -8,7 +8,7 @@ public class LoginRequest {
   
 	@NotNull
 	@ApiModelProperty(notes = "username", example = "admin", position = 1)
-    private String username;
+	private String username;
 
 	@NotNull
 	@ApiModelProperty(notes = "password of user", example = "admin", position = 2)

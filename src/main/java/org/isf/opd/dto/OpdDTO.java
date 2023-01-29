@@ -34,21 +34,21 @@ import io.swagger.annotations.ApiModelProperty;
  * @author gildas
  */
 public class OpdDTO {
-	
-	@ApiModelProperty(notes = "the code of the opd", example="3", position = 1)
+    
+    @ApiModelProperty(notes = "the code of the opd", example="3", position = 1)
     private int code;
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
     private LocalDateTime date;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     @NotNull
     @ApiModelProperty(notes = "the visit date", position = 3)
     private LocalDate visitDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
     @ApiModelProperty(notes = "the next visit date", position = 4)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
@@ -67,14 +67,13 @@ public class OpdDTO {
     private String patientName;
     
     @ApiModelProperty(notes = "Age type", example="null", position = 9)
-	private String ageType; // ADDED: Arnaud
-    
+    private String ageType; // ADDED: Arnaud
 
     @NotNull
     @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 10)
     private String note; // ADDED: Alex
 
-   // @NotNull
+    //@NotNull
     @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 11)
     private int prog_year;
 
@@ -101,7 +100,7 @@ public class OpdDTO {
     private String userID;
 
     @ApiModelProperty(notes = "lock", example = "0")
-	private int lock;
+    private int lock;
     
     private int hashCode;
     
@@ -121,207 +120,207 @@ public class OpdDTO {
     private String prescription; // ADDED: Arnaud
     
     public String getReason() {
-		return reason;
-	}
+        return reason;
+    }
 
     public void setReason(String reason) {
-		this.reason = reason;
-	}
+        this.reason = reason;
+    }
 
-	public String getAnamnesis() {
-		return anamnesis;
-	}
+    public String getAnamnesis() {
+        return anamnesis;
+    }
 
-	public void setAnamnesis(String anamnesis) {
-		this.anamnesis = anamnesis;
-	}
+    public void setAnamnesis(String anamnesis) {
+        this.anamnesis = anamnesis;
+    }
 
-	public String getAllergies() {
-		return allergies;
-	}
+    public String getAllergies() {
+        return allergies;
+    }
 
-	public void setAllergies(String allergies) {
-		this.allergies = allergies;
-	}
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
 
-	public String getTherapies() {
-		return therapies;
-	}
+    public String getTherapies() {
+        return therapies;
+    }
 
-	public void setTherapies(String therapies) {
-		this.therapies = therapies;
-	}
+    public void setTherapies(String therapies) {
+        this.therapies = therapies;
+    }
 
-	public String getPrescription() {
-		return prescription;
-	}
+    public String getPrescription() {
+        return prescription;
+    }
 
-	public void setPrescription(String prescription) {
-		this.prescription = prescription;
-	}
+    public void setPrescription(String prescription) {
+        this.prescription = prescription;
+    }
 
-	@ApiModelProperty(hidden=true)
-	public int getLock() {
-		return lock;
-	}
+    @ApiModelProperty(hidden=true)
+    public int getLock() {
+        return lock;
+    }
 
     @ApiModelProperty(hidden=true)
     public int getHashCode() {
         return hashCode;
     }
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
+    public void setLock(int lock) {
+        this.lock = lock;
+    }
 
-	public int getCode() {
-		return this.code;
-	}
+    public int getCode() {
+        return this.code;
+    }
 
-	public LocalDateTime getDate() {
-		return this.date;
-	}
+    public LocalDateTime getDate() {
+        return this.date;
+    }
 
-	public LocalDate getVisitDate() {
-		return this.visitDate;
-	}
+    public LocalDate getVisitDate() {
+        return this.visitDate;
+    }
 
-	public String getPatientName() {
-		return patientName;
-	}
+    public String getPatientName() {
+        return patientName;
+    }
 
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
-	}
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
 
-	public LocalDateTime getNextVisitDate() {
-		return this.nextVisitDate;
-	}
+    public LocalDateTime getNextVisitDate() {
+        return this.nextVisitDate;
+    }
 
-	public Integer getPatientCode() {
-		return this.patientCode;
-	}
+    public Integer getPatientCode() {
+        return this.patientCode;
+    }
 
-	public int getAge() {
-		return this.age;
-	}
+    public int getAge() {
+        return this.age;
+    }
 
-	public char getSex() {
-		return this.sex;
-	}
+    public char getSex() {
+        return this.sex;
+    }
 
-	public String getNote() {
-		return this.note;
-	}
+    public String getNote() {
+        return this.note;
+    }
 
-	public int getProg_year() {
-		return this.prog_year;
-	}
+    public int getProg_year() {
+        return this.prog_year;
+    }
 
-	public DiseaseDTO getDisease() {
-		return this.disease;
-	}
+    public DiseaseDTO getDisease() {
+        return this.disease;
+    }
 
-	public DiseaseDTO getDisease2() {
-		return this.disease2;
-	}
+    public DiseaseDTO getDisease2() {
+        return this.disease2;
+    }
 
-	public DiseaseDTO getDisease3() {
-		return this.disease3;
-	}
+    public DiseaseDTO getDisease3() {
+        return this.disease3;
+    }
 
-	public char getNewPatient() {
-		return this.newPatient;
-	}
+    public char getNewPatient() {
+        return this.newPatient;
+    }
 
-	public String getReferralFrom() {
-		return this.referralFrom;
-	}
+    public String getReferralFrom() {
+        return this.referralFrom;
+    }
 
-	public String getReferralTo() {
-		return this.referralTo;
-	}
+    public String getReferralTo() {
+        return this.referralTo;
+    }
 
-	public String getUserID() {
-		return this.userID;
-	}
+    public String getUserID() {
+        return this.userID;
+    }
 
-	public void setCode(int code) {
-		this.code = code;
-	}
+    public void setCode(int code) {
+        this.code = code;
+    }
 
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
 
-	public void setVisitDate(LocalDate visitDate) {
-		this.visitDate = visitDate;
-	}
+    public void setVisitDate(LocalDate visitDate) {
+        this.visitDate = visitDate;
+    }
 
-	public void setNextVisitDate(LocalDateTime nextVisitDate) {
-		this.nextVisitDate = nextVisitDate;
-	}
+    public void setNextVisitDate(LocalDateTime nextVisitDate) {
+        this.nextVisitDate = nextVisitDate;
+    }
 
-	public void setPatientCode(Integer patientCode) {
-		this.patientCode = patientCode;
-	}
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public void setAge(int age) {
+        this.age = age;
+    }
 
-	public void setSex(char sex) {
-		this.sex = sex;
-	}
+    public void setSex(char sex) {
+        this.sex = sex;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-	public void setProg_year(int prog_year) {
-		this.prog_year = prog_year;
-	}
+    public void setProg_year(int prog_year) {
+        this.prog_year = prog_year;
+    }
 
-	public void setDisease(DiseaseDTO disease) {
-		this.disease = disease;
-	}
+    public void setDisease(DiseaseDTO disease) {
+        this.disease = disease;
+    }
 
-	public void setDisease2(DiseaseDTO disease2) {
-		this.disease2 = disease2;
-	}
+    public void setDisease2(DiseaseDTO disease2) {
+        this.disease2 = disease2;
+    }
 
-	public void setDisease3(DiseaseDTO disease3) {
-		this.disease3 = disease3;
-	}
+    public void setDisease3(DiseaseDTO disease3) {
+        this.disease3 = disease3;
+    }
 
-	public void setNewPatient(char newPatient) {
-		this.newPatient = newPatient;
-	}
+    public void setNewPatient(char newPatient) {
+        this.newPatient = newPatient;
+    }
 
-	public void setReferralFrom(String referralFrom) {
-		this.referralFrom = referralFrom;
-	}
+    public void setReferralFrom(String referralFrom) {
+        this.referralFrom = referralFrom;
+    }
 
-	public void setReferralTo(String referralTo) {
-		this.referralTo = referralTo;
-	}
+    public void setReferralTo(String referralTo) {
+        this.referralTo = referralTo;
+    }
 
-	public void setUserID(String userID) {
-		this.userID = userID;
-	}
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
 
-	public void setHashCode(int hashCode) {
-		this.hashCode = hashCode;
-	}
+    public void setHashCode(int hashCode) {
+        this.hashCode = hashCode;
+    }
 
-	public String getAgeType() {
-		return ageType;
-	}
+    public String getAgeType() {
+        return ageType;
+    }
 
-	public void setAgeType(String ageType) {
-		this.ageType = ageType;
-	}
-	
-	
+    public void setAgeType(String ageType) {
+        this.ageType = ageType;
+    }
+    
+    
 }

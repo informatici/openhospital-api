@@ -72,7 +72,7 @@ public class MalnutritionDTO {
 		weight = aWeight;
 	}
 
-    public int getLock() {
+	public int getLock() {
 		return lock;
 	}
 
