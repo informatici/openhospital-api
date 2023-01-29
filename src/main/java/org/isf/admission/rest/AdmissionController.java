@@ -378,7 +378,7 @@ public class AdmissionController {
 	 * Get the next prog in the year for specified {@link Ward} code.
 	 * 
 	 * @param wardCode
-	 * @return the next prog.<
+	 * @return the next prog.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/getNextProgressiveIdInYear", produces = MediaType.APPLICATION_JSON_VALUE)
