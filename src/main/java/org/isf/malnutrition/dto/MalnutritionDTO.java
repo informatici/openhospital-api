@@ -58,7 +58,6 @@ public class MalnutritionDTO {
 	@ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
 	
-	
 	public MalnutritionDTO() { }
 	
 	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp,
