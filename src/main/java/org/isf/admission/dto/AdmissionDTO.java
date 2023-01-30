@@ -90,14 +90,12 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "operation date", position = 15)
 	private LocalDateTime opDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
 	private String opResult;
 
 	@ApiModelProperty(notes = "discharge date", position = 17)
 	private LocalDateTime disDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@ApiModelProperty(notes = "disChargeType", position = 18)
 	private DischargeTypeDTO disType;
@@ -110,14 +108,12 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "visit date", position = 21)
 	private LocalDateTime visitDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@ApiModelProperty(notes = "treatmentType ", position = 22)
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
 	@ApiModelProperty(notes = "delivery date", position = 23)
 	private LocalDateTime deliveryDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@ApiModelProperty(notes = "delivery type", position = 24)
 	private DeliveryTypeDTO deliveryType;

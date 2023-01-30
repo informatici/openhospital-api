@@ -41,12 +41,10 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime registrationDate;
 
     @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime examDate;
     
     @ApiModelProperty(notes = "Laboratory Result", position = 6)

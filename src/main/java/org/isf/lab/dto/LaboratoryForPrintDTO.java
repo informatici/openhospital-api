@@ -21,16 +21,13 @@
  */
 package org.isf.lab.dto;
 
-import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 
 public class LaboratoryForPrintDTO {
 
 	private String exam;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-	private Date date;
+	private LocalDateTime date;
 
 	private String result;
 
@@ -56,11 +53,11 @@ public class LaboratoryForPrintDTO {
 		this.exam = exam;
 	}
 
-	public Date getDate() {
+	public LocalDateTime getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
