@@ -43,14 +43,14 @@ public class OpdDTO {
     private LocalDateTime date;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-    @NotNull
-    @ApiModelProperty(notes = "the visit date", position = 3)
-    private LocalDate visitDate;
+   // @NotNull
+   // @ApiModelProperty(notes = "the visit date", position = 3)
+   // private LocalDate visitDate;
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-    @ApiModelProperty(notes = "the next visit date", position = 4)
+    //@ApiModelProperty(notes = "the next visit date", position = 4)
 	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-    private LocalDateTime nextVisitDate;
+    //private LocalDateTime nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;
@@ -186,9 +186,9 @@ public class OpdDTO {
 		return this.date;
 	}
 
-	public LocalDate getVisitDate() {
-		return this.visitDate;
-	}
+	//public LocalDate getVisitDate() {
+	//	return this.visitDate;
+	//}
 
 	public String getPatientName() {
 		return patientName;
@@ -198,9 +198,9 @@ public class OpdDTO {
 		this.patientName = patientName;
 	}
 
-	public LocalDateTime getNextVisitDate() {
-		return this.nextVisitDate;
-	}
+	//public LocalDateTime getNextVisitDate() {
+	//	return this.nextVisitDate;
+	//}
 
 	public Integer getPatientCode() {
 		return this.patientCode;
@@ -258,13 +258,13 @@ public class OpdDTO {
 		this.date = date;
 	}
 
-	public void setVisitDate(LocalDate visitDate) {
-		this.visitDate = visitDate;
-	}
+	//public void setVisitDate(LocalDate visitDate) {
+	//	this.visitDate = visitDate;
+	//}
 
-	public void setNextVisitDate(LocalDateTime nextVisitDate) {
-		this.nextVisitDate = nextVisitDate;
-	}
+	//public void setNextVisitDate(LocalDateTime nextVisitDate) {
+	//	this.nextVisitDate = nextVisitDate;
+	//}
 
 	public void setPatientCode(Integer patientCode) {
 		this.patientCode = patientCode;
