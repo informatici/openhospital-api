@@ -29,6 +29,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class OpenHospitalApiApplicationTests {
 
+//  FIXME: test application context loading	
 //	@Test
 //	public void contextLoads() {
 //	}
