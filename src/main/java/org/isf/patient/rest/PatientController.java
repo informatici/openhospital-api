@@ -93,9 +93,6 @@ public class PatientController {
         if (patient == null){
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
         }
-//        PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        Date date = Date.from(pat.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        patientDTO.setBirthDate(date);
         return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
 
@@ -115,8 +112,6 @@ public class PatientController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
         }
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        patientDTO.setBirthDate(date); 
         return ResponseEntity.ok(patientDTO);
 	}
 
@@ -127,12 +122,7 @@ public class PatientController {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		List<Patient> patients = patientManager.getPatient(page, size);
 		List<PatientDTO> patientDTOS = patients.stream().map(pat -> {
-			PatientDTO patientDTO = patientMapper.map2DTO(pat);
-//			if (pat.getBirthDate() != null) {
-//				Date date = Date.from(pat.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//				patientDTO.setBirthDate(date);
-//			}
-			return patientDTO;
+			return patientMapper.map2DTO(pat);
 		}).collect(Collectors.toList());
         if (patientDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
@@ -154,10 +144,6 @@ public class PatientController {
 		LOGGER.debug("admission retrieved: {}", admission);
 		Boolean status = admission != null ? true : false;
 		PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
-//		if (patient.getBirthDate() != null) {
-//			Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//			patientDTO.setBirthDate(date);
-//		}
 		return ResponseEntity.ok(patientDTO);
 	}
 
@@ -202,12 +188,7 @@ public class PatientController {
 			Admission admission = null;
 			admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
-			PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
-			//	if (patient.getBirthDate() != null) {
-			//		Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-			//		patientDTO.setBirthDate(date);
-			//	}
-			return patientDTO;
+			return patientMapper.map2DTOWS(patient, status);
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(patientListDTO);
 	}
@@ -220,10 +201,6 @@ public class PatientController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        if (patient.getBirthDate() != null) {
-//        	 Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//             patientDTO.setBirthDate(date); 
-//        }
         return ResponseEntity.ok(patientDTO);
 	}
 	

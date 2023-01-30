@@ -80,11 +80,7 @@ public class VisitsController {
         List<VisitDTO> listVisit = new ArrayList<VisitDTO>();
         for(Visit visitP : visit) {	
 			VisitDTO visitDTO =  mapper.map2DTO(visitP);
-//    		Instant instant = visitP.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//        	Date date = (Date) Date.from(instant);
-//        	visitDTO.setDate(date);
         	listVisit.add(visitDTO);
-    			
     	}
         if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -104,7 +100,6 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 	    LOGGER.info("Create Visit: {}", newVisit);
 	    Visit visitD = mapper.map2Model(newVisit);
-	    //visitD.setDate(newVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         Visit visit = visitManager.newVisit(visitD);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); //TODO: verify if it's correct
     }
@@ -162,12 +157,10 @@ public class VisitsController {
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         
         Visit visitUp = mapper.map2Model(updateVisit);
-        //visitUp.setDate(updateVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        //Visit visitUpdate = visitManager.updateVisit(visitUp);
         Visit visitUpdate = visitManager.newVisit(visitUp);
-        if (visitUpdate == null)
+        if (visitUpdate == null) {
         	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
-        
+        }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }
 

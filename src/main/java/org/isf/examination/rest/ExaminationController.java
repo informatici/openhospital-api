@@ -193,9 +193,6 @@ public class ExaminationController {
 		if (patientExaminationDTO == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-//			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = (Date) Date.from(instant);
-//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
 			return ResponseEntity.ok(patientExaminationDTO);
 		}
     }
@@ -208,9 +205,6 @@ public class ExaminationController {
 		if (patientExaminationDTO == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-//			Instant instant = lastPatientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = (Date) Date.from(instant);
-//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
 			return ResponseEntity.ok(patientExaminationDTO);
 		}
 	}
@@ -224,9 +218,6 @@ public class ExaminationController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
-//			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = (Date) Date.from(instant);
-//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
 			return ResponseEntity.ok(patientExaminationDTO);
 
 		}
@@ -241,9 +232,6 @@ public class ExaminationController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
-//			Instant instant = patientExamination.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//			Date date = (Date) Date.from(instant);
-//			patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
 			return ResponseEntity.ok(patientExaminationDTO);
 		}
 	}
@@ -257,11 +245,7 @@ public class ExaminationController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			List<PatientExaminationDTO> patientExamList = patientExaminationList.stream().map(pat -> {
-				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
-//				Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//				Date date = (Date) Date.from(instant);
-//				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-				return patientExaminationDTO;
+				return patientExaminationMapper.map2DTO(pat);
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(patientExamList);
 		}
@@ -276,11 +260,7 @@ public class ExaminationController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			listPatientExaminationDTO = patientExamination.stream().map(pat -> {
-				PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(pat);
-//				Instant instant = pat.getPex_date().atZone(ZoneId.systemDefault()).toInstant();
-//				Date date = (Date) Date.from(instant);
-//				patientExaminationDTO.setPex_date(patientExaminationDTO.getPex_date());
-				return patientExaminationDTO;
+				return patientExaminationMapper.map2DTO(pat);
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(listPatientExaminationDTO);
 		}
