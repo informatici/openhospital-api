@@ -162,8 +162,8 @@ public class OpdController {
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
 			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateFrom, 
 			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateTo, 
-			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alldiseasetypes.txt") String diseaseTypeCode,
-			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
+			@RequestParam(value = "diseaseTypeCode", required = false) String diseaseTypeCode,
+			@RequestParam(value = "diseaseCode", required = false) String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
 			@RequestParam(value = "ageTo", required = false, defaultValue = "200") Integer ageTo,
 			@RequestParam(value = "sex", required = false, defaultValue = "A") char sex,
@@ -172,8 +172,8 @@ public class OpdController {
 		LOGGER.info("Get opd within specified dates");
 		LOGGER.debug("dateFrom: {}", dateFrom);
 		LOGGER.debug("dateTo: {}", dateTo);
-		LOGGER.debug("diseaseTypeCode: {} -> {}", diseaseTypeCode, MessageBundle.getMessage(diseaseTypeCode));
-		LOGGER.debug("diseaseCode: {} -> {}", diseaseCode, MessageBundle.getMessage(diseaseCode));
+		LOGGER.debug("diseaseTypeCode: {}", diseaseTypeCode);
+		LOGGER.debug("diseaseCode: {}", diseaseCode);
 		LOGGER.debug("ageFrom: {}", ageFrom);
 		LOGGER.debug("ageTo: {}", ageTo);
 		LOGGER.debug("sex: {}", sex);
