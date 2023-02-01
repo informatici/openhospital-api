@@ -159,7 +159,7 @@ public class OpdController {
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
 			@RequestParam(value = "dateFrom") LocalDate dateFrom, 
-			@RequestParam(value = "dateFrom") LocalDate dateTo, 
+			@RequestParam(value = "dateTo") LocalDate dateTo, 
 			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode,
 			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
