@@ -374,7 +374,7 @@ public class UserController {
 
 
 	/**
-	 * Retrieves all permissions of the sername passed as path variable. If user not
+	 * Retrieves all permissions of the username passed as path variable. If user not
 	 * found, an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
