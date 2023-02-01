@@ -46,7 +46,9 @@ import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
 import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.operation.manager.OperationBrowserManager;
+import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
@@ -221,7 +223,7 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 		}
 		if (dischargeRange != null && dischargeRange.length == 2) {
-			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
+			LOGGER.debug("Get admissions end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 		
 		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
@@ -240,7 +242,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
+	public ResponseEntity<List<AdmittedPatientDTO>> getAdmissions(
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
 			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
@@ -250,7 +252,7 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 		}
 		if (dischargeRange != null && dischargeRange.length == 2) {
-			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
+			LOGGER.debug("Get admissions end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 		
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
@@ -262,21 +264,7 @@ public class AdmissionController {
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (admittedPatients.get(0).getAdmission() == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		List<AdmissionDTO> adms = admittedPatients.stream().map(admP->{
-			
-			Admission adm = admP!=null ? admP.getAdmission():null;
-			AdmissionDTO admissionDTO = new AdmissionDTO();
-			if (adm!= null) {
-				admissionDTO = admissionMapper.map2DTO(adm);
-			}	
-			return admissionDTO;
-		}).filter(adm -> {
-			return adm.getId() != 0;
-		}).collect(Collectors.toList());
-		return ResponseEntity.ok(adms);
+		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
 	}
 	
 	/**
