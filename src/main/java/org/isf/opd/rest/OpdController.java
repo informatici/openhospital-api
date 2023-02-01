@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
@@ -38,6 +39,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -158,9 +160,9 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
-			@RequestParam(value = "dateFrom") LocalDate dateFrom, 
-			@RequestParam(value = "dateTo") LocalDate dateTo, 
-			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode,
+			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateFrom, 
+			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateTo, 
+			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alldiseasetypes.txt") String diseaseTypeCode,
 			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
 			@RequestParam(value = "ageTo", required = false, defaultValue = "200") Integer ageTo,
@@ -168,9 +170,23 @@ public class OpdController {
 			@RequestParam(value = "newPatient", required = false, defaultValue = "A") char newPatient,
 			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
-
-		List<Opd> opds = opdManager.getOpd(null, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, 0);
+		LOGGER.debug("dateFrom: {}", dateFrom);
+		LOGGER.debug("dateTo: {}", dateTo);
+		LOGGER.debug("diseaseTypeCode: {} -> {}", diseaseTypeCode, MessageBundle.getMessage(diseaseTypeCode));
+		LOGGER.debug("diseaseCode: {} -> {}", diseaseCode, MessageBundle.getMessage(diseaseCode));
+		LOGGER.debug("ageFrom: {}", ageFrom);
+		LOGGER.debug("ageTo: {}", ageTo);
+		LOGGER.debug("sex: {}", sex);
+		LOGGER.debug("newPatient: {}", newPatient);
+		LOGGER.debug("patientCode: {}", patientCode);
 		
+		List<Opd> opds = null;
+		if (patientCode != 0) {
+			opds = opdManager.getOpdList(patientCode);
+		} else {
+			opds = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
+		}
+
 		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
 			return mapper.map2DTO(opd);
 		}).collect(Collectors.toList());

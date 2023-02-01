@@ -58,6 +58,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -211,10 +212,16 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
-			@RequestParam(name = "admissionrange", required = false) LocalDateTime[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
+		if (admissionRange != null && admissionRange.length == 2) {
+			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
+		}
+		if (dischargeRange != null && dischargeRange.length == 2) {
+			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
+		}
 		
 		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
 		if (admittedPatients.isEmpty()) {
@@ -234,10 +241,17 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
-			@RequestParam(name = "admissionrange", required = false) LocalDateTime[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) LocalDateTime[] dischargeRange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admissions of patients by id: {}", patientcode);
+		if (admissionRange != null && admissionRange.length == 2) {
+			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
+		}
+		if (dischargeRange != null && dischargeRange.length == 2) {
+			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
+		}
+		
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		if (patientcode == 0) {
 			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, "");
