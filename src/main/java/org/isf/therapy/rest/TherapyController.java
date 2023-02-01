@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -82,7 +82,7 @@ public class TherapyController {
 	 */
 	@PostMapping(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
-		if(thRowDTO.getPatID() == null) {
+		if (thRowDTO.getPatID() == null) {
 			throw new OHAPIException(
 					new OHExceptionMessage(null, "patient not found!", OHSeverityLevel.ERROR));
 		}
@@ -101,7 +101,7 @@ public class TherapyController {
 	public ResponseEntity<TherapyRow> replaceTherapies(@RequestBody @Valid List<TherapyRowDTO> thRowDTOs) throws OHServiceException {
 		ArrayList<TherapyRow> therapies = (ArrayList<TherapyRow>)therapyRowMapper.map2ModelList(thRowDTOs);
 		TherapyRow done = manager.newTherapy(therapies.get(0));
-		if(done != null) {
+		if (done != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(done);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not replaced!", OHSeverityLevel.ERROR));

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -80,11 +80,7 @@ public class VisitsController {
         List<VisitDTO> listVisit = new ArrayList<VisitDTO>();
         for(Visit visitP : visit) {	
 			VisitDTO visitDTO =  mapper.map2DTO(visitP);
-//    		Instant instant = visitP.getDate().atZone(ZoneId.systemDefault()).toInstant();
-//        	Date date = (Date) Date.from(instant);
-//        	visitDTO.setDate(date);
         	listVisit.add(visitDTO);
-    			
     	}
         if (listVisit.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -104,7 +100,6 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 	    LOGGER.info("Create Visit: {}", newVisit);
 	    Visit visitD = mapper.map2Model(newVisit);
-	    //visitD.setDate(newVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         Visit visit = visitManager.newVisit(visitD);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); //TODO: verify if it's correct
     }
@@ -155,19 +150,17 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
-        if(visit == null)
+        if (visit == null)
         	throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
         
-        if(visit.getVisitID() != updateVisit.getVisitID())
+        if (visit.getVisitID() != updateVisit.getVisitID())
         	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         
         Visit visitUp = mapper.map2Model(updateVisit);
-        //visitUp.setDate(updateVisit.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
-        //Visit visitUpdate = visitManager.updateVisit(visitUp);
         Visit visitUpdate = visitManager.newVisit(visitUp);
-        if(visitUpdate == null)
+        if (visitUpdate == null) {
         	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
-        
+        }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }
 

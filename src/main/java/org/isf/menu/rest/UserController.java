@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -364,12 +364,9 @@ public class UserController {
 			LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
 			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
-			User user = userManager.getUserByName(currentUserName);
 			UserProfileDTO userProfileDTO = new UserProfileDTO();
 			userProfileDTO.setUserName(currentUserName);
 			userProfileDTO.setPermissions(permissionsCode);
-			userProfileDTO.setUserDesc(user.getDesc());
-			userProfileDTO.setUserGroupName(user.getUserGroupName().getDesc());
 			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserProfileDTO());
@@ -377,7 +374,7 @@ public class UserController {
 
 
 	/**
-	 * Retrieves all permissions of the sername passed as path variable. If user not
+	 * Retrieves all permissions of the username passed as path variable. If user not
 	 * found, an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}

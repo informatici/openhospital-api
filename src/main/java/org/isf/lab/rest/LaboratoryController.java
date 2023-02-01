@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -32,14 +32,12 @@ import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
-import org.isf.lab.dto.LaboratoryForPrintDTO;
 import org.isf.lab.dto.LaboratoryRowDTO;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
-import org.isf.lab.model.LaboratoryForPrint;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -64,7 +62,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
 public class LaboratoryController {
 
 	@Autowired
@@ -86,7 +84,7 @@ public class LaboratoryController {
 	private LaboratoryForPrintMapper laboratoryForPrintMapper;
 
 	public LaboratoryController(LabManager laboratoryManager, PatientBrowserManager patientBrowserManager, ExamBrowsingManager examManager,
-			LaboratoryMapper laboratoryMapper, LaboratoryRowMapper laboratoryRowMapper, LaboratoryForPrintMapper laboratoryForPrintMapper) {
+					LaboratoryMapper laboratoryMapper, LaboratoryRowMapper laboratoryRowMapper, LaboratoryForPrintMapper laboratoryForPrintMapper) {
 		this.laboratoryManager = laboratoryManager;
 		this.patientBrowserManager = patientBrowserManager;
 		this.examManager = examManager;
@@ -112,22 +110,22 @@ public class LaboratoryController {
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
-        labToInsert.setExam(exam);
-        labToInsert.setPatient(patient);
-        labToInsert.setCode(null);
-        labToInsert.setLock(0);
-        labToInsert.setDate(LocalDateTime.now());
-        ArrayList<String> labRows = new ArrayList<>();
-        if (labRow != null) {
-            labRows = new ArrayList<String>(labRow);
-        }
-        
-        if (labToInsert.getDate() == null) {
-        	labToInsert.setDate(LocalDateTime.now());
-        }
+		labToInsert.setExam(exam);
+		labToInsert.setPatient(patient);
+		labToInsert.setCode(null);
+		labToInsert.setLock(0);
+		labToInsert.setDate(LocalDateTime.now());
+		ArrayList<String> labRows = new ArrayList<>();
+		if (labRow != null) {
+			labRows = new ArrayList<String>(labRow);
+		}
 
-        boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
-        
+		if (labToInsert.getDate() == null) {
+			labToInsert.setDate(LocalDateTime.now());
+		}
+
+		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
+
 		if (!inserted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
 		}
@@ -189,10 +187,10 @@ public class LaboratoryController {
 		}
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-        if (!labo.isPresent()) {
-        	System.out.println(!labo.isPresent());
-            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
-        }
+		if (!labo.isPresent()) {
+			System.out.println(!labo.isPresent());
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
@@ -222,16 +220,16 @@ public class LaboratoryController {
 	@DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
-    	Laboratory labToDelete = null;
-        if (lab.isPresent()) {
-        	labToDelete = lab.get();
-        }else {
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        if (!laboratoryManager.deleteLaboratory(labToDelete)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not deleted!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.ok(true);
+		Laboratory labToDelete = null;
+		if (lab.isPresent()) {
+			labToDelete = lab.get();
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		if (!laboratoryManager.deleteLaboratory(labToDelete)) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not deleted!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.ok(true);
 	}
 
     @GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -303,15 +301,15 @@ public class LaboratoryController {
         }
     }
 
-    @GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
-        List<String> materialList = laboratoryManager.getMaterialList();
-        if (materialList == null || materialList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(materialList);
-        }
-    }
+	@GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
+		List<String> materialList = laboratoryManager.getMaterialList();
+		if (materialList == null || materialList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(materialList);
+		}
+	}
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
@@ -359,7 +357,7 @@ public class LaboratoryController {
         	}).collect(Collectors.toList()));
 		}
 	}
-	
+
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
@@ -372,7 +370,7 @@ public class LaboratoryController {
 
 		return ResponseEntity.ok(laboratoryMapper.map2DTO(lab));
 	}
-	
+
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
     	LabWithRowsDTO lab = new LabWithRowsDTO();
@@ -396,8 +394,20 @@ public class LaboratoryController {
         	}
         	
 		}
-        lab.setLaboratoryRowList(labDescription);
-        return  ResponseEntity.ok(lab);
-    }
- 
+		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+		lab.setLaboratoryDTO(labDTO);
+
+		if (laboratory.getExam().getProcedure() == 2) {
+			List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
+			if (!labDes.isEmpty()) {
+				for (LaboratoryRow laboratoryRow : labDes) {
+					labDescription.add(laboratoryRow.getDescription());
+				}
+			}
+
+		}
+		lab.setLaboratoryRowList(labDescription);
+		return ResponseEntity.ok(lab);
+	}
+
 }

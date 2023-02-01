@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -114,6 +114,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
+<<<<<<< HEAD
 		opdToInsert.setPatient(patient);
 		opdToInsert.setWard(wardManager.findWard("OPD"));
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
@@ -142,11 +143,14 @@ public class OpdController {
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
 		opdToInsert.setWard(wardManager.findWard("OPD"));
+=======
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
 		}
+<<<<<<< HEAD
 		opdWithOperatioRowDTO.getOpdDTO().setWard(mapperWard.map2DTO(wardManager.findWard("OPD")));
 		opdWithOpeRDTO.setOpdDTO(mapper.map2DTO(isCreatedOpd));
 		List<OperationRowDTO> listOpeRows = new ArrayList<OperationRowDTO>();
@@ -162,6 +166,9 @@ public class OpdController {
 		}
 		opdWithOpeRDTO.setOperationRows(listOpeRows);
 		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOpeRDTO);
+=======
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 	}
 
 	/**
@@ -174,7 +181,11 @@ public class OpdController {
 	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
+<<<<<<< HEAD
 		if (opdManager.getOpdByCode(code) == null ) {	
+=======
+		if (opdManager.getOpdById(code) == null) {	
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 
@@ -278,8 +289,13 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
+<<<<<<< HEAD
 			@RequestParam(value = "dateFrom") String dateFrom, 
 			@RequestParam(value = "dateTo") String dateTo, 
+=======
+			@RequestParam(value = "dateFrom") LocalDate dateFrom, 
+			@RequestParam(value = "dateTo") LocalDate dateTo, 
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode,
 			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
@@ -316,6 +332,7 @@ public class OpdController {
 		List<Opd> opds = opdManager.getOpdList(pcode);
 		List<OpdWithOperatioRowDTO> opdWithOpeRowDTOs = new ArrayList<OpdWithOperatioRowDTO>();
 		if (!opds.isEmpty()) {
+<<<<<<< HEAD
 			for (Opd opd : opds) {
 				OpdWithOperatioRowDTO opdWithOpeRow = new OpdWithOperatioRowDTO();
 				opdWithOpeRow.setOpdDTO(mapper.map2DTO(opd));	
@@ -324,6 +341,12 @@ public class OpdController {
 				opdWithOpeRowDTOs.add(opdWithOpeRow);	
 			}
 			return ResponseEntity.ok(opdWithOpeRowDTOs);
+=======
+			opdDTOs = opds.stream().map(opd -> {
+				return mapper.map2DTO(opd);
+			}).collect(Collectors.toList());
+			return ResponseEntity.ok(opdDTOs);
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
 		} else {
 
@@ -371,8 +394,12 @@ public class OpdController {
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
+<<<<<<< HEAD
 		OpdDTO opdDTO =  mapper.map2DTO(lastOpd);
 		return ResponseEntity.ok(opdDTO);
+=======
+		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 	}
 	
 	/**

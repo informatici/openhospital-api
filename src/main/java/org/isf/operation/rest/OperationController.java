@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -213,7 +213,7 @@ public class OperationController {
 	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
-		if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
@@ -234,21 +234,25 @@ public class OperationController {
 	
 	/**
 	 * Updates the specified {@link OperationRow}.
+	 * 
 	 * @param operationRowDTO
 	 * @return {@code true} if the operation row has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO)
-			throws OHServiceException {
+	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
-	    if(operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-		   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
-	    }
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
-				.collect(Collectors.toList());
+						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
 		}
@@ -291,8 +295,12 @@ public class OperationController {
 		Patient patient = patientBrowserManager.getPatientById(patientCode);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByPatientCode(patient);
 		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
+<<<<<<< HEAD
 			OperationRowDTO opR = opRowMapper.map2DTO(operation);
 			return opR;
+=======
+			return opRowMapper.map2DTO(operation);
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		}).collect(Collectors.toList());
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
@@ -311,8 +319,12 @@ public class OperationController {
 		LOGGER.info("Get operations row for provided opd");
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
 		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
+<<<<<<< HEAD
 			OperationRowDTO opR = opRowMapper.map2DTO(operation);
 			return opR;
+=======
+			return opRowMapper.map2DTO(operation);
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		}).collect(Collectors.toList());
 		
 		if (operationRowDTOs.isEmpty()) {

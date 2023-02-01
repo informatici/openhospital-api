@@ -22,16 +22,19 @@
 package org.isf.security;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.isf.security.jwt.TokenProvider;
+import org.isf.sessionaudit.manager.SessionAuditManager;
+import org.isf.sessionaudit.model.SessionAudit;
+import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -47,50 +50,49 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 	private TokenProvider tokenProvider;
 
+	@Autowired
+	private HttpSession httpSession;
+
+	@Autowired
+	private SessionAuditManager sessionAuditManager;
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
+
 	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
 	}
 
-	private final Logger logger = LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+					throws ServletException, IOException {
 
-    @Override
-    public void onAuthenticationSuccess(
-      HttpServletRequest request,
-      HttpServletResponse response, 
-      Authentication authentication) 
-      throws ServletException, IOException {
-  
-        SavedRequest savedRequest
-          = requestCache.getRequest(request, response);
+		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
+		LoginResponse loginResponse = new LoginResponse();
+		loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
+		loginResponse.setDisplayName(authentication.getName());
+		ObjectMapper mapper = new ObjectMapper();
 
-        //response.setHeader("Set-Cookie", response.getHeader("Set-Cookie") + ";SameSite=none; Secure");
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
-        loginResponse.setDisplayName(authentication.getName());
-        ObjectMapper mapper = new ObjectMapper();
+		response.getWriter().append(mapper.writeValueAsString(loginResponse));
+		response.setStatus(200);
 
-        response.getWriter().append(mapper.writeValueAsString(loginResponse));
-        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(200);
+		try {
+			this.httpSession.setAttribute("sessionAuditId",
+							sessionAuditManager.newSessionAudit(new SessionAudit(authentication.getName(), LocalDateTime.now(), null)));
+		} catch (OHServiceException e1) {
+			LOGGER.error("Unable to log user login in the session_audit table");
+		}
 
-        if (savedRequest == null) {
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        String targetUrlParam = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl()
-          || (targetUrlParam != null
-          && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
-            requestCache.removeRequest(request, response);
-            clearAuthenticationAttributes(request);
-            return;
-        }
-        clearAuthenticationAttributes(request);
-
-        authentication.getDetails();
-
-
-    }
-
+		if (savedRequest == null) {
+			clearAuthenticationAttributes(request);
+			return;
+		}
+		String targetUrlParam = getTargetUrlParameter();
+		if (isAlwaysUseDefaultTargetUrl() || (targetUrlParam != null && StringUtils.hasText(request.getParameter(targetUrlParam)))) {
+			requestCache.removeRequest(request, response);
+			clearAuthenticationAttributes(request);
+			return;
+		}
+		clearAuthenticationAttributes(request);
+	}
 }

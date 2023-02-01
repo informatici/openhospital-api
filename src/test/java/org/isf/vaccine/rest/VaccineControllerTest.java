@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -141,7 +141,6 @@ public class VaccineControllerTest {
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isCreated())
 				.andReturn();
-
 		LOGGER.debug("result: {}", result);
 	}
 

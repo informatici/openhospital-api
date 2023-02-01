@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -40,12 +40,10 @@ public class TherapyRowDTO {
 
 	@NotNull(message="the start date is required")
 	@ApiModelProperty(notes="The start date of therapy", example = "2020-07-16T00:00:00", position = 3)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime startDate;
 
 	@NotNull(message="the end date is required")
 	@ApiModelProperty(notes="The end date of the therapy", example = "2020-07-30T00:00:00", position = 4)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime endDate;
 
 	@NotNull(message="the medical's ID is required")

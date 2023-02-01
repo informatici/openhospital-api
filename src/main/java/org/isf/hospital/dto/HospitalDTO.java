@@ -50,77 +50,77 @@ public class HospitalDTO {
     private String currencyCod;
     
     @ApiModelProperty(notes = "lock", example = "0")
-	private int lock;
+    private int lock;
 
-	public int getLock() {
-		return lock;
-	}
+    public int getLock() {
+        return lock;
+    }
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
+    public void setLock(int lock) {
+        this.lock = lock;
+    }
 
-	public String getCode() {
-		return this.code;
-	}
+    public String getCode() {
+        return this.code;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public String getAddress() {
-		return this.address;
-	}
+    public String getAddress() {
+        return this.address;
+    }
 
-	public String getCity() {
-		return this.city;
-	}
+    public String getCity() {
+        return this.city;
+    }
 
-	public String getTelephone() {
-		return this.telephone;
-	}
+    public String getTelephone() {
+        return this.telephone;
+    }
 
-	public String getFax() {
-		return this.fax;
-	}
+    public String getFax() {
+        return this.fax;
+    }
 
-	public String getEmail() {
-		return this.email;
-	}
+    public String getEmail() {
+        return this.email;
+    }
 
-	public String getCurrencyCod() {
-		return this.currencyCod;
-	}
+    public String getCurrencyCod() {
+        return this.currencyCod;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setCurrencyCod(String currencyCod) {
-		this.currencyCod = currencyCod;
-	}
+    public void setCurrencyCod(String currencyCod) {
+        this.currencyCod = currencyCod;
+    }
 }

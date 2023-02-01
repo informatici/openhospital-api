@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,9 +22,7 @@
 package org.isf.patient.rest;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +40,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -96,9 +93,6 @@ public class PatientController {
         if (patient == null){
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
         }
-//        PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        Date date = Date.from(pat.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        patientDTO.setBirthDate(date);
         return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
 
@@ -118,8 +112,6 @@ public class PatientController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
         }
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        patientDTO.setBirthDate(date); 
         return ResponseEntity.ok(patientDTO);
 	}
 
@@ -130,14 +122,9 @@ public class PatientController {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		List<Patient> patients = patientManager.getPatient(page, size);
 		List<PatientDTO> patientDTOS = patients.stream().map(pat -> {
-			PatientDTO patientDTO = patientMapper.map2DTO(pat);
-//			if (pat.getBirthDate() != null) {
-//				Date date = Date.from(pat.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//				patientDTO.setBirthDate(date);
-//			}
-			return patientDTO;
+			return patientMapper.map2DTO(pat);
 		}).collect(Collectors.toList());
-        if(patientDTOS.isEmpty()){
+        if (patientDTOS.isEmpty()){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
         }
 		return ResponseEntity.ok(patientDTOS);
@@ -152,15 +139,11 @@ public class PatientController {
 			
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		LOGGER.info("admissionBrowserManager injected: {}", admissionManager);
+		LOGGER.debug("admissionBrowserManager injected: {}", admissionManager);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
-		LOGGER.info("admission retrieved: {}", admission);
+		LOGGER.debug("admission retrieved: {}", admission);
 		Boolean status = admission != null ? true : false;
 		PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
-//		if (patient.getBirthDate() != null) {
-//			Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//			patientDTO.setBirthDate(date);
-//		}
 		return ResponseEntity.ok(patientDTO);
 	}
 
@@ -168,7 +151,7 @@ public class PatientController {
 	public ResponseEntity<List<PatientDTO>> searchPatient(
 			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
 			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-			@RequestParam(value="birthDate", defaultValue="", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") Date birthDate,
+			@RequestParam(value="birthDate", defaultValue="", required = false) LocalDateTime birthDate,
 			@RequestParam(value="address", defaultValue="", required = false) String address
 	) throws OHServiceException {
 
@@ -176,21 +159,22 @@ public class PatientController {
 		List<Patient> patientList = null;
 
 		Map<String, Object> params = new HashMap<String, Object>();
+		
 		if (firstName != null && !firstName.isEmpty()) {
 			params.put("firstName", firstName);
 		}
+		
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
 		}
-		LocalDateTime birthDateTime = null;
-		if(birthDate != null) {
-			birthDateTime  = birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-			params.put("birthDate", birthDateTime);
+		
+		if (birthDate != null) {
+			params.put("birthDate", birthDate);
 		}
+		
 		if (address != null && !address.isEmpty()) {
 			params.put("address", address);
 		}
-
 
 		if (params.entrySet().size() > 0) {
 			patientList = patientManager.getPatients(params);
@@ -199,21 +183,12 @@ public class PatientController {
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		
 		patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = null;
-			try {
-				admission = admissionManager.getCurrentAdmission(patient);
-			} catch (OHServiceException e) {
-				// TODO Auto-generated catch block
-				 new OHExceptionMessage(null, "the Patients exist but have problems with their admissions", OHSeverityLevel.ERROR);
-			}
+			admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
-			PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
-//			if (patient.getBirthDate() != null) {
-//				Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//				patientDTO.setBirthDate(date);
-//			}
-			return patientDTO;
+			return patientMapper.map2DTOWS(patient, status);
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(patientListDTO);
 	}
@@ -226,10 +201,6 @@ public class PatientController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         PatientDTO patientDTO = patientMapper.map2DTO(patient);
-//        if(patient.getBirthDate() != null) {
-//        	 Date date = Date.from(patient.getBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant());
-//             patientDTO.setBirthDate(date); 
-//        }
         return ResponseEntity.ok(patientDTO);
 	}
 	

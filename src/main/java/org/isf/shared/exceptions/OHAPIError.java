@@ -30,8 +30,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.ErrorDescription;
 import org.springframework.http.HttpStatus;
 
-//import com.fasterxml.jackson.annotation.JsonFormat;
-
 /**
  * Exception DTO
  *
@@ -39,7 +37,6 @@ import org.springframework.http.HttpStatus;
  */
 public class OHAPIError {
     private HttpStatus status;
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private String message;
     private String debugMessage;
     private String stackTrace;

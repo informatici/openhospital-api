@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -41,15 +41,12 @@ public class LaboratoryDTO {
     private ExamDTO exam;
 
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime registrationDate;
 
     @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-
     private LocalDateTime examDate;
-	
+    
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
     
@@ -65,7 +62,7 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
     private String patName;
 
-	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
+    @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
     private String inOutPatient;
 
     @ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
@@ -75,106 +72,118 @@ public class LaboratoryDTO {
     private String sex;
 
     public int getLock() {
-		return lock;
-	}
+        return lock;
+    }
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
+    public void setLock(int lock) {
+        this.lock = lock;
+    }
 
-	public Integer getCode() {
-		return this.code;
-	}
+    public Integer getCode() {
+        return this.code;
+    }
 
-	public String getMaterial() {
-		return this.material;
-	}
+    public String getMaterial() {
+        return this.material;
+    }
 
-	public ExamDTO getExam() {
-		return this.exam;
-	}
+    public ExamDTO getExam() {
+        return this.exam;
+    }
 
-	public LocalDateTime getRegistrationDate() {
-		return this.registrationDate;
-	}
+    public LocalDateTime getRegistrationDate() {
+        return this.registrationDate;
+    }
 
+<<<<<<< HEAD
 	public LocalDateTime getDate() {
 		return this.examDate;
 	}
+=======
+    public LocalDateTime getDate() {
+        return this.examDate;
+    }
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
-	public String getResult() {
-		return this.result;
-	}
+    public String getResult() {
+        return this.result;
+    }
 
-	public String getNote() {
-		return this.note;
-	}
+    public String getNote() {
+        return this.note;
+    }
 
-	public Integer getPatientCode() {
-		return this.patientCode;
-	}
+    public Integer getPatientCode() {
+        return this.patientCode;
+    }
 
-	public String getPatName() {
-		return this.patName;
-	}
+    public String getPatName() {
+        return this.patName;
+    }
 
-	public String getInOutPatient() {
-		return this.inOutPatient;
-	}
+    public String getInOutPatient() {
+        return this.inOutPatient;
+    }
 
-	public Integer getAge() {
-		return this.age;
-	}
+    public Integer getAge() {
+        return this.age;
+    }
 
-	public String getSex() {
-		return this.sex;
-	}
+    public String getSex() {
+        return this.sex;
+    }
 
-	public void setCode(Integer code) {
-		this.code = code;
-	}
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
-	public void setMaterial(String material) {
-		this.material = material;
-	}
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
-	public void setExam(ExamDTO exam) {
-		this.exam = exam;
-	}
+    public void setExam(ExamDTO exam) {
+        this.exam = exam;
+    }
 
-	public void setRegistrationDate(LocalDateTime registrationDate) {
-		this.registrationDate = registrationDate;
-	}
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 
+<<<<<<< HEAD
 	public void setDate(LocalDateTime examDate) {
 		this.examDate = examDate;
 	}
+=======
+    public void setDate(LocalDateTime examDate) {
+        this.examDate = examDate;
+    }
+>>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
-	public void setResult(String result) {
-		this.result = result;
-	}
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-	public void setPatientCode(Integer patientCode) {
-		this.patientCode = patientCode;
-	}
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
+    }
 
-	public void setPatName(String patName) {
-		this.patName = patName;
-	}
+    public void setPatName(String patName) {
+        this.patName = patName;
+    }
 
-	public void setInOutPatient(String inOutPatient) {
-		this.inOutPatient = inOutPatient;
-	}
+    public void setInOutPatient(String inOutPatient) {
+        this.inOutPatient = inOutPatient;
+    }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 }

@@ -23,6 +23,7 @@ package org.isf.config;
 
 import java.util.Arrays;
 
+import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTAuthenticationFilter;
@@ -67,6 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
+    
+	@Autowired
+	private CustomLogoutHandler customLogoutHandler;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
@@ -270,19 +274,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("admin", "guest")
             .and()
-          //	.formLogin()
-          	//	.loginPage("/auth/login")
-            //		.successHandler(successHandler())
-            //		.failureHandler(failureHandler())
-           // .and()
+				// .formLogin()
+				// .loginPage("/auth/login")
+				// .successHandler(successHandler())
+				// .failureHandler(failureHandler())
+				// .and()
 			.apply(securityConfigurerAdapter())
 			.and()
             .httpBasic()
             .and()
           	.logout()
 				.logoutUrl("/auth/logout")
-				.permitAll();
-    }
+				.addLogoutHandler(customLogoutHandler)
+				.permitAll();    
+        }
 
     private JWTConfigurer securityConfigurerAdapter() {
         return new JWTConfigurer(tokenProvider);

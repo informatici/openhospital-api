@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -54,7 +54,6 @@ public class MovementDTO {
 	@NotNull(message="the movement's date is required")
 	@ApiModelProperty(notes="The movement date", example = "2020-06-24", position = 6)
 	private LocalDate date;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@NotNull(message="the movement's medical quantity is required")
 	@ApiModelProperty(notes="The movement's medical quantity", example = "50", position = 7)

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -36,13 +36,10 @@ public class MalnutritionDTO {
 
 	@NotNull(message="The date of control is required")
 	@ApiModelProperty(notes="The date of this malnutrition control", example = "1979-05-01T11:20:33", position = 2)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime dateSupp;
 
 	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01T11:20:33", position = 3)
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime dateConf;
-	
 
 	@NotNull(message="The admission is required")
 	@ApiModelProperty(notes="The admission requesting the control", position = 4)
@@ -59,7 +56,6 @@ public class MalnutritionDTO {
 	@ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
 	
-	
 	public MalnutritionDTO() { }
 	
 	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp,
@@ -73,7 +69,7 @@ public class MalnutritionDTO {
 		weight = aWeight;
 	}
 
-    public int getLock() {
+	public int getLock() {
 		return lock;
 	}
 

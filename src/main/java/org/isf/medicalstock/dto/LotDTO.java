@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -37,12 +37,10 @@ public class LotDTO {
 	@NotNull(message="The preparation date is required")
 	@ApiModelProperty(notes="The preparation date", example = "2020-06-24", position = 2)
 	private LocalDate preparationDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@NotNull(message="The due date is required")
 	@ApiModelProperty(notes="The due date", example = "2021-06-24", position = 3)
 	private LocalDate dueDate;
-	//@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
 	@ApiModelProperty(notes="The lot's code", example = "750", position = 4)
 	private BigDecimal cost;

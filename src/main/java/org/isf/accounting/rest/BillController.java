@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2021 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2022 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -112,14 +112,11 @@ public class BillController {
 
 		Bill bill = billMapper.map2Model(newBillDto.getBill());
 
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
+		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
 
 		List<PriceList> list = priceListManager.getLists();
 
-		PriceList plist = list.stream()
-				.filter(pricel -> pricel.getName().equals(bill.getListName()))
-				.findAny()
-				.orElse(null);
+		PriceList plist = list.stream().filter(pricel -> pricel.getName().equals(bill.getListName())).findAny().orElse(null);
 
 		if (pat != null) {
 			bill.setBillPatient(pat);
@@ -143,15 +140,17 @@ public class BillController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
-	 }
-	 /**
-     * Update bill with the list of billItems and the list of billPayments
-     * @param odBillDto
-     * @return {@link FullBillDTO}
-     * @throws OHServiceException
-     */
-	 @PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	 public ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
+	}
+
+	/**
+	 * Update bill with the list of billItems and the list of billPayments
+	 * 
+	 * @param odBillDto
+	 * @return {@link FullBillDTO}
+	 * @throws OHServiceException
+	 */
+	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
 		LOGGER.info("updated Bill {}", odBillDto);
 		Bill bill = billMapper.map2Model(odBillDto.getBill());
@@ -162,14 +161,11 @@ public class BillController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found!", OHSeverityLevel.ERROR));
 		}
 
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); //FIXME: verify why we were searching by name
+		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
 
 		List<PriceList> list = priceListManager.getLists();
 
-		PriceList plist = list.stream()
-				.filter(pricel -> pricel.getName().equals(bill.getListName()))
-				.findAny()
-				.orElse(null);
+		PriceList plist = list.stream().filter(pricel -> pricel.getName().equals(bill.getListName())).findAny().orElse(null);
 
 		if (pat != null) {
 			bill.setBillPatient(pat);
