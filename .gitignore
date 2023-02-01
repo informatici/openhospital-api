@@ -5,6 +5,8 @@ HELP.md
 logs/
 bin
 *.log
+/static
+!static/swagger-ui/
 
 
 ### STS ###
