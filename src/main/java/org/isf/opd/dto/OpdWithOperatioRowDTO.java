@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.isf.operation.dto.OperationRowDTO;
 
+import com.drew.lang.annotations.NotNull;
+
 public class OpdWithOperatioRowDTO {
 	
+	@NotNull
 	private OpdDTO opdDTO;
 	
 	private List<OperationRowDTO> operationRows;
