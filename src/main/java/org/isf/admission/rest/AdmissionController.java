@@ -216,12 +216,9 @@ public class AdmissionController {
 			@RequestParam(name = "dischargerange", required = false) String[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
-<<<<<<< HEAD
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
 		LocalDateTime[] admissionR= new LocalDateTime[2];	
 		LocalDateTime[] dischargeR = new LocalDateTime[2];
-=======
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		
 		
 		if(admissionRange != null) {
@@ -261,7 +258,6 @@ public class AdmissionController {
 			@RequestParam(name = "dischargerange", required = false) String[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admissions of patients by id: {}", patientcode);
-<<<<<<< HEAD
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
 		LocalDateTime[] admissionR= new LocalDateTime[2];	
 		LocalDateTime[] dischargeR = new LocalDateTime[2];
@@ -288,13 +284,6 @@ public class AdmissionController {
 		}else {
 			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR,
 					Integer.toString(patientcode));
-=======
-		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
-		if (patientcode == 0) {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, "");
-		} else {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

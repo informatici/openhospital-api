@@ -394,18 +394,6 @@ public class LaboratoryController {
         	}
         	
 		}
-		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
-		lab.setLaboratoryDTO(labDTO);
-
-		if (laboratory.getExam().getProcedure() == 2) {
-			List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
-			if (!labDes.isEmpty()) {
-				for (LaboratoryRow laboratoryRow : labDes) {
-					labDescription.add(laboratoryRow.getDescription());
-				}
-			}
-
-		}
 		lab.setLaboratoryRowList(labDescription);
 		return ResponseEntity.ok(lab);
 	}

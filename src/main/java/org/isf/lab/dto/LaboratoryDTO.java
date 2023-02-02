@@ -95,15 +95,9 @@ public class LaboratoryDTO {
         return this.registrationDate;
     }
 
-<<<<<<< HEAD
-	public LocalDateTime getDate() {
-		return this.examDate;
-	}
-=======
     public LocalDateTime getDate() {
         return this.examDate;
     }
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
     public String getResult() {
         return this.result;
@@ -149,15 +143,9 @@ public class LaboratoryDTO {
         this.registrationDate = registrationDate;
     }
 
-<<<<<<< HEAD
-	public void setDate(LocalDateTime examDate) {
-		this.examDate = examDate;
-	}
-=======
     public void setDate(LocalDateTime examDate) {
         this.examDate = examDate;
     }
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
     public void setResult(String result) {
         this.result = result;

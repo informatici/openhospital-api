@@ -317,22 +317,12 @@ public class PatientDTO {
 		this.hashCode = hashCode;
 	}
 	
-<<<<<<< HEAD
     public PatientSTATUS getStatus() {
         return status;
     }
     public PatientSTATUS setStatus(PatientSTATUS status) {
         return this.status = status;
     }
-=======
-	public PatientSTATUS getStatus() {
-		return status;
-	}
-	
-	public PatientSTATUS setStatus(PatientSTATUS status) {
-		return this.status = status;
-	}
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 
 	public String getMotherName() {
 		return motherName;
@@ -350,8 +340,5 @@ public class PatientDTO {
 		this.fatherName = fatherName;
 	}
     
-<<<<<<< HEAD
     
-=======
->>>>>>> 61d6093a548e6d294a350f4dfba91d1ad554b8b3
 }
