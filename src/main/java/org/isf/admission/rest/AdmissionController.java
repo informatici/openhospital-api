@@ -242,7 +242,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmittedPatientDTO>> getAdmissions(
+	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
 			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
@@ -255,16 +255,16 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 		
-		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
-		if (patientcode == 0) {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, "");
-		} else {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
+		List<Admission> admissions = new ArrayList<Admission>();
+		if (admissionRange != null && admissionRange.length == 2) {
+			admissions = admissionManager.getAdmissions(admissionRange[0], admissionRange[1], 0, 0);
+		} else if (dischargeRange != null && dischargeRange.length == 2) {
+			admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], 0, 0);
 		}
-		if (admittedPatients.isEmpty()) {
+		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
+		return ResponseEntity.ok(admissionMapper.map2DTOList(admissions));
 	}
 	
 	/**
