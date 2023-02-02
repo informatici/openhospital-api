@@ -59,6 +59,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -219,18 +220,16 @@ public class AdmissionController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
 		LocalDateTime[] admissionR= new LocalDateTime[2];	
 		LocalDateTime[] dischargeR = new LocalDateTime[2];
-		
-		
-		if(admissionRange != null) {
-			admissionR = new LocalDateTime[admissionRange.length];	
+
+		if (admissionRange != null && admissionRange.length == 2) {
+			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 			for (int i = 0; i < admissionRange.length; i++) {
 				LocalDateTime date = LocalDateTime.parse(admissionRange[i], formatter);
 				admissionR[i] = date;
 			}
 		}
-		if(dischargeRange != null) {
-
-			dischargeR = new LocalDateTime[dischargeRange.length];	
+		if (dischargeRange != null && dischargeRange.length == 2) {
+			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
 			for (int j = 0; j < dischargeRange.length; j++) {
 				LocalDateTime date = LocalDateTime.parse(dischargeRange[j], formatter);
 				dischargeR[j] = date;
@@ -262,28 +261,26 @@ public class AdmissionController {
 		LocalDateTime[] admissionR= new LocalDateTime[2];	
 		LocalDateTime[] dischargeR = new LocalDateTime[2];
 		
-		
-		if(admissionRange != null) {
-			admissionR = new LocalDateTime[admissionRange.length];	
+		if (admissionRange != null && admissionRange.length == 2) {
+			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 			for (int i = 0; i < admissionRange.length; i++) {
 				LocalDateTime date = LocalDateTime.parse(admissionRange[i], formatter);
 				admissionR[i] = date;
 			}
 		}
-		if(dischargeRange != null) {
-
-			dischargeR = new LocalDateTime[dischargeRange.length];	
+		if (dischargeRange != null && dischargeRange.length == 2) {
+			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
 			for (int j = 0; j < dischargeRange.length; j++) {
 				LocalDateTime date = LocalDateTime.parse(dischargeRange[j], formatter);
 				dischargeR[j] = date;
 			}
 		}
+	
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
-		if(patientcode == 0) {
-			 admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR,"");
-		}else {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR,
-					Integer.toString(patientcode));
+		if (patientcode == 0) {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, "");
+		} else {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, Integer.toString(patientcode));
 		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

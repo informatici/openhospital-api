@@ -61,7 +61,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 					sessionAudit.setLogoutDate(LocalDateTime.now());
 					sessionAuditManager.updateSessionAudit(sessionAudit);
 				}
-			}else {
+			} else {
 				LOGGER.error("Unable to find the session. Are you sure that you are logged in?");
 			}
 		} catch (OHServiceException e) {

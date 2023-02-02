@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.dto.OpdWithOperatioRowDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -47,6 +48,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -288,11 +290,23 @@ public class OpdController {
 			@RequestParam(value = "newPatient", required = false, defaultValue = "A") char newPatient,
 			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
+		LOGGER.debug("dateFrom: {}", dateFrom);
+		LOGGER.debug("dateTo: {}", dateTo);
+		LOGGER.debug("diseaseTypeCode: {}", diseaseTypeCode);
+		LOGGER.debug("diseaseCode: {}", diseaseCode);
+		LOGGER.debug("ageFrom: {}", ageFrom);
+		LOGGER.debug("ageTo: {}", ageTo);
+		LOGGER.debug("sex: {}", sex);
+		LOGGER.debug("newPatient: {}", newPatient);
+		LOGGER.debug("newPatient: {}", patientCode);
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-		List<Opd> opds = opdManager.getOpd(null, diseaseTypeCode, diseaseCode, dateF, dateT, ageFrom,  ageTo, sex, newPatient, 0);
+
+		LOGGER.debug("patientCode: {}", patientCode);
 		
+		List<Opd> opds  = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateF, dateT, ageFrom,  ageTo, sex, newPatient, 0);
+
 		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
 			return mapper.map2DTO(opd);
 		}).collect(Collectors.toList());

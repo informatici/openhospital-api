@@ -21,7 +21,6 @@
  */
 package org.isf.opd.dto;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
@@ -41,6 +40,14 @@ public class OpdDTO {
 
     @ApiModelProperty(notes = "the date of the admission", position = 2)
     private LocalDateTime date;
+
+    @NotNull
+    @ApiModelProperty(notes = "the visit date", position = 3)
+    @Deprecated
+    private LocalDateTime visitDate;
+
+    @ApiModelProperty(notes = "the next visit date", position = 4)
+    private LocalDateTime nextVisitDate;
 
     @ApiModelProperty(notes = "the admitted patient code", position = 5)
     private Integer patientCode;
@@ -175,6 +182,10 @@ public class OpdDTO {
         return this.date;
     }
 
+    public LocalDateTime getVisitDate() {
+        return this.visitDate;
+    }
+
     public String getPatientName() {
         return patientName;
     }
@@ -237,6 +248,14 @@ public class OpdDTO {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public void setVisitDate(LocalDateTime visitDate) {
+        this.visitDate = visitDate;
+    }
+
+    public void setNextVisitDate(LocalDateTime nextVisitDate) {
+        this.nextVisitDate = nextVisitDate;
     }
 
     public void setPatientCode(Integer patientCode) {
