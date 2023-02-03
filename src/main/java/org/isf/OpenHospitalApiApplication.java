@@ -23,6 +23,7 @@ package org.isf;
 
 import javax.annotation.PostConstruct;
 
+import org.isf.generaldata.GeneralData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,6 +46,7 @@ public class OpenHospitalApiApplication {
 	@PostConstruct
 	public void setUp() {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		GeneralData.getGeneralData(); //initialize core settings
 	}
 
 }
