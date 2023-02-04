@@ -30,9 +30,12 @@ import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,13 +52,13 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class TokenProvider implements Serializable, InitializingBean {
+public class TokenProvider implements Serializable {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
     
-    //@Value("${jwt.token.secret}")
-    private String SECRET = "bezKoderSecretKeyvcvzayubyagazgygeygezalugazufzgaoazuhoaiuhzaioazhioygeaygzgeuygudsjvjbdskbygazyugfyi";
-
+	@Autowired
+	private Environment env;
+	
 	private static final String AUTHORITIES_KEY = "auth";
 
     private Key key;
@@ -64,11 +67,12 @@ public class TokenProvider implements Serializable, InitializingBean {
 
     private long tokenValidityInMillisecondsForRememberMe;
 
-    @Override
-    public void afterPropertiesSet() {
-        log.info("Initializing JWT key with secret: {}", SECRET);
+    @PostConstruct
+    public void init() {
+    	String secret = env.getProperty("jwt.token.secret");
+        log.info("Initializing JWT key with secret: {}", secret);
         // byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        byte[] keyBytes = SECRET.getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
         
         this.tokenValidityInMilliseconds = 1000L * 6000;
