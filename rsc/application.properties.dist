@@ -23,4 +23,3 @@ spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 
 ### Security token secret (JWT)
 jwt.token.secret=JWT_TOKEN_SECRET
-jwt.token.key=JWT_TOKEN_KEY
