@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.isf.login.dto.LoginRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,11 +44,15 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+	
+	@Autowired
+	private Environment env;
 
     private AuthenticationManager authenticationManager;
 
-    private long EXPIRATION_TIME=SecurityConstants.EXPIRATION_TIME;
-    private String SECRET=SecurityConstants.SECRET;
+    private long EXPIRATION_TIME = SecurityConstants.EXPIRATION_TIME;
+    
+    
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
@@ -74,10 +80,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse res,
                                             FilterChain chain,
                                             Authentication auth) throws IOException {
+    	String jwtSecretkey = env.getProperty("jwt.token.key");
         String token = Jwts.builder()
                 .setSubject(auth.getPrincipal().toString())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
+                .signWith(SignatureAlgorithm.HS512, jwtSecretkey)
                 .compact();
 
         String body = ((LoginRequest) auth.getPrincipal()).getUsername() + " " + token;

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.isf.menu.service.MenuIoOperations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -42,10 +43,13 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
 	private String HEADER_STRING = SecurityConstants.HEADER_STRING;
 	private String TOKEN_PREFIX = SecurityConstants.TOKEN_PREFIX;
-	private String SECRET = SecurityConstants.SECRET;
 	
 	@Autowired
+	private Environment env;
+
+	@Autowired
     private TokenProvider jwtTokenUtil;
+	
 	@Autowired
 	private MenuIoOperations menuIoOperations;
 	
@@ -73,11 +77,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     // Reads the JWT from the Authorization header, and then uses JWT to validate the token
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
         String token = request.getHeader(HEADER_STRING);
+        String jwtSecretkey = env.getProperty("jwt.token.key");
 
         if (token != null) {
             // parse the token.
             String LoginRequest =  Jwts.parser()
-                    .setSigningKey(SecurityConstants.SECRET)
+                    .setSigningKey(jwtSecretkey)
                     .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
                     .getBody()
                     .getSubject();

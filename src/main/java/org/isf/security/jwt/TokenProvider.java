@@ -67,7 +67,7 @@ public class TokenProvider {
     @PostConstruct
     public void init() {
         byte[] keyBytes;
-        String secret = env.getProperty("jwt.token.secret");   // "oj6eHNG8jrjyMXiR7Vho7JBvQgG-n2jku5MKbVLoJkL0bImol-hGtk-MVl9s9uwm_4IxHU1iQ8t0G7IseYc8bFrl9F4q6tkvyrlY1zm2doRsA5u1YeSvdMPAFBrr_VEzE4EWzu62RyVBjWWX9TYHTI8G7qIY3GMyFqPXYCVpO05EWCUnJMHZwZbyoSjv5dOhMwIup5bRq001KCpwMt_4Vn8m-CaUPpThNG3HulLbn-y6QKBtFKczgZkK2YLw-nuCy5BorP1BQy88RY9Y1Ho3BjII0iNvyLUF5rUtFeoxn1HA7LiCOuPSCxqkr0_VJEm8lVl6VNAkEnY7Sn3PhYpRTw";
+        String secret = env.getProperty("jwt.token.secret");
         keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 
         this.key = Keys.hmacShaKeyFor(keyBytes);

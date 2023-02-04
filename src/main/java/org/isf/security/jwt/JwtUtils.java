@@ -25,6 +25,8 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
@@ -35,29 +37,39 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+
 @Component
 public class JwtUtils {
+	
+	@Autowired
+	private Environment env;
 
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
-	private static String jwtSecret = SecurityConstants.SECRET;
+	
 	private static int jwtExpirationMs = 86400000;
+	
 	public String generateJwtToken(Authentication authentication) {
+		
+		String jwtSecretKey = env.getProperty("jwt.token.key");
+		
 		User userPrincipal = (User) authentication.getPrincipal();
 		return Jwts.builder()
 				.setSubject((userPrincipal.getUsername()))
 				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-				.signWith(SignatureAlgorithm.HS512,jwtSecret)
+				.signWith(SignatureAlgorithm.HS512,jwtSecretKey)
 				.compact();
 	}
 	
 	public String getUserNameFromJwtToken(String token) {
-		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+		String jwtSecretKey = env.getProperty("jwt.token.key");
+		return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(token).getBody().getSubject();
 	}
 	
 	public boolean validateJwtToken(String authToken) {
+		String jwtSecretKey = env.getProperty("jwt.token.key");
 		try {
-			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+			Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());
