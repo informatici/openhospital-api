@@ -6,8 +6,12 @@ server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 spring.jpa.hibernate.use-new-id-generator-mappings=false
 spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 server.servlet.context-path=/
+server.port=8080
+
+### Swagger-UI (info)
 api.host=localhost:8080
 api.protocol=http
+
 
 ### Without the following overriding property the following error is generated:
 ### Caused by: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'org.springframework.transaction.config.internalTransactionAdvisor' defined in class path resource [org/springframework/transaction/annotation/ProxyTransactionManagementConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration; factoryMethodName=transactionAdvisor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/transaction/annotation/ProxyTransactionManagementConfiguration.class]] for bean 'org.springframework.transaction.config.internalTransactionAdvisor': There is already [Root bean: class [org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor]; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null] bound.
@@ -18,5 +22,5 @@ spring.main.allow-bean-definition-overriding=true
 ### See: https://stackoverflow.com/questions/70036953/springboot-2-6-0-spring-fox-3-failed-to-start-bean-documentationpluginsboot/70037507#70037507
 spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 
-# Security token secret (JWT)
+### Security token secret (JWT)
 jwt.token.secret=JWT_TOKEN_SECRET

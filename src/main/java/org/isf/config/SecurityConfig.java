@@ -55,17 +55,16 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 	
     @Autowired
     private UserDetailsService userDetailsService;
-    
+
+    private final TokenProvider tokenProvider;
+
     @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-    private TokenProvider tokenProvider;
 
     public SecurityConfig(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;

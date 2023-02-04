@@ -45,23 +45,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @RestController
 @Api(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController {
-
-	@Autowired
-	UserDetailsServiceImpl userDetailsServiceImpl;
 
 	@Autowired
 	private HttpSession httpSession;
@@ -76,29 +68,6 @@ public class LoginController {
     private CustomAuthenticationManager authenticationManager;
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
-	
-//	 /**
-//     * Implemented by Spring Security
-//     */
-//    @ApiOperation(value = "Login", notes = "Login with the given credentials.")
-//    @ApiResponses({@ApiResponse(code = 200, message = "", response = LoginResponse.class)})
-//    @PostMapping(value = "/auth/login")
-//    void login(
-//        @RequestParam("username") String username,
-//        @RequestParam("password") String password
-//    ) {
-//        throw new IllegalStateException("Add Spring Security to handle authentication");
-//    }
-
-//    /**
-//     * Implemented by Spring Security
-//     */
-//    @ApiOperation(value = "Logout", notes = "Logout the current user.")
-//    @ApiResponses({@ApiResponse(code = 200, message = "")})
-//    @PostMapping(value = "/auth/logout")
-//    void logout() {
-//        throw new IllegalStateException("Add Spring Security to handle authentication");
-//    }
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
