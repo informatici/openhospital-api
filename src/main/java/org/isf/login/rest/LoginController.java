@@ -28,6 +28,7 @@ import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
@@ -70,21 +71,24 @@ public class LoginController {
 	
 	@Autowired
 	private TokenProvider tokenProvider;
+	
+	@Autowired
+    private CustomAuthenticationManager authenticationManager;
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 	
-	 /**
-     * Implemented by Spring Security
-     */
-    @ApiOperation(value = "Login", notes = "Login with the given credentials.")
-    @ApiResponses({@ApiResponse(code = 200, message = "", response = LoginResponse.class)})
-    @PostMapping(value = "/auth/login")
-    void login(
-        @RequestParam("username") String username,
-        @RequestParam("password") String password
-    ) {
-        throw new IllegalStateException("Add Spring Security to handle authentication");
-    }
+//	 /**
+//     * Implemented by Spring Security
+//     */
+//    @ApiOperation(value = "Login", notes = "Login with the given credentials.")
+//    @ApiResponses({@ApiResponse(code = 200, message = "", response = LoginResponse.class)})
+//    @PostMapping(value = "/auth/login")
+//    void login(
+//        @RequestParam("username") String username,
+//        @RequestParam("password") String password
+//    ) {
+//        throw new IllegalStateException("Add Spring Security to handle authentication");
+//    }
 
 //    /**
 //     * Implemented by Spring Security
@@ -96,26 +100,26 @@ public class LoginController {
 //        throw new IllegalStateException("Add Spring Security to handle authentication");
 //    }
 
-//	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
-//		if (loginRequest.getPassword().length() < 10) {
-//			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT, "password too short", OHSeverityLevel.ERROR));
-//		}
-//		Authentication authentication = authenticationManager
-//						.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-//		SecurityContextHolder.getContext().setAuthentication(authentication);
-//		String jwt = tokenProvider.generateJwtToken(authentication, true);
-//
-//		User userDetails = (User) authentication.getPrincipal();
-//
-//
-//		try {
-//			this.httpSession.setAttribute("sessionAuditId",
-//							sessionAuditManager.newSessionAudit(new SessionAudit(authentication.getName(), LocalDateTime.now(), null)));
-//		} catch (OHServiceException e1) {
-//			LOGGER.error("Unable to log user login in the session_audit table");
-//		}
-//
-//		return ResponseEntity.ok(new LoginResponse(jwt, userDetails.getUsername()));
-//	}
+	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
+		if (loginRequest.getPassword().length() < 10) {
+			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT, "password too short", OHSeverityLevel.ERROR));
+		}
+		Authentication authentication = authenticationManager
+						.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = tokenProvider.generateJwtToken(authentication, true);
+
+		String userDetails = (String) authentication.getPrincipal();
+
+
+		try {
+			this.httpSession.setAttribute("sessionAuditId",
+							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
+		} catch (OHServiceException e1) {
+			LOGGER.error("Unable to log user login in the session_audit table");
+		}
+
+		return ResponseEntity.ok(new LoginResponse(jwt, userDetails));
+	}
 }
