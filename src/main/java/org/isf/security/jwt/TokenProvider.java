@@ -32,6 +32,8 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +52,9 @@ public class TokenProvider {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
+	@Autowired
+	private Environment env;
+	
     private static final String AUTHORITIES_KEY = "auth";
 
     private Key key;
@@ -62,7 +67,7 @@ public class TokenProvider {
     @PostConstruct
     public void init() {
         byte[] keyBytes;
-        String secret = "oj6eHNG8jrjyMXiR7Vho7JBvQgG-n2jku5MKbVLoJkL0bImol-hGtk-MVl9s9uwm_4IxHU1iQ8t0G7IseYc8bFrl9F4q6tkvyrlY1zm2doRsA5u1YeSvdMPAFBrr_VEzE4EWzu62RyVBjWWX9TYHTI8G7qIY3GMyFqPXYCVpO05EWCUnJMHZwZbyoSjv5dOhMwIup5bRq001KCpwMt_4Vn8m-CaUPpThNG3HulLbn-y6QKBtFKczgZkK2YLw-nuCy5BorP1BQy88RY9Y1Ho3BjII0iNvyLUF5rUtFeoxn1HA7LiCOuPSCxqkr0_VJEm8lVl6VNAkEnY7Sn3PhYpRTw";
+        String secret = env.getProperty("jwt.token.secret");   // "oj6eHNG8jrjyMXiR7Vho7JBvQgG-n2jku5MKbVLoJkL0bImol-hGtk-MVl9s9uwm_4IxHU1iQ8t0G7IseYc8bFrl9F4q6tkvyrlY1zm2doRsA5u1YeSvdMPAFBrr_VEzE4EWzu62RyVBjWWX9TYHTI8G7qIY3GMyFqPXYCVpO05EWCUnJMHZwZbyoSjv5dOhMwIup5bRq001KCpwMt_4Vn8m-CaUPpThNG3HulLbn-y6QKBtFKczgZkK2YLw-nuCy5BorP1BQy88RY9Y1Ho3BjII0iNvyLUF5rUtFeoxn1HA7LiCOuPSCxqkr0_VJEm8lVl6VNAkEnY7Sn3PhYpRTw";
         keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 
         this.key = Keys.hmacShaKeyFor(keyBytes);
