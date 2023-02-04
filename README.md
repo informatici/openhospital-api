@@ -20,11 +20,12 @@ For the moment, to build this project you should
         cd openhospital-api
         mvn clean install -DskipTests=true
         
- 3. prepare settings from rsc/*.dist files
+ 3. prepare settings from each rsc/*.dist files
  
-        rsc/application.properties
+        rsc/application.properties <- set a SHA-256 token
         rsc/database.properties
         rsc/log4j.properties
+        rsc/...
  
  4. set target/rsc/database.properties
  
