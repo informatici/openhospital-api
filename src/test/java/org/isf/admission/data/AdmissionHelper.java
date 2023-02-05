@@ -109,6 +109,15 @@ public class AdmissionHelper {
 		}
 		return null;
 	}
+	
+	public static String asJsonString(List<?> list) {
+		try {
+			return getObjectMapper().writeValueAsString(list);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public static AdmissionDTO setup(AdmissionMapper admissionMapper) throws OHException {
 		return admissionMapper.map2DTO(AdmissionHelper.setup());

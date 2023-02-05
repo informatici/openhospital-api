@@ -42,8 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import java.util.Optional;
 
+import org.isf.admission.data.AdmissionHelper;
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.model.Admission;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.dto.PatientDTO;
+import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
@@ -74,6 +78,9 @@ public class PatientControllerTest {
 
 	@Mock
 	private PatientBrowserManager patientBrowserManagerMock;
+	
+	@Mock
+	private AdmissionBrowserManager admissionBrowserManagerMock;
 
 	private PatientMapper patientMapper = new PatientMapper();
 
@@ -83,7 +90,7 @@ public class PatientControllerTest {
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock, patientMapper))
+				.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
@@ -238,14 +245,19 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
-		Integer code = 12345;
 		String request = "/patients/{code}";
+		
+		Integer code = 12345;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient newPatient = PatientHelper.setup();
-		newPatient.setCode(code);
+		
+		Patient updatedAfterReadPatient = PatientHelper.setup();
+		updatedAfterReadPatient.setCode(code);
+		updatedAfterReadPatient.setLock(3);
+		
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(updatedAfterReadPatient);
 
-		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
+		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(null);
 
 		this.mockMvc
 				.perform(
@@ -293,14 +305,13 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
-		Integer code = 12345;
 		String request = "/patients/{code}";
+
+		Integer code = 123;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		Patient newPatient = PatientHelper.setup();
-		newPatient.setCode(code);
-
-		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
+		
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
@@ -308,7 +319,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
-				.andExpect(content().string(containsString("Patient is not updated!"))).andReturn();
+				.andExpect(content().string(containsString("Patient not found!"))).andReturn();
 
 		//TODO Create OHUpdateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
@@ -344,6 +355,7 @@ public class PatientControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
 				.andReturn();
+		
 	}
 
 	/**
@@ -352,16 +364,19 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_then_response_PatientDTO_and_OK() throws Exception {
+	public void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
-		PatientDTO expectedPatientDTO = PatientHelper.setup(patientMapper);
-		expectedPatientDTO.setCode(code);
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
+		
+		PatientDTO expectedPatientDTO = patientMapper.map2DTO(patient);
+		expectedPatientDTO.setStatus(PatientSTATUS.O);
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
-
+		
+		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(null);
+		
 		this.mockMvc
 				.perform(
 						get(request, code)
@@ -371,68 +386,46 @@ public class PatientControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 				.andReturn();
+				
+		
 	}
-
+	
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
 	 *
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_with_existent_name_non_code_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 456;
-		String name = "TestFirstName";
-		String request = "/patients/search";
-		PatientDTO expectedPatientDTO = PatientHelper.setup(patientMapper);
-		expectedPatientDTO.setCode(code);
+	public void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
+		Integer code = 123;
+		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
+		Admission admission = AdmissionHelper.setup();
 		patient.setCode(code);
-
-		when(patientBrowserManagerMock.getPatientByName(name)).thenReturn(patient);
-
-		this.mockMvc
-				.perform(
-						get(request)
-								.param("name", name)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-				.andReturn();
-	}
-
-	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
-	 * @throws Exception
-	 */
-	@Test
-	public void when_get_patients_search_without_name_and_existent_code_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 678;
-		String request = "/patients/search";
-		PatientDTO expectedPatientDTO = PatientHelper.setup(patientMapper);
-		expectedPatientDTO.setCode(code);
-		Patient patient = PatientHelper.setup();
-		patient.setCode(code);
+		admission.setPatient(patient);
+		
+		PatientDTO expectedPatientDTO = patientMapper.map2DTO(patient);
+		expectedPatientDTO.setStatus(PatientSTATUS.I);
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
-
+		
+		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(admission);
+		
 		this.mockMvc
 				.perform(
-						get(request)
-								.param("code", code.toString())
+						get(request, code)
 								.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 				.andReturn();
+				
+		
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -453,8 +446,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -470,9 +462,9 @@ public class PatientControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
+
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.Integer)}.
-	 *
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test

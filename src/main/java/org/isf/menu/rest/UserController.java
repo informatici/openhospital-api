@@ -30,6 +30,7 @@ import javax.validation.Valid;
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserMenuItemDTO;
+import org.isf.menu.dto.UserProfileDTO;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
@@ -37,6 +38,10 @@ import org.isf.menu.mapper.UserMenuItemMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
+import org.isf.permissions.dto.LitePermissionDTO;
+import org.isf.permissions.manager.PermissionManager;
+import org.isf.permissions.mapper.LitePermissionMapper;
+import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -46,6 +51,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,7 +82,13 @@ public class UserController {
 	
 	@Autowired
 	private UserBrowsingManager userManager;
-	
+
+	@Autowired
+	protected PermissionManager permissionManager;
+
+	@Autowired
+	protected LitePermissionMapper litePermissionMapper;
+
 	/**
 	 * Returns the list of {@link User}s.
 	 * @return the list of {@link User}s.
@@ -310,4 +324,72 @@ public class UserController {
         }
         return group.get(0);
 	}
+
+	/**
+	 * Retrieves all permissions of the current logged in user. If user not found,
+	 * an empty list of permissions is returned
+	 *
+	 * @return list of permissions {@link Permission}
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String currentUserName = authentication.getName();
+			LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUserName);
+			List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUserName);
+			List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
+			if (dtos.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
+			} else {
+				return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+			}
+		}
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
+	}
+
+	/**
+	 * Retrieves profile of the current logged in user. If user not found,
+	 * an empty list of permissions is returned
+	 *
+	 * @return list of permissions {@link Permission}
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserProfileDTO> retrieveProfileByCurrentLoggedInUser() throws OHServiceException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			String currentUserName = authentication.getName();
+			LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
+			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
+			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
+			UserProfileDTO userProfileDTO = new UserProfileDTO();
+			userProfileDTO.setUserName(currentUserName);
+			userProfileDTO.setPermissions(permissionsCode);
+			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
+		}
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserProfileDTO());
+	}
+
+
+	/**
+	 * Retrieves all permissions of the username passed as path variable. If user not
+	 * found, an empty list of permissions is returned.
+	 *
+	 * @return list of permissions {@link Permission}
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/users/permissions/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
+		LOGGER.info("retrieving permissions: retrievePermissionsByUsername({})", username);
+		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
+		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
+		if (dtos.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+		}
+	}
+
 }

@@ -41,9 +41,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class HospitalController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HospitalController.class);
@@ -60,7 +61,7 @@ public class HospitalController {
     }
 
     @PutMapping(value = "/hospitals/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
+    public ResponseEntity<HospitalDTO> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
 
         if (!hospitalDTO.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "Hospital code mismatch", OHSeverityLevel.ERROR));
@@ -70,9 +71,10 @@ public class HospitalController {
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);
-        hospitalBrowsingManager.updateHospital(hospital);
+        hospital.setLock(hospitalDTO.getLock());
+        Hospital hospi = hospitalBrowsingManager.updateHospital(hospital);
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(hospitalMapper.map2DTO(hospi));
     }
 
     @GetMapping(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE)

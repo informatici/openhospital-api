@@ -78,13 +78,13 @@ public class PriceListController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
+	ResponseEntity<PriceListDTO> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		LOGGER.info("Create price list {}", priceListDTO.getCode());
-		boolean isCreated = priceListManager.newList(mapper.map2Model(priceListDTO));
-		if (!isCreated) {
+		PriceList isCreatedPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
+		if (isCreatedPriceList == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "price list is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(priceListDTO.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPriceList));
 	}
 
 	/**
@@ -94,15 +94,15 @@ public class PriceListController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updatePriceListt(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
+	ResponseEntity<PriceListDTO> updatePriceListt(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
 			throws OHServiceException {
 		LOGGER.info("Update pricelists code: {}", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);
-		boolean isUpdated = priceListManager.updateList(priceList);
-		if (!isUpdated) {
+		PriceList isUpdatedPriceList = priceListManager.updateList(priceList);
+		if (isUpdatedPriceList == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "price list is not updated!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.ok(priceList.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPriceList));
 	}
 
 	/**

@@ -33,11 +33,11 @@ public class SmsDTO {
 	private Integer smsId;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS Date", example="2020-07-16", position = 2)
+	@ApiModelProperty(notes = "SMS Date", example="2020-07-16T00:00:00", position = 2)
 	private LocalDateTime smsDate;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS scheduled date", example="2020-07-28", position = 3)
+	@ApiModelProperty(notes = "SMS scheduled date", example="2020-07-28T00:00:00", position = 3)
 	private LocalDateTime smsDateSched;
 	
 	@NotNull
@@ -48,7 +48,7 @@ public class SmsDTO {
 	@ApiModelProperty(notes = "SMS content text", example="Hi Mario!", position = 5)
 	private String smsText;
 	
-	@ApiModelProperty(notes = "SMS sent date", example="2020-07-28", position = 6)
+	@ApiModelProperty(notes = "SMS sent date", example="2020-07-28T00:00:00", position = 6)
 	private LocalDateTime smsDateSent;
 	
 	@NotNull

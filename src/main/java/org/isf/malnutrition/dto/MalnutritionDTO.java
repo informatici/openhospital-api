@@ -35,10 +35,10 @@ public class MalnutritionDTO {
 	private int code;
 
 	@NotNull(message="The date of control is required")
-	@ApiModelProperty(notes="The date of this malnutrition control", example = "1979-05-01", position = 2)
+	@ApiModelProperty(notes="The date of this malnutrition control", example = "1979-05-01T11:20:33", position = 2)
 	private LocalDateTime dateSupp;
 
-	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01", position = 3)
+	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01T11:20:33", position = 3)
 	private LocalDateTime dateConf;
 
 	@NotNull(message="The admission is required")
@@ -53,6 +53,9 @@ public class MalnutritionDTO {
 	@ApiModelProperty(notes="The weight of the patient", example="65", position = 6)
 	private float weight;
 	
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+	
 	public MalnutritionDTO() { }
 	
 	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp,
@@ -64,6 +67,14 @@ public class MalnutritionDTO {
 		admission = anAdmission;
 		height = aHeight;
 		weight = aWeight;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 
 	public int getCode() {

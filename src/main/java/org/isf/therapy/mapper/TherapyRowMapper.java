@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,14 +21,61 @@
  */
 package org.isf.therapy.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.isf.medicals.model.Medical;
+import org.isf.patient.dto.PatientDTO;
+import org.isf.patient.mapper.PatientMapper;
+import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
 import org.isf.therapy.dto.TherapyRowDTO;
 import org.isf.therapy.model.TherapyRow;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
+
+	@Autowired
+	private PatientMapper patientMapper;
+
 	public TherapyRowMapper() {
 		super(TherapyRow.class, TherapyRowDTO.class);
 	}
+
+	@Override
+	public TherapyRow map2Model(TherapyRowDTO toObj) {
+		TherapyRow therapyRow = super.map2Model(toObj);
+
+		// map medical
+		Medical medical = new Medical();
+		medical.setCode(toObj.getMedicalId());
+		therapyRow.setMedical(medical);
+		Patient patient = patientMapper.map2Model(toObj.getPatID());
+		therapyRow.setPatient(patient);
+		return therapyRow;
+	}
+
+	@Override
+	public TherapyRowDTO map2DTO(TherapyRow fromObj) {
+		TherapyRowDTO therapyRowDTO = super.map2DTO(fromObj);
+
+		// map medical
+		therapyRowDTO.setMedicalId(fromObj.getMedical());
+		PatientDTO patID = patientMapper.map2DTO(fromObj.getPatient());
+		therapyRowDTO.setPatID(patID);
+		return therapyRowDTO;
+	}
+
+	@Override
+	public List<TherapyRowDTO> map2DTOList(List<TherapyRow> list) {
+		return (List<TherapyRowDTO>) list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TherapyRow> map2ModelList(List<TherapyRowDTO> list) {
+		return (List<TherapyRow>) list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
+	}
+
 }

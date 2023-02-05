@@ -37,6 +37,8 @@ import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.operation.model.Operation;
 import org.isf.operation.model.OperationRow;
 import org.isf.opetype.model.OperationType;
+import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -73,6 +75,9 @@ public class OperationController {
 	protected OperationRowBrowserManager operationRowManager;
 	
 	@Autowired
+	protected PatientBrowserManager patientBrowserManager;
+	
+	@Autowired
 	protected OperationMapper mapper;
 	
 	@Autowired
@@ -93,18 +98,17 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
+	ResponseEntity<OperationDTO> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}", code);
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "another operation has already been created with provided description and types!", OHSeverityLevel.ERROR));
 		}
-		boolean isCreated = operationManager.newOperation(mapper.map2Model(operationDTO));
-		Operation operationCreated = operationManager.getOperationByCode(code);
-		if (!isCreated || operationCreated == null) {
+		Operation isCreatedOperation = operationManager.newOperation(mapper.map2Model(operationDTO));
+		if (isCreatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(operationCreated.getCode());
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperation));
 	}
 
 	/**
@@ -114,18 +118,19 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<String> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
+	ResponseEntity<OperationDTO> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
 			throws OHServiceException {
 		LOGGER.info("Update operations code: {}", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
 		}
-		boolean isUpdated = operationManager.updateOperation(operation);
-		if (!isUpdated) {
+		operation.setLock(operationDTO.getLock());
+		Operation isUpdatedOperation = operationManager.updateOperation(operation);
+		if (isUpdatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.ok(operation.getCode());
+		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperation));
 	}
 
 	/**
@@ -205,12 +210,16 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
-		int code = operationRowDTO.getId();
+	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
+		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+		
 		boolean isCreated = operationRowManager.newOperationRow(opRow);
-		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == code)
+		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getAdmission().getId() == code)
 				.collect(Collectors.toList());
 		OperationRow opCreated = null;
 		if (!opRowFounds.isEmpty()) {
@@ -219,22 +228,27 @@ public class OperationController {
 		if (!isCreated || opCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not created!", OHSeverityLevel.ERROR));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(opCreated.getId());
+		OperationRowDTO opR =  opRowMapper.map2DTO(opCreated);
+		return ResponseEntity.status(HttpStatus.CREATED).body(opR);
 	}
 	
 	/**
 	 * Updates the specified {@link OperationRow}.
+	 * 
 	 * @param operationRowDTO
 	 * @return {@code true} if the operation row has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO)
-			throws OHServiceException {
+	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
+		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
-				.collect(Collectors.toList());
+						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
 		}
@@ -255,7 +269,10 @@ public class OperationController {
 		LOGGER.info("Get operations row for provided admission");
 		Admission adm = admissionManager.getAdmission(id);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByAdmission(adm);
-		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
+		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
+			OperationRowDTO opR = opRowMapper.map2DTO(operation);
+			return opR;
+		}).collect(Collectors.toList());
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {
@@ -263,6 +280,26 @@ public class OperationController {
 		}
 	}
 
+	/**
+	 * Get {@link OperationRow}s for specified patient.
+	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/operations/rows/search/patient", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByPatient(@RequestParam int patientCode) throws OHServiceException {
+		LOGGER.info("Get operations row for provided patient");
+		Patient patient = patientBrowserManager.getPatientById(patientCode);
+		List<OperationRow> operationRows = operationRowManager.getOperationRowByPatientCode(patient);
+		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
+			return opRowMapper.map2DTO(operation);
+		}).collect(Collectors.toList());
+		if (operationRowDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
+		} else {
+			return ResponseEntity.ok(operationRowDTOs);
+		}
+	}
+	
 	/**
 	 * Get {@link OperationRow}s for specified {@link OpdDTO}.
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
@@ -272,7 +309,10 @@ public class OperationController {
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		LOGGER.info("Get operations row for provided opd");
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
-		List<OperationRowDTO> operationRowDTOs = opRowMapper.map2DTOList(operationRows);
+		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
+			return opRowMapper.map2DTO(operation);
+		}).collect(Collectors.toList());
+		
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {
@@ -297,7 +337,4 @@ public class OperationController {
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
-
-	
-
 }

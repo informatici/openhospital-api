@@ -46,9 +46,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class VaccineController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineController.class);
@@ -109,18 +110,18 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
+    public ResponseEntity<VaccineDTO> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
         LOGGER.info("Create vaccine: {}", newVaccine);
-        boolean isCreated;
+        Vaccine isCreatedVaccine;
         try {
-             isCreated = vaccineManager.newVaccine(mapper.map2Model(newVaccine)) != null;
+             isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
         }
-        if (!isCreated) {
+        if (isCreatedVaccine == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
 
     /**
@@ -131,14 +132,13 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
+    public ResponseEntity<VaccineDTO> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         LOGGER.info("Update vaccine: {}", updateVaccine);
-        boolean isUpdated = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine)) != null;
-        if (!isUpdated) {
+        Vaccine isUpdatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+        if (isUpdatedVaccine == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
-
+        return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccine));
     }
 
     /**

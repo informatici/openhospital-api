@@ -63,7 +63,7 @@ public class BillItemsDTO {
 	
 	private volatile int hashCode;
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}

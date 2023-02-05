@@ -21,6 +21,9 @@
  */
 package org.isf.admission.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.model.Admission;
 import org.isf.shared.GenericMapper;
@@ -33,4 +36,13 @@ public class AdmissionMapper extends GenericMapper<Admission, AdmissionDTO> {
 		super(Admission.class, AdmissionDTO.class);
 	}
 
+	@Override
+	public List<AdmissionDTO> map2DTOList(List<Admission> list) {
+		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Admission> map2ModelList(List<AdmissionDTO> list) {
+		return list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
+	}
 }

@@ -46,9 +46,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class ExamTypeController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExamTypeController.class);
@@ -64,21 +65,20 @@ public class ExamTypeController {
         this.examTypeMapper = examTypeMapper;
     }
 
-    @PostMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
+	@PostMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ExamTypeDTO> newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
 
-        ExamType examType = examTypeMapper.map2Model(newExamType);
-        boolean created = examTypeBrowserManager.newExamType(examType);
+		ExamType examType = examTypeMapper.map2Model(newExamType);
+		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
+		if (createdExamType == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
+		}
 
-        if (!created) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(true);
-    }
+		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
+	}
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
+    public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
 
         if (!updateExamType.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType code mismatch", OHSeverityLevel.ERROR));
@@ -88,11 +88,12 @@ public class ExamTypeController {
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
-        if (!examTypeBrowserManager.updateExamType(examType)) {
+        ExamType exType = examTypeBrowserManager.updateExamType(examType);
+        if (exType == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType is not updated!", OHSeverityLevel.ERROR));
         }
 
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(examTypeMapper.map2DTO(exType));
     }
 
 

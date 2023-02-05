@@ -27,10 +27,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 
+import io.swagger.models.auth.In;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -47,11 +50,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig {
 
-	@Value("${api.host:localhost:8080}")
-	String host;
-
-	@Value("${api.protocol:http}")
-	String protocol;
+    @Autowired
+    private Environment env;
 
     @Bean
     public Docket apiDocket() {
@@ -59,6 +59,9 @@ public class SpringFoxConfig {
         List<SecurityScheme> securitySchemes = Arrays.asList(new ApiKey("JWT", "Authorization", "header"));
 
         ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
+
+        String host = env.getProperty("api.host");
+        String protocol = env.getProperty("api.protocol");
 
         Set<String> protocols = new HashSet<>();
         protocols.add(protocol);
@@ -74,7 +77,7 @@ public class SpringFoxConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .securityContexts(Arrays.asList(jwtSecurityContext()))
-                .securitySchemes(securitySchemes);
+                .securitySchemes(Arrays.asList(apiKey()));
     }
 
     private SecurityContext jwtSecurityContext() {
@@ -87,6 +90,15 @@ public class SpringFoxConfig {
 
     List<SecurityReference> defaultAuth() {
         return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
+    }
+
+
+    private SecurityReference apiKeyReference() {
+        return new SecurityReference("Authorization", new AuthorizationScope[0]);
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("Authorization", HttpHeaders.AUTHORIZATION, In.HEADER.name());
     }
 
 }

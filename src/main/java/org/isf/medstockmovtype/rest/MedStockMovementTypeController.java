@@ -103,12 +103,12 @@ public class MedStockMovementTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> newMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovType) throws OHServiceException {
-		boolean isCreated = manager.newMedicaldsrstockmovType(mapper.map2Model(medicaldsrstockmovType));
-		if (!isCreated) {
+	public ResponseEntity<MovementTypeDTO> newMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovType) throws OHServiceException {
+		MovementType isCreatedMovementType = manager.newMedicaldsrstockmovType(mapper.map2Model(medicaldsrstockmovType));
+		if (isCreatedMovementType == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Movement type is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
 	}
 	
 	/**
@@ -118,16 +118,16 @@ public class MedStockMovementTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PutMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Void> updateMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovTypeDTO) throws OHServiceException {
+	public ResponseEntity<MovementTypeDTO> updateMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovTypeDTO) throws OHServiceException {
 		MovementType medicaldsrstockmovType = mapper.map2Model(medicaldsrstockmovTypeDTO);
 		if (!manager.isCodePresent(medicaldsrstockmovType.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Movement type not found!", OHSeverityLevel.ERROR));
 		}
-		boolean isUpdated = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
-		if (!isUpdated) {
+		MovementType isUpdatedMovementType = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+		if (isUpdatedMovementType == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Movement type is not updated!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(mapper.map2DTO(isUpdatedMovementType));
 	}
 	
 	/**

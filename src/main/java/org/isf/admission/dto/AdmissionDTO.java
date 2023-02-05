@@ -97,7 +97,7 @@ public class AdmissionDTO {
 	@ApiModelProperty(notes = "discharge date", position = 17)
 	private LocalDateTime disDate;
 
-	@ApiModelProperty(notes = "disChargeType ", position = 18)
+	@ApiModelProperty(notes = "disChargeType", position = 18)
 	private DischargeTypeDTO disType;
 
 	@ApiModelProperty(notes = "free note", position = 19)
@@ -132,10 +132,11 @@ public class AdmissionDTO {
 
 	@ApiModelProperty(notes = "weight", position = 30)
 	private String userID;
-
-	private int lock;
 	
 	private int hashCode;
+	
+	@ApiModelProperty(notes = "lock", example = "0", position = 31)
+	private int lock;
 
 	@NotNull
 	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
@@ -265,12 +266,7 @@ public class AdmissionDTO {
 		return this.deleted;
 	}
 
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
-
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}
@@ -326,7 +322,6 @@ public class AdmissionDTO {
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
 	}
-
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}
@@ -395,12 +390,16 @@ public class AdmissionDTO {
 		this.userID = userID;
 	}
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
-
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 
 	public void setDeleted(String deleted) {

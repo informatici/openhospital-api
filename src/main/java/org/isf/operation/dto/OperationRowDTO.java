@@ -54,10 +54,8 @@ public class OperationRowDTO {
 
     private String remarks;
 
-    @NotNull
     private AdmissionDTO admission;
 
-    @NotNull
     private OpdDTO opd;
 
     private BillDTO bill;
@@ -66,7 +64,7 @@ public class OperationRowDTO {
     
     private int hashCode;
 
-    @ApiModelProperty(hidden= true)
+    @ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}

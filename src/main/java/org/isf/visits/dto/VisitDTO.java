@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
+import org.isf.ward.model.Ward;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,26 +34,36 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Class representing a vaccine type")
 public class VisitDTO {
 
-    private int visitID;
+	@ApiModelProperty(notes = "The visit's ID", position = 1)
+	private int visitID;
 
-    @NotNull
-    @ApiModelProperty(notes = "Patient related to visitor", position = 1)
-    PatientDTO patient;
+	@NotNull
+	@ApiModelProperty(notes = "Patient related to visitor", position = 2)
+	PatientDTO patient;
 
-    @NotNull
-    @ApiModelProperty(notes = "Date of the visit", position = 2)
-    private LocalDateTime date;
+	@NotNull
+	@ApiModelProperty(notes = "Date of the visit", example = "2020-03-19T14:58:00", position = 3)
+	private LocalDateTime date;
 
-    @ApiModelProperty(notes = "Note of the visit", position = 3)
-    private String note;
+	@ApiModelProperty(notes = "Note of the visit", position = 4)
+	private String note;
 
-    @ApiModelProperty(notes = "Sms of the visit", position = 4)
-    private boolean sms;
+	@ApiModelProperty(notes = "Sms of the visit", position = 5)
+	private boolean sms;
 
-    @ApiModelProperty(hidden= true)
-    public int getVisitID() {
-        return visitID;
-    }
+	@ApiModelProperty(notes = "ward of the visit", position = 6)
+	private Ward ward;
+
+	@ApiModelProperty(notes = "duration of the visit", position = 7)
+	private Integer duration;
+
+	@ApiModelProperty(notes = "service done during the visit", position = 8)
+	private String service;
+
+	// @ApiModelProperty(hidden=true)
+	public int getVisitID() {
+		return visitID;
+	}
 
 	public PatientDTO getPatient() {
 		return this.patient;
@@ -60,6 +71,30 @@ public class VisitDTO {
 
 	public LocalDateTime getDate() {
 		return this.date;
+	}
+
+	public Ward getWard() {
+		return ward;
+	}
+
+	public void setWard(Ward ward) {
+		this.ward = ward;
+	}
+
+	public Integer getDuration() {
+		return duration;
+	}
+
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
 	}
 
 	public String getNote() {
@@ -90,13 +125,8 @@ public class VisitDTO {
 		this.sms = sms;
 	}
 
-  @Override
+	@Override
 	public String toString() {
-		return "VisitDTO{" +
-                ", patient=" + patient +
-                ", date=" + date +
-                ", note='" + note + '\'' +
-                ", sms=" + sms +
-                '}';
-  }
+		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms + '}';
+	}
 }

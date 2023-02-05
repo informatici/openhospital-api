@@ -58,7 +58,7 @@ public class PriceDTO
 	
 	private int hashCode;
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public boolean isEditable() {
 		return editable;
 	}
@@ -68,7 +68,7 @@ public class PriceDTO
 		return description;
 	}
 	
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}

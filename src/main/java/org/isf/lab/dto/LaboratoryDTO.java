@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
 
+import com.drew.lang.annotations.NotNull;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class LaboratoryDTO {
@@ -41,12 +43,14 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
     private LocalDateTime registrationDate;
 
+    @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
     private LocalDateTime examDate;
-
+    
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
-
+    
+    @ApiModelProperty(notes = "lock", example = "0")
     private int lock;
 
     @ApiModelProperty(notes = "Laboratory Note", position = 7)
@@ -67,108 +71,107 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
 
-	@ApiModelProperty(hidden= true)
-	public int getLock() {
-		return lock;
-	}
+    public int getLock() {
+        return lock;
+    }
 
-	public Integer getCode() {
-		return this.code;
-	}
+    public void setLock(int lock) {
+        this.lock = lock;
+    }
 
-	public String getMaterial() {
-		return this.material;
-	}
+    public Integer getCode() {
+        return this.code;
+    }
 
-	public ExamDTO getExam() {
-		return this.exam;
-	}
+    public String getMaterial() {
+        return this.material;
+    }
 
-	public LocalDateTime getRegistrationDate() {
-		return this.registrationDate;
-	}
+    public ExamDTO getExam() {
+        return this.exam;
+    }
 
-	public LocalDateTime getExamDate() {
-		return this.examDate;
-	}
+    public LocalDateTime getRegistrationDate() {
+        return this.registrationDate;
+    }
 
-	public String getResult() {
-		return this.result;
-	}
+    public LocalDateTime getDate() {
+        return this.examDate;
+    }
 
-	public String getNote() {
-		return this.note;
-	}
+    public String getResult() {
+        return this.result;
+    }
 
-	public Integer getPatientCode() {
-		return this.patientCode;
-	}
+    public String getNote() {
+        return this.note;
+    }
 
-	public String getPatName() {
-		return this.patName;
-	}
+    public Integer getPatientCode() {
+        return this.patientCode;
+    }
 
-	public String getInOutPatient() {
-		return this.inOutPatient;
-	}
+    public String getPatName() {
+        return this.patName;
+    }
 
-	public Integer getAge() {
-		return this.age;
-	}
+    public String getInOutPatient() {
+        return this.inOutPatient;
+    }
 
-	public String getSex() {
-		return this.sex;
-	}
+    public Integer getAge() {
+        return this.age;
+    }
 
-	public void setCode(Integer code) {
-		this.code = code;
-	}
+    public String getSex() {
+        return this.sex;
+    }
 
-	public void setMaterial(String material) {
-		this.material = material;
-	}
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
-	public void setExam(ExamDTO exam) {
-		this.exam = exam;
-	}
+    public void setMaterial(String material) {
+        this.material = material;
+    }
 
-	public void setRegistrationDate(LocalDateTime registrationDate) {
-		this.registrationDate = registrationDate;
-	}
+    public void setExam(ExamDTO exam) {
+        this.exam = exam;
+    }
 
-	public void setExamDate(LocalDateTime examDate) {
-		this.examDate = examDate;
-	}
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 
-	public void setResult(String result) {
-		this.result = result;
-	}
+    public void setDate(LocalDateTime examDate) {
+        this.examDate = examDate;
+    }
 
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-	public void setNote(String note) {
-		this.note = note;
-	}
+    public void setNote(String note) {
+        this.note = note;
+    }
 
-	public void setPatientCode(Integer patientCode) {
-		this.patientCode = patientCode;
-	}
+    public void setPatientCode(Integer patientCode) {
+        this.patientCode = patientCode;
+    }
 
-	public void setPatName(String patName) {
-		this.patName = patName;
-	}
+    public void setPatName(String patName) {
+        this.patName = patName;
+    }
 
-	public void setInOutPatient(String inOutPatient) {
-		this.inOutPatient = inOutPatient;
-	}
+    public void setInOutPatient(String inOutPatient) {
+        this.inOutPatient = inOutPatient;
+    }
 
-	public void setAge(Integer age) {
-		this.age = age;
-	}
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
 }

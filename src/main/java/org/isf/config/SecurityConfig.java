@@ -32,16 +32,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
@@ -51,43 +55,38 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
-    private UserDetailsService userDetailsService;
+@EnableGlobalMethodSecurity(securedEnabled = true)
+public class SecurityConfig {
 	
-	@Autowired
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    private final TokenProvider tokenProvider;
+
+    @Autowired
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-	private TokenProvider tokenProvider;
-	
+    public SecurityConfig(TokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
+    
 	@Autowired
 	private CustomLogoutHandler customLogoutHandler;
 
-	public SecurityConfig(TokenProvider tokenProvider) {
-		this.tokenProvider = tokenProvider;
-	}
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth)
-	  throws Exception {
-	    auth.authenticationProvider(authenticationProvider());
-	}
-	
-	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-	    DaoAuthenticationProvider authProvider
-	      = new DaoAuthenticationProvider();
-	    authProvider.setUserDetailsService(userDetailsService);
-	    authProvider.setPasswordEncoder(encoder());
-	    return authProvider;
-	}
-	
-	@Bean
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider
+                = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    }
+
+    @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
+    
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -104,15 +103,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CorsFilter(source);
     }
 
-    @Override
-    protected void configure(final HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.sessionManagement()
-		    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-			.cors()
-			.and()
-			.csrf()
-				.disable()
-					.authorizeRequests()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+			.cors().and().csrf().disable()
+			.authorizeRequests()
+            .expressionHandler(webExpressionHandler())
             .and()
             .exceptionHandling()
             	//.accessDeniedHandler(accessDeniedHandler)
@@ -259,11 +256,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             	.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("admin")
             	.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("admin", "guest")
             .and()
-          	.formLogin()
-          		.loginPage("/auth/login")
-            		.successHandler(successHandler())
-            		.failureHandler(failureHandler())
-            .and()
+//			.formLogin()
+//				 .loginPage("/auth/login")
+//				 .successHandler(successHandler())
+//				 .failureHandler(failureHandler())
+//			.and()
 			.apply(securityConfigurerAdapter())
 			.and()
             .httpBasic()
@@ -272,19 +269,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/auth/logout")
 				.addLogoutHandler(customLogoutHandler)
 				.permitAll();    
-        }
+        return http.build();
+    }
 
-	private JWTConfigurer securityConfigurerAdapter() {
-		return new JWTConfigurer(tokenProvider);
-	}
-    
+    private JWTConfigurer securityConfigurerAdapter() {
+        return new JWTConfigurer(tokenProvider);
+    }
+
     @Bean
-	public SimpleUrlAuthenticationFailureHandler failureHandler() {
-    	return new SimpleUrlAuthenticationFailureHandler();
+    public SimpleUrlAuthenticationFailureHandler failureHandler() {
+        return new SimpleUrlAuthenticationFailureHandler();
+    }
+
+    @Bean
+    public SimpleUrlAuthenticationSuccessHandler successHandler() {
+        return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
+    }
+    
+    private SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
+        DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
+        defaultWebSecurityExpressionHandler.setRoleHierarchy(roleHierarchy());
+        return defaultWebSecurityExpressionHandler;
     }
     
     @Bean
-	public SimpleUrlAuthenticationSuccessHandler successHandler() {
-    	return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        String hierarchy = "ROLE_ADMIN > ROLE_FAMILYMANAGER \n ROLE_FAMILYMANAGER > ROLE_USER";
+        roleHierarchy.setHierarchy(hierarchy);
+        return roleHierarchy;
     }
 }

@@ -71,7 +71,7 @@ public class BillPaymentsDTO {
 		return this.user;
 	}
 
-	@ApiModelProperty(hidden= true)
+	@ApiModelProperty(hidden=true)
 	public int getHashCode() {
 		return hashCode;
 	}

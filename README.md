@@ -20,21 +20,51 @@ For the moment, to build this project you should
         cd openhospital-api
         mvn clean install -DskipTests=true
         
- 3. call services
- URL base: localhost:8080/oh-api/patients
- URL swagger: http://localhost:8080/oh-api/swagger-ui.html
-
- 3. set rsc/database.properties
+ 3. prepare settings from each rsc/*.dist file
+ 
+        rsc/application.properties <- set a SHA-256 token
+        rsc/database.properties
+        rsc/log4j.properties
+        rsc/...
+ 
+ 4. set target/rsc/database.properties
  
         DB can be created with `docker-compose up` from `openhospital-core` or using a dedicated MySQL server
-
- 4. start openhospital-api
+        
+ 5. start openhospital-api (in `target` folder)
  
-        java -jar openhospital-api-<version>.jar
+        # Windows
+        java -cp "openhospital-api-0.0.2.jar;rsc/;static/" org.springframework.boot.loader.JarLauncher
 
-You can see Swagger Api Documentation at: http://localhost:8080/oh-api/swagger-ui/
+        # Linux
+        java -cp "openhospital-api-0.0.2.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
+        
+ 6. call services
+    - URL base: http://localhost:8080
+    - URL login: http://localhost:8080/auth/login
+    - URL patients: http://localhost:8080/patients
+    - URL swagger: http://localhost:8080/swagger-ui/
 
-![image](https://user-images.githubusercontent.com/2938553/203870946-fff6166c-ac0d-43da-874d-07b5163c5184.png)
+You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
+
+![image](https://user-images.githubusercontent.com/2938553/215335720-73d59075-f0df-44c4-93ed-eae79945bb71.png)
+   
+ 
+
+## How to deploy backend in docker environment
+
+Make sure you have docker with docker-compose installed, then run the following commands:
+
+    - DOCKER_BUILDKIT=0 docker-compose build [--no-cache]
+    - docker-compose up
+    - docker-compose  exec database /bin/bash
+    - cd sql/
+    - mysql -u isf -p
+    - source create_all_demo.sql;
+
+When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
+
+You can change the deployment branch using an .env file.
 
 ## How to contribute
 

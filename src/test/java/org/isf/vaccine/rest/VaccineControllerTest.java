@@ -141,7 +141,6 @@ public class VaccineControllerTest {
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isCreated())
 				.andReturn();
-
 		LOGGER.debug("result: {}", result);
 	}
 

@@ -48,9 +48,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
 public class ExamRowController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExamRowController.class);
@@ -71,7 +72,7 @@ public class ExamRowController {
     }
 
     @PostMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
+    public ResponseEntity<ExamRowDTO> newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
         Exam exam = examManager.getExams().stream().filter(e -> examRowDTO.getExam().getCode().equals(e.getCode())).findFirst().orElse(null);
 
         if (exam == null) {
@@ -81,11 +82,11 @@ public class ExamRowController {
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
         examRow.setExamCode(exam);
 
-        boolean isCreated = examRowBrowsingManager.newExamRow(examRow);
-        if (!isCreated) {
+        ExamRow isCreatedExamRow = examRowBrowsingManager.newExamRow(examRow);
+        if (isCreatedExamRow == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not created!", OHSeverityLevel.ERROR));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(true);
+        return ResponseEntity.status(HttpStatus.CREATED).body(examRowMapper.map2DTO(isCreatedExamRow));
     }
 
     @GetMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)

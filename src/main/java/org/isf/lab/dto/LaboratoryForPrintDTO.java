@@ -21,22 +21,24 @@
  */
 package org.isf.lab.dto;
 
+import java.time.LocalDateTime;
+
 public class LaboratoryForPrintDTO {
 
-    private String exam;
+	private String exam;
 
-    private String date;
+	private LocalDateTime date;
 
-    private String result;
+	private String result;
 
-    private Integer code;
+	private Integer code;
+
+	private String patName;
+
+	private Integer patientCode;
 
 	public String getExam() {
 		return this.exam;
-	}
-
-	public String getDate() {
-		return this.date;
 	}
 
 	public String getResult() {
@@ -51,7 +53,11 @@ public class LaboratoryForPrintDTO {
 		this.exam = exam;
 	}
 
-	public void setDate(String date) {
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
@@ -62,4 +68,21 @@ public class LaboratoryForPrintDTO {
 	public void setCode(Integer code) {
 		this.code = code;
 	}
+
+	public String getPatName() {
+		return patName;
+	}
+
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+
+	public Integer getPatientCode() {
+		return patientCode;
+	}
+
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
+
 }

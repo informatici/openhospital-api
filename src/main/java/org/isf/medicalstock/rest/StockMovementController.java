@@ -174,33 +174,9 @@ public class StockMovementController {
 			@RequestParam(name="lot_prep_to", required=false) LocalDateTime lotPrepTo,
 			@RequestParam(name="lot_due_from", required=false) LocalDateTime lotDueFrom,
 			@RequestParam(name="lot_due_to", required=false) LocalDateTime lotDueTo) throws OHServiceException {
-		LocalDateTime movFrom_ = null;
-		if (movFrom != null) {
-			movFrom_ = movFrom;
-		}
-		LocalDateTime movTo_ = null;
-		if (movTo != null) {
-			movTo_ = movTo;
-		}
-		LocalDateTime lotPrepFrom_ = null;
-		if (lotPrepFrom != null) {
-			lotPrepFrom_ = lotPrepFrom;
-		}
-		LocalDateTime lotPrepTo_ = null;
-		if (lotPrepTo != null) {
-			lotPrepTo_ = lotPrepTo;
-		}
-		LocalDateTime lotDueFrom_ = null;
-		if (lotDueFrom != null) {
-			lotDueFrom_ = lotDueFrom;
-		}
-		LocalDateTime lotDueTo_ = null;
-		if (lotDueTo != null) {
-			lotDueTo_ = lotDueTo;
-		}
 
-		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom_, movTo_, lotPrepFrom_, lotPrepTo_, lotDueFrom_,
-				lotDueTo_);
+		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom,
+				lotDueTo);
 		return collectResults(movements);
 	}
 	
