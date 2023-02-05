@@ -272,7 +272,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-	private JWTConfigurer securityConfigurerAdapter() {
+    private JWTConfigurer securityConfigurerAdapter() {
         return new JWTConfigurer(tokenProvider);
     }
 

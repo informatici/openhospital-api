@@ -50,8 +50,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig {
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
     @Bean
     public Docket apiDocket() {

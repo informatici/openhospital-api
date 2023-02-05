@@ -56,10 +56,10 @@ public class TokenProvider implements Serializable {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
     
-	@Autowired
-	private Environment env;
-	
-	private static final String AUTHORITIES_KEY = "auth";
+    @Autowired
+    private Environment env;
+
+    private static final String AUTHORITIES_KEY = "auth";
 
     private Key key;
 
@@ -139,19 +139,19 @@ public class TokenProvider implements Serializable {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-	public boolean validateToken(String token) {
-		try {
-			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			return true;
-		} catch (MalformedJwtException e) {
-			log.error("Invalid JWT token: {}", e.getMessage());
-		} catch (ExpiredJwtException e) {
-			log.error("JWT token is expired: {}", e.getMessage());
-		} catch (UnsupportedJwtException e) {
-			log.error("JWT token is unsupported: {}", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			log.error("JWT claims string is empty: {}", e.getMessage());
-		}
-		return false;
-	}
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
+        }
+        return false;
+    }
 }
