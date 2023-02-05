@@ -27,9 +27,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 
 import io.swagger.models.auth.In;
@@ -49,11 +50,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig {
 
-	@Value("${api.host:localhost:8080}")
-	String host;
-
-	@Value("${api.protocol:http}")
-	String protocol;
+    @Autowired
+    private Environment env;
 
     @Bean
     public Docket apiDocket() {
@@ -62,8 +60,8 @@ public class SpringFoxConfig {
 
         ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
 
-        String host = System.getProperty("api.host", "localhost:8080");
-        String protocol = System.getProperty("api.protocol", "http");
+        String host = env.getProperty("api.host");
+        String protocol = env.getProperty("api.protocol");
 
         Set<String> protocols = new HashSet<>();
         protocols.add(protocol);
