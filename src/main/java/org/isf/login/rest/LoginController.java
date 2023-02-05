@@ -29,7 +29,6 @@ import javax.validation.Valid;
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.security.CustomAuthenticationManager;
-import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
