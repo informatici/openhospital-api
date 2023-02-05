@@ -45,13 +45,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
     private AuthenticationManager authenticationManager;
 
     private long EXPIRATION_TIME = SecurityConstants.EXPIRATION_TIME;
-    
     
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;

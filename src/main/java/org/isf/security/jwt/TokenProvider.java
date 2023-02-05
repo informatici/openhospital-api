@@ -52,8 +52,8 @@ public class TokenProvider {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 	
     private static final String AUTHORITIES_KEY = "auth";
 
