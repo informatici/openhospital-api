@@ -48,7 +48,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 	private Environment env;
 
 	@Autowired
-    private TokenProvider jwtTokenUtil;
+        private TokenProvider jwtTokenUtil;
 	
 	@Autowired
 	private MenuIoOperations menuIoOperations;
