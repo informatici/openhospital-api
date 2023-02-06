@@ -43,11 +43,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
-<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-=======
->>>>>>> develop
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class OpdControllerTest {
 	
@@ -62,16 +62,12 @@ public class OpdControllerTest {
 	protected OpdMapper opdMapper = new OpdMapper();
 
 	private MockMvc mockMvc;
-<<<<<<< HEAD
-	
-	protected WardMapper mapperWard;
-	
-	
-	protected WardBrowserManager wardManager;
-=======
->>>>>>> develop
 
->>>>>>> develop
+	@BeforeEach
+	public void setup() {
+		MockitoAnnotations.openMocks(this);
+		this.mockMvc = MockMvcBuilders
+				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
@@ -110,4 +106,3 @@ public class OpdControllerTest {
 	}
 
 }
-
