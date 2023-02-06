@@ -37,6 +37,8 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.ward.manager.WardBrowserManager;
+import org.isf.ward.mapper.WardMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -60,14 +62,19 @@ public class OpdControllerTest {
 	protected PatientBrowserManager patientBrowserManagerMock;
 
 	protected OpdMapper opdMapper = new OpdMapper();
-
+	
+	protected WardMapper mapperWard = new WardMapper();
+	
+	protected WardBrowserManager wardManager = new WardBrowserManager();
+	
+	
 	private MockMvc mockMvc;
 
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock))
+				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, mapperWard, wardManager))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
