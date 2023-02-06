@@ -21,17 +21,21 @@
  */
 package org.isf.security.jwt;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,15 +44,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 
 @Component
-public class TokenProvider {
+public class TokenProvider implements Serializable {
 
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
+    
+    @Autowired
+    private Environment env;
 
     private static final String AUTHORITIES_KEY = "auth";
 
@@ -58,24 +67,50 @@ public class TokenProvider {
 
     private long tokenValidityInMillisecondsForRememberMe;
 
-
     @PostConstruct
     public void init() {
-        byte[] keyBytes;
-        String secret = "oj6eHNG8jrjyMXiR7Vho7JBvQgG-n2jku5MKbVLoJkL0bImol-hGtk-MVl9s9uwm_4IxHU1iQ8t0G7IseYc8bFrl9F4q6tkvyrlY1zm2doRsA5u1YeSvdMPAFBrr_VEzE4EWzu62RyVBjWWX9TYHTI8G7qIY3GMyFqPXYCVpO05EWCUnJMHZwZbyoSjv5dOhMwIup5bRq001KCpwMt_4Vn8m-CaUPpThNG3HulLbn-y6QKBtFKczgZkK2YLw-nuCy5BorP1BQy88RY9Y1Ho3BjII0iNvyLUF5rUtFeoxn1HA7LiCOuPSCxqkr0_VJEm8lVl6VNAkEnY7Sn3PhYpRTw";
-        keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-
+    	String secret = env.getProperty("jwt.token.secret");
+        log.info("Initializing JWT key with secret: {}", secret);
+        // byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        
         this.tokenValidityInMilliseconds = 1000L * 6000;
         this.tokenValidityInMillisecondsForRememberMe = 1000L * 6000;
     }
-
-    public String createToken(Authentication authentication, boolean rememberMe) {
-        String authorities = authentication.getAuthorities().stream()
+    
+    public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+    
+    private Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(this.key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+    
+    public Date getExpirationDateFromToken(String token) {
+        return getClaimFromToken(token, Claims::getExpiration);
+    }
+    
+    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = getAllClaimsFromToken(token);
+        return claimsResolver.apply(claims);
+    }
+    
+    public Boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
+    
+    public String generateJwtToken(Authentication authentication, boolean rememberMe) {
+    	final String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
+        long now = System.currentTimeMillis();
         Date validity;
         if (rememberMe) {
             validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
@@ -92,13 +127,9 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    	final Claims claims = getAllClaimsFromToken(token);
 
-        Collection<? extends GrantedAuthority> authorities =
+        final Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
@@ -108,13 +139,18 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.info("Invalid JWT token.");
-            log.trace("Invalid JWT token trace.", e);
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty: {}", e.getMessage());
         }
         return false;
     }

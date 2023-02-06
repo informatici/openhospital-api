@@ -69,7 +69,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
 		LoginResponse loginResponse = new LoginResponse();
-		loginResponse.setToken(this.tokenProvider.createToken(authentication, true));
+		loginResponse.setToken(this.tokenProvider.generateJwtToken(authentication, true));
 		loginResponse.setDisplayName(authentication.getName());
 		ObjectMapper mapper = new ObjectMapper();
 
