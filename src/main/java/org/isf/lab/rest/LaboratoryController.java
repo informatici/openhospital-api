@@ -329,6 +329,7 @@ public class LaboratoryController {
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT,patient);
+		System.out.println(laboratoryList.size());
 		if (laboratoryList == null || laboratoryList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {

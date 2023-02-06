@@ -252,6 +252,7 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
+			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
 			@RequestParam(name = "admissionrange", required = false) String[] admissionRange,
 			@RequestParam(name = "dischargerange", required = false) String[] dischargeRange)
@@ -278,7 +279,7 @@ public class AdmissionController {
 	
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		if (patientcode == 0) {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, "");
+			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, searchTerms);
 		} else {
 			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, Integer.toString(patientcode));
 		}
