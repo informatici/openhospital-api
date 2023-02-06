@@ -37,20 +37,17 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
-import org.isf.ward.manager.WardBrowserManager;
-import org.isf.ward.mapper.WardMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Autowired;
+=======
+>>>>>>> develop
 import org.springframework.http.MediaType;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class OpdControllerTest {
 	
@@ -65,17 +62,16 @@ public class OpdControllerTest {
 	protected OpdMapper opdMapper = new OpdMapper();
 
 	private MockMvc mockMvc;
+<<<<<<< HEAD
 	
 	protected WardMapper mapperWard;
 	
 	
 	protected WardBrowserManager wardManager;
+=======
+>>>>>>> develop
 
-	@BeforeEach
-	public void setup() {
-		MockitoAnnotations.openMocks(this);
-		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, mapperWard, wardManager))
+>>>>>>> develop
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();

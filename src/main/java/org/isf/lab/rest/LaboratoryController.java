@@ -232,74 +232,74 @@ public class LaboratoryController {
 		return ResponseEntity.ok(true);
 	}
 
-    @GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LabWithRowsDTO>> getLaboratory() throws OHServiceException {
-        List<Laboratory> labList = laboratoryManager.getLaboratory();
-        if (labList == null || labList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-        	return ResponseEntity.ok(labList.stream().map(lab -> {
-        		LabWithRowsDTO labDTO = new LabWithRowsDTO();
-            	List<String> labDescription = new ArrayList<String>();
-        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
-        		 if (lab.getExam().getProcedure() == 2) {
-        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
-						try {
-							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
-						} catch (OHServiceException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory() throws OHServiceException {
+		List<Laboratory> labList = laboratoryManager.getLaboratory();
+		if (labList == null || labList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(labList.stream().map(lab -> {
+				LabWithRowsDTO labDTO = new LabWithRowsDTO();
+				List<String> labDescription = new ArrayList<String>();
+				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+				if (lab.getExam().getProcedure() == 2) {
+					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					try {
+						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+					} catch (OHServiceException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (!labDes.isEmpty()) {
+						for (LaboratoryRow laboratoryRow : labDes) {
+							labDescription.add(laboratoryRow.getDescription());
 						}
-        	        	if(!labDes.isEmpty()) {
-        	        		for(LaboratoryRow laboratoryRow : labDes) {
-        	        			labDescription.add(laboratoryRow.getDescription());
-        	        		}
-        	        	}
-        	        	
-        			}
-        		 labDTO.setLaboratoryDTO(laboratoryDTO);
-        		 labDTO.setLaboratoryRowList(labDescription);	
-    		    return labDTO;
-        	}).collect(Collectors.toList()));
-        }
-    }
+					}
 
-    @GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
-        Patient patient = patientBrowserManager.getPatientById(patId);
-        if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
-        }
+				}
+				labDTO.setLaboratoryDTO(laboratoryDTO);
+				labDTO.setLaboratoryRowList(labDescription);
+				return labDTO;
+			}).collect(Collectors.toList()));
+		}
+	}
 
-        List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
-        if (labList == null || labList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-        	return ResponseEntity.ok(labList.stream().map(lab -> {
-        		LabWithRowsDTO labDTO = new LabWithRowsDTO();
-            	List<String> labDescription = new ArrayList<String>();
-        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
-        		 if (lab.getExam().getProcedure() == 2) {
-        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
-						try {
-							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
-						} catch (OHServiceException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
+		Patient patient = patientBrowserManager.getPatientById(patId);
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
+		if (labList == null || labList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(labList.stream().map(lab -> {
+				LabWithRowsDTO labDTO = new LabWithRowsDTO();
+				List<String> labDescription = new ArrayList<String>();
+				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+				if (lab.getExam().getProcedure() == 2) {
+					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					try {
+						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+					} catch (OHServiceException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (!labDes.isEmpty()) {
+						for (LaboratoryRow laboratoryRow : labDes) {
+							labDescription.add(laboratoryRow.getDescription());
 						}
-        	        	if(!labDes.isEmpty()) {
-        	        		for(LaboratoryRow laboratoryRow : labDes) {
-        	        			labDescription.add(laboratoryRow.getDescription());
-        	        		}
-        	        	}
-        	        	
-        			}
-        		 labDTO.setLaboratoryDTO(laboratoryDTO);
-        		 labDTO.setLaboratoryRowList(labDescription);	
-    		    return labDTO;
-        	}).collect(Collectors.toList()));
-        }
-    }
+					}
+
+				}
+				labDTO.setLaboratoryDTO(laboratoryDTO);
+				labDTO.setLaboratoryRowList(labDescription);
+				return labDTO;
+			}).collect(Collectors.toList()));
+		}
+	}
 
 	@GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
@@ -312,50 +312,47 @@ public class LaboratoryController {
 	}
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
-			@RequestParam(required = false, defaultValue = "") String examName,
-			@RequestParam(value = "dateFrom") String dateFrom,
-			@RequestParam(value = "dateTo") String dateTo,
-			@RequestParam(value = "patientCode",required = false, defaultValue = "0") int patientCode) throws OHServiceException {
-		
-		Patient patient = null ;
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
+	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(@RequestParam(required = false, defaultValue = "") String examName,
+					@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
+					@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode) throws OHServiceException {
+
+		Patient patient = null;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-		
+
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null)
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT,patient);
-		System.out.println(laboratoryList.size());
+		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
 		if (laboratoryList == null || laboratoryList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			return ResponseEntity.ok(laboratoryList.stream().map(lab -> {
-            	LabWithRowsDTO labDTO = new LabWithRowsDTO();
-            	List<String> labDescription = new ArrayList<String>();
-        		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
-        		 if (lab.getExam().getProcedure() == 2) {
-        	        	List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
-						try {
-							labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
-						} catch (OHServiceException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+				LabWithRowsDTO labDTO = new LabWithRowsDTO();
+				List<String> labDescription = new ArrayList<String>();
+				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+				if (lab.getExam().getProcedure() == 2) {
+					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					try {
+						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
+					} catch (OHServiceException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if (!labDes.isEmpty()) {
+						for (LaboratoryRow laboratoryRow : labDes) {
+							labDescription.add(laboratoryRow.getDescription());
 						}
-        	        	if(!labDes.isEmpty()) {
-        	        		for(LaboratoryRow laboratoryRow : labDes) {
-        	        			labDescription.add(laboratoryRow.getDescription());
-        	        		}
-        	        	}
-        	        	
-        			}
-        		 labDTO.setLaboratoryDTO(laboratoryDTO);
-        		 labDTO.setLaboratoryRowList(labDescription);	
-    		    return labDTO;
-        	}).collect(Collectors.toList()));
+					}
+
+				}
+				labDTO.setLaboratoryDTO(laboratoryDTO);
+				labDTO.setLaboratoryRowList(labDescription);
+				return labDTO;
+			}).collect(Collectors.toList()));
 		}
 	}
 
@@ -373,27 +370,27 @@ public class LaboratoryController {
 	}
 
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
-    	LabWithRowsDTO lab = new LabWithRowsDTO();
-    	Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-    	List<String> labDescription = new ArrayList<String>();
-        Laboratory laboratory = null;
-        if (labo.isPresent()) {
-        	laboratory = labo.get();
-        } else {
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
-        lab.setLaboratoryDTO(labDTO);
-        
-        if (laboratory.getExam().getProcedure() == 2) {
-        	List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
-        	if(!labDes.isEmpty()) {
-        		for(LaboratoryRow laboratoryRow : labDes) {
-        			labDescription.add(laboratoryRow.getDescription());
-        		}
-        	}
-        	
+	public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
+		LabWithRowsDTO lab = new LabWithRowsDTO();
+		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+		List<String> labDescription = new ArrayList<String>();
+		Laboratory laboratory = null;
+		if (labo.isPresent()) {
+			laboratory = labo.get();
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+		lab.setLaboratoryDTO(labDTO);
+
+		if (laboratory.getExam().getProcedure() == 2) {
+			List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
+			if (!labDes.isEmpty()) {
+				for (LaboratoryRow laboratoryRow : labDes) {
+					labDescription.add(laboratoryRow.getDescription());
+				}
+			}
+
 		}
 		lab.setLaboratoryRowList(labDescription);
 		return ResponseEntity.ok(lab);

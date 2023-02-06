@@ -385,8 +385,7 @@ public class OpdController {
 	public ResponseEntity<OpdDTO> getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
-		OpdDTO opdDTO =  mapper.map2DTO(lastOpd);
-		return ResponseEntity.ok(opdDTO);
+		return ResponseEntity.ok(mapper.map2DTO(lastOpd));
 	}
 	
 	/**

@@ -246,6 +246,7 @@ public class OperationController {
 			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
+
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
