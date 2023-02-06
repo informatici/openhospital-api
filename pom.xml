@@ -149,6 +149,13 @@
                 </configuration>
             </plugin>
             <plugin>
+			  <artifactId>maven-surefire-plugin</artifactId>
+			  <configuration>
+			    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+			    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+			  </configuration>
+			</plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
