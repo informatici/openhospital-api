@@ -306,7 +306,6 @@ public class OpdDTO {
         this.userID = userID;
     }
 
-
     public void setHashCode(int hashCode) {
         this.hashCode = hashCode;
     }
@@ -326,7 +325,4 @@ public class OpdDTO {
 	public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
-	
-	
-	
 }

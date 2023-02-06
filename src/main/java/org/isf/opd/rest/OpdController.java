@@ -133,7 +133,8 @@ public class OpdController {
 	 */
 	@PostMapping(value = "/opds/rows", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OpdWithOperatioRowDTO> newOpdWithOperationRow(@RequestBody OpdWithOperatioRowDTO opdWithOperatioRowDTO) throws OHServiceException {
-		LOGGER.info("store Out patient {}");
+		int code = opdWithOperatioRowDTO.getOpdDTO().getCode();
+		LOGGER.info("store Out patient {}", code);
 		OpdWithOperatioRowDTO opdWithOpeRDTO = new OpdWithOperatioRowDTO();
 		Patient patient = patientManager.getPatientById(opdWithOperatioRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
@@ -176,7 +177,7 @@ public class OpdController {
 	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-		if (opdManager.getOpdById(code) == null ) {	
+		if (opdManager.getOpdById(code) == null) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 
@@ -207,9 +208,9 @@ public class OpdController {
 	@PutMapping(value = "/opds/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OpdWithOperatioRowDTO> updateOpdWithOperationRow(@PathVariable("code") int code, @RequestBody OpdWithOperatioRowDTO opdWithOperatioRowDTO)
 			throws OHServiceException {
-		LOGGER.info("Update opds code: {}", opdWithOperatioRowDTO.getOpdDTO().getCode());
+		LOGGER.info("Update opds code: {}", code);
 		OpdWithOperatioRowDTO opdWithOpeRDTO = new OpdWithOperatioRowDTO();
-		if (opdManager.getOpdById(code) == null ) {	
+		if (opdManager.getOpdById(code) == null) {	
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
 		}
 

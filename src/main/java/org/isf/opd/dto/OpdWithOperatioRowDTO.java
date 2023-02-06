@@ -47,7 +47,4 @@ public class OpdWithOperatioRowDTO {
 	public void setOperationRows(List<OperationRowDTO> operationRows) {
 		this.operationRows = operationRows;
 	}
-	
-	
-
 }
