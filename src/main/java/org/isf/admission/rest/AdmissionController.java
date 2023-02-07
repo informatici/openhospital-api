@@ -254,34 +254,16 @@ public class AdmissionController {
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 			@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
 			@RequestParam(name = "patientcode", defaultValue = "0", required = false) int patientcode,
-			@RequestParam(name = "admissionrange", required = false) String[] admissionRange,
-			@RequestParam(name = "dischargerange", required = false) String[] dischargeRange)
+			@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
+			@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
 			throws OHServiceException {
 		LOGGER.info("Get admissions of patients by id: {}", patientcode);
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
-		LocalDateTime[] admissionR= new LocalDateTime[2];	
-		LocalDateTime[] dischargeR = new LocalDateTime[2];
-		
-		if (admissionRange != null && admissionRange.length == 2) {
-			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
-			for (int i = 0; i < admissionRange.length; i++) {
-				LocalDateTime date = LocalDateTime.parse(admissionRange[i], formatter);
-				admissionR[i] = date;
-			}
-		}
-		if (dischargeRange != null && dischargeRange.length == 2) {
-			LOGGER.debug("Get admissions ended between {} and {}", dischargeRange[0], dischargeRange[1]);
-			for (int j = 0; j < dischargeRange.length; j++) {
-				LocalDateTime date = LocalDateTime.parse(dischargeRange[j], formatter);
-				dischargeR[j] = date;
-			}
-		}
 	
 		List<AdmittedPatient> admittedPatients = new ArrayList<AdmittedPatient>();
 		if (patientcode == 0) {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, searchTerms);
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
 		} else {
-			admittedPatients = admissionManager.getAdmittedPatients(admissionR, dischargeR, Integer.toString(patientcode));
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, Integer.toString(patientcode));
 		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

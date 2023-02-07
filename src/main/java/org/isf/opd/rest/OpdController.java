@@ -22,7 +22,6 @@
 package org.isf.opd.rest;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,7 +42,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
-import org.isf.ward.dto.WardDTO;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
 import org.slf4j.Logger;
@@ -281,8 +279,8 @@ public class OpdController {
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OpdDTO>> getOpdByDates(
-			@RequestParam(value = "dateFrom") String dateFrom, 
-			@RequestParam(value = "dateTo") String dateTo, 
+			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom, 
+			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo, 
 			@RequestParam(value = "diseaseTypeCode", required = false, defaultValue = "angal.common.alltypes.txt") String diseaseTypeCode,
 			@RequestParam(value = "diseaseCode", required = false, defaultValue = "angal.opd.alldiseases.txt") String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
@@ -300,13 +298,9 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("newPatient: {}", patientCode);
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"); 
-		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
-		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-
 		LOGGER.debug("patientCode: {}", patientCode);
 		
-		List<Opd> opds  = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateF, dateT, ageFrom,  ageTo, sex, newPatient, 0);
+		List<Opd> opds  = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, 0);
 
 		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
 			return mapper.map2DTO(opd);
