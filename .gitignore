@@ -1,6 +1,13 @@
 HELP.md
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+/oh-rest-api.log.*.gz
+logs/
+bin
+*.log
+/static
+!static/swagger-ui/
+
 
 ### STS ###
 .apt_generated
@@ -11,6 +18,7 @@ HELP.md
 .springBeans
 .sts4-cache
 *.class
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -24,5 +32,6 @@ HELP.md
 /nbdist/
 /.nb-gradle/
 /build/
-*.log
-/oh-rest-api.log.*.gz
+
+### VScode ###
+.vscode
