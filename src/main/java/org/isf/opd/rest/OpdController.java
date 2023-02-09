@@ -147,16 +147,13 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		List<OperationRowDTO> opeRList = new ArrayList<OperationRowDTO>();
+		
 		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				boolean isCreated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
 			}
 		}
-		opeRList = operationRowManager.getOperationRowByOpd(isCreatedOpd).stream().map(operation-> {
-			return opRowMapper.map2DTO(operation);
-		}).collect(Collectors.toList());
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOperatioRow);
 	}
@@ -229,17 +226,13 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		List<OperationRowDTO> opeRList = new ArrayList<OperationRowDTO>();
+		
 		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				boolean isCreated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
 			}
 		}
-		opeRList = operationRowManager.getOperationRowByOpd(updatedOpd).stream().map(operation-> {
-			return opRowMapper.map2DTO(operation);
-		}).collect(Collectors.toList());
-		
 		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
 	}
 	/**
@@ -268,7 +261,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdWithOperatioRowDTO>> getOpdByDates(
+	public ResponseEntity<List<OpdDTO>> getOpdByDates(
 			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateFrom, 
 			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateTo, 
 			@RequestParam(value = "diseaseTypeCode", required = false) String diseaseTypeCode,
@@ -288,7 +281,6 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("patientCode: {}", patientCode);
-		List<OpdWithOperatioRowDTO> opdWithOperations = new ArrayList<OpdWithOperatioRowDTO>();
 		List<Opd> opds = null;
 		if (patientCode != 0) {
 			opds = opdManager.getOpdList(patientCode);
@@ -296,24 +288,14 @@ public class OpdController {
 			opds = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
 		}
 
-		opdWithOperations = opds.stream().map(opd -> {
-			OpdWithOperatioRowDTO opRows = new OpdWithOperatioRowDTO();
-			opRows.setOpdDTO( mapper.map2DTO(opd));
-			List<OperationRow> listOp = new ArrayList<OperationRow>();
-			try {
-				listOp = operationRowManager.getOperationRowByOpd(opd);
-			} catch (OHServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
-			return opRows;
+		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
+			return mapper.map2DTO(opd);
 		}).collect(Collectors.toList());
 		
-		if (opdWithOperations.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdWithOperations);
+		if (opdDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
 		} else {
-			return ResponseEntity.ok(opdWithOperations);
+			return ResponseEntity.ok(opdDTOs);
 		}
 	}
 	
@@ -323,20 +305,30 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/patient/{pcode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByPatient(@PathVariable("pcode") int pcode) throws OHServiceException {
+	public ResponseEntity<List<OpdWithOperatioRowDTO>> getOpdByPatient(@PathVariable("pcode") int pcode) throws OHServiceException {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdDTO> opdDTOs = new ArrayList<OpdDTO>();
+		List<OpdWithOperatioRowDTO> opdWithOperations = new ArrayList<OpdWithOperatioRowDTO>();
 		if (!opds.isEmpty()) {
-			opdDTOs = opds.stream().map(opd -> {
-				return mapper.map2DTO(opd);
+			opdWithOperations = opds.stream().map(opd -> {
+				OpdWithOperatioRowDTO opRows = new OpdWithOperatioRowDTO();
+				opRows.setOpdDTO( mapper.map2DTO(opd));
+				List<OperationRow> listOp = new ArrayList<OperationRow>();
+				try {
+					listOp = operationRowManager.getOperationRowByOpd(opd);
+				} catch (OHServiceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
+				return opRows;
 			}).collect(Collectors.toList());
-			return ResponseEntity.ok(opdDTOs);
+			return ResponseEntity.ok(opdWithOperations);
 
 		} else {
 
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdWithOperations);
 
 		}
 	}
