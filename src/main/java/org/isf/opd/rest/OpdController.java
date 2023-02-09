@@ -154,7 +154,8 @@ public class OpdController {
 				boolean isCreated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
 			}
 		}
-		
+		List<OperationRow> listOp = operationRowManager.getOperationRowByOpd(opdToInsert);
+		opdWithOperatioRow.setOperationRows(opRowMapper.map2DTOList(listOp));
 		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOperatioRow);
 	}
 	
@@ -226,13 +227,14 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		
 		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				boolean isCreated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
 			}
 		}
+		List<OperationRow> listOp = operationRowManager.getOperationRowByOpd(updatedOpd);
+		opdWithOperatioRow.setOperationRows(opRowMapper.map2DTOList(listOp));
 		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
 	}
 	/**
