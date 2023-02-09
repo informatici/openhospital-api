@@ -28,15 +28,21 @@ import java.util.stream.Collectors;
 
 import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
+import org.isf.opd.dto.OpdWithOperatioRowDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+import org.isf.operation.dto.OperationRowDTO;
+import org.isf.operation.manager.OperationRowBrowserManager;
+import org.isf.operation.mapper.OperationRowMapper;
+import org.isf.operation.model.OperationRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
+import org.isf.ward.manager.WardBrowserManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -68,11 +74,24 @@ public class OpdController {
 	
 	@Autowired
 	protected PatientBrowserManager patientManager;
+	
+	@Autowired
+	protected OperationRowBrowserManager operationRowManager;
+	
+	@Autowired
+	protected OperationRowMapper opRowMapper;
+	
+	@Autowired
+    protected WardBrowserManager wardManager;
 
-	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper, PatientBrowserManager patientManager) {
+	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper, PatientBrowserManager patientManager, OperationRowBrowserManager 
+			operationRowManager, OperationRowMapper opRowMapper, WardBrowserManager wardManager) {
 		this.opdManager = opdManager;
 		this.mapper = opdmapper;
 		this.patientManager = patientManager;
+		this.operationRowManager = operationRowManager;
+		this.opRowMapper = opRowMapper;
+		this.wardManager = wardManager;
 	}
 
 	/**
@@ -101,6 +120,47 @@ public class OpdController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
 
+	/**
+	 * Create a new {@link Opd}.
+	 * @param opdDTO
+	 * @return the code of {@link Opd} stored
+	 * @throws OHServiceException
+	 */
+	@PostMapping(value = "/opds/rows", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<OpdWithOperatioRowDTO> newOpdWithOperationRow(@RequestBody OpdWithOperatioRowDTO opdWithOperatioRowDTO) throws OHServiceException {
+		int code = opdWithOperatioRowDTO.getOpdDTO().getCode();
+		LOGGER.info("store Out patient {}", code);
+		OpdWithOperatioRowDTO opdWithOperatioRow = new OpdWithOperatioRowDTO();
+		Patient patient = patientManager.getPatientById(opdWithOperatioRowDTO.getOpdDTO().getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+		if (opdWithOperatioRowDTO.getOpdDTO().getNote() == " ") {
+			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
+		}
+		Opd opdToInsert = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
+		opdToInsert.setPatient(patient);
+		opdToInsert.setWard(wardManager.findWard("OPD"));
+		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
+		if (isCreatedOpd == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created!", OHSeverityLevel.ERROR));
+		}
+		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
+		opdWithOperatioRow.setOpdDTO(opdDTO);
+		List<OperationRowDTO> opeRList = new ArrayList<OperationRowDTO>();
+		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
+			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
+				operationRow.setOpd(opdDTO);
+				boolean isCreated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+			}
+		}
+		opeRList = operationRowManager.getOperationRowByOpd(isCreatedOpd).stream().map(operation-> {
+			return opRowMapper.map2DTO(operation);
+		}).collect(Collectors.toList());
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOperatioRow);
+	}
+	
 	/**
 	 * Updates the specified {@link Opd}.
 	 * @param opdDTO
@@ -134,6 +194,55 @@ public class OpdController {
 	}
 
 	/**
+	 * Updates the specified {@link Opd}.
+	 * @param opdDTO
+	 * @return the code of updated {@link Opd}
+	 * @throws OHServiceException
+	 */
+	@PutMapping(value = "/opds/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ResponseEntity<OpdWithOperatioRowDTO> updateOpdWithOperationRow(@PathVariable("code") int code, @RequestBody OpdWithOperatioRowDTO opdWithOperatioRowDTO)
+			throws OHServiceException {
+		LOGGER.info("Update opds code: {}", code);
+		OpdWithOperatioRowDTO opdWithOperatioRow = new OpdWithOperatioRowDTO();
+		if (opdManager.getOpdById(code) == null) {	
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
+		}
+
+		if (opdWithOperatioRowDTO.getOpdDTO().getCode() != 0 && opdWithOperatioRowDTO.getOpdDTO().getCode() != code) {	
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found!", OHSeverityLevel.ERROR));
+		}
+		
+		Patient patient = patientManager.getPatientById(opdWithOperatioRowDTO.getOpdDTO().getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		Opd opdToUpdate = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
+		opdToUpdate.setLock(opdWithOperatioRowDTO.getOpdDTO().getLock());
+		if(opdToUpdate.getWard() == null) {
+			opdToUpdate.setWard(wardManager.findWard("OPD"));
+		}
+			
+		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
+		if (updatedOpd == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
+		}
+		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
+		opdWithOperatioRow.setOpdDTO(opdDTO);
+		List<OperationRowDTO> opeRList = new ArrayList<OperationRowDTO>();
+		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
+			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
+				operationRow.setOpd(opdDTO);
+				boolean isCreated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
+			}
+		}
+		opeRList = operationRowManager.getOperationRowByOpd(updatedOpd).stream().map(operation-> {
+			return opRowMapper.map2DTO(operation);
+		}).collect(Collectors.toList());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
+	}
+	/**
 	 * Get all {@link Opd}s for today or for the last week.
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
@@ -159,7 +268,7 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByDates(
+	public ResponseEntity<List<OpdWithOperatioRowDTO>> getOpdByDates(
 			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateFrom, 
 			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateTo, 
 			@RequestParam(value = "diseaseTypeCode", required = false) String diseaseTypeCode,
@@ -179,7 +288,7 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("patientCode: {}", patientCode);
-		
+		List<OpdWithOperatioRowDTO> opdWithOperations = new ArrayList<OpdWithOperatioRowDTO>();
 		List<Opd> opds = null;
 		if (patientCode != 0) {
 			opds = opdManager.getOpdList(patientCode);
@@ -187,14 +296,24 @@ public class OpdController {
 			opds = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
 		}
 
-		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
-			return mapper.map2DTO(opd);
+		opdWithOperations = opds.stream().map(opd -> {
+			OpdWithOperatioRowDTO opRows = new OpdWithOperatioRowDTO();
+			opRows.setOpdDTO( mapper.map2DTO(opd));
+			List<OperationRow> listOp = new ArrayList<OperationRow>();
+			try {
+				listOp = operationRowManager.getOperationRowByOpd(opd);
+			} catch (OHServiceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
+			return opRows;
 		}).collect(Collectors.toList());
 		
-		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+		if (opdWithOperations.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdWithOperations);
 		} else {
-			return ResponseEntity.ok(opdDTOs);
+			return ResponseEntity.ok(opdWithOperations);
 		}
 	}
 	
