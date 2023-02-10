@@ -147,15 +147,15 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		
+		List<OperationRowDTO> listOp = new ArrayList<OperationRowDTO>();
 		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
-				boolean isCreated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+				OperationRow created = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+				listOp.add(opRowMapper.map2DTO(created));
 			}
 		}
-		List<OperationRow> listOp = operationRowManager.getOperationRowByOpd(opdToInsert);
-		opdWithOperatioRow.setOperationRows(opRowMapper.map2DTOList(listOp));
+		opdWithOperatioRow.setOperationRows(listOp);
 		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOperatioRow);
 	}
 	
@@ -216,25 +216,29 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
+		opdToUpdate.setWard(wardManager.findWard("OPD"));
 		opdToUpdate.setLock(opdWithOperatioRowDTO.getOpdDTO().getLock());
-		if(opdToUpdate.getWard() == null) {
-			opdToUpdate.setWard(wardManager.findWard("OPD"));
-		}
-			
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated!", OHSeverityLevel.ERROR));
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
+		List<OperationRowDTO> listOpeRow = new ArrayList<OperationRowDTO>();
 		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
-				boolean isCreated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
+				OperationRow updated = new OperationRow();
+				if(operationRow.getId() == 0) {
+					 updated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+				} else {
+					 updated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
+				}
+				
+				listOpeRow.add(opRowMapper.map2DTO(updated));
 			}
 		}
-		List<OperationRow> listOp = operationRowManager.getOperationRowByOpd(updatedOpd);
-		opdWithOperatioRow.setOperationRows(opRowMapper.map2DTOList(listOp));
+		opdWithOperatioRow.setOperationRows(listOpeRow);
 		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
 	}
 	/**
@@ -315,7 +319,7 @@ public class OpdController {
 		if (!opds.isEmpty()) {
 			opdWithOperations = opds.stream().map(opd -> {
 				OpdWithOperatioRowDTO opRows = new OpdWithOperatioRowDTO();
-				opRows.setOpdDTO( mapper.map2DTO(opd));
+				opRows.setOpdDTO(mapper.map2DTO(opd));
 				List<OperationRow> listOp = new ArrayList<OperationRow>();
 				try {
 					listOp = operationRowManager.getOperationRowByOpd(opd);
@@ -323,7 +327,12 @@ public class OpdController {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
+				if(!listOp.isEmpty()) {
+					opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
+				} else {
+					opRows.setOperationRows(new ArrayList<OperationRowDTO>());
+				}
+					
 				return opRows;
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(opdWithOperations);
