@@ -121,9 +121,9 @@ public class OpdController {
 	}
 
 	/**
-	 * Create a new {@link Opd}.
-	 * @param opdDTO
-	 * @return the code of {@link Opd} stored
+	 * Create a new {@link OpdWithOperatioRowDTO}.
+	 * @param OpdWithOperatioRowDTO
+	 * @return the OpdWithOperatioRowDTO stored
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds/rows", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -148,7 +148,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOp = new ArrayList<OperationRowDTO>();
-		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
+		if(opdWithOperatioRowDTO.getOperationRows().size() > 0) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow created = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
@@ -192,9 +192,10 @@ public class OpdController {
 	}
 
 	/**
-	 * Updates the specified {@link Opd}.
-	 * @param opdDTO
-	 * @return the code of updated {@link Opd}
+	 * Updates the specified {@link OpdWithOperatioRowDTO}.
+	 * @param code
+	 * @param OpdWithOperatioRowDTO
+	 * @return the OpdWithOperatioRowDTO updated
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -241,6 +242,7 @@ public class OpdController {
 		opdWithOperatioRow.setOperationRows(listOpeRow);
 		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
 	}
+	
 	/**
 	 * Get all {@link Opd}s for today or for the last week.
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
@@ -306,8 +308,8 @@ public class OpdController {
 	}
 	
 	/**
-	 * Get all {@link Opd}s associated to specified patient CODE.
-	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
+	 * Get all {@link OpdWithOperatioRowDTO}s associated to specified patient CODE.
+	 * @return a {@link List} of {@link OpdWithOperatioRowDTO} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/patient/{pcode}", produces = MediaType.APPLICATION_JSON_VALUE)
