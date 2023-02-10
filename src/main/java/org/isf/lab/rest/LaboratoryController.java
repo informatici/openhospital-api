@@ -323,8 +323,9 @@ public class LaboratoryController {
 
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
-			if (patient == null || laboratoryManager.getLaboratory(patient) == null)
+			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
 				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
 		if (laboratoryList == null || laboratoryList.isEmpty()) {
