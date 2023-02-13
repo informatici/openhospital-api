@@ -109,7 +109,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 		if (opdDTO.getNote() == " ") {
-			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Note field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
 		opdToInsert.setPatient(patient);
@@ -136,7 +136,7 @@ public class OpdController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 		if (opdWithOperatioRowDTO.getOpdDTO().getNote() == " ") {
-			throw new OHAPIException(new OHExceptionMessage(null, "not field is mandatory!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Note field is mandatory!", OHSeverityLevel.ERROR));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
 		opdToInsert.setPatient(patient);
@@ -148,7 +148,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOp = new ArrayList<OperationRowDTO>();
-		if(opdWithOperatioRowDTO.getOperationRows().size() > 0) {
+		if (opdWithOperatioRowDTO.getOperationRows().size() > 0) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow created = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
@@ -226,11 +226,11 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOpeRow = new ArrayList<OperationRowDTO>();
-		if(opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
+		if (opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow updated = new OperationRow();
-				if(operationRow.getId() == 0) {
+				if (operationRow.getId() == 0) {
 					 updated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
 				} else {
 					 updated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
