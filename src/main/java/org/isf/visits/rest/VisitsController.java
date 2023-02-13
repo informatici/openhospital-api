@@ -150,11 +150,13 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
-        if (visit == null)
-        	throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
+        if (visit == null) {
+            throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
+        }
         
-        if (visit.getVisitID() != updateVisit.getVisitID())
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (visit.getVisitID() != updateVisit.getVisitID()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         
         Visit visitUp = mapper.map2Model(updateVisit);
         Visit visitUpdate = visitManager.newVisit(visitUp);
