@@ -151,8 +151,8 @@ public class OpdController {
 		if (opdWithOperatioRowDTO.getOperationRows().size() > 0) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
-				OperationRow created = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
-				listOp.add(opRowMapper.map2DTO(created));
+				OperationRow createOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+				listOp.add(opRowMapper.map2DTO(createOpeRow));
 			}
 		}
 		opdWithOperatioRow.setOperationRows(listOp);
@@ -229,14 +229,14 @@ public class OpdController {
 		if (opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
-				OperationRow updated = new OperationRow();
+				OperationRow updateOpeRow = new OperationRow();
 				if (operationRow.getId() == 0) {
-					 updated = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+					 updateOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
 				} else {
-					 updated = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
+					updateOpeRow = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
 				}
 				
-				listOpeRow.add(opRowMapper.map2DTO(updated));
+				listOpeRow.add(opRowMapper.map2DTO(updateOpeRow));
 			}
 		}
 		opdWithOperatioRow.setOperationRows(listOpeRow);
