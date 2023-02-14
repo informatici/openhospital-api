@@ -327,9 +327,9 @@ public class OpdController {
 					listOp = operationRowManager.getOperationRowByOpd(opd);
 				} catch (OHServiceException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Unable to get the List of operation associate to this Opd");
 				}
-				if(!listOp.isEmpty()) {
+				if (!listOp.isEmpty()) {
 					opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
 				} else {
 					opRows.setOperationRows(new ArrayList<OperationRowDTO>());
