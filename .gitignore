@@ -1,5 +1,9 @@
 HELP.md
 /target/
+/rsc/application.properties
+/rsc/log4j.properties
+/rsc/settings.properties
+/rsc/database.properties
 !.mvn/wrapper/maven-wrapper.jar
 /oh-rest-api.log.*.gz
 logs/
