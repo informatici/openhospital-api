@@ -175,6 +175,32 @@ public class LaboratoryController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
+	
+	@PostMapping(value = "/laboratories/prescription", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> newLaboratory3(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
+	
+		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode())).findFirst().orElse(null);
+		if (exam == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+		}
+
+		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
+		labToInsert.setExam(exam);
+		labToInsert.setPatient(patient);
+		labToInsert.setActive(2);
+
+		boolean inserted = laboratoryManager.newLaboratory3(labToInsert);
+
+		if (!inserted) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not create!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+	}
 
 	@PutMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateLaboratory(@PathVariable Integer code, @RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
@@ -188,9 +214,9 @@ public class LaboratoryController {
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (!labo.isPresent()) {
-			System.out.println(!labo.isPresent());
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
 		}
+		
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
@@ -205,6 +231,9 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setDate(LocalDateTime.now());
+		if (labo.get().getActive() == 2) {
+			labToInsert.setActive(1);
+		}
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
@@ -298,6 +327,32 @@ public class LaboratoryController {
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
 			}).collect(Collectors.toList()));
+		}
+	}
+	
+	@GetMapping(value = "/laboratories/prescription/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryPrescibe(@PathVariable Integer patId) throws OHServiceException {
+		Patient patient = patientBrowserManager.getPatientById(patId);
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getActive() == 2).collect(Collectors.toList());
+		if (labList == null || labList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
+		}
+	}
+	
+	@GetMapping(value = "/laboratories/prescription/all", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryPrescibes() throws OHServiceException {
+	
+		List<Laboratory> labList = laboratoryManager.getLaboratory().stream().filter(e -> e.getActive() == 2).collect(Collectors.toList());
+		if (labList == null || labList.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
 		}
 	}
 
