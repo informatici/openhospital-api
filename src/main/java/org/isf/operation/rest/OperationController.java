@@ -218,14 +218,14 @@ public class OperationController {
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 		
-		boolean isCreated = operationRowManager.newOperationRow(opRow);
+		OperationRow createOpeRow = operationRowManager.newOperationRow(opRow);
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getAdmission().getId() == code)
 				.collect(Collectors.toList());
 		OperationRow opCreated = null;
 		if (!opRowFounds.isEmpty()) {
 			opCreated = opRowFounds.get(0);
 		}
-		if (!isCreated || opCreated == null) {
+		if (createOpeRow == null || opCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not created!", OHSeverityLevel.ERROR));
 		}
 		OperationRowDTO opR =  opRowMapper.map2DTO(opCreated);
@@ -252,8 +252,8 @@ public class OperationController {
 		if (opRowFounds.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
 		}
-		boolean isUpdated = operationRowManager.updateOperationRow(opRow);
-		if (!isUpdated) {
+		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
+		if (updateOpeRow == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(opRow.getId());
