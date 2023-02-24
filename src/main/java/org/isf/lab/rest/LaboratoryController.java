@@ -401,7 +401,6 @@ public class LaboratoryController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter).plusHours(23).plusMinutes(59);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-		LOGGER.info("date: {}", dateT);
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
