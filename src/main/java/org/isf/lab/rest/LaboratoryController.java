@@ -384,7 +384,7 @@ public class LaboratoryController {
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(@RequestParam(required = false, defaultValue = "") String examName,
 					@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
 					@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode,
-					@RequestParam(value = "patientCode", required = false, defaultValue = "-1") int status) throws OHServiceException {
+					@RequestParam(value = "status", required = false, defaultValue = "-1") int status) throws OHServiceException {
 		LOGGER.info("Get lawithRow within specified date: {}");
 		LOGGER.info("examName: {}", examName);
 		LOGGER.info("dateFrom: {}", dateFrom);
