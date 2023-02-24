@@ -192,7 +192,13 @@ public class LaboratoryController {
 		if (exam == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
 		}
-
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getActive() == 2).collect(Collectors.toList());
+		for (Laboratory lab: labList) {
+			if (laboratoryDTO.getExam().getCode().equals(lab.getExam().getCode())) {
+				throw new OHAPIException(new OHExceptionMessage(null, "This Exam Request already exist!", OHSeverityLevel.ERROR));
+			}
+		}
+		
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
@@ -390,11 +396,12 @@ public class LaboratoryController {
 		LOGGER.info("dateFrom: {}", dateFrom);
 		LOGGER.info("dateTo: {}", dateTo);
 		LOGGER.info("patientCode: {}", patientCode);
+		LOGGER.info("status: {}", status);
 		Patient patient = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
+		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter).plusHours(23).plusMinutes(59);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-
+		LOGGER.info("date: {}", dateT);
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
