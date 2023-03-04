@@ -67,7 +67,7 @@ import io.swagger.annotations.Authorization;
 @Api(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
 public class LaboratoryController {
 	
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OpdController.class);
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LaboratoryController.class);
 
 	@Autowired
 	protected LabManager laboratoryManager;
