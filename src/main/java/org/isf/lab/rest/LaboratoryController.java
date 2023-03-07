@@ -203,7 +203,7 @@ public class LaboratoryController {
 			labToInsert.setDate(LocalDateTime.now());
 		}
 
-		boolean inserted = laboratoryManager.newLaboratory3(labToInsert);
+		boolean inserted = laboratoryManager.newExamRequest(labToInsert);
 
 		if (!inserted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not create!", OHSeverityLevel.ERROR));
