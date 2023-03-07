@@ -36,3 +36,4 @@ bin
 
 ### VScode ###
 .vscode
+/deps/
