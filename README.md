@@ -22,7 +22,7 @@ For the moment, to build this project you should
         
  3. prepare settings from each rsc/*.dist file
  
-        rsc/application.properties <- set a SHA-256 token
+        rsc/application.properties <- set a SHA-256 jwt token
         rsc/database.properties
         rsc/log4j.properties
         rsc/...
@@ -55,7 +55,7 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 Make sure you have docker with docker-compose installed, then run the following commands:
 
-- set .env variables (from dotenv file)
+- copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
 - run `docker compose up -d database`
 - (optional) run `docker compose run oh-database-init`
