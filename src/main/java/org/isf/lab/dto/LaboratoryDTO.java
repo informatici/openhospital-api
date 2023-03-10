@@ -24,6 +24,7 @@ package org.isf.lab.dto;
 import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
+import org.isf.patient.dto.PatientSTATUS;
 
 import com.drew.lang.annotations.NotNull;
 
@@ -45,7 +46,7 @@ public class LaboratoryDTO {
 
     @NotNull
     @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private LocalDateTime examDate;
+    private LocalDateTime date;
     
     @ApiModelProperty(notes = "Laboratory Result", position = 6)
     private String result;
@@ -63,7 +64,7 @@ public class LaboratoryDTO {
     private String patName;
 
     @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
-    private String inOutPatient;
+    private PatientSTATUS inOutPatient;
 
     @ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
     private Integer age;
@@ -107,7 +108,7 @@ public class LaboratoryDTO {
     }
 
     public LocalDateTime getDate() {
-        return this.examDate;
+        return this.date;
     }
 
     public String getResult() {
@@ -126,7 +127,7 @@ public class LaboratoryDTO {
         return this.patName;
     }
 
-    public String getInOutPatient() {
+    public PatientSTATUS getInOutPatient() {
         return this.inOutPatient;
     }
 
@@ -155,7 +156,7 @@ public class LaboratoryDTO {
     }
 
     public void setDate(LocalDateTime examDate) {
-        this.examDate = examDate;
+        this.date = examDate;
     }
 
     public void setResult(String result) {
@@ -174,7 +175,7 @@ public class LaboratoryDTO {
         this.patName = patName;
     }
 
-    public void setInOutPatient(String inOutPatient) {
+    public void setInOutPatient(PatientSTATUS inOutPatient) {
         this.inOutPatient = inOutPatient;
     }
 

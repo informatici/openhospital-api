@@ -40,7 +40,6 @@ import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.opd.rest.OpdController;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -117,18 +116,14 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-		labToInsert.setCode(null);
 		labToInsert.setLock(0);
 		labToInsert.setDate(laboratoryDTO.getDate());
 		ArrayList<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<String>(labRow);
 		}
-		boolean inserted;
-		if (labToInsert.getDate() == null) {
-			labToInsert.setDate(LocalDateTime.now());
-		}
 		
+		boolean inserted;
 		if (labToInsert.getStatus().equals(LaboratorySTATUS.DRAFT)) {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
 		} else {
@@ -213,10 +208,8 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-		labToInsert.setDate(LocalDateTime.now());
-		if (labo.get().getActive() == 2) {
-			labToInsert.setActive(1);
-		}
+		labToInsert.setDate(laboratoryDTO.getDate());
+	
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
