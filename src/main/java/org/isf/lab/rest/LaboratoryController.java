@@ -123,7 +123,17 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<String>(labRow);
 		}
-		System.out.println(labToInsert.getStatus());
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
+		if (labList.size() > 0) {
+			labList = labList.stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
+			if (labList.size() > 0) {
+				for (Laboratory lab:labList) {
+					if (lab.getExam() == exam) {
+						throw new OHAPIException(new OHExceptionMessage(null, "Exam Request already exist!", OHSeverityLevel.ERROR));
+					}
+				}
+			}
+		}
 		boolean inserted;
 		if (labToInsert.getStatus().equals(LaboratorySTATUS.DRAFT.toString())) {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
