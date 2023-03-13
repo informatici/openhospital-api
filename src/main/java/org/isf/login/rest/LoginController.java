@@ -64,7 +64,7 @@ public class LoginController {
 	private TokenProvider tokenProvider;
 	
 	@Autowired
-        private CustomAuthenticationManager authenticationManager;
+    private CustomAuthenticationManager authenticationManager;
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
