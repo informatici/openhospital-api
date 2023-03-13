@@ -122,9 +122,9 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<String>(labRow);
 		}
-		
+		System.out.println(labToInsert.getStatus());
 		boolean inserted;
-		if (labToInsert.getStatus().equals(LaboratorySTATUS.DRAFT)) {
+		if (labToInsert.getStatus().equals(LaboratorySTATUS.DRAFT.toString())) {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
 		} else {
 			inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
@@ -215,7 +215,7 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 		boolean updated;
-		if (!labToInsert.getStatus().equals(LaboratorySTATUS.DONE)) {
+		if (!labToInsert.getStatus().equals(LaboratorySTATUS.DONE.toString())) {
 			updated = laboratoryManager.updateExamRequest(labToInsert);
 		} else {
 			updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
@@ -322,10 +322,11 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT)).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
+			labList = labList.stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
 			return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
 		}
 	}
@@ -333,7 +334,7 @@ public class LaboratoryController {
 	@GetMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested: {}");
-		List<Laboratory> labList = laboratoryManager.getLaboratory().stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT)).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory().stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
