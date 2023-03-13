@@ -1,10 +1,8 @@
 FROM maven:3.8-jdk-11
 
-ARG GITHUB_ORG = intesys
-ARG OH_CORE_BRANCH = develop
-ARG OH_API_BRANCH = develop
-ARG OH_VERSION
-ARG OPENHOSPITAL_CORE_VERSION
+ARG GITHUB_ORG
+ARG OH_CORE_BRANCH
+ARG OH_API_BRANCH
 
 RUN apt-get update
 RUN apt-get install -y git
@@ -17,7 +15,6 @@ WORKDIR /
 RUN git clone --depth=1 -b $OH_API_BRANCH https://github.com/informatici/openhospital-api.git
 ADD ./rsc /openhospital-api/rsc
 WORKDIR ./openhospital-api
-#RUN mvn -Doh-core.version=${OPENHOSPITAL_CORE_VERSION} clean install -DskipTests=true
 RUN --mount=type=cache,target=/root/.m2 mvn clean install -DskipTests=true
 
 WORKDIR ./target
