@@ -298,6 +298,7 @@ public class LaboratoryController {
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
+			labList = labList.stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DONE.toString())).collect(Collectors.toList());
 			return ResponseEntity.ok(labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
 				List<String> labDescription = new ArrayList<String>();
