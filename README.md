@@ -22,7 +22,7 @@ For the moment, to build this project you should
         
  3. prepare settings from each rsc/*.dist file
  
-        rsc/application.properties <- set a SHA-256 token
+        rsc/application.properties <- set a SHA-256 jwt token
         rsc/database.properties
         rsc/log4j.properties
         rsc/...
@@ -55,16 +55,21 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 Make sure you have docker with docker-compose installed, then run the following commands:
 
-    - DOCKER_BUILDKIT=0 docker-compose build [--no-cache]
-    - docker-compose up
-    - docker-compose  exec database /bin/bash
-    - cd sql/
-    - mysql -u isf -p
-    - source create_all_demo.sql;
+- copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
+- run `make`
+- run `docker compose up -d database`
+- (optional) run `docker compose run oh-database-init`
+- run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
 
 You can change the deployment branch using an .env file.
+
+## Cleaning
+
+	docker compose rm --stop --volumes --force
+	make clean
+
 
 ## How to contribute
 
