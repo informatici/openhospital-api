@@ -294,11 +294,10 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient);
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DONE.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			labList = labList.stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DONE.toString())).collect(Collectors.toList());
 			return ResponseEntity.ok(labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
 				List<String> labDescription = new ArrayList<String>();
