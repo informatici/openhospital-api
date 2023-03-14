@@ -388,18 +388,8 @@ public class LaboratoryController {
 		List<Laboratory> laboratoryList = new ArrayList<Laboratory>();
 		if (status.equals("")) {
 			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
-		}
-		
-		if (status.equals(LaboratorySTATUS.DRAFT.toString())) {
-			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
-		}
-		
-		if (status.equals(LaboratorySTATUS.START.toString())) {
-			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.START.toString())).collect(Collectors.toList());
-		}
-		
-		if (status.equals(LaboratorySTATUS.DONE.toString())) {
-			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DONE.toString())).collect(Collectors.toList());
+		} else {
+			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 		}
 		
 		if (laboratoryList == null || laboratoryList.isEmpty()) {
