@@ -394,6 +394,10 @@ public class LaboratoryController {
 			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
 		}
 		
+		if (status.equals(LaboratorySTATUS.START.toString())) {
+			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.START.toString())).collect(Collectors.toList());
+		}
+		
 		if (status.equals(LaboratorySTATUS.DONE.toString())) {
 			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DONE.toString())).collect(Collectors.toList());
 		}
