@@ -130,6 +130,9 @@ public class LaboratoryController {
 				}
 			}
 		}
+		if(!laboratoryDTO.getResult().equals("") || laboratoryDTO.getResult() != null) {
+			labToInsert.setStatus(LaboratorySTATUS.DONE.toString());
+		}
 		boolean inserted;
 		if (!labToInsert.getStatus().equals(LaboratorySTATUS.DONE.toString())) {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
@@ -221,7 +224,7 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		if(!laboratoryDTO.getResult().equals("") || laboratoryDTO.getResult() == null) {
+		if(!laboratoryDTO.getResult().equals("") || laboratoryDTO.getResult() != null) {
 			labToInsert.setStatus(LaboratorySTATUS.DONE.toString());
 		}
 		boolean updated;
