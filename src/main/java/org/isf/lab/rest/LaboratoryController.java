@@ -130,7 +130,7 @@ public class LaboratoryController {
 				}
 			}
 		}
-		if(!laboratoryDTO.getResult().equals("") || laboratoryDTO.getResult() != null) {
+		if(!laboratoryDTO.getResult().equals("")) {
 			labToInsert.setStatus(LaboratorySTATUS.DONE.toString());
 		}
 		boolean inserted;
@@ -224,7 +224,7 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		if(!laboratoryDTO.getResult().equals("") || laboratoryDTO.getResult() != null) {
+		if(!laboratoryDTO.getResult().equals("")) {
 			labToInsert.setStatus(LaboratorySTATUS.DONE.toString());
 		}
 		boolean updated;
