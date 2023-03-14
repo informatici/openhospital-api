@@ -1,5 +1,5 @@
 package org.isf.lab.dto;
 
 public enum LaboratorySTATUS {
-	DRAFT, DONE
+	DRAFT, START, DONE
 }
