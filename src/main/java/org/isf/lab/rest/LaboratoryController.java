@@ -131,7 +131,7 @@ public class LaboratoryController {
 			}
 		}
 		boolean inserted;
-		if (labToInsert.getStatus().equals(LaboratorySTATUS.DRAFT.toString())) {
+		if (!labToInsert.getStatus().equals(LaboratorySTATUS.DONE.toString())) {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
 		} else {
 			inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
