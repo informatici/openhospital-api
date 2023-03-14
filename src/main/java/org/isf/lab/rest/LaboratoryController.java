@@ -124,7 +124,7 @@ public class LaboratoryController {
 			labRows = new ArrayList<String>(labRow);
 		}
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratorySTATUS.DRAFT.toString())).collect(Collectors.toList());
-		if (labList != null) {
+		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab:labList) {
 				if (lab.getExam() == exam) {
 					throw new OHAPIException(new OHExceptionMessage(null, "Exam Request already exist!", OHSeverityLevel.ERROR));
