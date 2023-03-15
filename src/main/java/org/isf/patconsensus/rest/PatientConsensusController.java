@@ -94,13 +94,19 @@ public class PatientConsensusController {
 		if (patientConsensusUpdated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus was not inserted!", OHSeverityLevel.ERROR));
 		}
-		 return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(patientConsensusUpdated));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(patientConsensusUpdated));
 	}
 
 	@DeleteMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Delete patient consensus by patient id: {}", patientId);
-		return ResponseEntity.ok(true);
+		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
+		if (patientConsensus.isPresent()) {
+			manager.deletePatientConsensus(patientConsensus.get());
+			return ResponseEntity.ok(true);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
 	}
 
 }
