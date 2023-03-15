@@ -42,12 +42,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
-@RestController
+@RestController()
+@RequestMapping("/patient-consensus")
 @Api(value = "/patient-consensus", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
 public class PatientConsensusController {
 
@@ -64,7 +66,8 @@ public class PatientConsensusController {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
 		if (patientConsensus.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity
+							.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		PatientConsensusDTO patientDTO = mapper.map2DTO(patientConsensus.get());
 		return ResponseEntity.ok(patientDTO);
@@ -90,11 +93,11 @@ public class PatientConsensusController {
 		return ResponseEntity.ok(patientConsensusDTO);
 	}
 
-	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> storePatientConsensus(@RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
 		LOGGER.info("create or update patient consensus");
 		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
-		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
+		PatientConsensus patientConsensusUpdated = manager.newPatientConsensus(updatedPatienConsensustModel);
 		if (patientConsensusUpdated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus was not inserted!", OHSeverityLevel.ERROR));
 		}

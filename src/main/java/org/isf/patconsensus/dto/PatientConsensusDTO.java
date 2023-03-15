@@ -39,7 +39,7 @@ public class PatientConsensusDTO {
 	private boolean serviceFlag;
 
 	@NotNull
-	@ApiModelProperty(notes = "the vaccine date", position = 4)
+	@ApiModelProperty(notes = "patient id", position = 4)
 	private Integer patientId;
 
 	public boolean isConsensusFlag() {

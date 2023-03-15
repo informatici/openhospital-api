@@ -1,4 +1,5 @@
 /*
+
  * Open Hospital (www.open-hospital.org)
  * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
@@ -23,13 +24,39 @@ package org.isf.patconsensus.mapper;
 
 import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.model.PatientConsensus;
+import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.stereotype.Component;
 
-public class PatientConsensusMapper  extends GenericMapper<PatientConsensus, PatientConsensusDTO>{
+@Component
+public class PatientConsensusMapper extends GenericMapper<PatientConsensus, PatientConsensusDTO> {
 
-	public PatientConsensusMapper(Class<PatientConsensus> sourceClass, Class<PatientConsensusDTO> destClass) {
+	public PatientConsensusMapper() {
 		super(PatientConsensus.class, PatientConsensusDTO.class);
 	}
 
+	@Override
+	public PatientConsensus map2Model(PatientConsensusDTO fromObj) {
+		modelMapper.getConfiguration().setAmbiguityIgnored(true);
+		PatientConsensus patientConsensus = super.map2Model(fromObj);
+		if (fromObj.getPatientId() != null) {
+			Patient patient = new Patient();
+			patient.setCode(fromObj.getPatientId());
+			patientConsensus.setPatient(patient);
+		}
+		return patientConsensus;
+	}
+
+
+	@Override
+	public PatientConsensusDTO map2DTO(PatientConsensus fromObj) {
+		modelMapper.getConfiguration().setAmbiguityIgnored(true);
+		PatientConsensusDTO patientConsensus = super.map2DTO(fromObj);
+		if (fromObj.getPatient() != null) {
+			patientConsensus.setPatientId(fromObj.getPatient().getCode());
+		}
+		return patientConsensus;
+	}
 
 }
