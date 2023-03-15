@@ -22,5 +22,5 @@
 package org.isf.lab.dto;
 
 public enum LaboratoryStatus {
-	DRAFT, DONE
+	draft, open, done
 }
