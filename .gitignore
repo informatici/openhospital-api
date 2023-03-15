@@ -1,5 +1,6 @@
 HELP.md
 /target/
+.env
 /rsc/*.properties
 !.mvn/wrapper/maven-wrapper.jar
 /oh-rest-api.log.*.gz
