@@ -85,6 +85,7 @@ public class PatientConsensusController {
 			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus not found!", OHSeverityLevel.ERROR));
 		}
 		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
+		updatedPatienConsensustModel.setId(this.manager.getPatientConsensusByUserId(patientId).get().getId());
 		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
 		if (patientConsensusUpdated == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus is not updated!", OHSeverityLevel.ERROR));
