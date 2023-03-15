@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -72,7 +73,6 @@ public class PatientConsensusController {
 		if (patientId != patientConsensus.getPatientId()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
 		}
-
 		Optional<PatientConsensus> patConsensusOpt = this.manager.getPatientConsensusByUserId(patientId);
 		if (patConsensusOpt.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus not found!", OHSeverityLevel.ERROR));
@@ -89,7 +89,12 @@ public class PatientConsensusController {
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> storePatientConsensus(@RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
 		LOGGER.info("create or update patient consensus");
-		return ResponseEntity.ok(null);
+		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
+		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
+		if (patientConsensusUpdated == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus was not inserted!", OHSeverityLevel.ERROR));
+		}
+		 return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(patientConsensusUpdated));
 	}
 
 	@DeleteMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
