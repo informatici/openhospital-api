@@ -21,11 +21,16 @@
  */
 package org.isf.patconsensus.rest;
 
+import java.util.Optional;
+
 import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.manager.PatientConsensusBrowserManager;
 import org.isf.patconsensus.mapper.PatientConsensusMapper;
-import org.isf.patient.dto.PatientDTO;
+import org.isf.patconsensus.model.PatientConsensus;
+import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,7 +47,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/patient-consensus",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/patient-consensus", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
 public class PatientConsensusController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientConsensusController.class);
@@ -54,30 +59,43 @@ public class PatientConsensusController {
 	protected PatientConsensusMapper mapper;
 
 	@GetMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PatientConsensusDTO> updatePatient(@PathVariable Integer patientId) throws OHServiceException {
+	ResponseEntity<PatientConsensusDTO> updatePatient(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
-		//TODO
-        return ResponseEntity.ok(null);
+		// TODO
+		return ResponseEntity.ok(null);
 	}
 
 	@PutMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PatientDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
+	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
+					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);
-        return ResponseEntity.ok(null);
-	}
+		if (patientId != patientConsensus.getPatientId()) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
+		}
 
+		Optional<PatientConsensus> patConsensusOpt = this.manager.getPatientConsensusByUserId(patientId);
+		if (patConsensusOpt.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus not found!", OHSeverityLevel.ERROR));
+		}
+		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
+		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
+		if (patientConsensusUpdated == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus is not updated!", OHSeverityLevel.ERROR));
+		}
+		PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
+		return ResponseEntity.ok(patientConsensusDTO);
+	}
 
 	@PostMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PatientDTO> storePatientConsensus( @RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
+	ResponseEntity<PatientConsensusDTO> storePatientConsensus(@RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
 		LOGGER.info("create or update patient consensus");
-        return ResponseEntity.ok(null);
+		return ResponseEntity.ok(null);
 	}
-
 
 	@DeleteMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Delete patient consensus by patient id: {}", patientId);
-        return ResponseEntity.ok(true);
-    }
+		return ResponseEntity.ok(true);
+	}
 
 }
