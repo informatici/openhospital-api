@@ -22,6 +22,8 @@
  */
 package org.isf.patconsensus.mapper;
 
+import javax.annotation.PostConstruct;
+
 import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.model.Patient;
@@ -36,9 +38,13 @@ public class PatientConsensusMapper extends GenericMapper<PatientConsensus, Pati
 		super(PatientConsensus.class, PatientConsensusDTO.class);
 	}
 
+	@PostConstruct
+	private void postConstruct() {
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+	}
+
 	@Override
 	public PatientConsensus map2Model(PatientConsensusDTO fromObj) {
-		modelMapper.getConfiguration().setAmbiguityIgnored(true);
 		PatientConsensus patientConsensus = super.map2Model(fromObj);
 		if (fromObj.getPatientId() != null) {
 			Patient patient = new Patient();
@@ -51,7 +57,6 @@ public class PatientConsensusMapper extends GenericMapper<PatientConsensus, Pati
 
 	@Override
 	public PatientConsensusDTO map2DTO(PatientConsensus fromObj) {
-		modelMapper.getConfiguration().setAmbiguityIgnored(true);
 		PatientConsensusDTO patientConsensus = super.map2DTO(fromObj);
 		if (fromObj.getPatient() != null) {
 			patientConsensus.setPatientId(fromObj.getPatient().getCode());
