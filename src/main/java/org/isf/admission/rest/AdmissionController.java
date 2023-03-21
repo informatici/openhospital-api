@@ -220,7 +220,7 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 		}
 		if (dischargeRange != null && dischargeRange.length == 2) {
-			LOGGER.debug("Get admissions end between {} and {}", dischargeRange[0], dischargeRange[1]);
+			LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 		
 		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
@@ -263,7 +263,7 @@ public class AdmissionController {
 	public ResponseEntity<List<AdmissionDTO>> getDischarges(
 			@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
 			throws OHServiceException {
-		LOGGER.debug("Get admissions end between {} and {}", dischargeRange[0], dischargeRange[1]);
+		LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		
 		List<Admission> admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], 0, 0);
 
