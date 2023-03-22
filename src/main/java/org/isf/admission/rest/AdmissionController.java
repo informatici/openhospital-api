@@ -145,7 +145,7 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
-		Patient patient = patientManager.getPatientById(Integer.valueOf(patientCode));
+		Patient patient = patientManager.getPatientById(patientCode);
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
 		if (listAdmissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

@@ -118,8 +118,8 @@ public class PatientController {
 
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> getPatients(
-					@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
+					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		List<Patient> patients = patientManager.getPatient(page, size);
 		List<PatientDTO> patientDTOS = patients.stream().map(pat -> {
@@ -194,7 +194,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam Integer code) throws OHServiceException {
+	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam int code) throws OHServiceException {
 		LOGGER.info("get patient for provided code even if logically deleted: {}", code);
 		Patient patient = patientManager.getPatientAll(code);
 		if (patient == null) {
@@ -228,7 +228,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/merge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> mergePatients(@RequestParam Integer mergedcode, @RequestParam Integer code2) throws OHServiceException {
+	public ResponseEntity<Boolean> mergePatients(@RequestParam int mergedcode, @RequestParam int code2) throws OHServiceException {
 		LOGGER.info("merge patient for code {} in patient for code {}", code2, mergedcode);
 		Patient mergedPatient = patientManager.getPatientById(mergedcode);
 		Patient patient2 = patientManager.getPatientById(code2);
