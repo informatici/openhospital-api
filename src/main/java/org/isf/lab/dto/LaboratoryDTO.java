@@ -73,13 +73,13 @@ public class LaboratoryDTO {
     private String sex;
     
     @ApiModelProperty(notes = "Laboratory status", example = "Draft", position = 13)
-    private LaboratorySTATUS status;
+    private LaboratoryStatus status;
 
-    public LaboratorySTATUS getStatus() {
+    public LaboratoryStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(LaboratorySTATUS status) {
+	public void setStatus(LaboratoryStatus status) {
 		this.status = status;
 	}
 
