@@ -227,8 +227,8 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
 					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
-					@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
@@ -250,8 +250,8 @@ public class AdmissionController {
 	@GetMapping(value = "/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getDischarges(
 					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange,
-					@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
-					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 
@@ -417,7 +417,7 @@ public class AdmissionController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient field is required!", OHSeverityLevel.ERROR));
 		}
 		List<Disease> diseases = diseaseManager.getDiseaseAll();
-		;
+
 		if (newAdmissionDTO.getDiseaseIn() != null && newAdmissionDTO.getDiseaseIn().getCode() != null) {
 			List<Disease> dIns = diseases.stream()
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
