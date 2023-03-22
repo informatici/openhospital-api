@@ -139,7 +139,7 @@ public class MalnutritionController {
 	 */
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		List<Malnutrition> malnutritions = manager.getMalnutrition(malnutritionDTO.getAdmission().getId()+"");
+		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malnutritionDTO.getAdmission().getId()));
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions
