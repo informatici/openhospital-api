@@ -60,7 +60,7 @@ public class DischargeTypeHelper {
 		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
-						return DischargeTypeHelper.setup("" + i);
+						return DischargeTypeHelper.setup(String.valueOf(i));
 					} catch (OHException e) {
 						e.printStackTrace();
 					}
