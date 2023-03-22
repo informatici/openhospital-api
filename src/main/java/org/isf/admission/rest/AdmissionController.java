@@ -82,6 +82,9 @@ public class AdmissionController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);
 
+	// TODO: to centralize
+	protected static final String DEFAULT_PAGE_SIZE = "80";
+
 	@Autowired
 	private AdmissionBrowserManager admissionManager;
 
@@ -223,11 +226,13 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(
-					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange)
+					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
+					@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
-		List<Admission> admissions = admissionManager.getAdmissions(admissionRange[0], admissionRange[1], 0, 0);
+		List<Admission> admissions = admissionManager.getAdmissions(admissionRange[0], admissionRange[1], page, size);
 
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -244,11 +249,13 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getDischarges(
-					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
+					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange,
+					@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 
-		List<Admission> admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], 0, 0);
+		List<Admission> admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], page, size);
 
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
