@@ -184,23 +184,6 @@ public class AdmissionController {
 	}
 
 	/**
-	 * Returns all {@link Patient}s with ward in which they are admitted.
-	 * @return the {@link List} of found {@link Patient} or NO_CONTENT otherwise.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/admissions/allAdmittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmittedPatientDTO>> allAdmittedPatients()
-					throws OHServiceException {
-		LOGGER.info("Get all admitted patients");
-
-		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients();
-		if (admittedPatients.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
-	}
-
-	/**
 	 * Get all admitted {@link Patient}s based on the applied filters.
 	 * 
 	 * @param searchTerms
