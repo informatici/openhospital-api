@@ -54,7 +54,6 @@ public class PatientConsensusMapper extends GenericMapper<PatientConsensus, Pati
 		return patientConsensus;
 	}
 
-
 	@Override
 	public PatientConsensusDTO map2DTO(PatientConsensus fromObj) {
 		PatientConsensusDTO patientConsensus = super.map2DTO(fromObj);
