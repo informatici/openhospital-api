@@ -1,6 +1,4 @@
 /*
-
-
  * Open Hospital (www.open-hospital.org)
  * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
@@ -54,6 +52,7 @@ public class PatientConsensusMapper extends GenericMapper<PatientConsensus, Pati
 		}
 		return patientConsensus;
 	}
+
 
 	@Override
 	public PatientConsensusDTO map2DTO(PatientConsensus fromObj) {

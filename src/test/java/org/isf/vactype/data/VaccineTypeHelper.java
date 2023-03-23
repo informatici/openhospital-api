@@ -60,7 +60,7 @@ public class VaccineTypeHelper {
 		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
-						return VaccineTypeHelper.setup("" + i);
+						return VaccineTypeHelper.setup(String.valueOf(i));
 					} catch (OHException e) {
 						e.printStackTrace();
 					}
