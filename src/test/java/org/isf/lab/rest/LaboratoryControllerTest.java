@@ -105,7 +105,7 @@ public class LaboratoryControllerTest {
 		String request = "/laboratories";
 		
 		Laboratory lab = LaboratoryHelper.setup();
-		ArrayList<String> labRows =new ArrayList<String>();
+		ArrayList<String> labRows = new ArrayList<>();
 		labRows.add("good");
 		labRows.add("material");
 		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
@@ -128,7 +128,7 @@ public class LaboratoryControllerTest {
 		Integer code = 5;
 		
 		Laboratory lab = LaboratoryHelper.setup();
-		ArrayList<String> labRows =new ArrayList<String>();
+		ArrayList<String> labRows = new ArrayList<>();
 		labRows.add("lab");
 		labRows.add("material");
 		lab.setCode(code);

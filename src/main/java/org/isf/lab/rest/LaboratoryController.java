@@ -117,7 +117,7 @@ public class LaboratoryController {
 		labToInsert.setDate(LocalDateTime.now());
 		ArrayList<String> labRows = new ArrayList<>();
 		if (labRow != null) {
-			labRows = new ArrayList<String>(labRow);
+			labRows = new ArrayList<>(labRow);
 		}
 
 		if (labToInsert.getDate() == null) {
@@ -240,10 +240,10 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.ok(labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
-				List<String> labDescription = new ArrayList<String>();
+				List<String> labDescription = new ArrayList<>();
 				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 				if (lab.getExam().getProcedure() == 2) {
-					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					List<LaboratoryRow> labDes = new ArrayList<>();
 					try {
 						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
 					} catch (OHServiceException e) {
@@ -277,10 +277,10 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.ok(labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
-				List<String> labDescription = new ArrayList<String>();
+				List<String> labDescription = new ArrayList<>();
 				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 				if (lab.getExam().getProcedure() == 2) {
-					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					List<LaboratoryRow> labDes = new ArrayList<>();
 					try {
 						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
 					} catch (OHServiceException e) {
@@ -333,10 +333,10 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.ok(laboratoryList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
-				List<String> labDescription = new ArrayList<String>();
+				List<String> labDescription = new ArrayList<>();
 				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 				if (lab.getExam().getProcedure() == 2) {
-					List<LaboratoryRow> labDes = new ArrayList<LaboratoryRow>();
+					List<LaboratoryRow> labDes = new ArrayList<>();
 					try {
 						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
 					} catch (OHServiceException e) {
@@ -374,7 +374,7 @@ public class LaboratoryController {
 	public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
 		LabWithRowsDTO lab = new LabWithRowsDTO();
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-		List<String> labDescription = new ArrayList<String>();
+		List<String> labDescription = new ArrayList<>();
 		Laboratory laboratory = null;
 		if (labo.isPresent()) {
 			laboratory = labo.get();
