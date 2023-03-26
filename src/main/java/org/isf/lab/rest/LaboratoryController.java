@@ -188,7 +188,6 @@ public class LaboratoryController {
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (!labo.isPresent()) {
-			System.out.println(!labo.isPresent());
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
 		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
