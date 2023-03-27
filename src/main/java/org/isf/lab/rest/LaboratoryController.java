@@ -39,6 +39,7 @@ import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -116,28 +117,11 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
-		labToInsert.setDate(laboratoryDTO.getDate());
 		ArrayList<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<String>(labRow);
 		}
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
-		if (!(labList == null || labList.isEmpty())) {
-			for (Laboratory lab:labList) {
-				if (lab.getExam() == exam) {
-					throw new OHAPIException(new OHExceptionMessage(null, "Exam Request already exist", OHSeverityLevel.ERROR));
-				}
-			}
-		}
-		if (!laboratoryDTO.getResult().equals("")) {
-			labToInsert.setStatus(LaboratoryStatus.done.toString());
-		}
-		boolean inserted;
-		if (!labToInsert.getStatus().equals(LaboratoryStatus.done.toString())) {
-			inserted = laboratoryManager.newExamRequest(labToInsert);
-		} else {
-			inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
-		}
+		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
 		if (!inserted) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
@@ -145,7 +129,45 @@ public class LaboratoryController {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
+	
+	@PostMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
+		LOGGER.info("store exam request");
 
+		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+		}
+
+		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode())).findFirst().orElse(null);
+		if (exam == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+		}
+
+		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
+		labToInsert.setExam(exam);
+		labToInsert.setPatient(patient);
+		labToInsert.setLock(0);
+		
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+		
+		if (!(labList == null || labList.isEmpty())) {
+			for (Laboratory lab:labList) {
+				if (lab.getExam() == exam) {
+					throw new OHAPIException(new OHExceptionMessage(null, "Exam Request already exist", OHSeverityLevel.ERROR));
+				}
+			}
+		}
+		
+		boolean inserted = laboratoryManager.newExamRequest(labToInsert);
+
+		if (!inserted) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
+		}
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+	}
+	
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
 		LOGGER.info("store List of Exam with result");
