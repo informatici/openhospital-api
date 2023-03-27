@@ -147,7 +147,7 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		List<OperationRowDTO> listOp = new ArrayList<OperationRowDTO>();
+		List<OperationRowDTO> listOp = new ArrayList<>();
 		if (opdWithOperatioRowDTO.getOperationRows().size() > 0) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
@@ -225,7 +225,7 @@ public class OpdController {
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
-		List<OperationRowDTO> listOpeRow = new ArrayList<OperationRowDTO>();
+		List<OperationRowDTO> listOpeRow = new ArrayList<>();
 		if (opdWithOperatioRowDTO.getOperationRows().size() > 0 ) {
 			for (OperationRowDTO operationRow : opdWithOperatioRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
@@ -317,12 +317,12 @@ public class OpdController {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 
 		List<Opd> opds = opdManager.getOpdList(pcode);
-		List<OpdWithOperatioRowDTO> opdWithOperations = new ArrayList<OpdWithOperatioRowDTO>();
+		List<OpdWithOperatioRowDTO> opdWithOperations = new ArrayList<>();
 		if (!opds.isEmpty()) {
 			opdWithOperations = opds.stream().map(opd -> {
 				OpdWithOperatioRowDTO opRows = new OpdWithOperatioRowDTO();
 				opRows.setOpdDTO(mapper.map2DTO(opd));
-				List<OperationRow> listOp = new ArrayList<OperationRow>();
+				List<OperationRow> listOp = new ArrayList<>();
 				try {
 					listOp = operationRowManager.getOperationRowByOpd(opd);
 				} catch (OHServiceException e) {
@@ -332,7 +332,7 @@ public class OpdController {
 				if (!listOp.isEmpty()) {
 					opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
 				} else {
-					opRows.setOperationRows(new ArrayList<OperationRowDTO>());
+					opRows.setOperationRows(new ArrayList<>());
 				}
 					
 				return opRows;

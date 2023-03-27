@@ -155,10 +155,10 @@ public class PatientController {
 					@RequestParam(value = "birthDate", defaultValue = "", required = false) LocalDateTime birthDate,
 					@RequestParam(value = "address", defaultValue = "", required = false) String address) throws OHServiceException {
 
-		List<PatientDTO> patientListDTO = new ArrayList<PatientDTO>();
+		List<PatientDTO> patientListDTO = new ArrayList<>();
 		List<Patient> patientList = null;
 
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 
 		if (firstName != null && !firstName.isEmpty()) {
 			params.put("firstName", firstName);
