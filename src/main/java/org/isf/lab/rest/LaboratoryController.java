@@ -168,7 +168,6 @@ public class LaboratoryController {
 			Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 			labToInsert.setExam(exam);
 			labToInsert.setPatient(patient);
-
 			labsToInsert.add(labToInsert);
 
 			if (labWithRowsDTO.getLaboratoryRowList() != null) {
@@ -227,12 +226,21 @@ public class LaboratoryController {
 		if (!laboratoryDTO.getResult().equals("")) {
 			labToInsert.setStatus(LaboratoryStatus.done.toString());
 		}
-		boolean updated;
-		if (!labToInsert.getStatus().equals(LaboratoryStatus.done.toString())) {
-			updated = laboratoryManager.updateExamRequest(labToInsert);
-		} else {
-			updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
+		
+		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
+
+		if (!updated) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));
 		}
+		return ResponseEntity.ok(true);
+	}
+
+	@PutMapping(value = "/laboratories/examrequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status) throws OHServiceException {
+		LOGGER.info("Update exam request code: {}", code);
+		
+		
+		boolean updated = laboratoryManager.updateExamRequest(code.intValue(), org.isf.lab.model.LaboratoryStatus.valueOf(status));
 
 		if (!updated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));
