@@ -33,7 +33,6 @@ import org.isf.exa.model.Exam;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryRowDTO;
-import org.isf.lab.dto.LaboratoryStatus;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
