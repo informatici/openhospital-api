@@ -313,6 +313,8 @@ public class LaboratoryController {
 					}
 
 				}
+				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 				labDTO.setLaboratoryDTO(laboratoryDTO);
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
@@ -350,6 +352,8 @@ public class LaboratoryController {
 					}
 
 				}
+				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 				labDTO.setLaboratoryDTO(laboratoryDTO);
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
@@ -369,7 +373,12 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		
-		return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
+		return ResponseEntity.ok(labList.stream().map(lab->{
+			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
+			return laboratoryDTO;
+		}).collect(Collectors.toList()));
 	}
 	
 	@GetMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -380,7 +389,12 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		
-		return ResponseEntity.ok(laboratoryMapper.map2DTOList(labList));
+		return ResponseEntity.ok(labList.stream().map(lab->{
+			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
+			return laboratoryDTO;
+		}).collect(Collectors.toList()));
 	}
 
 	@GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -437,6 +451,8 @@ public class LaboratoryController {
 					}
 
 				}
+				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 				labDTO.setLaboratoryDTO(laboratoryDTO);
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
@@ -471,6 +487,8 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+		labDTO.setInOutPatient(PatientSTATUS.valueOf(laboratory.getInOutPatient()));
+		labDTO.setStatus(LaboratoryStatus.valueOf(laboratory.getStatus()));
 		lab.setLaboratoryDTO(labDTO);
 
 		if (laboratory.getExam().getProcedure() == 2) {

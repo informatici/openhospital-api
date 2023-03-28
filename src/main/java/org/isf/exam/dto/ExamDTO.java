@@ -27,11 +27,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class ExamDTO {
 
-    @ApiModelProperty(notes = "Exam Code", example = "99.99", position = 1)
-    private String code;
+	@ApiModelProperty(notes = "Exam Code", example = "01.01", position = 1)
+	private String code;
 
-    @ApiModelProperty(notes = "Exam Description", example = "99.99 HB", position = 2)
-    private String description;
+	@ApiModelProperty(notes = "Exam Description", example = "1.1 HB", position = 2)
+	private String description;
 
     @ApiModelProperty(notes = "Exam Procedure", example = "1", position = 3)
     private Integer procedure;
