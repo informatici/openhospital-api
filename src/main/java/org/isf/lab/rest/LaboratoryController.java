@@ -260,8 +260,7 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status) throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
 		
-		
-		boolean updated = laboratoryManager.updateExamRequest(code.intValue(), org.isf.lab.model.LaboratoryStatus.valueOf(status));
+		boolean updated = laboratoryManager.updateExamRequest(code.intValue(), LaboratoryStatus.valueOf(status));
 
 		if (!updated) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));

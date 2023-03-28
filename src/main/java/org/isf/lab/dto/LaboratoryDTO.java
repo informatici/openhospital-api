@@ -76,14 +76,6 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory status", example = "draft", position = 13)
     private LaboratoryStatus status;
 
-    public LaboratoryStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(LaboratoryStatus status) {
-		this.status = status;
-	}
-
 	public int getLock() {
         return lock;
     }
@@ -187,4 +179,11 @@ public class LaboratoryDTO {
     public void setSex(String sex) {
         this.sex = sex;
     }
+    public LaboratoryStatus getStatus() {
+  		return status;
+  	}
+
+  	public void setStatus(LaboratoryStatus status) {
+  		this.status = status;
+  	}
 }
