@@ -40,6 +40,7 @@ import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
 import org.isf.lab.model.LaboratoryStatus;
+import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -117,6 +118,7 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
+		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		ArrayList<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<String>(labRow);
@@ -148,7 +150,7 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
-		
+		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
 		
 		if (!(labList == null || labList.isEmpty())) {
@@ -189,6 +191,7 @@ public class LaboratoryController {
 			Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 			labToInsert.setExam(exam);
 			labToInsert.setPatient(patient);
+			labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 			labsToInsert.add(labToInsert);
 
 			if (labWithRowsDTO.getLaboratoryRowList() != null) {
@@ -239,7 +242,7 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setDate(laboratoryDTO.getDate());
-	
+		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
