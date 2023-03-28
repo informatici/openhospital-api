@@ -69,7 +69,7 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 ![image](https://user-images.githubusercontent.com/2938553/228294801-4d27dd2c-9053-4f62-9497-690706232c9f.png)
 ![image](https://user-images.githubusercontent.com/2938553/228294867-79d6a326-9e7d-4ca0-93cd-ce34c7b7373f.png)
  
- 2. use the Authorize button at the top of the Swagger-UI and paste the token prefixed by "Bearer " text and click Authorize
+ 2. use the Authorize button at the top of the Swagger-UI and paste the token form step #1 prefixed by the string "Bearer " and click Authorize
 
 ![image](https://user-images.githubusercontent.com/2938553/228296149-64905464-441f-4b20-80af-4dcfb40aef4c.png)
  
@@ -77,7 +77,7 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 ![image](https://user-images.githubusercontent.com/2938553/228294994-56c1ae3b-f7cb-49b6-94d4-c899fa20374e.png)
 
- 4. now all endpoints are automatically secured and the token will be added to the request
+ 4. now all the endpoints are automatically secured and the token will be added to the request
 
 ![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
 ![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
