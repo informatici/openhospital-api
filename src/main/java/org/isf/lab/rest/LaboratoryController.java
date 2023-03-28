@@ -149,7 +149,7 @@ public class LaboratoryController {
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
 		
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
 		
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab:labList) {
@@ -245,7 +245,7 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 		if (!laboratoryDTO.getResult().equals("")) {
-			labToInsert.setStatus(LaboratoryStatus.done.toString());
+			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
 		}
 		
 		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
@@ -325,7 +325,7 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> !e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> !e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} 
@@ -362,7 +362,7 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 
-		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream().filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -373,7 +373,7 @@ public class LaboratoryController {
 	@GetMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
-		List<Laboratory> labList = laboratoryManager.getLaboratory().stream().filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+		List<Laboratory> labList = laboratoryManager.getLaboratory().stream().filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
