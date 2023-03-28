@@ -2,7 +2,20 @@
 
 [![Java CI with Maven](https://github.com/informatici/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/informatici/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
-This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
+This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].
+
+## Summary
+
+  * [How to build [WIP]](#how-to-build-wip)
+    + [Using Swagger-UI](#using-swagger-ui)
+  * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
+  * [Cleaning](#cleaning)
+  * [How to contribute](#how-to-contribute)
+  * [Community](#community)
+  * [Code style](#code-style)
+
+<small>Table of contents generated with <i><a href='http://ecotrust-canada.github.io/markdown-toc/'>markdown-toc</a></i></small>
+
 
 ## How to build [WIP]
 
