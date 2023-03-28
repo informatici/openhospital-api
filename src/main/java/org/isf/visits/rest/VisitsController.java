@@ -77,7 +77,7 @@ public class VisitsController {
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
-        List<VisitDTO> listVisit = new ArrayList<VisitDTO>();
+        List<VisitDTO> listVisit = new ArrayList<>();
         for(Visit visitP : visit) {	
 			VisitDTO visitDTO =  mapper.map2DTO(visitP);
         	listVisit.add(visitDTO);
