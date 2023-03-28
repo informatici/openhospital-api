@@ -55,8 +55,6 @@ public class SpringFoxConfig {
 	@Bean
 	public Docket apiDocket() {
 
-//        List<SecurityScheme> securitySchemes = Arrays.asList(new ApiKey("JWT", "Authorization", "header"));
-
 		ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0",
 						"https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
 
@@ -94,10 +92,6 @@ public class SpringFoxConfig {
 		authorizationScopes[0] = authorizationScope;
 		return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
 	}
-
-//    private SecurityReference apiKeyReference() {
-//        return new SecurityReference("Authorization", new AuthorizationScope[0]);
-//    }
 
 	private ApiKey apiKey() {
 		return new ApiKey("JWT", HttpHeaders.AUTHORIZATION, In.HEADER.name());
