@@ -64,7 +64,7 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
    
 ### Using Swagger-UI
 
- 1. use endpoint /auth/login to log and get the token
+ 1. use endpoint /auth/login to login and get the token
  
 ![image](https://user-images.githubusercontent.com/2938553/228294801-4d27dd2c-9053-4f62-9497-690706232c9f.png)
 ![image](https://user-images.githubusercontent.com/2938553/228294867-79d6a326-9e7d-4ca0-93cd-ce34c7b7373f.png)
