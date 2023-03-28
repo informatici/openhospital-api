@@ -49,6 +49,13 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 ![image](https://user-images.githubusercontent.com/2938553/215335720-73d59075-f0df-44c4-93ed-eae79945bb71.png)
    
+### Using Swagger-UI
+
+ 1. use endpoint /auth/login to log and get the token
+ 
+ 2. use the Authorize button at the top of the Swagger-UI and paste the token prefixed by "Bearer " text
+ 
+ 3. now all endpoints are automatically secured and the token will be added to the request
  
 
 ## How to deploy backend in docker environment
