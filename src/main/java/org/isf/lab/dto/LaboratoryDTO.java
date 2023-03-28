@@ -73,7 +73,7 @@ public class LaboratoryDTO {
     @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
     private String sex;
     
-    @ApiModelProperty(notes = "Laboratory status", example = "draft", position = 13)
+    @ApiModelProperty(notes = "Laboratory status", example = "DRAFT", position = 13)
     private LaboratoryStatus status;
 
 	public int getLock() {
