@@ -14,8 +14,8 @@ services:
       MARIADB_ROOT_PASSWORD: ${OH_MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${OH_MARIADB_USER}
       MARIADB_PASSWORD: ${OH_MARIADB_PASSWORD}
-#    networks:
-#      - hospital-net
+    networks:
+      - hospital-net
     restart: unless-stopped
       
   oh-database-password:
@@ -29,8 +29,8 @@ services:
       MARIADB_ROOT_PASSWORD: ${OH_MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${OH_MARIADB_USER}
       MARIADB_PASSWORD: ${OH_MARIADB_PASSWORD}
-#    networks:
-#      - hospital-net
+    networks:
+      - hospital-net
     restart: "no"
     volumes:
       - ./deps/openhospital-core/sql:/database-sources
@@ -48,8 +48,8 @@ services:
       DEMO_LANG: en
     volumes:
       - ./deps/openhospital-core/sql:/database-sources # /docker-entrypoint-initdb.d
-#    networks:
-#      - hospital-net
+    networks:
+      - hospital-net
 
   backend:
     container_name: backend
@@ -70,9 +70,9 @@ services:
         options:
             max-size: "100m"
             max-file: "10"
-#    networks:
-#      - hospital-net
+    networks:
+      - hospital-net
 
-#networks:
-#  hospital-net:
-#    driver: bridge 
+networks:
+  hospital-net:
+    driver: bridge 
