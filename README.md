@@ -82,14 +82,15 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 ![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
 ![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
 
-## How to deploy backend in docker environment
+## How to deploy backend in Docker environment
 
 Make sure you have docker with docker-compose installed, then run the following commands:
 
 - copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
-- run `docker compose up -d database`
+- run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
 - (optional) run `docker compose run oh-database-init`
+- run `docker compose run oh-database-password` (for strong password 'Admin2022test!')
 - run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/

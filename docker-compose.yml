@@ -17,6 +17,23 @@ services:
 #    networks:
 #      - hospital-net
     restart: unless-stopped
+      
+  oh-database-password:
+    image: oh-core_database:latest
+    command: sh -c "mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} oh < /database-sources/extra/reset_admin_password_strong.sql"
+    depends_on:
+      - database
+    environment:
+      MARIADB_MYSQL_LOCALHOST_USER: "true"
+      MARIADB_DATABASE: oh
+      MARIADB_ROOT_PASSWORD: ${OH_MARIADB_ROOT_PASSWORD}
+      MARIADB_USER: ${OH_MARIADB_USER}
+      MARIADB_PASSWORD: ${OH_MARIADB_PASSWORD}
+#    networks:
+#      - hospital-net
+    restart: "no"
+    volumes:
+      - ./deps/openhospital-core/sql:/database-sources
   
   oh-database-init:
     image: oh-core_database:latest
