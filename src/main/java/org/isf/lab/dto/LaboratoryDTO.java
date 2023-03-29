@@ -33,152 +33,152 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class LaboratoryDTO {
 
-    @ApiModelProperty(notes = "Laboratory Code", position = 1)
-    private Integer code;
+	@ApiModelProperty(notes = "Laboratory Code", position = 1)
+	private Integer code;
 
-    @ApiModelProperty(notes = "Laboratory Material", value = "Blood", position = 2)
+	@ApiModelProperty(notes = "Laboratory Material", value = "Blood", position = 2)
 	private String material;
 
-    @ApiModelProperty(notes = "Laboratory Exam", position = 3)
-    private ExamDTO exam;
+	@ApiModelProperty(notes = "Laboratory Exam", position = 3)
+	private ExamDTO exam;
 
-    @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-    private LocalDateTime registrationDate;
+	@ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
+	private LocalDateTime registrationDate;
 
-    @NotNull
-    @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private LocalDateTime date;
-    
-    @ApiModelProperty(notes = "Laboratory Result", position = 6)
-    private String result;
-    
-    @ApiModelProperty(notes = "lock", example = "0")
-    private int lock;
+	@NotNull
+	@ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
+	private LocalDateTime date;
 
-    @ApiModelProperty(notes = "Laboratory Note", value = "Note by laboratorist", position = 7)
+	@ApiModelProperty(notes = "Laboratory Result", position = 6)
+	private String result;
+
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
+
+	@ApiModelProperty(notes = "Laboratory Note", value = "Note by laboratorist", position = 7)
 	private String note;
 
-    @ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
-    private Integer patientCode;
+	@ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
+	private Integer patientCode;
 
-    @ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
-    private String patName;
+	@ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
+	private String patName;
 
-    @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
-    private PatientSTATUS inOutPatient;
+	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
+	private PatientSTATUS inOutPatient;
 
-    @ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
-    private Integer age;
+	@ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
+	private Integer age;
 
-    @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
-    private String sex;
-    
-    @ApiModelProperty(notes = "Laboratory status", example = "DRAFT", position = 13)
-    private LaboratoryStatus status;
+	@ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
+	private String sex;
+
+	@ApiModelProperty(notes = "Laboratory status", example = "DRAFT", position = 13)
+	private LaboratoryStatus status;
 
 	public int getLock() {
-        return lock;
-    }
+		return lock;
+	}
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public Integer getCode() {
-        return this.code;
-    }
+	public Integer getCode() {
+		return this.code;
+	}
 
-    public String getMaterial() {
-        return this.material;
-    }
+	public String getMaterial() {
+		return this.material;
+	}
 
-    public ExamDTO getExam() {
-        return this.exam;
-    }
+	public ExamDTO getExam() {
+		return this.exam;
+	}
 
-    public LocalDateTime getRegistrationDate() {
-        return this.registrationDate;
-    }
+	public LocalDateTime getRegistrationDate() {
+		return this.registrationDate;
+	}
 
-    public LocalDateTime getDate() {
-        return this.date;
-    }
+	public LocalDateTime getDate() {
+		return this.date;
+	}
 
-    public String getResult() {
-        return this.result;
-    }
+	public String getResult() {
+		return this.result;
+	}
 
-    public String getNote() {
-        return this.note;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public Integer getPatientCode() {
-        return this.patientCode;
-    }
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
 
-    public String getPatName() {
-        return this.patName;
-    }
+	public String getPatName() {
+		return this.patName;
+	}
 
-    public PatientSTATUS getInOutPatient() {
-        return this.inOutPatient;
-    }
+	public PatientSTATUS getInOutPatient() {
+		return this.inOutPatient;
+	}
 
-    public Integer getAge() {
-        return this.age;
-    }
+	public Integer getAge() {
+		return this.age;
+	}
 
-    public String getSex() {
-        return this.sex;
-    }
+	public String getSex() {
+		return this.sex;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 
-    public void setMaterial(String material) {
-        this.material = material;
-    }
+	public void setMaterial(String material) {
+		this.material = material;
+	}
 
-    public void setExam(ExamDTO exam) {
-        this.exam = exam;
-    }
+	public void setExam(ExamDTO exam) {
+		this.exam = exam;
+	}
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate;
-    }
+	public void setRegistrationDate(LocalDateTime registrationDate) {
+		this.registrationDate = registrationDate;
+	}
 
-    public void setDate(LocalDateTime examDate) {
-        this.date = examDate;
-    }
+	public void setDate(LocalDateTime examDate) {
+		this.date = examDate;
+	}
 
-    public void setResult(String result) {
-        this.result = result;
-    }
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+	public void setNote(String note) {
+		this.note = note;
+	}
 
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
 
-    public void setPatName(String patName) {
-        this.patName = patName;
-    }
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
 
-    public void setInOutPatient(PatientSTATUS inOutPatient) {
-        this.inOutPatient = inOutPatient;
-    }
+	public void setInOutPatient(PatientSTATUS inOutPatient) {
+		this.inOutPatient = inOutPatient;
+	}
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public void setAge(Integer age) {
+		this.age = age;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
 
 	public LaboratoryStatus getStatus() {
 		return status;
