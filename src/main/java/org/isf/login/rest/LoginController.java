@@ -59,31 +59,31 @@ public class LoginController {
 
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
-	
+
 	@Autowired
 	private TokenProvider tokenProvider;
-	
+
 	@Autowired
-    private CustomAuthenticationManager authenticationManager;
+	private CustomAuthenticationManager authenticationManager;
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		if (loginRequest.getPassword().length() < 10) {
-			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT, "password too short", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,
+					"password too short", OHSeverityLevel.ERROR));
 		}
-		Authentication authentication = authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
 
-
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
-							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
+					sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}

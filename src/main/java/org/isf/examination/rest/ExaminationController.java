@@ -255,7 +255,7 @@ public class ExaminationController {
 	public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
 		List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
-		List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<PatientExaminationDTO>();
+		List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<>();
 		if (patientExamination == null || patientExamination.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
