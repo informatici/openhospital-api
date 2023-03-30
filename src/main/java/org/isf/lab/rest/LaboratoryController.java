@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.isf.admission.model.Admission;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.lab.dto.LabWithRowsDTO;
@@ -100,6 +101,13 @@ public class LaboratoryController {
 		this.laboratoryForPrintMapper = laboratoryForPrintMapper;
 	}
 
+	/**
+	 * Create a new {@link LabWithRows}.
+	 * 
+	 * @param labWithRowsDTO
+	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 		LOGGER.info("store exam with result");
@@ -134,7 +142,15 @@ public class LaboratoryController {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
-
+	
+	/**
+	 * Create a new {@link Laboratory}.
+	 * 
+	 * @param laboratoryDTO
+	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
 	@PostMapping(value = "/laboratories/examRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
 		LOGGER.info("store exam request");
@@ -176,6 +192,13 @@ public class LaboratoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
+	/**
+	 * Create a {@link List} of {@link LabWithRows}.
+	 * 
+	 * @param labsWithRows
+	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows)
 			throws OHServiceException {
@@ -221,7 +244,15 @@ public class LaboratoryController {
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
-
+	
+	/**
+	 * Updates the specified {@link LabWithRows} object.
+	 * 
+	 * @param code
+	 * @param labWithRowsDTO
+	 * @return {@code true} if has been updated, {@code false} otherwise.
+	 * @throws OHServiceException
+	 */
 	@PutMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateLaboratory(@PathVariable Integer code,
 			@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
@@ -269,7 +300,16 @@ public class LaboratoryController {
 		}
 		return ResponseEntity.ok(true);
 	}
-
+	
+	/**
+	 * Updates the specified {@link Laboratory} object.
+	 * 
+	 * @param code
+	 * @param status
+	 * @return {@code true} if has been updated, {@code false} otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
 	@PutMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 			throws OHServiceException {
@@ -283,7 +323,14 @@ public class LaboratoryController {
 		}
 		return ResponseEntity.ok(true);
 	}
-
+	
+	/**
+	 * Set an {@link Laboratory} record to deleted.
+	 * 
+	 * @param code
+	 * @return {@code true} if the record has been set to delete, {@code false} otherwise.
+	 * @throws OHServiceException
+	 */
 	@DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
@@ -300,6 +347,12 @@ public class LaboratoryController {
 		return ResponseEntity.ok(true);
 	}
 
+	/**
+	 * Get all {@link LabWithRows}s.
+	 * 
+	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory() throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
@@ -333,7 +386,14 @@ public class LaboratoryController {
 			return labDTO;
 		}).collect(Collectors.toList()));
 	}
-
+	
+	/**
+	 * Get all {@link LabWithRows}s for the specified id.
+	 * 
+	 * @param patId
+	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
 		LOGGER.info("Get LabWithRows for patient Id: {}", patId);
@@ -373,7 +433,15 @@ public class LaboratoryController {
 			return labDTO;
 		}).collect(Collectors.toList()));
 	}
-
+	
+	/**
+	 * Get all {@link Laboratory}s for the specified id.
+	 * 
+	 * @param patId
+	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
 	@GetMapping(value = "/laboratories/examRequest/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest(@PathVariable Integer patId)
 			throws OHServiceException {
@@ -396,7 +464,14 @@ public class LaboratoryController {
 			return laboratoryDTO;
 		}).collect(Collectors.toList()));
 	}
-
+	
+	/**
+	 * Get all {@link Laboratory}s.
+	 * 
+	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
 	@GetMapping(value = "/laboratories/examRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
@@ -413,7 +488,13 @@ public class LaboratoryController {
 			return laboratoryDTO;
 		}).collect(Collectors.toList()));
 	}
-
+	
+	/**
+	 * Get all {@link String}s.
+	 * 
+	 * @return the {@link List} of all material or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/laboratories/materials", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getMaterials() throws OHServiceException {
 		LOGGER.info("Get all Material");
@@ -425,6 +506,17 @@ public class LaboratoryController {
 		}
 	}
 
+	/**
+	 * Get all the {@link LabWithRows}s based on the applied filters.
+	 * 
+	 * @param examName
+	 * @param dateFrom
+	 * @param dateTo
+	 * @param patientCode
+	 * @return the {@link List} of found {@link LabWithRowsDTO} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
+	
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
 			@RequestParam(required = false, defaultValue = "") String examName,
@@ -480,6 +572,13 @@ public class LaboratoryController {
 		}
 	}
 
+   /**
+	 * Get all the {@link Laboratory}s for the specified id.
+	 * 
+	 * @param code
+	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
@@ -496,6 +595,13 @@ public class LaboratoryController {
 		return ResponseEntity.ok(laboratoryDTO);
 	}
 
+	/**
+	 * Get all the {@link LabWithRows}s for the specified id.
+	 * 
+	 * @param code
+	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @throws OHServiceException
+	 */
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LabWithRowsDTO> getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get labWithRows associated to specified CODE: {}", code);
