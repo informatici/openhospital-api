@@ -162,7 +162,7 @@ public class LaboratoryController {
 			for (Laboratory lab : labList) {
 				if (lab.getExam() == exam) {
 					throw new OHAPIException(
-							new OHExceptionMessage(null, "Exam Request already exist", OHSeverityLevel.ERROR));
+							new OHExceptionMessage(null, "Exam Request already exists", OHSeverityLevel.ERROR));
 				}
 			}
 		}
