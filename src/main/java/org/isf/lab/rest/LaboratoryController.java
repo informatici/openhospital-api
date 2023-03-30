@@ -135,7 +135,7 @@ public class LaboratoryController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
-	@PostMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/laboratories/examRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
 		LOGGER.info("store exam request");
 
@@ -270,7 +270,7 @@ public class LaboratoryController {
 		return ResponseEntity.ok(true);
 	}
 
-	@PutMapping(value = "/laboratories/examrequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
@@ -374,7 +374,7 @@ public class LaboratoryController {
 		}).collect(Collectors.toList()));
 	}
 
-	@GetMapping(value = "/laboratories/examrequest/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/laboratories/examRequest/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest(@PathVariable Integer patId)
 			throws OHServiceException {
 		LOGGER.info("Get Exam requested by patient Id: {}", patId);
@@ -397,7 +397,7 @@ public class LaboratoryController {
 		}).collect(Collectors.toList()));
 	}
 
-	@GetMapping(value = "/laboratories/examrequest", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/laboratories/examRequest", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
