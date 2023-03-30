@@ -24,10 +24,7 @@ package org.isf.lab.dto;
 import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
-<<<<<<< HEAD
-=======
 import org.isf.lab.model.LaboratoryStatus;
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 import org.isf.patient.dto.PatientSTATUS;
 
 import com.drew.lang.annotations.NotNull;
@@ -48,21 +45,9 @@ public class LaboratoryDTO {
 	@ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
 	private LocalDateTime registrationDate;
 
-<<<<<<< HEAD
-    @NotNull
-    @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private LocalDateTime date;
-    
-    @ApiModelProperty(notes = "Laboratory Result", position = 6)
-    private String result;
-    
-    @ApiModelProperty(notes = "lock", example = "0")
-    private int lock;
-=======
 	@NotNull
 	@ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
 	private LocalDateTime date;
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	@ApiModelProperty(notes = "Laboratory Result", position = 6)
 	private String result;
@@ -73,42 +58,17 @@ public class LaboratoryDTO {
 	@ApiModelProperty(notes = "Laboratory Note", value = "Note by laboratorist", position = 7)
 	private String note;
 
-<<<<<<< HEAD
-    @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
-    private PatientSTATUS inOutPatient;
-=======
 	@ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
 	private Integer patientCode;
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	@ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
 	private String patName;
 
-<<<<<<< HEAD
-    @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
-    private String sex;
-    
-    @ApiModelProperty(notes = "Laboratory status", example = "Draft", position = 13)
-    private LaboratoryStatus status;
-
-    public LaboratoryStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(LaboratoryStatus status) {
-		this.status = status;
-	}
-
-	public int getLock() {
-        return lock;
-    }
-=======
 	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
 	private PatientSTATUS inOutPatient;
 
 	@ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
 	private Integer age;
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	@ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
 	private String sex;
@@ -128,15 +88,9 @@ public class LaboratoryDTO {
 		return this.code;
 	}
 
-<<<<<<< HEAD
-    public LocalDateTime getDate() {
-        return this.date;
-    }
-=======
 	public String getMaterial() {
 		return this.material;
 	}
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	public ExamDTO getExam() {
 		return this.exam;
@@ -154,15 +108,9 @@ public class LaboratoryDTO {
 		return this.result;
 	}
 
-<<<<<<< HEAD
-    public PatientSTATUS getInOutPatient() {
-        return this.inOutPatient;
-    }
-=======
 	public String getNote() {
 		return this.note;
 	}
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	public Integer getPatientCode() {
 		return this.patientCode;
@@ -188,15 +136,9 @@ public class LaboratoryDTO {
 		this.code = code;
 	}
 
-<<<<<<< HEAD
-    public void setDate(LocalDateTime examDate) {
-        this.date = examDate;
-    }
-=======
 	public void setMaterial(String material) {
 		this.material = material;
 	}
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	public void setExam(ExamDTO exam) {
 		this.exam = exam;
@@ -214,15 +156,9 @@ public class LaboratoryDTO {
 		this.result = result;
 	}
 
-<<<<<<< HEAD
-    public void setInOutPatient(PatientSTATUS inOutPatient) {
-        this.inOutPatient = inOutPatient;
-    }
-=======
 	public void setNote(String note) {
 		this.note = note;
 	}
->>>>>>> 86677e2b840a55f00ad3929086a1870580801f26
 
 	public void setPatientCode(Integer patientCode) {
 		this.patientCode = patientCode;
