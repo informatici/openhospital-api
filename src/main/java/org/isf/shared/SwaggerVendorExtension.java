@@ -51,7 +51,7 @@ public class SwaggerVendorExtension implements OperationBuilderPlugin {
             }
         });
 
-        List<VendorExtension> extensions = new ArrayList<VendorExtension>();
+        List<VendorExtension> extensions = new ArrayList<>();
         extensions.add(extension);
         operationContext.operationBuilder().extensions(extensions);
     }
