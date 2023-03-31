@@ -21,8 +21,8 @@
  */
 package org.isf.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +40,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.SecurityReference;
-import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -50,55 +49,52 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SpringFoxConfig {
 
-    @Autowired
-    private Environment env;
+	@Autowired
+	private Environment env;
 
-    @Bean
-    public Docket apiDocket() {
+	@Bean
+	public Docket apiDocket() {
 
-        List<SecurityScheme> securitySchemes = Arrays.asList(new ApiKey("JWT", "Authorization", "header"));
+		ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0",
+						"https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
 
-        ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0", "https://www.apache.org/licenses/LICENSE-2.0", new ArrayList());
+		String host = env.getProperty("api.host");
+		String protocol = env.getProperty("api.protocol");
 
-        String host = env.getProperty("api.host");
-        String protocol = env.getProperty("api.protocol");
+		Set<String> protocols = new HashSet<>();
+		protocols.add(protocol);
 
-        Set<String> protocols = new HashSet<>();
-        protocols.add(protocol);
+		return new Docket(DocumentationType.SWAGGER_2)
+						.apiInfo(apiInfo)
+						.host(host)
+						.protocols(protocols)
+						.select()
+						.apis(RequestHandlerSelectors.basePackage("org.isf"))
+						// .apis(RequestHandlerSelectors.any())
+						.paths(PathSelectors.any())
+						.build()
+						.securityContexts(Arrays.asList(jwtSecurityContext()))
+						.securitySchemes(Arrays.asList(apiKey()));
+	}
 
+	private SecurityContext jwtSecurityContext() {
+		return SecurityContext
+						.builder()
+						.securityReferences(defaultAuth())
+						// .forPaths(PathSelectors.regex("^(?!(\\/auth\\/login)).*$"))
+						.build();
+	}
 
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo)
-                .host(host)
-                .protocols(protocols)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("org.isf"))
-                //.apis(RequestHandlerSelectors.any())
-                .paths(PathSelectors.any())
-                .build()
-                .securityContexts(Arrays.asList(jwtSecurityContext()))
-                .securitySchemes(Arrays.asList(apiKey()));
-    }
+	List<SecurityReference> defaultAuth() {
+		// return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
+		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+		authorizationScopes[0] = authorizationScope;
+		return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+	}
 
-    private SecurityContext jwtSecurityContext() {
-        return SecurityContext
-                .builder()
-                .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.regex("^(?!(\\/auth\\/login)).*$"))
-                .build();
-    }
-
-    List<SecurityReference> defaultAuth() {
-        return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
-    }
-
-
-    private SecurityReference apiKeyReference() {
-        return new SecurityReference("Authorization", new AuthorizationScope[0]);
-    }
-
-    private ApiKey apiKey() {
-        return new ApiKey("Authorization", HttpHeaders.AUTHORIZATION, In.HEADER.name());
-    }
+	private ApiKey apiKey() {
+		return new ApiKey("JWT", HttpHeaders.AUTHORIZATION, In.HEADER.name());
+	}
 
 }
