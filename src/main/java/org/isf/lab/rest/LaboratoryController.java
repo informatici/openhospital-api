@@ -541,7 +541,7 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		List<Laboratory> laboratoryList = new ArrayList<Laboratory>();
+		List<Laboratory> laboratoryList = new ArrayList<>();
 		if (!status.equals("")) {
 			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
                     .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
