@@ -57,18 +57,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.Authorization;
 
 @RestController
-@Api(value="/patients",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@Api(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
 public class PatientController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientController.class);
 
+	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
 
 	@Autowired
 	protected PatientBrowserManager patientManager;
-	
+
 	@Autowired
-	protected  AdmissionBrowserManager admissionManager;
+	protected AdmissionBrowserManager admissionManager;
 
 	@Autowired
 	protected PatientMapper patientMapper;
@@ -79,25 +80,25 @@ public class PatientController {
 		this.patientMapper = patientMapper;
 	}
 
-    /**
-     * Create new {@link Patient}.
-     * @param newPatient
-     * @return
-     * @throws OHServiceException
-     */
+	/**
+	 * Create new {@link Patient}.
+	 * @param newPatient
+	 * @return
+	 * @throws OHServiceException
+	 */
 	@PostMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
-        String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
+	ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
+		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
-        Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
-        if (patient == null){
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
+		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
 
 	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PatientDTO> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
+	ResponseEntity<PatientDTO> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: {}", code);
 		if (!updatePatient.getCode().equals(code)) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
@@ -107,26 +108,27 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
 		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
+		updatePatientModel.setLock(patientRead.getLock());
 		Patient patient = patientManager.savePatient(updatePatientModel);
 		if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
-        }
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
+		}
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
-        return ResponseEntity.ok(patientDTO);
+		return ResponseEntity.ok(patientDTO);
 	}
 
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> getPatients(
-			@RequestParam(value="page", required=false, defaultValue="0") Integer page,
-			@RequestParam(value="size", required=false, defaultValue=DEFAULT_PAGE_SIZE) Integer size) throws OHServiceException {
+					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		List<Patient> patients = patientManager.getPatient(page, size);
 		List<PatientDTO> patientDTOS = patients.stream().map(pat -> {
 			return patientMapper.map2DTO(pat);
 		}).collect(Collectors.toList());
-        if (patientDTOS.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
-        }
+		if (patientDTOS.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
+		}
 		return ResponseEntity.ok(patientDTOS);
 	}
 
@@ -136,7 +138,7 @@ public class PatientController {
 		Patient patient = patientManager.getPatientById(code);
 		LOGGER.info("Patient retrieved: {}", patient);
 		if (patient == null) {
-			
+
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		LOGGER.debug("admissionBrowserManager injected: {}", admissionManager);
@@ -149,29 +151,28 @@ public class PatientController {
 
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PatientDTO>> searchPatient(
-			@RequestParam(value="firstName", defaultValue="", required = false) String firstName,
-			@RequestParam(value="secondName", defaultValue="", required = false) String secondName,
-			@RequestParam(value="birthDate", defaultValue="", required = false) LocalDateTime birthDate,
-			@RequestParam(value="address", defaultValue="", required = false) String address
-	) throws OHServiceException {
+					@RequestParam(value = "firstName", defaultValue = "", required = false) String firstName,
+					@RequestParam(value = "secondName", defaultValue = "", required = false) String secondName,
+					@RequestParam(value = "birthDate", defaultValue = "", required = false) LocalDateTime birthDate,
+					@RequestParam(value = "address", defaultValue = "", required = false) String address) throws OHServiceException {
 
-		List<PatientDTO> patientListDTO = new ArrayList<PatientDTO>();
+		List<PatientDTO> patientListDTO = new ArrayList<>();
 		List<Patient> patientList = null;
 
-		Map<String, Object> params = new HashMap<String, Object>();
-		
+		Map<String, Object> params = new HashMap<>();
+
 		if (firstName != null && !firstName.isEmpty()) {
 			params.put("firstName", firstName);
 		}
-		
+
 		if (secondName != null && !secondName.isEmpty()) {
 			params.put("secondName", secondName);
 		}
-		
+
 		if (birthDate != null) {
 			params.put("birthDate", birthDate);
 		}
-		
+
 		if (address != null && !address.isEmpty()) {
 			params.put("address", address);
 		}
@@ -179,11 +180,11 @@ public class PatientController {
 		if (params.entrySet().size() > 0) {
 			patientList = patientManager.getPatients(params);
 		}
-		
+
 		if (patientList == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		
+
 		patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = null;
 			admission = admissionManager.getCurrentAdmission(patient);
@@ -194,57 +195,57 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam Integer code) throws OHServiceException {
+	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam int code) throws OHServiceException {
 		LOGGER.info("get patient for provided code even if logically deleted: {}", code);
-        Patient patient = patientManager.getPatientAll(code);
-        if (patient == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        PatientDTO patientDTO = patientMapper.map2DTO(patient);
-        return ResponseEntity.ok(patientDTO);
+		Patient patient = patientManager.getPatientAll(code);
+		if (patient == null) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		PatientDTO patientDTO = patientMapper.map2DTO(patient);
+		return ResponseEntity.ok(patientDTO);
 	}
-	
+
 	@GetMapping(value = "/patients/nextcode", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getPatientNextCode() throws OHServiceException {
-        LOGGER.info("get patient next code");
-        int nextCode = patientManager.getNextPatientCode();
-        return ResponseEntity.ok(nextCode);
+		LOGGER.info("get patient next code");
+		int nextCode = patientManager.getNextPatientCode();
+		return ResponseEntity.ok(nextCode);
 	}
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Delete patient code: {}", code);
-        Patient patient = patientManager.getPatientById(code);
-        boolean isDeleted;
-        if (patient != null) {
-            isDeleted = patientManager.deletePatient(patient);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        if (!isDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.ok(isDeleted);
-    }
-	
-	@GetMapping(value = "/patients/merge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> mergePatients(@RequestParam Integer mergedcode, @RequestParam Integer code2) throws OHServiceException {
-		LOGGER.info("merge patient for code {} in patient for code {}", code2, mergedcode);
-        Patient mergedPatient = patientManager.getPatientById(mergedcode);
-        Patient patient2 = patientManager.getPatientById(code2);
-        if (mergedPatient == null || patient2 == null) {
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        boolean merged = patientManager.mergePatient(mergedPatient, patient2);
-        if (!merged) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged!", OHSeverityLevel.ERROR));
-        }
-        return ResponseEntity.ok(merged);
+		Patient patient = patientManager.getPatientById(code);
+		boolean isDeleted;
+		if (patient != null) {
+			isDeleted = patientManager.deletePatient(patient);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		if (!isDeleted) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.ok(isDeleted);
 	}
-	
+
+	@GetMapping(value = "/patients/merge", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> mergePatients(@RequestParam int mergedcode, @RequestParam int code2) throws OHServiceException {
+		LOGGER.info("merge patient for code {} in patient for code {}", code2, mergedcode);
+		Patient mergedPatient = patientManager.getPatientById(mergedcode);
+		Patient patient2 = patientManager.getPatientById(code2);
+		if (mergedPatient == null || patient2 == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		boolean merged = patientManager.mergePatient(mergedPatient, patient2);
+		if (!merged) {
+			throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged!", OHSeverityLevel.ERROR));
+		}
+		return ResponseEntity.ok(merged);
+	}
+
 	@GetMapping(value = "/patients/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getPatientCities() throws OHServiceException {
 		LOGGER.info("get all cities of patient");
-        return ResponseEntity.ok(patientManager.getCities());
+		return ResponseEntity.ok(patientManager.getCities());
 	}
 }

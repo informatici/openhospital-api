@@ -2,7 +2,20 @@
 
 [![Java CI with Maven](https://github.com/informatici/openhospital-api/workflows/Java%20CI%20with%20Maven/badge.svg)](https://github.com/informatici/openhospital-api/actions?query=workflow%3A%22Java+CI+with+Maven%22)
 
-This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].  
+This is the API project of [Open Hospital][openhospital]: it exposes a REST API of the business logic implemented in the [openhospital-core project][core].
+
+## Summary
+
+  * [How to build [WIP]](#how-to-build-wip)
+    + [Using Swagger-UI](#using-swagger-ui)
+  * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
+  * [Cleaning](#cleaning)
+  * [How to contribute](#how-to-contribute)
+  * [Community](#community)
+  * [Code style](#code-style)
+
+<small>Table of contents generated with <i><a href='http://ecotrust-canada.github.io/markdown-toc/'>markdown-toc</a></i></small>
+
 
 ## How to build [WIP]
 
@@ -49,16 +62,35 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 ![image](https://user-images.githubusercontent.com/2938553/215335720-73d59075-f0df-44c4-93ed-eae79945bb71.png)
    
- 
+### Using Swagger-UI
 
-## How to deploy backend in docker environment
+ 1. use endpoint /auth/login to login and get the token
+ 
+![image](https://user-images.githubusercontent.com/2938553/228294801-4d27dd2c-9053-4f62-9497-690706232c9f.png)
+![image](https://user-images.githubusercontent.com/2938553/228294867-79d6a326-9e7d-4ca0-93cd-ce34c7b7373f.png)
+ 
+ 2. use the Authorize button at the top of the Swagger-UI and paste the token form step #1 prefixed by the string "Bearer " and click Authorize
+
+![image](https://user-images.githubusercontent.com/2938553/228296149-64905464-441f-4b20-80af-4dcfb40aef4c.png)
+ 
+ 3. close the dialog
+
+![image](https://user-images.githubusercontent.com/2938553/228294994-56c1ae3b-f7cb-49b6-94d4-c899fa20374e.png)
+
+ 4. now all the endpoints are automatically secured and the token will be added to the request
+
+![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
+![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
+
+## How to deploy backend in Docker environment
 
 Make sure you have docker with docker-compose installed, then run the following commands:
 
 - copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
-- run `docker compose up -d database`
-- (optional) run `docker compose run oh-database-init`
+- run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
+- (optional) run `docker compose run --rm oh-database-init`
+- run `docker compose run --rm oh-database-password` (for strong password 'Admin2022test!')
 - run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/

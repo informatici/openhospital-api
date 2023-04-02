@@ -29,4 +29,6 @@ copy:
 # Modify copies
 modify: clean deps copy
 	sed -i "s/JWT_TOKEN_SECRET/$(JWT_TOKEN_SECRET)/g" $(OH_APPLICATION_PROPERTIES)
-	sed -i "s/localhost/$(OH_MARIADB_SERVER)/g" $(OH_DATABASE_PROPERTIES)
+	sed -i "s/localhost/backend/g" $(OH_APPLICATION_PROPERTIES)
+	sed -i "s/localhost/database/g" $(OH_DATABASE_PROPERTIES)
+	

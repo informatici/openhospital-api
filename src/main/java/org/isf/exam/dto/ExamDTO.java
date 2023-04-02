@@ -27,53 +27,23 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class ExamDTO {
 
-    @ApiModelProperty(notes = "Exam Code", example = "99.99", position = 1)
-    private String code;
+	@ApiModelProperty(notes = "Exam Code", example = "01.01", position = 1)
+	private String code;
 
-    @ApiModelProperty(notes = "Exam Description", example = "99.99 HB", position = 2)
-    private String description;
+	@ApiModelProperty(notes = "Exam Description", example = "1.1 HB", position = 2)
+	private String description;
 
-    @ApiModelProperty(notes = "Exam Procedure", example = "1", position = 3)
-    private Integer procedure;
+	@ApiModelProperty(notes = "Exam Procedure", example = "1", position = 3)
+	private Integer procedure;
 
-    @ApiModelProperty(notes = "Exam Default Result", example = ">=12 (NORMAL)", position = 4)
-    private String defaultResult;
+	@ApiModelProperty(notes = "Exam Default Result", example = ">=12 (NORMAL)", position = 4)
+	private String defaultResult;
 
-    private ExamTypeDTO examtype;
-    
-    @ApiModelProperty(notes = "lock", example = "0")
+	@ApiModelProperty(notes = "Exam Type", position = 5)
+	private ExamTypeDTO examtype;
+
+	@ApiModelProperty(notes = "lock", example = "0")
 	private int lock;
-
-	public int getLock() {
-		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
-	}
-
-	public ExamDTO() {
-	}
-
-    public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype) {
-        this.code = code;
-        this.description = description;
-        this.procedure = procedure;
-        this.defaultResult = defaultResult;
-        this.examtype = examtype;
-    }
-
-
-    @Override
-    public String toString() {
-        return "ExamDTO{" +
-                "code='" + code + '\'' +
-                ", description='" + description + '\'' +
-                ", procedure=" + procedure +
-                ", defaultResult='" + defaultResult + '\'' +
-                ", examtype=" + examtype +
-                '}';
-    }
 
 	public String getCode() {
 		return this.code;
@@ -113,6 +83,31 @@ public class ExamDTO {
 
 	public void setExamtype(ExamTypeDTO examtype) {
 		this.examtype = examtype;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
+
+	public ExamDTO() {
+	}
+
+	public ExamDTO(String code, String description, Integer procedure, String defaultResult, ExamTypeDTO examtype) {
+		this.code = code;
+		this.description = description;
+		this.procedure = procedure;
+		this.defaultResult = defaultResult;
+		this.examtype = examtype;
+	}
+
+	@Override
+	public String toString() {
+		return "ExamDTO{" + "code='" + code + '\'' + ", description='" + description + '\'' + ", procedure=" + procedure
+				+ ", defaultResult='" + defaultResult + '\'' + ", examtype=" + examtype + '}';
 	}
 
 }
