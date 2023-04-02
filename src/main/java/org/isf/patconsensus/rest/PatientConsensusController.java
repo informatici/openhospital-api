@@ -105,16 +105,4 @@ public class PatientConsensusController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(patientConsensusUpdated));
 	}
 
-	@DeleteMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
-		LOGGER.info("Delete patient consensus by patient id: {}", patientId);
-		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
-		if (patientConsensus.isPresent()) {
-			manager.deletePatientConsensus(patientConsensus.get());
-			return ResponseEntity.ok(true);
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-	}
-
 }
