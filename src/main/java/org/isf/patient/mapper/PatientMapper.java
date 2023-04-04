@@ -24,6 +24,7 @@ package org.isf.patient.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
 import org.isf.patient.model.PatientProfilePhoto;
@@ -70,6 +71,8 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			photo.setPhoto(toObj.getBlobPhoto());
 			patient.setPatientProfilePhoto(photo);
 		}
+		patient.setPatientConsensus(new PatientConsensus(toObj.isConsensusFlag(), toObj.isConsensusAdministrativeFlag(), toObj.isConsensusServiceFlag(), patient));
+
 		return patient;
 	}
 

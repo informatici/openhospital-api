@@ -23,6 +23,7 @@ package org.isf.patient.dto;
 
 import java.time.LocalDate;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
 
 import com.drew.lang.annotations.Nullable;
@@ -109,17 +110,55 @@ public class PatientDTO {
 	private byte[] blobPhoto;
 
 	private int hashCode = 0;
-	
+
 	@Nullable
 	@ApiModelProperty(notes = "allergies of patient", position = 22)
 	private String allergies; // ADDED: Arnaud
-	
+
 	@Nullable
 	@ApiModelProperty(notes = "Current anamnesis", position = 23)
 	private String anamnesis; // ADDED: Arnaud
 
 	@ApiModelProperty(notes = "status", example="I", position = 24)
 	private PatientSTATUS status;
+
+	@ApiModelProperty(notes = "consensus flag", example="true", position = 25)
+	private boolean consensusFlag;
+
+	@ApiModelProperty(notes = "consensus administrative flag", example="true", position = 26)
+	private boolean consensusAdministrativeFlag;
+
+	@ApiModelProperty(notes = "consensus service flag", example="true", position = 27)
+	private boolean consensusServiceFlag;
+
+	public boolean isConsensusFlag() {
+		return consensusFlag;
+	}
+
+
+	public void setConsensusFlag(boolean consensusFlag) {
+		this.consensusFlag = consensusFlag;
+	}
+
+
+	public boolean isConsensusAdministrativeFlag() {
+		return consensusAdministrativeFlag;
+	}
+
+
+	public void setConsensusAdministrativeFlag(boolean consensusAdministrativeFlag) {
+		this.consensusAdministrativeFlag = consensusAdministrativeFlag;
+	}
+
+
+	public boolean isConsensusServiceFlag() {
+		return consensusServiceFlag;
+	}
+
+
+	public void setConsensusServiceFlag(boolean consensusServiceFlag) {
+		this.consensusServiceFlag = consensusServiceFlag;
+	}
 
 	public int getLock() {
 		return lock;
@@ -316,11 +355,11 @@ public class PatientDTO {
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
-	
+
 	public PatientSTATUS getStatus() {
 		return status;
 	}
-	
+
 	public PatientSTATUS setStatus(PatientSTATUS status) {
 		return this.status = status;
 	}
@@ -340,5 +379,5 @@ public class PatientDTO {
 	public void setFatherName(String fatherName) {
 		this.fatherName = fatherName;
 	}
-    
+
 }
