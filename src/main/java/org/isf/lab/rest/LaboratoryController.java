@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.isf.admission.model.Admission;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.lab.dto.LabWithRowsDTO;
@@ -521,13 +520,15 @@ public class LaboratoryController {
 	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
 			@RequestParam(required = false, defaultValue = "") String examName,
 			@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
-			@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode)
+			@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode,
+			@RequestParam(value = "status", required = false, defaultValue = "") String status)
 			throws OHServiceException {
 		LOGGER.info("Get labWithRow within specified date");
-		LOGGER.info("examName: {}", examName);
-		LOGGER.info("dateFrom: {}", dateFrom);
-		LOGGER.info("dateTo: {}", dateTo);
-		LOGGER.info("patientCode: {}", patientCode);
+		LOGGER.debug("examName: {}", examName);
+		LOGGER.debug("dateFrom: {}", dateFrom);
+		LOGGER.debug("dateTo: {}", dateTo);
+		LOGGER.debug("patientCode: {}", patientCode);
+		LOGGER.debug("status: {}", status);
 		Patient patient = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
@@ -540,7 +541,13 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		List<Laboratory> laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
+		List<Laboratory> laboratoryList = new ArrayList<>();
+		if (!status.equals("")) {
+			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
+                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+		} else {
+			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
+		}
 		if (laboratoryList == null || laboratoryList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
