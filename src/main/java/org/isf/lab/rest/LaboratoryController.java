@@ -524,11 +524,11 @@ public class LaboratoryController {
 			@RequestParam(value = "status", required = false, defaultValue = "") String status)
 			throws OHServiceException {
 		LOGGER.info("Get labWithRow within specified date");
-		LOGGER.info("examName: {}", examName);
-		LOGGER.info("dateFrom: {}", dateFrom);
-		LOGGER.info("dateTo: {}", dateTo);
-		LOGGER.info("patientCode: {}", patientCode);
-		LOGGER.info("status: {}", status);
+		LOGGER.debug("examName: {}", examName);
+		LOGGER.debug("dateFrom: {}", dateFrom);
+		LOGGER.debug("dateTo: {}", dateTo);
+		LOGGER.debug("patientCode: {}", patientCode);
+		LOGGER.debug("status: {}", status);
 		Patient patient = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
