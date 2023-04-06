@@ -94,15 +94,4 @@ public class PatientConsensusController {
 		return ResponseEntity.ok(patientConsensusDTO);
 	}
 
-	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientConsensusDTO> storePatientConsensus(@RequestBody PatientConsensusDTO patientConsensus) throws OHServiceException {
-		LOGGER.info("create or update patient consensus");
-		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
-		PatientConsensus patientConsensusUpdated = manager.newPatientConsensus(updatedPatienConsensustModel);
-		if (patientConsensusUpdated == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus was not inserted!", OHSeverityLevel.ERROR));
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(patientConsensusUpdated));
-	}
-
 }
