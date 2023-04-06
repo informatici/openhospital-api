@@ -72,7 +72,6 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			patient.setPatientProfilePhoto(photo);
 		}
 		patient.setPatientConsensus(new PatientConsensus(toObj.isConsensusFlag(), toObj.isConsensusAdministrativeFlag(), toObj.isConsensusServiceFlag(), patient));
-
 		return patient;
 	}
 
