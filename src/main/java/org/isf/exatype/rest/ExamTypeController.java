@@ -71,7 +71,7 @@ public class ExamTypeController {
 		ExamType examType = examTypeMapper.map2Model(newExamType);
 		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
 		if (createdExamType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created.", OHSeverityLevel.ERROR));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
@@ -84,13 +84,13 @@ public class ExamTypeController {
             throw new OHAPIException(new OHExceptionMessage(null, "ExamType code mismatch", OHSeverityLevel.ERROR));
         }
         if (!examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "ExamType not found.", OHSeverityLevel.WARNING));
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
         ExamType exType = examTypeBrowserManager.updateExamType(examType);
         if (exType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "ExamType is not updated.", OHSeverityLevel.ERROR));
         }
 
         return ResponseEntity.ok(examTypeMapper.map2DTO(exType));
@@ -113,10 +113,10 @@ public class ExamTypeController {
 	    LOGGER.info("Delete exams code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!examType.isPresent()) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "Exam type not found.", OHSeverityLevel.WARNING));
         }
         if (!examTypeBrowserManager.deleteExamType(examType.get())) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type is not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Exam type is not deleted.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(true);
     }

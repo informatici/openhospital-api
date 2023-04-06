@@ -116,10 +116,10 @@ public class VaccineController {
         try {
              isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present.", OHSeverityLevel.ERROR));
         }
         if (isCreatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
@@ -136,7 +136,7 @@ public class VaccineController {
         LOGGER.info("Update vaccine: {}", updateVaccine);
         Vaccine isUpdatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (isUpdatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccine));
     }
@@ -156,7 +156,7 @@ public class VaccineController {
         if (vaccine!=null){
             isDeleted = vaccineManager.deleteVaccine(vaccine);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted.", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
         }

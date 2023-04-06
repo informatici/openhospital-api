@@ -75,7 +75,7 @@ public class PricesOthersController {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
 		PricesOthers isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
 		if (isCreatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPricesOthers));
 	}
@@ -97,7 +97,7 @@ public class PricesOthersController {
 		}
 		PricesOthers isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
 		if (isUpdatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
 	}

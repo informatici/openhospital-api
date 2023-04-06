@@ -83,7 +83,7 @@ public class DeliveryTypeController {
 		}
 		if (!isCreated || dlvrTypeCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not created!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
@@ -100,12 +100,12 @@ public class DeliveryTypeController {
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type not found!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated = dlvrtypeManager.updateDeliveryType(dlvrType);
 		if (!isUpdated) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not updated!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}

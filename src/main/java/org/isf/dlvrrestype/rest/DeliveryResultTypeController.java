@@ -85,7 +85,7 @@ public class DeliveryResultTypeController {
 		}
 		if (!isCreated || dlvrrestTypeCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR),
+					new OHExceptionMessage(null, "Delivery result type is not created.", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dlvrrestTypeCreated));
@@ -104,12 +104,12 @@ public class DeliveryResultTypeController {
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery result type not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
 		if (!isUpdated) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR),
+					new OHExceptionMessage(null, "Delivery result type is not updated.", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dlvrrestType));

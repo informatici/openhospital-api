@@ -84,7 +84,7 @@ public class TherapyController {
 	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
 		if (thRowDTO.getPatID() == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "patient not found!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
 		thRow = manager.newTherapy(thRow);
@@ -104,7 +104,7 @@ public class TherapyController {
 		if (done != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not replaced!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not replaced.", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class TherapyController {
 		if (done) {
 			return ResponseEntity.ok(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not deleted.", OHSeverityLevel.ERROR));
 		}
 	}
 	

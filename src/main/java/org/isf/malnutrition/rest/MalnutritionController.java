@@ -74,7 +74,7 @@ public class MalnutritionController {
 		Malnutrition isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
 		if (isCreatedMalnutrition == null) {
 			LOGGER.info("Malnutrition is not created!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created.", OHSeverityLevel.ERROR));
         }
 		LOGGER.info("Malnutrition successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMalnutrition));
@@ -91,7 +91,7 @@ public class MalnutritionController {
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if (malnutritions == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls.", OHSeverityLevel.ERROR));
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 		if (mappedMalnutritions.isEmpty()) {
@@ -113,7 +113,7 @@ public class MalnutritionController {
 	public ResponseEntity<MalnutritionDTO> getLastMalnutrition(@PathVariable("id_patient") int patientID) throws OHServiceException {
 		Malnutrition foundMalnutrition = manager.getLastMalnutrition(patientID);
 		if (foundMalnutrition == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "No malnutrition found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "No malnutrition found.", OHSeverityLevel.ERROR));
 		} else {
 			return ResponseEntity.ok(mapper.map2DTO(foundMalnutrition));
 		}
@@ -148,7 +148,7 @@ public class MalnutritionController {
 					.collect(Collectors.toList());
 		}
 		if (matchedMalnutritions.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition control not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition control not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isDeleted = manager.deleteMalnutrition(matchedMalnutritions.get(0));
 		return ResponseEntity.ok(isDeleted);

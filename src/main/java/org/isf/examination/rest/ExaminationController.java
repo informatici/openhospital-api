@@ -77,13 +77,13 @@ public class ExaminationController {
     public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
         Patient patient = patientBrowserManager.getPatientById(newPatientExamination.getPatientCode());
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not exist.", OHSeverityLevel.ERROR));
         }
         if (newPatientExamination.getPex_height() < 0 || newPatientExamination.getPex_height() > 250) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250!", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250.", OHSeverityLevel.WARNING));
         }
         if (newPatientExamination.getPex_weight() < 0 || newPatientExamination.getPex_weight() > 200) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200!", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200.", OHSeverityLevel.WARNING));
         }
         if (newPatientExamination.getPex_ap_min() < 80) {
         	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
@@ -130,21 +130,21 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage(null, "Patient examination id mismatch", OHSeverityLevel.ERROR));
         }
         if (examinationBrowserManager.getByID(id) == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not found.", OHSeverityLevel.WARNING));
         }
 
         Patient patient = patientBrowserManager.getPatientById(dto.getPatientCode());
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not exist.", OHSeverityLevel.ERROR));
         }
         if (dto.getPex_height() < 0 || dto.getPex_height() > 250) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250!", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250.", OHSeverityLevel.WARNING));
         }
         if (dto.getPex_weight() < 0 || dto.getPex_weight() > 200) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200!", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200.", OHSeverityLevel.WARNING));
         }
         if (dto.getPex_ap_min() < 80) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80.", OHSeverityLevel.WARNING));
         }
         if (dto.getPex_ap_min() > dto.getPex_ap_max() ) {
         	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
@@ -186,7 +186,7 @@ public class ExaminationController {
 
         Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient not exists!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not  exist.", OHSeverityLevel.ERROR));
         }
         PatientExamination patientExamination = examinationBrowserManager.getDefaultPatientExamination(patient);
         PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);

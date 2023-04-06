@@ -83,7 +83,7 @@ public class AdmissionTypeController {
 		}
 		if (!isCreated || admtCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR),
+					new OHExceptionMessage(null, "Admission Type is not created.", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
@@ -101,12 +101,12 @@ public class AdmissionTypeController {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
 		if (!isUpdated) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not updated!", OHSeverityLevel.ERROR),
+					new OHExceptionMessage(null, "Admission Type is not updated.", OHSeverityLevel.ERROR),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(admt));

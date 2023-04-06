@@ -121,7 +121,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		User user = userManager.getUserByName(userName);
 		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User not found.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(userMapper.map2DTO(user));
 	}
@@ -139,7 +139,7 @@ public class UserController {
 		boolean isCreated = userManager.newUser(user);
 		if (!isCreated) {
 			LOGGER.info("User is not created!");
-            throw new OHAPIException(new OHExceptionMessage(null, "User is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "User is not created.", OHSeverityLevel.ERROR));
         }
 		LOGGER.info("User successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
@@ -158,7 +158,7 @@ public class UserController {
 		User user = userMapper.map2Model(userDTO);
 		User foundUser = userManager.getUserByName(user.getUserName());
 		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated;
 		if (updatePassword) {
@@ -169,7 +169,7 @@ public class UserController {
 		if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "User is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User was not updated.", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -182,13 +182,13 @@ public class UserController {
 	public ResponseEntity<Boolean> deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
 		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isDelete = userManager.deleteUser(foundUser);
 		if (isDelete) {
 			return ResponseEntity.ok(isDelete);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "User is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User is not deleted.", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class UserController {
 	public ResponseEntity<List<UserMenuItemDTO>> getMenu(@PathVariable String username) throws OHServiceException {
 		User user = userManager.getUserByName(username);
 		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "User not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User not found.", OHSeverityLevel.ERROR));
 		}
         List<UserMenuItem> menuItems = userManager.getMenu(user);
         List<UserMenuItemDTO> mappedMenuItems = userMenuItemMapper.map2DTOList(menuItems);
@@ -263,7 +263,7 @@ public class UserController {
         if (done) {
         	return ResponseEntity.ok(done);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Group rights hasn't been updated!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, "Group rights haven't been updated.", OHSeverityLevel.ERROR));
         }
 	}
 	
@@ -279,7 +279,7 @@ public class UserController {
 		if (isDeleted) {
 			return ResponseEntity.ok(isDeleted);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "User group is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User group is not deleted.", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -293,7 +293,7 @@ public class UserController {
 		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
 		boolean isCreated = userManager.newUserGroup(userGroup);
 		if (!isCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "User group is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "User group is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
@@ -307,20 +307,20 @@ public class UserController {
 	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
         UserGroup group = userGroupMapper.map2Model(aGroup);
         if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, "User group not found.", OHSeverityLevel.ERROR));
         }
         boolean isUpdated = userManager.updateUserGroup(group);
         if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "User group is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "User group is not updated.", OHSeverityLevel.ERROR));
 		}
 	}
 	
 	private UserGroup loadUserGroup(String code) throws OHServiceException {
 		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
         if (group.isEmpty()) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "User group not found!", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage(null, "User group not found.", OHSeverityLevel.ERROR));
         }
         return group.get(0);
 	}

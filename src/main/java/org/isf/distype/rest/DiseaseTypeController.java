@@ -96,7 +96,7 @@ public class DiseaseTypeController {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
-        			"specified code is already used!", 
+        			"specified code is already used.", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
@@ -104,7 +104,7 @@ public class DiseaseTypeController {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 
-        			"disease type is not created!", 
+        			"disease type is not created.", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
@@ -120,7 +120,7 @@ public class DiseaseTypeController {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
         	throw new OHAPIException(new OHExceptionMessage(null, 
-        			"disease type not found!", 
+        			"disease type not found.", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         
@@ -128,7 +128,7 @@ public class DiseaseTypeController {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
         	throw new OHAPIException(new OHExceptionMessage(null, 
-        			"disease type is not updated!", 
+        			"disease type is not updated.", 
         			OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
@@ -152,7 +152,7 @@ public class DiseaseTypeController {
 			return ResponseEntity.ok(result);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, 
-					"No disease type found with the given code!", 
+					"No disease type found with the given code.", 
 					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
