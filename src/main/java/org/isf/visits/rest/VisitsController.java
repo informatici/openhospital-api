@@ -117,7 +117,7 @@ public class VisitsController {
         List<Visit> listVisits = mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
@@ -134,7 +134,7 @@ public class VisitsController {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(true);
     }
@@ -151,7 +151,7 @@ public class VisitsController {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
         if (visit == null) {
-            throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException( new OHExceptionMessage(null, "Visit not found.", OHSeverityLevel.ERROR));
         }
         
         if (visit.getVisitID() != updateVisit.getVisitID()) {
@@ -161,7 +161,7 @@ public class VisitsController {
         Visit visitUp = mapper.map2Model(updateVisit);
         Visit visitUpdate = visitManager.newVisit(visitUp);
         if (visitUpdate == null) {
-        	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
+        	throw new OHAPIException( new OHExceptionMessage(null, "visit is not updated.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }

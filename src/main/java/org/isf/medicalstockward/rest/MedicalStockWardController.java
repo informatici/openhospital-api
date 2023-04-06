@@ -114,11 +114,11 @@ public class MedicalStockWardController {
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
@@ -237,12 +237,12 @@ public class MedicalStockWardController {
 		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
 		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
 		if (!isPresent) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward not found.", OHSeverityLevel.ERROR));
 		}
 
 		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isUpdated);
 	}

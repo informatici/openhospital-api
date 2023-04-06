@@ -97,10 +97,10 @@ public class VaccineTypeController {
         try {
             isCreatedVaccineType = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
         }catch(OHDataIntegrityViolationException e){
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type already present.", OHSeverityLevel.ERROR));
         }
         if (isCreatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccineType));
     }
@@ -117,7 +117,7 @@ public class VaccineTypeController {
         LOGGER.info("Update vaccine type: {}", updateVaccineType);
         VaccineType isUpdatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (isUpdatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not updated.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccineType));
 
@@ -138,7 +138,7 @@ public class VaccineTypeController {
         if (vaccineType!=null){
             isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not deleted.", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
         }

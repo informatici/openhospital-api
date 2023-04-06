@@ -95,7 +95,7 @@ public class AgeTypeController {
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid.", OHSeverityLevel.ERROR));
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
@@ -105,7 +105,7 @@ public class AgeTypeController {
 			return ResponseEntity.ok(ageTypeDTO);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage(null, 
-					"The age type is not updated!", 
+					"The age type is not updated.", 
 					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

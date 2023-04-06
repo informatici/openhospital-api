@@ -77,7 +77,7 @@ public class PatVacController {
 		LOGGER.info("Create patient vaccine {}", code);
 		PatientVaccine isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (isCreatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPatientVaccine));
 	}
@@ -96,7 +96,7 @@ public class PatVacController {
 		patvac.setLock(patientVaccineDTO.getLock());
 		PatientVaccine isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (isUpdatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "patient vaccine is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPatientVaccine));
 	}
@@ -165,7 +165,7 @@ public class PatVacController {
 		patVac.setCode(code);
 		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not deleted.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}

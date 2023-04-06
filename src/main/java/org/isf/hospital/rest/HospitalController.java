@@ -67,7 +67,7 @@ public class HospitalController {
             throw new OHAPIException(new OHExceptionMessage(null, "Hospital code mismatch", OHSeverityLevel.ERROR));
         }
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Hospital not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "Hospital not found.", OHSeverityLevel.WARNING));
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);

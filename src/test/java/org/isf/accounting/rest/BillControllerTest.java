@@ -201,7 +201,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient Not found!")))
+				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException
@@ -235,7 +235,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient Not found!")))
+				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException

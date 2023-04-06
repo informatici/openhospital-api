@@ -92,7 +92,7 @@ public class PatientController {
 		LOGGER.info("Create patient {}", name);
 		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
@@ -105,13 +105,13 @@ public class PatientController {
 		}
 		Patient patientRead = patientManager.getPatientById(code);
 		if (patientRead == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
 		updatePatientModel.setLock(patientRead.getLock());
 		Patient patient = patientManager.savePatient(updatePatientModel);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated.", OHSeverityLevel.ERROR));
 		}
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 		return ResponseEntity.ok(patientDTO);
@@ -223,7 +223,7 @@ public class PatientController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
@@ -238,7 +238,7 @@ public class PatientController {
 		}
 		boolean merged = patientManager.mergePatient(mergedPatient, patient2);
 		if (!merged) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(merged);
 	}

@@ -115,13 +115,13 @@ public class LaboratoryController {
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 				.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found.", OHSeverityLevel.ERROR));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -136,7 +136,7 @@ public class LaboratoryController {
 		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 
 		if (!inserted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created.", OHSeverityLevel.ERROR));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -156,13 +156,13 @@ public class LaboratoryController {
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 				.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found.", OHSeverityLevel.ERROR));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -185,7 +185,7 @@ public class LaboratoryController {
 		boolean inserted = laboratoryManager.newExamRequest(labToInsert);
 
 		if (!inserted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created.", OHSeverityLevel.ERROR));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -209,13 +209,13 @@ public class LaboratoryController {
 			LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
 			Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 			if (patient == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 			}
 
 			Exam exam = examManager.getExams().stream()
 					.filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode())).findFirst().orElse(null);
 			if (exam == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+				throw new OHAPIException(new OHExceptionMessage(null, "Exam not found.", OHSeverityLevel.ERROR));
 			}
 
 			Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -239,7 +239,7 @@ public class LaboratoryController {
 		boolean inserted = laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
 
 		if (!inserted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
@@ -260,23 +260,23 @@ public class LaboratoryController {
 		List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
 		if (!code.equals(laboratoryDTO.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory code mismatch.", OHSeverityLevel.ERROR));
 		}
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (!labo.isPresent()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory Not Found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory not found.", OHSeverityLevel.ERROR));
 		}
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 				.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Exam not found.", OHSeverityLevel.ERROR));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -295,7 +295,7 @@ public class LaboratoryController {
 		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
 
 		if (!updated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -318,7 +318,7 @@ public class LaboratoryController {
 				LaboratoryStatus.valueOf(status.toUpperCase()));
 
 		if (!updated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -341,7 +341,7 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		if (!laboratoryManager.deleteLaboratory(labToDelete)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Laboratory is not deleted.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -398,7 +398,7 @@ public class LaboratoryController {
 		LOGGER.info("Get LabWithRows for patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
@@ -447,7 +447,7 @@ public class LaboratoryController {
 		LOGGER.info("Get Exam requested by patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
@@ -537,7 +537,7 @@ public class LaboratoryController {
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
-				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found!", OHSeverityLevel.ERROR),
+				throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR),
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}

@@ -254,7 +254,7 @@ public class DiseaseController {
 		if (diseaseManager.newDisease(disease) != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -273,7 +273,7 @@ public class DiseaseController {
 		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	

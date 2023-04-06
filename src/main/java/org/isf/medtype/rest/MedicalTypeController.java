@@ -90,7 +90,7 @@ public class MedicalTypeController {
 	public ResponseEntity<MedicalTypeDTO> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType isCreatedMedicalType = medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(medicalTypeDTO));
 		if (isCreatedMedicalType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(medicalTypeMapper.map2DTO(isCreatedMedicalType));
 	}
@@ -105,11 +105,11 @@ public class MedicalTypeController {
 	public ResponseEntity<MedicalTypeDTO> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
 		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found.", OHSeverityLevel.ERROR));
 		}
 		MedicalType isUpdatedMedicalType = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (isUpdatedMedicalType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Medical type is not updated.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(medicalTypeMapper.map2DTO(isUpdatedMedicalType));
 	}
@@ -140,7 +140,7 @@ public class MedicalTypeController {
 		if (!machedMedicalTypes.isEmpty()) {
 			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(machedMedicalTypes.get(0)));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Medical type not found.", OHSeverityLevel.ERROR));
 		}
 	}
 }
