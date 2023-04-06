@@ -31,7 +31,6 @@ import org.isf.disctype.model.DischargeType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,8 +81,7 @@ public class DischargeTypeController {
 			dischTypeCreated = dischTypeFounds.get(0);
 		}
 		if (!isCreated || dischTypeCreated == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type is not created.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dischTypeCreated));
 	}
@@ -99,13 +97,11 @@ public class DischargeTypeController {
 		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Discharge Type not found."));
 		}
 		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
 		if (!isUpdated) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}
