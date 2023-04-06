@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.ward.rest;
 
@@ -131,7 +131,7 @@ public class WardController {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (wardCreated == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(wardCreated));
     }
@@ -150,7 +150,7 @@ public class WardController {
 	    ward.setLock(updateWard.getLock());
         Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(mapper.map2DTO(wardUpdated));
 
@@ -171,7 +171,7 @@ public class WardController {
         if (ward != null) {
             isDeleted = wardManager.deleteWard(ward);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Wards is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage(null, "Ward is not deleted.", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
         }

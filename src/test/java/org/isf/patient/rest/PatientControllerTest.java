@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.patient.rest;
 
@@ -171,7 +171,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient is not created!")))
+				.andExpect(content().string(containsString("Patient is not created.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException
@@ -268,7 +268,7 @@ public class PatientControllerTest {
 				.andDo(print())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Patient is not updated!")));
+				.andExpect(content().string(containsString("Patient is not updated.")));
 
 	}
 
@@ -319,7 +319,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
-				.andExpect(content().string(containsString("Patient not found!"))).andReturn();
+				.andExpect(content().string(containsString("Patient not found."))).andReturn();
 
 		//TODO Create OHUpdateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
@@ -555,7 +555,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHDeleteAPIException
-				.andExpect(content().string(containsString("Patient is not deleted!")))
+				.andExpect(content().string(containsString("Patient is not deleted.")))
 				.andReturn();
 
 		//TODO Create OHDeleteAPIException

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.disctype.rest;
 
@@ -83,7 +83,7 @@ public class DischargeTypeController {
 		}
 		if (!isCreated || dischTypeCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+					new OHExceptionMessage(null, "discharge type is not created.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dischTypeCreated));
 	}
@@ -100,12 +100,12 @@ public class DischargeTypeController {
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type not found!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "discharge type not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
 		if (!isUpdated) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "discharge type is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+					new OHExceptionMessage(null, "discharge type is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}

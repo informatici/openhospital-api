@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.exam.rest;
 
@@ -76,7 +76,7 @@ public class ExamRowController {
         Exam exam = examManager.getExams().stream().filter(e -> examRowDTO.getExam().getCode().equals(e.getCode())).findFirst().orElse(null);
 
         if (exam == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam not found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "Exam not found.", OHSeverityLevel.ERROR));
         }
 
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
@@ -84,7 +84,7 @@ public class ExamRowController {
 
         ExamRow isCreatedExamRow = examRowBrowsingManager.newExamRow(examRow);
         if (isCreatedExamRow == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not created.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(examRowMapper.map2DTO(isCreatedExamRow));
     }
@@ -130,13 +130,13 @@ public class ExamRowController {
     public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamRows not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "ExamRows not found.", OHSeverityLevel.WARNING));
         }
         if (examRows.size() > 1) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Found multiple ExamRow!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage(null, "Found multiple ExamRow.", OHSeverityLevel.WARNING));
         }
         if (!examRowBrowsingManager.deleteExamRow(examRows.get(0))) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "ExamRow is not deleted.", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(true);
     }

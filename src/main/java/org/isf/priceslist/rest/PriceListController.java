@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.priceslist.rest;
 
@@ -82,7 +82,7 @@ public class PriceListController {
 		LOGGER.info("Create price list {}", priceListDTO.getCode());
 		PriceList isCreatedPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
 		if (isCreatedPriceList == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "price list is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Price list is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPriceList));
 	}
@@ -100,7 +100,7 @@ public class PriceListController {
 		PriceList priceList = mapper.map2Model(priceListDTO);
 		PriceList isUpdatedPriceList = priceListManager.updateList(priceList);
 		if (isUpdatedPriceList == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "price list is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Price list is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPriceList));
 	}
@@ -175,7 +175,7 @@ public class PriceListController {
 		}
 		isCopied = priceListManager.copyList(priceListFounds.get(0));
 		if (!isCopied) {
-			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been duplicated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Price list has not been duplicated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isCopied);
 	}
@@ -196,7 +196,7 @@ public class PriceListController {
 		}
 		isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
 		if (!isCopied) {
-			throw new OHAPIException(new OHExceptionMessage(null, "price list has not been duplicated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Price list has not been duplicated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isCopied);
 	}

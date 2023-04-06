@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.operation.rest;
 
@@ -102,11 +102,11 @@ public class OperationController {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}", code);
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "another operation has already been created with provided description and types!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Another operation has already been created with provided description and types.", OHSeverityLevel.ERROR));
 		}
 		Operation isCreatedOperation = operationManager.newOperation(mapper.map2Model(operationDTO));
 		if (isCreatedOperation == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperation));
 	}
@@ -123,12 +123,12 @@ public class OperationController {
 		LOGGER.info("Update operations code: {}", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation not found.", OHSeverityLevel.ERROR));
 		}
 		operation.setLock(operationDTO.getLock());
 		Operation isUpdatedOperation = operationManager.updateOperation(operation);
 		if (isUpdatedOperation == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperation));
 	}
@@ -214,7 +214,7 @@ public class OperationController {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation {}", code);
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+			   throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required.", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 		
@@ -226,7 +226,7 @@ public class OperationController {
 			opCreated = opRowFounds.get(0);
 		}
 		if (createOpeRow == null || opCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation row is not created.", OHSeverityLevel.ERROR));
 		}
 		OperationRowDTO opR =  opRowMapper.map2DTO(opCreated);
 		return ResponseEntity.status(HttpStatus.CREATED).body(opR);
@@ -243,18 +243,18 @@ public class OperationController {
 	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "At least one field between admission and Opd is required.", OHSeverityLevel.ERROR));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation row not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation row not found.", OHSeverityLevel.ERROR));
 		}
 		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
 		if (updateOpeRow == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(opRow.getId());
 	}
@@ -333,7 +333,7 @@ public class OperationController {
 		opRow.setId(code);
 		boolean isDeleted = operationRowManager.deleteOperationRow(opRow);
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation row is not deleted!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation row is not deleted.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}

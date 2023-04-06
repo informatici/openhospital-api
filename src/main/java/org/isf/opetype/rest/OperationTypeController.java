@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.opetype.rest;
 
@@ -76,7 +76,7 @@ public class OperationTypeController {
 		LOGGER.info("Create operation Type {}", code);
 		OperationType isCreatedOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
 		if (isCreatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperationType));
 	}
@@ -93,11 +93,11 @@ public class OperationTypeController {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type not found.", OHSeverityLevel.ERROR));
 		}
 		OperationType isUpdatedOperationType = opeTypeManager.updateOperationType(opeType);
 		if (isUpdatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperationType));
 	}

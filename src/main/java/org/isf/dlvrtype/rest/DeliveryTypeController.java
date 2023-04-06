@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.dlvrtype.rest;
 
@@ -83,7 +83,7 @@ public class DeliveryTypeController {
 		}
 		if (!isCreated || dlvrTypeCreated == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not created!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type is not created.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
@@ -100,12 +100,12 @@ public class DeliveryTypeController {
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type not found!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type not found.", OHSeverityLevel.ERROR));
 		}
 		boolean isUpdated = dlvrtypeManager.updateDeliveryType(dlvrType);
 		if (!isUpdated) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not updated!", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "Delivery type is not updated.", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}

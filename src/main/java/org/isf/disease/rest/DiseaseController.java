@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.disease.rest;
 
@@ -254,7 +254,7 @@ public class DiseaseController {
 		if (diseaseManager.newDisease(disease) != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -273,7 +273,7 @@ public class DiseaseController {
 		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	

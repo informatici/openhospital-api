@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.permissions.rest;
 
@@ -143,7 +143,7 @@ public class PermissionController {
 			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage(null, "Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/*
@@ -174,7 +174,7 @@ public class PermissionController {
 			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage(null, "Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	*/
 

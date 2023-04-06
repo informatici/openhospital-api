@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.sms.rest;
 
@@ -110,7 +110,7 @@ public class SmsController {
 	public ResponseEntity<Boolean> deleteSms(@RequestBody @Valid List<SmsDTO> smsDTOList) throws OHServiceException {
 		List<Sms> smsList = smsMapper.map2ModelList(smsDTOList);
 		if (smsList.stream().anyMatch(sms -> sms.getSmsId() <= 0)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Some Sms are not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "Some Sms are not found.", OHSeverityLevel.ERROR));
 		}
 		smsManager.delete(smsList);
 		return ResponseEntity.ok(true);
