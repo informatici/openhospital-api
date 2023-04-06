@@ -347,15 +347,18 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all {@link LabWithRows}s.
+	 * Get the list of exams {@link LabWithRows}s divided by pages.
 	 * 
+	 * @param oneWeek
+	 * @param pageNo
+	 * @param pageSize
 	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory() throws OHServiceException {
+	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@RequestParam boolean onWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
-		List<Laboratory> labList = laboratoryManager.getLaboratory();
+		List<Laboratory> labList = laboratoryManager.getLaboratory(onWeek, pageNo, pageSize);
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
