@@ -38,7 +38,6 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -190,7 +189,7 @@ public class StockMovementController {
 	public ResponseEntity<List<LotDTO>> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
 		List<Lot> lots = movInsertingManager.getLotByMedical(med);
 		List<LotDTO> mappedLots = lotMapper.map2DTOList(lots);
@@ -214,7 +213,7 @@ public class StockMovementController {
 			@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
 		return ResponseEntity.ok(movInsertingManager.alertCriticalQuantity(med, specifiedQuantity));
 	}

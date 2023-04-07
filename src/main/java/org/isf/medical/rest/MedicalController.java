@@ -33,7 +33,6 @@ import org.isf.medicals.model.Medical;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,7 +73,7 @@ public class MedicalController {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
 			LOGGER.info("Medical not found");
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		} else {
 			LOGGER.info("Medical retrieved successfully");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
@@ -101,7 +100,7 @@ public class MedicalController {
 			medicals = medicalManager.getMedicalsSortedByName();
 		}
 		if (medicals == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving medicals.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Error while retrieving medicals."));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
@@ -147,7 +146,7 @@ public class MedicalController {
 		}
 		
 		if (medicals == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving medicals.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Error while retrieving medicals."));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
@@ -174,7 +173,7 @@ public class MedicalController {
 		Medical isCreatedMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		if (isCreatedMedical == null) {
 			LOGGER.info("Medical is not created!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Medical is not created.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Medical not created."));
         }
 		LOGGER.info("Medical successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMedical));
@@ -195,7 +194,7 @@ public class MedicalController {
 		Medical isUpdatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		if (isUpdatedMedical == null) {
 			LOGGER.info("Medical is not updated!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Medical is not updated.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Medical not updated."));
         }
 		LOGGER.info("Medical successfully updated!");
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(isUpdatedMedical));
@@ -211,7 +210,7 @@ public class MedicalController {
 	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
 		boolean isDeleted = medicalManager.deleteMedical(medical);
 		return ResponseEntity.ok(isDeleted);
