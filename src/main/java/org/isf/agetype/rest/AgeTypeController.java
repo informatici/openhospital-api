@@ -35,7 +35,6 @@ import org.isf.agetype.model.AgeType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -95,7 +94,7 @@ public class AgeTypeController {
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "The age type is not valid.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
@@ -104,9 +103,7 @@ public class AgeTypeController {
 		if (ageTypeManager.updateAgeType(ageTypes)) {
 			return ResponseEntity.ok(ageTypeDTO);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, 
-					"The age type is not updated.", 
-					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

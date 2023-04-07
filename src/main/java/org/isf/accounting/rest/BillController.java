@@ -42,7 +42,6 @@ import org.isf.priceslist.model.PriceList;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -106,7 +105,7 @@ public class BillController {
 	public ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Bill is null.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Bill is null."));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
 
@@ -121,13 +120,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
@@ -137,7 +136,7 @@ public class BillController {
 		boolean isCreated = billManager.newBill(bill, billItems, billPayments);
 
 		if (!isCreated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
 	}
@@ -158,7 +157,7 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Bill to update not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Bill to update not found."));
 		}
 
 		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
@@ -170,13 +169,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
@@ -186,7 +185,7 @@ public class BillController {
 		boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
 
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
 	}
@@ -422,7 +421,7 @@ public class BillController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Bill is not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Bill is not deleted."));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
