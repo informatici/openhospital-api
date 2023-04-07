@@ -34,7 +34,6 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,40 +76,40 @@ public class ExaminationController {
     public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
         Patient patient = patientBrowserManager.getPatientById(newPatientExamination.getPatientCode());
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not exist.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
         }
         if (newPatientExamination.getPex_height() < 0 || newPatientExamination.getPex_height() > 250) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250.", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
         }
         if (newPatientExamination.getPex_weight() < 0 || newPatientExamination.getPex_weight() > 200) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200.", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The weight should be between 0 and 200."));
         }
         if (newPatientExamination.getPex_ap_min() < 80) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least 80."));
         }
         if (newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure."));
         }
         if (newPatientExamination.getPex_ap_max() > 120) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The maimum blood pressure must be lower than 120!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The maimum blood pressure must be lower than 120."));
         }
         if (newPatientExamination.getPex_hr() < 0 || newPatientExamination.getPex_hr() > 240 ) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Heart rate should be between 0 and 240!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
         }
         if (newPatientExamination.getPex_temp() < 30 || newPatientExamination.getPex_temp() > 50) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The temperature should be between 30 and 50!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The temperature should be between 30 and 50."));
         }
         if (newPatientExamination.getPex_sat() < 50 || newPatientExamination.getPex_temp() > 100) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The saturation should be between 50 and 100!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The saturation should be between 50 and 100."));
         }
         if (newPatientExamination.getPex_hgt() < 30 || newPatientExamination.getPex_temp() > 600) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "HGT should be between 30 and 600!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("HGT should be between 30 and 600."));
         }
         if (newPatientExamination.getPex_rr() < 0 || newPatientExamination.getPex_rr() > 100) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Respiratory rate should be between 0 and 100!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Respiratory rate should be between 0 and 100."));
         }
         if (newPatientExamination.getPex_diuresis() < 0 || newPatientExamination.getPex_diuresis() > 2500) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Diuresis should be between 0 and 2500!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between 0 and 2500."));
         }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
@@ -127,48 +126,48 @@ public class ExaminationController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Boolean> updateExamination(@PathVariable Integer id, @RequestBody PatientExaminationDTO dto) throws OHServiceException {
         if (dto.getPex_ID() != id) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient examination id mismatch", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Patient examination id mismatch."));
         }
         if (examinationBrowserManager.getByID(id) == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient Examination not found.", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Patient examination not found."));
         }
 
         Patient patient = patientBrowserManager.getPatientById(dto.getPatientCode());
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not exist.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
         }
         if (dto.getPex_height() < 0 || dto.getPex_height() > 250) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The size should be between 0 and 250.", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
         }
         if (dto.getPex_weight() < 0 || dto.getPex_weight() > 200) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The weight should be between 0 and 200.", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The weight should be between 0 and 200."));
         }
         if (dto.getPex_ap_min() < 80) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be at least 80.", OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least 80."));
         }
         if (dto.getPex_ap_min() > dto.getPex_ap_max() ) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The minimum blood pressure must be lower than the maximum blood pressure!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure."));
         }
         if (dto.getPex_ap_max() > 120) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The maimum blood pressure must be lower than 120!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The maximum blood pressure must be lower than 120."));
         }
         if (dto.getPex_hr() < 0 || dto.getPex_hr() > 240 ) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Heart rate should be between 0 and 240!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
         }
         if (dto.getPex_temp() < 30 || dto.getPex_temp() > 50) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The temperature should be between 30 and 50!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The temperature should be between 30 and 50."));
         }
         if (dto.getPex_sat() < 50 || dto.getPex_temp() > 100) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "The saturation should be between 50 and 100!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("The saturation should be between 50 and 100."));
         }
         if (dto.getPex_hgt() < 30 || dto.getPex_temp() > 600) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "HGT should be between 30 and 600!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("HGT should be between 30 and 600."));
         }
         if (dto.getPex_rr() < 0 || dto.getPex_rr() > 100) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Respiratory rate should be between 0 and 100!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Respiratory rate should be between 0 and 100."));
         }
         if (dto.getPex_diuresis() < 0 || dto.getPex_diuresis() > 2500) {
-        	throw new OHAPIException(new OHExceptionMessage(null, "Diuresis should be between 0 and 2500!",OHSeverityLevel.WARNING));
+        	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between 0 and 2500."));
         }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
@@ -186,7 +185,7 @@ public class ExaminationController {
 
         Patient patient = patientBrowserManager.getPatientById(patId);
         if (patient == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Patient does not  exist.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
         }
         PatientExamination patientExamination = examinationBrowserManager.getDefaultPatientExamination(patient);
         PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);

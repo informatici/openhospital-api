@@ -31,7 +31,6 @@ import org.isf.exatype.model.ExamType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,7 +70,7 @@ public class ExamTypeController {
 		ExamType examType = examTypeMapper.map2Model(newExamType);
 		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
 		if (createdExamType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "ExamType type not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Exam Type type not created."));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
@@ -81,16 +80,16 @@ public class ExamTypeController {
     public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
 
         if (!updateExamType.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType code mismatch", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam Type code mismatch."));
         }
         if (!examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType not found.", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
         ExamType exType = examTypeBrowserManager.updateExamType(examType);
         if (exType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "ExamType is not updated.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam Type not updated."));
         }
 
         return ResponseEntity.ok(examTypeMapper.map2DTO(exType));
@@ -113,10 +112,10 @@ public class ExamTypeController {
 	    LOGGER.info("Delete exams code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!examType.isPresent()) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type not found.", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
         }
         if (!examTypeBrowserManager.deleteExamType(examType.get())) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type is not deleted.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam Type not deleted."));
         }
         return ResponseEntity.ok(true);
     }
