@@ -21,14 +21,12 @@
  */
 package org.isf.visits.rest;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
@@ -117,7 +115,7 @@ public class VisitsController {
         List<Visit> listVisits = mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Visits not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
@@ -134,7 +132,7 @@ public class VisitsController {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Visits not deleted."));
         }
         return ResponseEntity.ok(true);
     }
@@ -142,7 +140,7 @@ public class VisitsController {
     /**
      * Create new visitors.
      *
-     * @param newVisits a list with all the visitors
+     * @param visitID the id of the visit
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
@@ -151,7 +149,7 @@ public class VisitsController {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
         if (visit == null) {
-            throw new OHAPIException( new OHExceptionMessage(null, "Visit not found.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Visit not found."));
         }
         
         if (visit.getVisitID() != updateVisit.getVisitID()) {
@@ -161,7 +159,7 @@ public class VisitsController {
         Visit visitUp = mapper.map2Model(updateVisit);
         Visit visitUpdate = visitManager.newVisit(visitUp);
         if (visitUpdate == null) {
-        	throw new OHAPIException( new OHExceptionMessage(null, "visit is not updated.", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage("Visit not updated."));
         }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }
