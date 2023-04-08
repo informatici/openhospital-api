@@ -39,7 +39,6 @@ import org.isf.therapy.model.Therapy;
 import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,8 +82,7 @@ public class TherapyController {
 	@PostMapping(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
 		if (thRowDTO.getPatID() == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
 		thRow = manager.newTherapy(thRow);
@@ -104,7 +102,7 @@ public class TherapyController {
 		if (done != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not replaced.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Therapies not replaced."));
 		}
 	}
 	
@@ -120,7 +118,7 @@ public class TherapyController {
 		if (done) {
 			return ResponseEntity.ok(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Therapies not deleted."));
 		}
 	}
 	
