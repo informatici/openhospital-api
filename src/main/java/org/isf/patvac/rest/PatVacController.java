@@ -31,7 +31,6 @@ import org.isf.patvac.model.PatientVaccine;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,7 +76,7 @@ public class PatVacController {
 		LOGGER.info("Create patient vaccine {}", code);
 		PatientVaccine isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (isCreatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPatientVaccine));
 	}
@@ -96,7 +95,7 @@ public class PatVacController {
 		patvac.setLock(patientVaccineDTO.getLock());
 		PatientVaccine isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
 		if (isUpdatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPatientVaccine));
 	}
@@ -165,7 +164,7 @@ public class PatVacController {
 		patVac.setCode(code);
 		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not deleted."));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
