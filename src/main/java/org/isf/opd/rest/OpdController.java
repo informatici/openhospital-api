@@ -41,7 +41,6 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,16 +105,16 @@ public class OpdController {
 		LOGGER.info("store Out patient {}", code);
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 		if (opdDTO.getNote() == " ") {
-			throw new OHAPIException(new OHExceptionMessage(null, "Note field is mandatory.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
@@ -133,17 +132,17 @@ public class OpdController {
 		OpdWithOperatioRowDTO opdWithOperatioRow = new OpdWithOperatioRowDTO();
 		Patient patient = patientManager.getPatientById(opdWithOperatioRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 		if (opdWithOperatioRowDTO.getOpdDTO().getNote() == " ") {
-			throw new OHAPIException(new OHExceptionMessage(null, "Note field is mandatory.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
 		opdToInsert.setPatient(patient);
 		opdToInsert.setWard(wardManager.findWard("OPD"));
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not created."));
 		}
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
@@ -170,23 +169,23 @@ public class OpdController {
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdById(code) == null) {	
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
 		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not updated."));
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedOpd));
 	}
@@ -204,16 +203,16 @@ public class OpdController {
 		LOGGER.info("Update opds code: {}", code);
 		OpdWithOperatioRowDTO opdWithOperatioRow = new OpdWithOperatioRowDTO();
 		if (opdManager.getOpdById(code) == null) {	
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdWithOperatioRowDTO.getOpdDTO().getCode() != 0 && opdWithOperatioRowDTO.getOpdDTO().getCode() != code) {	
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdWithOperatioRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
@@ -221,7 +220,7 @@ public class OpdController {
 		opdToUpdate.setLock(opdWithOperatioRowDTO.getOpdDTO().getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not updated."));
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
@@ -359,7 +358,7 @@ public class OpdController {
 		toDelete.setCode(code);
 		boolean isDeleted = opdManager.deleteOpd(toDelete);
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Opd is not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Opd not deleted."));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
