@@ -50,13 +50,17 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	@Override
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
 		PatientDTO patientDTO = super.map2DTOWS(fromObj, status);
-		if (fromObj.getPatientProfilePhoto()!= null) {
+		if (fromObj.getPatientProfilePhoto() != null) {
 			try {
 				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 			} catch (Exception e) {
 
 			}
 		}
+		PatientConsensus pc = fromObj.getPatientConsensus();
+		patientDTO.setConsensusAdministrativeFlag(pc.isAdministrativeFlag());
+		patientDTO.setConsensusFlag(pc.isConsensusFlag());
+		patientDTO.setConsensusServiceFlag(pc.isServiceFlag());
 		return patientDTO;
 
 	}
@@ -71,7 +75,8 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			photo.setPhoto(toObj.getBlobPhoto());
 			patient.setPatientProfilePhoto(photo);
 		}
-		patient.setPatientConsensus(new PatientConsensus(toObj.isConsensusFlag(), toObj.isConsensusAdministrativeFlag(), toObj.isConsensusServiceFlag(), patient));
+		patient.setPatientConsensus(
+						new PatientConsensus(toObj.isConsensusFlag(), toObj.isConsensusAdministrativeFlag(), toObj.isConsensusServiceFlag(), patient));
 		return patient;
 	}
 
