@@ -90,6 +90,10 @@ public class PatientController {
 	ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
 		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
+
+		// XXX this flag is mandatory
+		newPatient.setConsensusFlag(true);
+
 		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created.", OHSeverityLevel.ERROR));
