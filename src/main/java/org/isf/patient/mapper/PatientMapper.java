@@ -28,11 +28,15 @@ import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
 import org.isf.patient.model.PatientProfilePhoto;
+import org.isf.patient.rest.PatientController;
 import org.isf.shared.GenericMapper;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
+
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientMapper.class);
 
 	public PatientMapper() {
 		super(Patient.class, PatientDTO.class);
@@ -54,7 +58,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			try {
 				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 			} catch (Exception e) {
-
+				LOGGER.error("error while trying to retrieve the profile photo");
 			}
 		}
 		PatientConsensus pc = fromObj.getPatientConsensus();

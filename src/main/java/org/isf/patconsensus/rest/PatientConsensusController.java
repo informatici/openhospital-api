@@ -75,17 +75,17 @@ public class PatientConsensusController {
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);
 		if (patientId != patientConsensus.getPatientId()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Optional<PatientConsensus> patConsensusOpt = this.manager.getPatientConsensusByUserId(patientId);
 		if (patConsensusOpt.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
 		}
 		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
 		updatedPatienConsensustModel.setId(this.manager.getPatientConsensusByUserId(patientId).get().getId());
 		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
 		if (patientConsensusUpdated == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "PatientConsensus is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("PatientConsensus is not updated."));
 		}
 		PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
 		return ResponseEntity.ok(patientConsensusDTO);
