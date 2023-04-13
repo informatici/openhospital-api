@@ -64,8 +64,7 @@ public class PatientConsensusController {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
 		if (patientConsensus.isEmpty()) {
-			return ResponseEntity
-							.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		PatientConsensusDTO patientDTO = mapper.map2DTO(patientConsensus.get());
 		return ResponseEntity.ok(patientDTO);
