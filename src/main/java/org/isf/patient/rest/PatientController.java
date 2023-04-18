@@ -91,7 +91,7 @@ public class PatientController {
 		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
 
-		// XXX this flag is mandatory
+		//TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
 
 		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));

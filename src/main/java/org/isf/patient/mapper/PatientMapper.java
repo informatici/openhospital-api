@@ -58,7 +58,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 			try {
 				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
 			} catch (Exception e) {
-				LOGGER.error("error while trying to retrieve the profile photo");
+				LOGGER.error("Error while trying to retrieve the profile photo.");
 			}
 		}
 		PatientConsensus pc = fromObj.getPatientConsensus();
