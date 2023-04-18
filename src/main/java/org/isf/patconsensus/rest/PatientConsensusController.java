@@ -74,7 +74,7 @@ public class PatientConsensusController {
 	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);
-		if (patientId != patientConsensus.getPatientId()) {
+		if (!patientId.equals(patientConsensus.getPatientId())) {
 			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Optional<PatientConsensus> patConsensusOpt = this.manager.getPatientConsensusByUserId(patientId);
