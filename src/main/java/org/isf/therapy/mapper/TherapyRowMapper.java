@@ -70,12 +70,12 @@ public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
 
 	@Override
 	public List<TherapyRowDTO> map2DTOList(List<TherapyRow> list) {
-		return (List<TherapyRowDTO>) list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<TherapyRow> map2ModelList(List<TherapyRowDTO> list) {
-		return (List<TherapyRow>) list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
+		return list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
 	}
 
 }
