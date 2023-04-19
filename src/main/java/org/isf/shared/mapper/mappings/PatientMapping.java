@@ -8,8 +8,6 @@ public class PatientMapping {
 
 	public static void addMapping(ModelMapper modelMapper) {
 
-//		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//		modelMapper.getConfiguration().setAmbiguityIgnored(false);
 		modelMapper.getConfiguration().setAmbiguityIgnored(true);
 		modelMapper.typeMap(Patient.class, PatientDTO.class).addMappings(mapper -> {
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isAdministrativeFlag(), PatientDTO::setConsensusAdministrativeFlag);
@@ -22,9 +20,8 @@ public class PatientMapping {
 			mapper.<Boolean> map(src -> src.isConsensusAdministrativeFlag(), (db, value) -> db.getPatientConsensus().setAdministrativeFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusFlag(), (db, value) -> db.getPatientConsensus().setConsensusFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusServiceFlag(), (db, value) -> db.getPatientConsensus().setServiceFlag(value));
-//			mapper.<Byte[]>map(src->src.getBlobPhoto(), (db, value) -> db.getPatientProfilePhoto().setPhoto(value));
+			mapper.<Byte[]>map(src->src.getBlobPhoto(), (db, value) -> db.getPatientProfilePhoto().setPhoto(value));
 		});
 
-//		modelMapper.validate();
 	}
 }

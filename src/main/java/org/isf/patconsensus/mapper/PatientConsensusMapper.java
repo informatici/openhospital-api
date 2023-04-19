@@ -25,10 +25,9 @@ import javax.annotation.PostConstruct;
 
 import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.model.PatientConsensus;
-import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
-import org.modelmapper.PropertyMap;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,23 +39,7 @@ public class PatientConsensusMapper extends GenericMapper<PatientConsensus, Pati
 
 	@PostConstruct
 	private void postConstruct() {
-//		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//		modelMapper.getConfiguration().setAmbiguityIgnored(true);
-//		modelMapper.createTypeMap(PatientConsensus.class, PatientConsensusDTO.class).addMappings(mapper -> {
-//			mapper.map(src -> src.isAdministrativeFlag(), PatientConsensusDTO::setAdministrativeFlag);
-//			mapper.map(src -> src.isConsensusFlag(), PatientConsensusDTO::setConsensusFlag);
-//			mapper.map(src -> src.isServiceFlag(), PatientConsensusDTO::setServiceFlag);
-//		});
-
-
-		this.modelMapper.addMappings(new PropertyMap<PatientConsensus, PatientDTO>() {
-			@Override
-			protected void configure() {
-				map().setConsensusAdministrativeFlag(source.isAdministrativeFlag());
-				map().setConsensusFlag(source.isConsensusFlag());
-				map().setConsensusServiceFlag(source.isServiceFlag());
-			}
-		});
+		PatientMapping.addMapping(modelMapper);
 	}
 
 	@Override
