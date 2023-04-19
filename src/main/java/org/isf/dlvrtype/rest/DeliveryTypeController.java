@@ -31,7 +31,6 @@ import org.isf.dlvrtype.model.DeliveryType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,8 +81,7 @@ public class DeliveryTypeController {
 			dlvrTypeCreated = dlvrTypeFounds.get(0);
 		}
 		if (!isCreated || dlvrTypeCreated == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
@@ -99,13 +97,11 @@ public class DeliveryTypeController {
 		LOGGER.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type not found."));
 		}
 		boolean isUpdated = dlvrtypeManager.updateDeliveryType(dlvrType);
 		if (!isUpdated) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery type is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type is not updated."));
 		}
 		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}

@@ -1,0 +1,563 @@
+{
+	"info": {
+		"_postman_id": "40466912-0276-4941-abab-fa9cd7814e95",
+		"name": "OpenHospital-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "online",
+			"item": [
+				{
+					"name": "login (online)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"let token = jsonData.token;\r",
+									"pm.collectionVariables.set('oh_token_online', token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin2022test\"\r\n}"
+						},
+						"url": {
+							"raw": "https://oh2.open-hospital.org/oh-api/auth/login",
+							"protocol": "https",
+							"host": [
+								"oh2",
+								"open-hospital",
+								"org"
+							],
+							"path": [
+								"oh-api",
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "admin2022test",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout (online)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{oh_token_online}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "https://oh2.open-hospital.org/oh-api/auth/login",
+							"protocol": "https",
+							"host": [
+								"oh2",
+								"open-hospital",
+								"org"
+							],
+							"path": [
+								"oh-api",
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "password",
+									"value": "admin2022test",
+									"disabled": true
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let jsonData = pm.response.json();\r",
+							"let token = jsonData.token;\r",
+							"pm.collectionVariables.set('oh_token', token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\":\"admin\",\"password\":\"Admin2022test!\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPatients",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/patients?size=80",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"patients"
+					],
+					"query": [
+						{
+							"key": "size",
+							"value": "80"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAgeTypes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/agetypes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"agetypes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "*/*"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"auth",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "sessionAuditId",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "admissions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/admissions?admissionrange=2020-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"admissions"
+					],
+					"query": [
+						{
+							"key": "admissionrange",
+							"value": "2020-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "discharges",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/discharges?dischargerange=2020-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"discharges"
+					],
+					"query": [
+						{
+							"key": "dischargerange",
+							"value": "2020-11-01T00:00:00.000Z,2023-11-30T23:59:59.999Z"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPatients/{code}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/patients/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"patients",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "newPatient",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"firstName\":\"Otello\",\"secondName\":\"Gunther\",\"birthDate\":\"1990-09-03T00:00:00.000Z\",\"age\":null,\"agetype\":\"\",\"sex\":\"M\",\"address\":\"Carringson\",\"city\":\"Jewel Rd.\",\"telephone\":\"\",\"note\":\"\",\"motherName\":\"\",\"mother\":\"A\",\"fatherName\":\"\",\"father\":\"A\",\"bloodType\":\"\",\"hasInsurance\":\"N\",\"parentTogether\":\"U\",\"taxCode\":\"\",\"blobPhoto\":\"\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/patients",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"patients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOpds",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{oh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/opds/search?dateFrom=2022-02-07T00:17:22.333Z&dateTo=2023-02-07T00:17:22.333Z&diseaseCode=&diseaseTypeCode=&newPatient=&sex=",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"opds",
+						"search"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2022-02-07T00:17:22.333Z"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-02-07T00:17:22.333Z"
+						},
+						{
+							"key": "diseaseCode",
+							"value": ""
+						},
+						{
+							"key": "diseaseTypeCode",
+							"value": ""
+						},
+						{
+							"key": "newPatient",
+							"value": ""
+						},
+						{
+							"key": "sex",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{oh_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "oh_token",
+			"value": ""
+		},
+		{
+			"key": "oh_token_online",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

@@ -173,7 +173,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient is not created.")))
+				.andExpect(content().string(containsString("Patient not created.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException
@@ -270,7 +270,7 @@ public class PatientControllerTest {
 				.andDo(print())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Patient is not updated.")));
+				.andExpect(content().string(containsString("Patient not updated.")));
 
 	}
 
@@ -557,7 +557,7 @@ public class PatientControllerTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHDeleteAPIException
-				.andExpect(content().string(containsString("Patient is not deleted.")))
+				.andExpect(content().string(containsString("Patient not deleted.")))
 				.andReturn();
 
 		//TODO Create OHDeleteAPIException

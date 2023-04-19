@@ -37,7 +37,6 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -96,7 +95,7 @@ public class PatientController {
 
 		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
@@ -105,17 +104,17 @@ public class PatientController {
 	ResponseEntity<PatientDTO> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: {}", code);
 		if (!updatePatient.getCode().equals(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient code mismatch", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Patient patientRead = patientManager.getPatientById(code);
 		if (patientRead == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
 		updatePatientModel.setLock(patientRead.getLock());
 		Patient patient = patientManager.savePatient(updatePatientModel);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not updated."));
 		}
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 		return ResponseEntity.ok(patientDTO);
@@ -227,7 +226,7 @@ public class PatientController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient is not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patient not deleted."));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
@@ -242,7 +241,7 @@ public class PatientController {
 		}
 		boolean merged = patientManager.mergePatient(mergedPatient, patient2);
 		if (!merged) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patients are not merged.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Patients not merged."));
 		}
 		return ResponseEntity.ok(merged);
 	}

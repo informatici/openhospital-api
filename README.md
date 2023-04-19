@@ -8,6 +8,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
 
   * [How to build [WIP]](#how-to-build-wip)
     + [Using Swagger-UI](#using-swagger-ui)
+    + [Using Postman](#using-postman)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
   * [Cleaning](#cleaning)
   * [How to contribute](#how-to-contribute)
@@ -82,6 +83,11 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 ![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
 ![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
 
+
+### Using Postman
+
+ 1. import postman_collection.json in your Postman installation
+ 
 ## How to deploy backend in Docker environment
 
 Make sure you have docker with docker-compose installed, then run the following commands:

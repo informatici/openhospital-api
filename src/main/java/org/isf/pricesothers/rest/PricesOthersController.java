@@ -31,7 +31,6 @@ import org.isf.pricesothers.model.PricesOthers;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,7 +74,7 @@ public class PricesOthersController {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
 		PricesOthers isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
 		if (isCreatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Prices Others not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPricesOthers));
 	}
@@ -97,7 +96,7 @@ public class PricesOthersController {
 		}
 		PricesOthers isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
 		if (isUpdatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Prices Others not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
 	}

@@ -41,7 +41,6 @@ import org.isf.medicalstockward.model.MovementWard;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -114,11 +113,11 @@ public class MedicalStockWardController {
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Ward not found."));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
@@ -237,12 +236,12 @@ public class MedicalStockWardController {
 		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
 		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
 		if (!isPresent) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Movement ward not found."));
 		}
 
 		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Movement ward not updated."));
 		}
 		return ResponseEntity.ok(isUpdated);
 	}

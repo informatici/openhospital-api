@@ -34,7 +34,6 @@ import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -80,7 +79,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting opd diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting OPO diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -97,7 +96,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting opd diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting OPD diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -113,7 +112,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd out diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD out diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -130,7 +129,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd out diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD out diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -146,7 +145,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd-in diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD-in diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -163,7 +162,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting ipd-in diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD-in diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -179,7 +178,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -196,7 +195,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting diseases by type code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting diseases by type code."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -212,7 +211,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "error while getting all diseases", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Error getting all diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -230,7 +229,7 @@ public class DiseaseController {
 	    if (disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage(null, "no disease found with the specified code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -244,17 +243,17 @@ public class DiseaseController {
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (diseaseManager.isCodePresent(disease.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease code", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Duplicated disease code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "duplicated disease description for the same disease type", OHSeverityLevel.ERROR),
+			throw new OHAPIException(new OHExceptionMessage("Duplicated disease description for the same disease type."),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		if (diseaseManager.newDisease(disease) != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "disease is not created.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -267,13 +266,13 @@ public class DiseaseController {
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (!diseaseManager.isCodePresent(disease.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "disease not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Disease not found."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		disease.setLock(diseaseDTO.getLock());
 		if (diseaseManager.updateDisease(disease) != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage(null, "disease is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -291,9 +290,7 @@ public class DiseaseController {
 			result.put("deleted", diseaseManager.deleteDisease(disease));
 			return ResponseEntity.ok(result);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, 
-					"no disease found with the specified code", 
-					OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

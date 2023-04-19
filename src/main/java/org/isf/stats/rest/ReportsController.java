@@ -34,7 +34,6 @@ import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -69,17 +68,17 @@ public class ReportsController {
 		try {
 			resource = new UrlResource(report.toUri());
 			if (!resource.exists()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "File not found", OHSeverityLevel.ERROR));
+				throw new OHAPIException(new OHExceptionMessage("File not found."));
 			}
 		} catch (MalformedURLException e) {
-			throw new OHAPIException(new OHExceptionMessage(null, "File not found", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("File not found."));
 		}
 
 		String contentType;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 		} catch (IOException ex) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Failed to load the file's type", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Failed to load the file's type."));
 		}
 
 		// Fallback to the default content type if type could not be determined
