@@ -58,7 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OperationControllerTest {
 	
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
+	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OperationControllerTest.class);
 
 	@Mock
 	protected OperationBrowserManager operationBrowserManagerMock;
