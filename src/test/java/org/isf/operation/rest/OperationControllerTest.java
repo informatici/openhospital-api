@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
-import org.isf.dlvrtype.rest.DeliveryTypeControllerTest;
 import org.isf.operation.data.OperationHelper;
 import org.isf.operation.dto.OperationDTO;
 import org.isf.operation.manager.OperationBrowserManager;
