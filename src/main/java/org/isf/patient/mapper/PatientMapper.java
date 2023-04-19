@@ -24,12 +24,14 @@ package org.isf.patient.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
 import org.isf.patient.model.PatientProfilePhoto;
-import org.isf.patient.rest.PatientController;
 import org.isf.shared.GenericMapper;
+import org.modelmapper.Provider;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -38,33 +40,34 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientMapper.class);
 
+	Provider<PatientConsensus> patientConsensusProvider = req -> new PatientConsensus();
+
 	public PatientMapper() {
 		super(Patient.class, PatientDTO.class);
+	}
+	@PostConstruct
+	private void postConstruct() {
 	}
 
 	@Override
 	public PatientDTO map2DTO(Patient fromObj) {
 		PatientDTO patientDTO = super.map2DTO(fromObj);
-		if (fromObj.getPatientProfilePhoto() != null) {
-			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
-		}
+//		if (fromObj.getPatientProfilePhoto() != null) {
+//			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
+//		}
 		return patientDTO;
 
 	}
 	@Override
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
 		PatientDTO patientDTO = super.map2DTOWS(fromObj, status);
-		if (fromObj.getPatientProfilePhoto() != null) {
-			try {
-				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
-			} catch (Exception e) {
-				LOGGER.error("Error while trying to retrieve the profile photo.");
-			}
-		}
-		PatientConsensus pc = fromObj.getPatientConsensus();
-		patientDTO.setConsensusAdministrativeFlag(pc.isAdministrativeFlag());
-		patientDTO.setConsensusFlag(pc.isConsensusFlag());
-		patientDTO.setConsensusServiceFlag(pc.isServiceFlag());
+//		if (fromObj.getPatientProfilePhoto() != null) {
+//			try {
+//				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
+//			} catch (Exception e) {
+//				LOGGER.error("Error while trying to retrieve the profile photo.");
+//			}
+//		}
 		return patientDTO;
 
 	}
@@ -73,14 +76,12 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	public Patient map2Model(PatientDTO toObj) {
 
 		Patient patient = super.map2Model(toObj);
-		if (toObj.getBlobPhoto() != null) {
-			PatientProfilePhoto photo = new PatientProfilePhoto();
-			photo.setPatient(patient);
-			photo.setPhoto(toObj.getBlobPhoto());
-			patient.setPatientProfilePhoto(photo);
-		}
-		patient.setPatientConsensus(
-						new PatientConsensus(toObj.isConsensusFlag(), toObj.isConsensusAdministrativeFlag(), toObj.isConsensusServiceFlag(), patient));
+//		if (toObj.getBlobPhoto() != null) {
+//			PatientProfilePhoto photo = new PatientProfilePhoto();
+//			photo.setPatient(patient);
+//			photo.setPhoto(toObj.getBlobPhoto());
+//			patient.setPatientProfilePhoto(photo);
+//		}
 		return patient;
 	}
 

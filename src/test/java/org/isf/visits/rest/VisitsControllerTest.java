@@ -35,6 +35,7 @@ import java.util.List;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.visits.data.VisitHelper;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
@@ -71,6 +72,7 @@ public class VisitsControllerTest {
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
+		PatientMapping.addMapping(modelMapper);
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(visitMapper, "modelMapper", modelMapper);

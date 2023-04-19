@@ -30,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -78,7 +79,7 @@ public class PatientControllerTest {
 
 	@Mock
 	private PatientBrowserManager patientBrowserManagerMock;
-	
+
 	@Mock
 	private AdmissionBrowserManager admissionBrowserManagerMock;
 
@@ -94,6 +95,7 @@ public class PatientControllerTest {
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
+		PatientMapping.addMapping(modelMapper);
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
@@ -246,15 +248,15 @@ public class PatientControllerTest {
 	@Test
 	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
 		String request = "/patients/{code}";
-		
+
 		Integer code = 12345;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		
+
 		Patient updatedAfterReadPatient = PatientHelper.setup();
 		updatedAfterReadPatient.setCode(code);
 		updatedAfterReadPatient.setLock(3);
-		
+
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(updatedAfterReadPatient);
 
 		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(null);
@@ -310,7 +312,7 @@ public class PatientControllerTest {
 		Integer code = 123;
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
-		
+
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		MvcResult result = this.mockMvc
@@ -355,7 +357,7 @@ public class PatientControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
 				.andReturn();
-		
+
 	}
 
 	/**
@@ -369,14 +371,14 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
-		
+
 		PatientDTO expectedPatientDTO = patientMapper.map2DTO(patient);
 		expectedPatientDTO.setStatus(PatientSTATUS.O);
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
-		
+
 		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(null);
-		
+
 		this.mockMvc
 				.perform(
 						get(request, code)
@@ -386,10 +388,10 @@ public class PatientControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 				.andReturn();
-				
-		
+
+
 	}
-	
+
 	/**
 	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
 	 *
@@ -403,14 +405,14 @@ public class PatientControllerTest {
 		Admission admission = AdmissionHelper.setup();
 		patient.setCode(code);
 		admission.setPatient(patient);
-		
+
 		PatientDTO expectedPatientDTO = patientMapper.map2DTO(patient);
 		expectedPatientDTO.setStatus(PatientSTATUS.I);
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
-		
+
 		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(admission);
-		
+
 		this.mockMvc
 				.perform(
 						get(request, code)
@@ -420,8 +422,8 @@ public class PatientControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
 				.andReturn();
-				
-		
+
+
 	}
 
 	/**
