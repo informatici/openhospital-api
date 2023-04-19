@@ -81,7 +81,7 @@ public class PermissionController {
 
 	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrieveAllPermissions({})");
+		LOGGER.info("retrieving permissions: retrieveAllPermissions()");
 		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
 		if (permissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
