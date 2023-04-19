@@ -349,7 +349,7 @@ public class LaboratoryController {
 	/**
 	 * Get the list of exams {@link LabWithRows}s divided by pages.
 	 * 
-	 * @param oneWeek
+	 * @param onWeek
 	 * @param pageNo
 	 * @param pageSize
 	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
