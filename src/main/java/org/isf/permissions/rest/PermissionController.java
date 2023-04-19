@@ -126,7 +126,7 @@ public class PermissionController {
 
 	@PutMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable int id, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("Update permission id:"  +  id);
+		LOGGER.info("Update permission id: {}", id);
 		permissionDTO.setId(id);
 
 		if (!this.permissionManager.exists(permissionDTO.getId())) {
