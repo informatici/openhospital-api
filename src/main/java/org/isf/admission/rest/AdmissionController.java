@@ -137,7 +137,7 @@ public class AdmissionController {
 	/**
 	 * Get {@link Admission} for the specified id.
 	 * 
-	 * @param id
+	 * @param patientCode
 	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */

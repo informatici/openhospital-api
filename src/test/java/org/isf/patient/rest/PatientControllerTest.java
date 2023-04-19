@@ -329,7 +329,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(java.lang.Integer, java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(int, int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -343,7 +343,7 @@ public class PatientControllerTest {
 
 		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
-		when(patientBrowserManagerMock.getPatient(any(Integer.class), any(Integer.class)))
+		when(patientBrowserManagerMock.getPatient(any(int.class), any(int.class)))
 				.thenReturn(patientList);
 
 		this.mockMvc
@@ -359,13 +359,13 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
 	@Test
 	public void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
@@ -391,13 +391,13 @@ public class PatientControllerTest {
 	}
 	
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
 	@Test
 	public void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
 		Admission admission = AdmissionHelper.setup();
@@ -425,7 +425,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -446,7 +446,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -464,7 +464,7 @@ public class PatientControllerTest {
 
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
