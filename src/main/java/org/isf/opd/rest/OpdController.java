@@ -107,7 +107,7 @@ public class OpdController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
-		if (opdDTO.getNote() == " ") {
+		if (opdDTO.getNote().equals(" ")) {
 			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
@@ -134,7 +134,7 @@ public class OpdController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
-		if (opdWithOperatioRowDTO.getOpdDTO().getNote() == " ") {
+		if (opdWithOperatioRowDTO.getOpdDTO().getNote().equals(" ")) {
 			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperatioRowDTO.getOpdDTO());
