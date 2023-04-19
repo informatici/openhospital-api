@@ -100,10 +100,10 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a new {@link LabWithRows}.
+	 * Create a new {@link LaboratoryRow}.
 	 * 
 	 * @param labWithRowsDTO
-	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @return {@code true} if the record has been created,  {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -191,7 +191,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a {@link List} of {@link LabWithRows}.
+	 * Create a {@link List} of {@link LaboratoryRow}.
 	 * 
 	 * @param labsWithRows
 	 * @return {@code true} if the record has been create,  {@code false} otherwise.
@@ -244,7 +244,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Updates the specified {@link LabWithRows} object.
+	 * Updates the specified {@link LaboratoryRow} object.
 	 * 
 	 * @param code
 	 * @param labWithRowsDTO
@@ -346,12 +346,12 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get the list of exams {@link LabWithRows}s divided by pages.
+	 * Get the list of exams {@link LaboratoryRow}s divided by pages.
 	 * 
 	 * @param onWeek
 	 * @param pageNo
 	 * @param pageSize
-	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -389,10 +389,10 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link LabWithRows}s for the specified id.
+	 * Get all {@link LaboratoryRow}s for the specified id.
 	 * 
 	 * @param patId
-	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -508,7 +508,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LabWithRows}s based on the applied filters.
+	 * Get all the {@link LaboratoryRow}s based on the applied filters.
 	 * 
 	 * @param examName
 	 * @param dateFrom
@@ -605,10 +605,10 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LabWithRows}s for the specified id.
+	 * Get all the {@link LaboratoryRow}s for the specified id.
 	 * 
 	 * @param code
-	 * @return the {@link List} of found {@link LabWithRows} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
