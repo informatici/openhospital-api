@@ -333,7 +333,7 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
-		Laboratory labToDelete = null;
+		Laboratory labToDelete;
 		if (lab.isPresent()) {
 			labToDelete = lab.get();
 		} else {
@@ -592,7 +592,7 @@ public class LaboratoryController {
 	public ResponseEntity<LaboratoryDTO> getExamById(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-		Laboratory lab = null;
+		Laboratory lab;
 		if (labo.isPresent()) {
 			lab = labo.get();
 		} else {
@@ -617,7 +617,7 @@ public class LaboratoryController {
 		LabWithRowsDTO lab = new LabWithRowsDTO();
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		List<String> labDescription = new ArrayList<>();
-		Laboratory laboratory = null;
+		Laboratory laboratory;
 		if (labo.isPresent()) {
 			laboratory = labo.get();
 		} else {

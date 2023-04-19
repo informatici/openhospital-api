@@ -288,7 +288,7 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("patientCode: {}", patientCode);
-		List<Opd> opds = null;
+		List<Opd> opds;
 		if (patientCode != 0) {
 			opds = opdManager.getOpdList(patientCode);
 		} else {
