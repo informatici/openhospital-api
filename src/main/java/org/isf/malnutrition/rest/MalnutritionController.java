@@ -31,6 +31,7 @@ import org.isf.malnutrition.dto.MalnutritionDTO;
 import org.isf.malnutrition.manager.MalnutritionManager;
 import org.isf.malnutrition.mapper.MalnutritionMapper;
 import org.isf.malnutrition.model.Malnutrition;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -70,7 +71,12 @@ public class MalnutritionController {
 	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MalnutritionDTO> newMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
 		LOGGER.info("Creating a new malnutrition ...");
-		Malnutrition isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
+		Malnutrition isCreatedMalnutrition = null;
+		try {
+			isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedMalnutrition == null) {
 			LOGGER.info("Malnutrition is not created!");
             throw new OHAPIException(new OHExceptionMessage("Malnutrition not created."));
@@ -88,7 +94,12 @@ public class MalnutritionController {
 	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
-		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
+		List<Malnutrition> malnutritions = new ArrayList<>();
+		try {
+			malnutritions = manager.getMalnutrition(admissionID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage("Error while retrieving malnutrition controls."));
 		}
@@ -110,7 +121,12 @@ public class MalnutritionController {
 	 */
 	@GetMapping(value = "/malnutritions/last/{id_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MalnutritionDTO> getLastMalnutrition(@PathVariable("id_patient") int patientID) throws OHServiceException {
-		Malnutrition foundMalnutrition = manager.getLastMalnutrition(patientID);
+		Malnutrition foundMalnutrition = null;
+		try {
+			foundMalnutrition = manager.getLastMalnutrition(patientID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (foundMalnutrition == null) {
             throw new OHAPIException(new OHExceptionMessage("No malnutrition found."));
 		} else {
@@ -126,7 +142,12 @@ public class MalnutritionController {
 	 */
 	@PutMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MalnutritionDTO> updateMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException {
-		Malnutrition updatedMalnutrition = manager.updateMalnutrition(mapper.map2Model(malnutritionDTO));
+		Malnutrition updatedMalnutrition = null;
+		try {
+			updatedMalnutrition = manager.updateMalnutrition(mapper.map2Model(malnutritionDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.ok(mapper.map2DTO(updatedMalnutrition));
 	}
 	
@@ -138,7 +159,12 @@ public class MalnutritionController {
 	 */
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malnutritionDTO.getAdmission().getId()));
+		List<Malnutrition> malnutritions = new ArrayList<>();
+		try {
+			malnutritions = manager.getMalnutrition(String.valueOf(malnutritionDTO.getAdmission().getId()));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions

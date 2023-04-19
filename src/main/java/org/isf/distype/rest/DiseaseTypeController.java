@@ -21,6 +21,7 @@
  */
 package org.isf.distype.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.isf.distype.dto.DiseaseTypeDTO;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.mapper.DiseaseTypeMapper;
 import org.isf.distype.model.DiseaseType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,7 +77,12 @@ public class DiseaseTypeController {
 	 */
 	@GetMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseTypeDTO>> getAllDiseaseTypes() throws OHServiceException {
-		List<DiseaseType> results = diseaseTypeManager.getDiseaseType();
+		List<DiseaseType> results = new ArrayList<>();
+		try {
+			results = diseaseTypeManager.getDiseaseType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<DiseaseTypeDTO> parsedResults=mapper.map2DTOList(results);
 		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
@@ -93,14 +100,25 @@ public class DiseaseTypeController {
 	@PostMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Specified code is already used."), HttpStatus.INTERNAL_SERVER_ERROR);
+        boolean isPresent = false; 
+        try {
+			isPresent = diseaseTypeManager.isCodePresent(diseaseType.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (isPresent) {
+        	throw new OHAPIException(new OHExceptionMessage("diseasetype.specifiedcodeisalreadyused"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
-        if (diseaseTypeManager.newDiseaseType(diseaseType)) {
+        boolean isCreated = false;
+        try {
+        	isCreated = diseaseTypeManager.newDiseaseType(diseaseType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (isCreated) {
         	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage("diseasetype.isnotcreated"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -113,14 +131,25 @@ public class DiseaseTypeController {
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+        boolean isPresent = false; 
+        try {
+			isPresent = diseaseTypeManager.isCodePresent(diseaseType.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (!isPresent) {
+        	throw new OHAPIException(new OHExceptionMessage("diseasetype.notfound"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
-        if (diseaseTypeManager.updateDiseaseType(diseaseType)) {
+        boolean isUpdated = false;
+        try {
+        	isUpdated = diseaseTypeManager.updateDiseaseType(diseaseType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (isUpdated) {
         	return ResponseEntity.ok(diseaseTypeDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage("diseasetype.notupdated"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -132,17 +161,22 @@ public class DiseaseTypeController {
 	 */
 	@DeleteMapping(value = "/diseasetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Boolean>> deleteDiseaseType(@PathVariable String code) throws OHServiceException {
-		Optional<DiseaseType> optDiseaseType = diseaseTypeManager.getDiseaseType()
-				.stream()
-				.filter(item -> item.getCode().equals(code))
-				.findFirst();
+		Optional<DiseaseType> optDiseaseType = null;
+		 try {
+			 optDiseaseType = diseaseTypeManager.getDiseaseType()
+						.stream()
+						.filter(item -> item.getCode().equals(code))
+						.findFirst();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		if (optDiseaseType.isPresent()) {
 			boolean deleted = diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
 			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", deleted);
 			return ResponseEntity.ok(result);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("No disease type found with the given code."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("diseasetype.nodiseasetypefoundwiththegivencode"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

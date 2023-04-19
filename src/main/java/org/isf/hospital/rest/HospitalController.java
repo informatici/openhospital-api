@@ -25,6 +25,7 @@ import org.isf.hospital.dto.HospitalDTO;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.mapper.HospitalMapper;
 import org.isf.hospital.model.Hospital;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -63,23 +64,32 @@ public class HospitalController {
     public ResponseEntity<HospitalDTO> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
 
         if (!hospitalDTO.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Hospital code mismatch."));
+            throw new OHAPIException(new OHExceptionMessage("hospital.codemismatch"));
         }
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-            throw new OHAPIException(new OHExceptionMessage("Hospital not found."));
+            throw new OHAPIException(new OHExceptionMessage("hospital.notfound"));
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);
         hospital.setLock(hospitalDTO.getLock());
-        Hospital hospi = hospitalBrowsingManager.updateHospital(hospital);
+        Hospital hospi = null;
+        try {
+        	hospi = hospitalBrowsingManager.updateHospital(hospital);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
         return ResponseEntity.ok(hospitalMapper.map2DTO(hospi));
     }
 
     @GetMapping(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HospitalDTO> getHospital() throws OHServiceException {
-        Hospital hospital = hospitalBrowsingManager.getHospital();
-
+        Hospital hospital = null;
+        try {
+        	hospital = hospitalBrowsingManager.getHospital();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (hospital == null) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
@@ -89,8 +99,12 @@ public class HospitalController {
 
     @GetMapping(value = "/hospitals/currencyCode", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getHospitalCurrencyCode() throws OHServiceException {
-        String hospitalCurrencyCod = hospitalBrowsingManager.getHospitalCurrencyCod();
-
+        String hospitalCurrencyCod;
+        try {
+        	hospitalCurrencyCod = hospitalBrowsingManager.getHospitalCurrencyCod();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (hospitalCurrencyCod == null || hospitalCurrencyCod.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {

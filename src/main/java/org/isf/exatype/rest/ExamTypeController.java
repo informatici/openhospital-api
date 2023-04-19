@@ -21,6 +21,7 @@
  */
 package org.isf.exatype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ import org.isf.exatype.dto.ExamTypeDTO;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.mapper.ExamTypeMapper;
 import org.isf.exatype.model.ExamType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -68,9 +70,14 @@ public class ExamTypeController {
 	public ResponseEntity<ExamTypeDTO> newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
 
 		ExamType examType = examTypeMapper.map2Model(newExamType);
-		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
+		ExamType createdExamType = null;
+		try {
+			createdExamType = examTypeBrowserManager.newExamType(examType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (createdExamType == null) {
-			throw new OHAPIException(new OHExceptionMessage("Exam Type type not created."));
+			throw new OHAPIException(new OHExceptionMessage("examtype.notcreated"));
 		}
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
@@ -78,18 +85,28 @@ public class ExamTypeController {
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
-
+    	boolean isPresent = false;
+    	try {
+    		isPresent = examTypeBrowserManager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (!updateExamType.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type code mismatch."));
+            throw new OHAPIException(new OHExceptionMessage("examtype.codemismatch"));
         }
-        if (!examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
+        if (!isPresent) {
+            throw new OHAPIException(new OHExceptionMessage("examtype.notfound"));
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
-        ExamType exType = examTypeBrowserManager.updateExamType(examType);
+        ExamType exType = null;
+        try {
+        	exType = examTypeBrowserManager.updateExamType(examType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (exType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not updated."));
+            throw new OHAPIException(new OHExceptionMessage("examtype.notupdated"));
         }
 
         return ResponseEntity.ok(examTypeMapper.map2DTO(exType));
@@ -98,8 +115,13 @@ public class ExamTypeController {
 
     @GetMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ExamTypeDTO>> getExamTypes() throws OHServiceException {
-        List<ExamTypeDTO> examTypeDTOS = examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
-
+    	List<ExamTypeDTO> examTypeDTOS = new ArrayList<>();
+    	try {
+    		examTypeDTOS = examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        
         if (examTypeDTOS == null || examTypeDTOS.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         } else {
@@ -110,12 +132,23 @@ public class ExamTypeController {
     @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Delete exams code: {}", code);
-        Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
+        Optional<ExamType> examType = null;
+        try {
+        	examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (!examType.isPresent()) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
+            throw new OHAPIException(new OHExceptionMessage("examtype.notfound"));
         }
-        if (!examTypeBrowserManager.deleteExamType(examType.get())) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not deleted."));
+        boolean isDeleted = false;
+        try {
+        	isDeleted = examTypeBrowserManager.deleteExamType(examType.get());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (!isDeleted) {
+            throw new OHAPIException(new OHExceptionMessage("examtype.notdeleted"));
         }
         return ResponseEntity.ok(true);
     }

@@ -22,6 +22,7 @@
 package org.isf.admission.rest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,7 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -144,8 +146,18 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
-		Patient patient = patientManager.getPatientById(patientCode);
-		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
+		Patient patient =  new Patient();
+		try {
+			patient = patientManager.getPatientById(patientCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		List<Admission> listAdmissions = new ArrayList<>();
+		try {
+			listAdmissions = admissionManager.getAdmissions(patient);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (listAdmissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -173,7 +185,12 @@ public class AdmissionController {
 	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
 					throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
-		Patient patient = patientManager.getPatientById(patientCode);
+		Patient patient =  new Patient();
+		try {
+			patient = patientManager.getPatientById(patientCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -208,7 +225,12 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 
-		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
+		List<AdmittedPatient> admittedPatients = new ArrayList<>();
+		try {
+			admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (admittedPatients.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -231,8 +253,12 @@ public class AdmissionController {
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
-		List<Admission> admissions = admissionManager.getAdmissions(admissionRange[0], admissionRange[1], page, size);
-
+		List<Admission> admissions = new ArrayList<>();
+		try {
+			admissions = admissionManager.getAdmissions(admissionRange[0], admissionRange[1], page, size);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -254,7 +280,12 @@ public class AdmissionController {
 					throws OHServiceException {
 		LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 
-		List<Admission> admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], page, size);
+		List<Admission> admissions = new ArrayList<>();
+		try {
+			admissions = admissionManager.getDischarges(dischargeRange[0], dischargeRange[1], page, size);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		if (admissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -273,11 +304,21 @@ public class AdmissionController {
 	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode) throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 
-		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException(new OHExceptionMessage("Ward not found for code:" + wardCode));
+		boolean isPresent = false;
+		try {
+			isPresent = wardManager.isCodePresent(wardCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-
-		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
+		
+		if (wardCode.trim().isEmpty() || !isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("ward.notfoundforcode"));
+		}
+		try {
+			return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	}
 
 	/**
@@ -290,12 +331,20 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/getBedsOccupationInWard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
-
-		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			throw new OHAPIException(new OHExceptionMessage("Ward not found for code:" + wardCode));
+		boolean isPresent = false;
+		try {
+			isPresent = wardManager.isCodePresent(wardCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-
-		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
+		if (wardCode.trim().isEmpty() || !isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("ward.notfoundforcode"));
+		}
+		try {
+			return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	}
 
 	/**
@@ -309,9 +358,19 @@ public class AdmissionController {
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
 		boolean isDeleted = false;
-		Admission admission = admissionManager.getAdmission(id);
+		Admission admission = new Admission();
+		try {
+			admission = admissionManager.getAdmission(id);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		
 		if (admission != null) {
-			isDeleted = admissionManager.setDeleted(id);
+			try {
+				isDeleted = admissionManager.setDeleted(id);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -331,7 +390,12 @@ public class AdmissionController {
 					@Valid @RequestBody AdmissionDTO currentAdmissionDTO) throws OHServiceException {
 
 		LOGGER.info("discharge the patient");
-		Patient patient = patientManager.getPatientById(patientCode);
+		Patient patient =  new Patient();
+		try {
+			patient = patientManager.getPatientById(patientCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		Admission admissionUpdated = null;
 
 		if (patient == null) {
@@ -348,20 +412,24 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 		if (adm.getDiseaseOut1() == null) {
-			throw new OHAPIException(new OHExceptionMessage("at least one disease must be give."));
+			throw new OHAPIException(new OHExceptionMessage("disease.atleastonediseasemustbegive"));
 		}
 		if (adm.getDisDate() == null) {
-			throw new OHAPIException(new OHExceptionMessage("the exit date must be filled in."));
+			throw new OHAPIException(new OHExceptionMessage("error.theexitdatemustbefilledin"));
 		}
 		if (adm.getDisDate().isBefore(adm.getAdmDate())) {
-			throw new OHAPIException(new OHExceptionMessage("the exit date must be after the entry date."));
+			throw new OHAPIException(new OHExceptionMessage("error.theexitdatemustbeaftertheentrydate"));
 		}
 		if (adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("the type of output is mandatory or does not exist."));
+			throw new OHAPIException(new OHExceptionMessage("error.thetypeofoutputismandatoryordoesnotexist"));
 		}
 		adm.setAdmitted(0);
-		admissionUpdated = admissionManager.updateAdmission(adm);
-
+		
+		try {
+			admissionUpdated = admissionManager.updateAdmission(adm);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.OK).body(admissionUpdated != null);
 	}
 
@@ -382,11 +450,11 @@ public class AdmissionController {
 			List<Ward> wards = wardManager.getWards().stream()
 							.filter(w -> w.getCode().equals(newAdmissionDTO.getWard().getCode())).collect(Collectors.toList());
 			if (wards.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Ward not found."));
+				throw new OHAPIException(new OHExceptionMessage("ward.notfound"));
 			}
 			newAdmission.setWard(wards.get(0));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Ward field is required."));
+			throw new OHAPIException(new OHExceptionMessage("ward.fieldisrequired"));
 		}
 
 		if (newAdmissionDTO.getAdmType() != null && newAdmissionDTO.getAdmType().getCode() != null
@@ -395,21 +463,21 @@ public class AdmissionController {
 							.filter(admt -> admt.getCode().equals(newAdmissionDTO.getAdmType().getCode()))
 							.collect(Collectors.toList());
 			if (types.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Admission type not found."));
+				throw new OHAPIException(new OHExceptionMessage("admissiontype.notfound"));
 			}
 			newAdmission.setAdmType(types.get(0));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Admission type field is required."));
+			throw new OHAPIException(new OHExceptionMessage("admissiontype.fieldisrequired"));
 		}
 
 		if (newAdmissionDTO.getPatient() != null && newAdmissionDTO.getPatient().getCode() != null) {
 			Patient patient = patientManager.getPatientById(newAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
-				throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+				throw new OHAPIException(new OHExceptionMessage("patient.notfound"));
 			}
 			newAdmission.setPatient(patient);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient field is required."));
+			throw new OHAPIException(new OHExceptionMessage("patient.fieldisrequired"));
 		}
 		List<Disease> diseases = diseaseManager.getDiseaseAll();
 
@@ -418,7 +486,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
 							.collect(Collectors.toList());
 			if (dIns.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease in not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.innotfound"));
 			}
 			newAdmission.setDiseaseIn(dIns.get(0));
 		}
@@ -428,7 +496,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut1().getCode()))
 							.collect(Collectors.toList());
 			if (dOut1.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 1 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out1notfound"));
 			}
 			newAdmission.setDiseaseOut1(dOut1.get(0));
 		}
@@ -438,7 +506,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut2().getCode()))
 							.collect(Collectors.toList());
 			if (dOut2.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 2 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out2notfound"));
 			}
 			newAdmission.setDiseaseOut2(dOut2.get(0));
 		}
@@ -448,7 +516,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut3().getCode()))
 							.collect(Collectors.toList());
 			if (dOut3.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 3 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out3notfound"));
 			}
 			newAdmission.setDiseaseOut3(dOut3.get(0));
 		}
@@ -472,7 +540,7 @@ public class AdmissionController {
 							.filter(pregtt -> pregtt.getCode().equals(newAdmissionDTO.getPregTreatmentType().getCode()))
 							.collect(Collectors.toList());
 			if (pregTTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Pregnant treatment type not found."));
+				throw new OHAPIException(new OHExceptionMessage("dischargetype.notfound"));
 			}
 			newAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
@@ -484,7 +552,7 @@ public class AdmissionController {
 							.filter(dlvrType -> dlvrType.getCode().equals(newAdmissionDTO.getDeliveryType().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Delivery type not found."));
+				throw new OHAPIException(new OHExceptionMessage("deliverytype.notfound"));
 			}
 			newAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
@@ -496,7 +564,7 @@ public class AdmissionController {
 							dlvrrestType -> dlvrrestType.getCode().equals(newAdmissionDTO.getDeliveryResult().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Delivery result type not found."));
+				throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.notfound"));
 			}
 			newAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}
@@ -505,7 +573,12 @@ public class AdmissionController {
 						? newAdmission.getPatient().getFirstName() + ' ' + newAdmission.getPatient().getSecondName()
 						: newAdmission.getPatient().getName();
 		LOGGER.info("Create admission for patient {}", name);
-		int aId = admissionManager.newAdmissionReturnKey(newAdmission);
+		int aId = 0;
+		try {
+			aId = admissionManager.newAdmissionReturnKey(newAdmission);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (aId > 0) {
 			newAdmission.setId(aId);
 		}
@@ -531,7 +604,7 @@ public class AdmissionController {
 
 		Admission old = admissionManager.getAdmission(updateAdmissionDTO.getId());
 		if (old == null) {
-			throw new OHAPIException(new OHExceptionMessage("Admission not found."));
+			throw new OHAPIException(new OHExceptionMessage("admission.notfound."));
 		}
 		Admission updateAdmission = admissionMapper.map2Model(updateAdmissionDTO);
 
@@ -540,11 +613,11 @@ public class AdmissionController {
 			List<Ward> wards = wardManager.getWards().stream()
 							.filter(w -> w.getCode().equals(updateAdmissionDTO.getWard().getCode())).collect(Collectors.toList());
 			if (wards.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Ward not found."));
+				throw new OHAPIException(new OHExceptionMessage("ward.notfound."));
 			}
 			updateAdmission.setWard(wards.get(0));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Ward field is required."));
+			throw new OHAPIException(new OHExceptionMessage("ward.fieldisrequired."));
 		}
 
 		if (updateAdmissionDTO.getAdmType() != null && updateAdmissionDTO.getAdmType().getCode() != null
@@ -553,21 +626,21 @@ public class AdmissionController {
 							.filter(admt -> admt.getCode().equals(updateAdmissionDTO.getAdmType().getCode()))
 							.collect(Collectors.toList());
 			if (types.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Admission type not found."));
+				throw new OHAPIException(new OHExceptionMessage("admissiontype.notfound"));
 			}
 			updateAdmission.setAdmType(types.get(0));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Admission type field is required."));
+			throw new OHAPIException(new OHExceptionMessage("admissiontype.fieldisrequired "));
 		}
 
 		if (updateAdmissionDTO.getPatient() != null && updateAdmissionDTO.getPatient().getCode() != null) {
 			Patient patient = patientManager.getPatientById(updateAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
-				throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+				throw new OHAPIException(new OHExceptionMessage("patient.notfound"));
 			}
 			updateAdmission.setPatient(patient);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient field is required."));
+			throw new OHAPIException(new OHExceptionMessage("patient.fieldisrequired"));
 		}
 		List<Disease> diseases = diseaseManager.getDiseaseAll();
 		if (updateAdmissionDTO.getDiseaseIn() != null && updateAdmissionDTO.getDiseaseIn().getCode() != null) {
@@ -575,7 +648,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseIn().getCode()))
 							.collect(Collectors.toList());
 			if (dIns.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease in not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.innotfound"));
 			}
 			updateAdmission.setDiseaseIn(dIns.get(0));
 		}
@@ -585,7 +658,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut1().getCode()))
 							.collect(Collectors.toList());
 			if (dOut1s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 1 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out1notfound"));
 			}
 			updateAdmission.setDiseaseOut1(dOut1s.get(0));
 		}
@@ -595,7 +668,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut2().getCode()))
 							.collect(Collectors.toList());
 			if (dOut2s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 2 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out2notfound"));
 			}
 			updateAdmission.setDiseaseOut2(dOut2s.get(0));
 		}
@@ -605,7 +678,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut3().getCode()))
 							.collect(Collectors.toList());
 			if (dOut3s.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Disease out 3 not found."));
+				throw new OHAPIException(new OHExceptionMessage("disease.out3notfound"));
 			}
 			updateAdmission.setDiseaseOut3(dOut3s.get(0));
 		}
@@ -617,7 +690,7 @@ public class AdmissionController {
 							.filter(dtp -> dtp.getCode().equals(updateAdmissionDTO.getDisType().getCode()))
 							.collect(Collectors.toList());
 			if (disTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Discharge type not found."));
+				throw new OHAPIException(new OHExceptionMessage("dischargetype.notfound"));
 			}
 			updateAdmission.setDisType(disTypesF.get(0));
 		}
@@ -629,7 +702,7 @@ public class AdmissionController {
 							.filter(pregtt -> pregtt.getCode().equals(updateAdmissionDTO.getPregTreatmentType().getCode()))
 							.collect(Collectors.toList());
 			if (pregTTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Pregnant treatment type not found."));
+				throw new OHAPIException(new OHExceptionMessage("pregnanttreattype.notfound"));
 			}
 			updateAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
@@ -641,7 +714,7 @@ public class AdmissionController {
 							.filter(dlvrType -> dlvrType.getCode().equals(updateAdmissionDTO.getDeliveryType().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Delivery type not found."));
+				throw new OHAPIException(new OHExceptionMessage("deliverytype.notfound"));
 			}
 			updateAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
@@ -653,7 +726,7 @@ public class AdmissionController {
 							dlvrrestType -> dlvrrestType.getCode().equals(updateAdmissionDTO.getDeliveryResult().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Delivery result type not found."));
+				throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.notfound"));
 			}
 			updateAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}
@@ -662,9 +735,14 @@ public class AdmissionController {
 						? updateAdmission.getPatient().getFirstName() + ' ' + updateAdmission.getPatient().getSecondName()
 						: updateAdmission.getPatient().getName();
 		LOGGER.info("update admission for patient {}", name);
-		Admission isUpdatedAdmission = admissionManager.updateAdmission(updateAdmission);
+		Admission isUpdatedAdmission = null;
+		try {
+			isUpdatedAdmission = admissionManager.updateAdmission(updateAdmission);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedAdmission == null) {
-			throw new OHAPIException(new OHExceptionMessage("Admission not updated."));
+			throw new OHAPIException(new OHExceptionMessage("admission.notupdated"));
 		}
 
 		AdmissionDTO admDTO = admissionMapper.map2DTO(isUpdatedAdmission);

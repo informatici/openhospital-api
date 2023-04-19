@@ -21,6 +21,7 @@
  */
 package org.isf.disctype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -73,15 +75,25 @@ public class DischargeTypeController {
 	ResponseEntity<DischargeTypeDTO> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
 		LOGGER.info("Create discharge type {}", code);
-		boolean isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
+		boolean isCreated = false;
+		try {
+			isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		DischargeType dischTypeCreated = null;
-		List<DischargeType> dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
+		List<DischargeType> dischTypeFounds = new ArrayList<>();
+		try {
+			 dischTypeFounds = discTypeManager.getDischargeType().stream().filter(ad -> ad.getCode().equals(code))
+						.collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!dischTypeFounds.isEmpty()) {
 			dischTypeCreated = dischTypeFounds.get(0);
 		}
 		if (!isCreated || dischTypeCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("dischargetype.isnotcreated"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dischTypeCreated));
 	}
@@ -96,12 +108,23 @@ public class DischargeTypeController {
 	ResponseEntity<DischargeTypeDTO> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
-		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
+		boolean isPresent = false;
+		try {
+			isPresent = discTypeManager.isCodePresent(dischTypeDTO.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("Discharge Type not found."));
 		}
-		boolean isUpdated = discTypeManager.updateDischargeType(dischType);
+		boolean isUpdated = false;
+		try {
+			isUpdated = discTypeManager.updateDischargeType(dischType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("dischargetype.notfound"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}
@@ -114,7 +137,12 @@ public class DischargeTypeController {
 	@GetMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
 		LOGGER.info("Get all discharge types ");
-		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
+		List<DischargeType> dischTypes = new ArrayList<>();
+		try {
+			dischTypes = discTypeManager.getDischargeType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
 		if (dischTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
@@ -133,12 +161,27 @@ public class DischargeTypeController {
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
-		if (discTypeManager.isCodePresent(code)) {
-			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
+		boolean isPresent = false;
+		try {
+			isPresent = discTypeManager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (isPresent) {
+			List<DischargeType> dischTypes = new ArrayList<>();
+			try {
+				dischTypes = discTypeManager.getDischargeType();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!dischTypeFounds.isEmpty()) {
-				isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+				try {
+					isDeleted = discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+				} catch (OHServiceException e) {
+					throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

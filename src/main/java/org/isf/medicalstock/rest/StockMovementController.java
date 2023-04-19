@@ -35,6 +35,7 @@ import org.isf.medicalstock.mapper.LotMapper;
 import org.isf.medicalstock.mapper.MovementMapper;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -84,7 +85,12 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>();
 		movements.addAll(movMapper.map2ModelList(movementDTOs));
-		boolean done = movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
+		boolean done = false;
+		try {
+			done = movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
 	
@@ -102,7 +108,12 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>();
 		movements.addAll(movMapper.map2ModelList(movementDTOs));
-		boolean done = movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
+		boolean done = false;
+		try {
+			done = movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(done);
 	}
 	
@@ -113,7 +124,12 @@ public class StockMovementController {
 	 */
 	@GetMapping(value = "/stockmovements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementDTO>> getMovements() throws OHServiceException { 
-		List<Movement> movements = movManager.getMovements();
+		List<Movement> movements = new ArrayList<>();
+		try {
+			movements = movManager.getMovements();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return collectResults(movements);
 	}
 	
@@ -130,7 +146,12 @@ public class StockMovementController {
 			@RequestParam("ward_id") String wardId,
 			@RequestParam("from") LocalDateTime dateFrom,
 			@RequestParam("to") LocalDateTime dateTo) throws OHServiceException {
-		List<Movement> movements = movManager.getMovements(wardId, dateFrom, dateTo);
+		List<Movement> movements = new ArrayList<>();
+		try {
+			movements = movManager.getMovements(wardId, dateFrom, dateTo);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return collectResults(movements);
 	}
 	
@@ -142,7 +163,12 @@ public class StockMovementController {
 	 */
 	@GetMapping(value = "/stockmovements/{ref}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementDTO>> getMovements(@PathVariable("ref") String refNo) throws OHServiceException {
-		List<Movement> movements = movManager.getMovementsByReference(refNo);
+		List<Movement> movements = new ArrayList<>();
+		try {
+			movements = movManager.getMovementsByReference(refNo);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return collectResults(movements);
 	}
 	
@@ -174,8 +200,13 @@ public class StockMovementController {
 			@RequestParam(name="lot_due_from", required=false) LocalDateTime lotDueFrom,
 			@RequestParam(name="lot_due_to", required=false) LocalDateTime lotDueTo) throws OHServiceException {
 
-		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom,
-				lotDueTo);
+		List<Movement> movements = new ArrayList<>();
+		try {
+			movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom,
+					lotDueTo);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return collectResults(movements);
 	}
 	
@@ -187,7 +218,12 @@ public class StockMovementController {
 	 */
 	@GetMapping(value = "/stockmovements/lot/{med_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LotDTO>> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
-		Medical med = medicalManager.getMedical(medCode);
+		Medical med = null;
+		try {
+			med = medicalManager.getMedical(medCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (med == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
@@ -211,7 +247,12 @@ public class StockMovementController {
 	public ResponseEntity<Boolean> alertCriticalQuantity(
 			@RequestParam("med_code") int medCode,
 			@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
-		Medical med = medicalManager.getMedical(medCode);
+		Medical med = null;
+		try {
+			med = medicalManager.getMedical(medCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (med == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}

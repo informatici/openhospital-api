@@ -22,6 +22,7 @@
 package org.isf.accounting.rest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.accounting.dto.BillDTO;
@@ -39,6 +40,7 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -105,38 +107,52 @@ public class BillController {
 	public ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is null."));
+			throw new OHAPIException(new OHExceptionMessage("bill.isnull"));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
 
 		Bill bill = billMapper.map2Model(newBillDto.getBill());
-
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
-
-		List<PriceList> list = priceListManager.getLists();
+		Patient pat = new Patient();
+		try {
+			 pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		List<PriceList> list = new ArrayList<>();
+		try {
+			list = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		PriceList plist = list.stream().filter(pricel -> pricel.getName().equals(bill.getListName())).findAny().orElse(null);
 
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			throw new OHAPIException(new OHExceptionMessage("patient.notfound"));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			throw new OHAPIException(new OHExceptionMessage("error.pricelistnotfound"));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(newBillDto.getBillPayments());
 
-		boolean isCreated = billManager.newBill(bill, billItems, billPayments);
+		boolean isCreated = false;
+		
+		try {
+			isCreated = billManager.newBill(bill, billItems, billPayments);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		if (!isCreated) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
+			throw new OHAPIException(new OHExceptionMessage("bill.isnotcreated"));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
 	}
@@ -157,35 +173,51 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill to update not found."));
+			throw new OHAPIException(new OHExceptionMessage("bill.toupdatenotfound"));
 		}
 
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+		Patient pat = new Patient();
+		try {
+			 pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
-		List<PriceList> list = priceListManager.getLists();
+		List<PriceList> list = new ArrayList<>();
+		try {
+			list = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		PriceList plist = list.stream().filter(pricel -> pricel.getName().equals(bill.getListName())).findAny().orElse(null);
 
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			throw new OHAPIException(new OHExceptionMessage("patient.notfound"));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			throw new OHAPIException(new OHExceptionMessage("error.pricelistnotfound"));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(odBillDto.getBillPayments());
 
-		boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
+		boolean isUpdated = false;
+		
+		try {
+			isUpdated = billManager.updateBill(bill, billItems, billPayments);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
+			throw new OHAPIException(new OHExceptionMessage("bill.isnotupdate"));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
 	}
@@ -208,13 +240,28 @@ public class BillController {
 		List<BillDTO> billDTOS;
 
 		if (code == null) {
-			LOGGER.info("Get payments datefrom: {}  dateTo: {}", dateFrom, dateTo);
-			bills = billManager.getBills(dateFrom, dateTo);
+			LOGGER.info("Get payments datefrom: {}  dateTo: {}", dateFrom, dateTo);		
+			try {
+				bills = billManager.getBills(dateFrom, dateTo);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
-			Patient pat = patientManager.getPatientById(code);
 
+			Patient pat = new Patient();
+			try {
+				pat = patientManager.getPatientById(code);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 			LOGGER.info("Get Bills datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, pat);
-			bills = billManager.getBills(dateFrom, dateTo, pat);
+			
+			try {
+				bills = billManager.getBills(dateFrom, dateTo, pat);
+			} catch (OHServiceException e) {
+				
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 
 		billDTOS = billMapper.map2DTOList(bills);
@@ -247,10 +294,24 @@ public class BillController {
 		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", dateFrom, dateTo);
 
 		if (code == null) {
-			payments = billManager.getPayments(dateFrom, dateTo);
+			try {
+				payments = billManager.getPayments(dateFrom, dateTo);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
-			Patient pat = patientManager.getPatientById(code);
-			payments = billManager.getPayments(dateFrom, dateTo, pat);
+			Patient pat = new Patient();
+			try {
+				pat = patientManager.getPatientById(code);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
+			
+			try {
+				payments = billManager.getPayments(dateFrom, dateTo, pat);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 
 		paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
@@ -272,7 +333,13 @@ public class BillController {
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value="bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
 
-		List<BillPayments> billPayments = billManager.getPayments(id);
+		List<BillPayments> billPayments = new ArrayList<>();
+		
+		try {
+			billPayments = billManager.getPayments(id);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
 
@@ -292,7 +359,13 @@ public class BillController {
 	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value="bill_id")Integer id) throws OHServiceException {
 		LOGGER.info("Get Items for bill with id: {}", id);
 
-		List<BillItems> items = billManager.getItems(id);
+		List<BillItems> items = new ArrayList<>();
+
+		try {
+			items = billManager.getItems(id);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
@@ -312,7 +385,13 @@ public class BillController {
 	public ResponseEntity<BillDTO> getBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", id);
 
-		Bill bill = billManager.getBill(id);
+		Bill bill = new Bill();
+
+		try {
+			 bill = billManager.getBill(id);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		BillDTO billDTO = billMapper.map2DTO(bill);
 
@@ -332,7 +411,12 @@ public class BillController {
 	public ResponseEntity<List<BillDTO>> getPendingBillsAffiliate(@RequestParam(value="patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
-		List<Bill> bills = billManager.getPendingBillsAffiliate(code);
+		List<Bill> bills = new ArrayList<>();
+		try {
+			bills = billManager.getPendingBillsAffiliate(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
@@ -352,8 +436,12 @@ public class BillController {
 	public ResponseEntity<List<BillDTO>> getPendingBills(@RequestParam(value="patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
-		List<Bill> bills = billManager.getPendingBills(code);
-
+		List<Bill> bills = new ArrayList<>();
+		try {
+			bills = billManager.getPendingBills(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
@@ -379,8 +467,12 @@ public class BillController {
 
 		LOGGER.info("Get Bills dateFrom: {}  dateTo: {}  Bill ITEM ID: {}", dateFrom, dateTo, billItem.getId());
 
-		List<Bill> bills = billManager.getBills(dateFrom, dateTo, billItem);
-
+		List<Bill> bills = new ArrayList<>();
+		try {
+			bills = billManager.getBills(dateFrom, dateTo, billItem);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
@@ -400,8 +492,12 @@ public class BillController {
 
 		LOGGER.info("get all the distinct stored BillItems");
 
-		List<BillItems> items = billManager.getDistinctItems(); //TODO: verify if it's correct
-
+		List<BillItems> items = new ArrayList<>();
+		try {
+			items = billManager.getDistinctItems(); //TODO: verify if it's correct
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
 		if (itemsDTOS.isEmpty()) {
@@ -413,15 +509,24 @@ public class BillController {
 	@DeleteMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Delete bill id: {}", id);
-		Bill bill = billManager.getBill(id);
+		Bill bill = new Bill();
+		try {
+			bill = billManager.getBill(id);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		boolean isDeleted;
 		if (bill != null) {
-			isDeleted = billManager.deleteBill(bill);
+			try {
+				isDeleted = billManager.deleteBill(bill);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not deleted."));
+			throw new OHAPIException(new OHExceptionMessage("bill.isnotdeleted"));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}
@@ -437,7 +542,12 @@ public class BillController {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(paymentsDTO);
 
-		List<Bill> bills = billManager.getBills(billPayments);
+		List<Bill> bills = new ArrayList<>();
+		try {
+			bills = billManager.getBills(billPayments);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 

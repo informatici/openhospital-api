@@ -21,6 +21,7 @@
  */
 package org.isf.dlvrrestype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.isf.dlvrrestype.dto.DeliveryResultTypeDTO;
 import org.isf.dlvrrestype.manager.DeliveryResultTypeBrowserManager;
 import org.isf.dlvrrestype.mapper.DeliveryResultTypeMapper;
 import org.isf.dlvrrestype.model.DeliveryResultType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -74,16 +76,26 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
 		LOGGER.info("Create Delivery result type {}", code);
-		boolean isCreated = dlvrrestManager
-				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
+		boolean isCreated = false;
+		try {
+			isCreated = dlvrrestManager
+    				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		DeliveryResultType dlvrrestTypeCreated = null;
-		List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
-				.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
+		List<DeliveryResultType> dlvrrestTypeFounds = new ArrayList<>();
+		try {
+			dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
+					.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!dlvrrestTypeFounds.isEmpty()) {
 			dlvrrestTypeCreated = dlvrrestTypeFounds.get(0);
 		}
 		if (!isCreated || dlvrrestTypeCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery result type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.isnotcreated"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dlvrrestTypeCreated));
 	}
@@ -99,12 +111,23 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
-		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Result Type not found."));
+		boolean isPresent = false; 
+        try {
+			isPresent = dlvrrestManager.isCodePresent(dlvrrestType.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
+		if (!isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.notfound"));
+		}
+		boolean isUpdated = false;
+		try {
+			isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Result Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.isnotupdated"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dlvrrestType));
 	}
@@ -117,7 +140,12 @@ public class DeliveryResultTypeController {
 	@GetMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DeliveryResultTypeDTO>> getDeliveryResultTypes() throws OHServiceException {
 		LOGGER.info("Get all Delivery result types ");
-		List<DeliveryResultType> dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
+		List<DeliveryResultType> dlvrrestissionTypes = new  ArrayList<>();
+		try {
+			dlvrrestissionTypes = dlvrrestManager.getDeliveryResultType();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<DeliveryResultTypeDTO> dlvrrestTypeDTOs = mapper.map2DTOList(dlvrrestissionTypes);
 		if (dlvrrestTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrrestTypeDTOs);
@@ -137,8 +165,19 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		LOGGER.info("Delete Delivery result type code: {}", code);
 		boolean isDeleted = false;
-		if (dlvrrestManager.isCodePresent(code)) {
-			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
+		boolean isPresent = false; 
+        try {
+			isPresent = dlvrrestManager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (isPresent) {
+			List<DeliveryResultType> dlvrrestTypes = new ArrayList<>();
+			try {
+				dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 			List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!dlvrrestTypeFounds.isEmpty()) {

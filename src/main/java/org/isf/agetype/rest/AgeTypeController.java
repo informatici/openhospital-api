@@ -32,6 +32,7 @@ import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.mapper.AgeTypeMapper;
 import org.isf.agetype.model.AgeType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,7 +76,12 @@ public class AgeTypeController {
 	@GetMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
 		LOGGER.info("Get age types");
-		List<AgeType> results = ageTypeManager.getAgeType();
+		List<AgeType> results = new ArrayList<>();
+		try {
+			results = ageTypeManager.getAgeType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
 		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
@@ -100,7 +106,13 @@ public class AgeTypeController {
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
-		if (ageTypeManager.updateAgeType(ageTypes)) {
+		boolean isupdate = false;
+		try {
+			isupdate = ageTypeManager.updateAgeType(ageTypes);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (isupdate) {
 			return ResponseEntity.ok(ageTypeDTO);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,7 +128,12 @@ public class AgeTypeController {
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		LOGGER.info("Get age type by age: {}", age);
-		String result = ageTypeManager.getTypeByAge(age);
+		String result;
+		try {
+			result =  ageTypeManager.getTypeByAge(age);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		Map<String, String> responseBody = new HashMap<>();
 		if (result != null){
 			responseBody.put("code", result);
@@ -136,7 +153,12 @@ public class AgeTypeController {
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		LOGGER.info("Get age type by index: {}", index);
-		AgeType result = ageTypeManager.getTypeByCode(index);
+		AgeType result = null;
+		try {
+			result = ageTypeManager.getTypeByCode(index);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (result != null){
 			return ResponseEntity.ok(result);
         } else {

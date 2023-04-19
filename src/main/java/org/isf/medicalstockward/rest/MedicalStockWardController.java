@@ -38,6 +38,7 @@ import org.isf.medicalstockward.mapper.MedicalWardMapper;
 import org.isf.medicalstockward.mapper.MovementWardMapper;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -88,7 +89,12 @@ public class MedicalStockWardController {
 	 */
 	@GetMapping(value = "/medicalstockward/{ward_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalWardDTO>> getMedicalsWard(@PathVariable("ward_code") char wardId) throws OHServiceException {
-		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId, true); //FIXME: provide provision for boolean ,false?
+		List<MedicalWard> medWards = new ArrayList<>();
+		try {
+			medWards = movWardBrowserManager.getMedicalsWard(wardId, true); //FIXME: provide provision for boolean ,false?
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<MedicalWardDTO> mappedMedWards = medicalWardMapper.map2DTOList(medWards);
 		if (mappedMedWards.isEmpty()) {
 			LOGGER.info("No medical found");
@@ -111,7 +117,12 @@ public class MedicalStockWardController {
 	public ResponseEntity<Integer> getCurrentQuantityInWard(
 			@PathVariable("ward_code") String wardId,
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
-		Medical medical = medicalManager.getMedical(medicalId);
+		Medical medical = null;
+		try {
+			medical = medicalManager.getMedical(medicalId);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (medical == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
@@ -130,7 +141,12 @@ public class MedicalStockWardController {
 	 */
 	@GetMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementWardDTO>> getMovementWard() throws OHServiceException {
-		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movWardBrowserManager.getMovementWard());
+		List<MovementWardDTO> mappedMovs = new ArrayList<>();
+		try {
+			mappedMovs = movementWardMapper.map2DTOList(movWardBrowserManager.getMovementWard());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
 		} else {
@@ -163,7 +179,12 @@ public class MedicalStockWardController {
 			dateToTime = dateTo.atStartOfDay();
 		}
 
-		List<MovementWard> movs = movWardBrowserManager.getMovementWard(wardId, dateFromTime, dateToTime);
+		List<MovementWard> movs = new ArrayList<>();
+		try {
+			movs = movWardBrowserManager.getMovementWard(wardId, dateFromTime, dateToTime);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if (mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
@@ -187,7 +208,12 @@ public class MedicalStockWardController {
 			@RequestParam("from") LocalDateTime dateFrom,
 			@RequestParam("to") LocalDateTime dateTo) throws OHServiceException {
 
-		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
+		List<MovementWard> movs = new ArrayList<>();
+		try {
+			movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if (mappedMovs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
@@ -205,7 +231,11 @@ public class MedicalStockWardController {
 	@PostMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody MovementWardDTO newMovementDTO) throws OHServiceException {
 		MovementWard newMovement = movementWardMapper.map2Model(newMovementDTO);
-		movWardBrowserManager.newMovementWard(newMovement);
+		try {
+			movWardBrowserManager.newMovementWard(newMovement);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -220,7 +250,11 @@ public class MedicalStockWardController {
 	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody List<MovementWardDTO> newMovementDTOs) throws OHServiceException {
 		List<MovementWard> newMovements = new ArrayList<>();
 		newMovements.addAll(movementWardMapper.map2ModelList(newMovementDTOs));
-		movWardBrowserManager.newMovementWard(newMovements);
+		try {
+			movWardBrowserManager.newMovementWard(newMovements);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
@@ -234,12 +268,22 @@ public class MedicalStockWardController {
 	@PutMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateMovementWard(@Valid @RequestBody MovementWardDTO movementWardDTO) throws OHServiceException {
 		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
-		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
+		boolean isPresent = false;
+		try {
+			isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("Movement ward not found."));
 		}
 
-		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
+		boolean isUpdated = false;
+		try {
+			isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isUpdated) {
 			throw new OHAPIException(new OHExceptionMessage("Movement ward not updated."));
 		}

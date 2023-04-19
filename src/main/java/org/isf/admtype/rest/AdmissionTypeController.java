@@ -21,6 +21,7 @@
  */
 package org.isf.admtype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
 import org.isf.admtype.mapper.AdmissionTypeMapper;
 import org.isf.admtype.model.AdmissionType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,13 +77,18 @@ public class AdmissionTypeController {
 		LOGGER.info("Create Admission Type {}", code);
 		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
-		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
+		List<AdmissionType> admtFounds = new ArrayList<>();
+		try {
+			admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
+					.collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!admtFounds.isEmpty()) {
 			admtCreated = admtFounds.get(0);
 		}
 		if (!isCreated || admtCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("admissiontype.isnotcreated"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
 	}
@@ -97,12 +104,23 @@ public class AdmissionTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		if (!admtManager.isCodePresent(admt.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
+		boolean isPresent = false;
+		try {
+			isPresent = admtManager.isCodePresent(admt.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		boolean isUpdated = admtManager.updateAdmissionType(admt);
+		if (!isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("admissiontype.notfound"));
+		}
+		boolean isUpdated = false;
+		try {
+			isUpdated = admtManager.updateAdmissionType(admt);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Admission Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("admissiontype.isnotupdated"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(admt));
 	}
@@ -115,7 +133,12 @@ public class AdmissionTypeController {
 	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
 		LOGGER.info("Get all Admission Types ");
-		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
+		List<AdmissionType> admissionTypes = new ArrayList<>();
+		try {
+			admissionTypes = admtManager.getAdmissionType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
 		if (admissionTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
@@ -135,11 +158,20 @@ public class AdmissionTypeController {
 		LOGGER.info("Delete Admission Type code: {}", code);
 		boolean isDeleted = false;
 		if (admtManager.isCodePresent(code)) {
-			List<AdmissionType> admts = admtManager.getAdmissionType();
+			List<AdmissionType> admts = new ArrayList<>();
+			try {
+				admts = admtManager.getAdmissionType();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!admtFounds.isEmpty()) {
-				isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+				try {
+					isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+				} catch (OHServiceException e) {
+					throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

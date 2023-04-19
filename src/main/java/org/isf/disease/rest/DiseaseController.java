@@ -21,6 +21,7 @@
  */
 package org.isf.disease.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.manager.DiseaseBrowserManager;
 import org.isf.disease.mapper.DiseaseMapper;
 import org.isf.disease.model.Disease;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,11 +77,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpd() throws OHServiceException {
         LOGGER.info("Get opd diseases");
-	    List<Disease> diseases = diseaseManager.getDiseaseOpd();
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseOpd();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting OPO diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingopddiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -92,11 +99,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/opd/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesOpdByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get opd diseases by type code");
-	    List<Disease> diseases = diseaseManager.getDiseaseOpd(typeCode);
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseOpd(typeCode);;
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting OPD diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingopddiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -108,11 +120,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/ipd/out", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOut() throws OHServiceException {
         LOGGER.info("Get ipd out diseases");
-	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut();
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseIpdOut();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD out diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingipdoutdiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -125,11 +142,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/ipd/out/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdOutByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get ipd out diseases by type code");
-	    List<Disease> diseases = diseaseManager.getDiseaseIpdOut(typeCode);
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseIpdOut(typeCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD out diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingipdoutdiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -141,11 +163,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/ipd/in", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdIn() throws OHServiceException {
         LOGGER.info("Get ipd-in diseases");
-	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn();
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseIpdIn();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD-in diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("Edisease.errorgettingipdindiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -158,11 +185,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/ipd/in/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseasesIpdInByCode(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get ipd-in diseases by type code");
-	    List<Disease> diseases = diseaseManager.getDiseaseIpdIn(typeCode);
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseIpdIn(typeCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting IPD-in diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingipdindiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -174,11 +206,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/both", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases() throws OHServiceException {
         LOGGER.info("Get both ipd and opd diseases");
-	    List<Disease> diseases = diseaseManager.getDisease();
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDisease();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingdiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -191,11 +228,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/both/{typecode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getDiseases(@PathVariable("typecode") String typeCode) throws OHServiceException {
         LOGGER.info("Get both ipd and opd diseases by type code");
-	    List<Disease> diseases = diseaseManager.getDisease(typeCode);
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDisease(typeCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting diseases by type code."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingdiseasesbytypecode"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -207,11 +249,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<DiseaseDTO>> getAllDiseases() throws OHServiceException {
         LOGGER.info("Get all diseases, deleted ones too");
-	    List<Disease> diseases = diseaseManager.getDiseaseAll();
+	    List<Disease> diseases = new ArrayList<>();
+	    try {
+	    	diseases = diseaseManager.getDiseaseAll();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("Error getting all diseases."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.errorgettingalldiseases"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -224,12 +271,16 @@ public class DiseaseController {
 	@GetMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> getDiseaseByCode(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Get disease by code");
-        
-	    Disease disease = diseaseManager.getDiseaseByCode(code);
+	    Disease disease = null;
+	    try {
+	    	disease = diseaseManager.getDiseaseByCode(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 	    if (disease != null) {
 	    	return ResponseEntity.ok(mapper.map2DTO(disease));
 	    } else {
-	    	throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
+	    	throw new OHAPIException(new OHExceptionMessage("disease.nodiseasefoundwiththespecifiedcode"), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
@@ -242,18 +293,35 @@ public class DiseaseController {
 	@PostMapping(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		if (diseaseManager.isCodePresent(disease.getCode())) {
+		boolean isPresent = false;
+		try {
+	    	isPresent = diseaseManager.isCodePresent(disease.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("Duplicated disease code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Duplicated disease description for the same disease type."),
+		boolean isSame = false;
+		try {
+	    	isSame = diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (isSame) {
+			throw new OHAPIException(new OHExceptionMessage("disease.duplicateddiseasedescriptionforthesamediseasetype"),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		if (diseaseManager.newDisease(disease) != null) {
+		Disease newDisease = null;
+		try {
+	    	newDisease = diseaseManager.newDisease(disease);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (newDisease != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
 		}
-		throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage("disease.notcreated"), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -265,14 +333,26 @@ public class DiseaseController {
 	@PutMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		if (!diseaseManager.isCodePresent(disease.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Disease not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+		boolean isPresent = false;
+		try {
+	    	isPresent = diseaseManager.isCodePresent(disease.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (!isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("disease.notfound"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		disease.setLock(diseaseDTO.getLock());
-		if (diseaseManager.updateDisease(disease) != null) {
+		Disease updateDisease = null;
+		try {
+	    	updateDisease = diseaseManager.updateDisease(disease);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		if (updateDisease != null) {
         	return ResponseEntity.ok(diseaseDTO);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage("disease.notupdated"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
 	
@@ -284,13 +364,18 @@ public class DiseaseController {
 	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
-		Disease disease = diseaseManager.getDiseaseByCode(code);
+		Disease disease = null;
+		try {
+	    	disease = diseaseManager.getDiseaseByCode(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();
 			result.put("deleted", diseaseManager.deleteDisease(disease));
 			return ResponseEntity.ok(result);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("disease.nodiseasefoundwiththespecifiedcode"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	

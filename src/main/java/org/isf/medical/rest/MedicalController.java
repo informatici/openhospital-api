@@ -30,6 +30,7 @@ import org.isf.medical.dto.MedicalSortBy;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -70,7 +71,12 @@ public class MedicalController {
 	@GetMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MedicalDTO> getMedical(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Retrieving medical with code {} ...", code);
-		Medical medical = medicalManager.getMedical(code);
+		Medical medical = null;
+		try {
+			medical = medicalManager.getMedical(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (medical == null) {
 			LOGGER.info("Medical not found");
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
@@ -92,12 +98,24 @@ public class MedicalController {
 		LOGGER.info("Retrieving all the medicals...");
 		List<Medical> medicals;
 		if (sortBy == null || sortBy == MedicalSortBy.NONE) {
-			medicals = medicalManager.getMedicals();
+			try {
+				medicals = medicalManager.getMedicals();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
-		else if (sortBy == MedicalSortBy.CODE) {
-			medicals = medicalManager.getMedicalsSortedByCode();
+		else if (sortBy == MedicalSortBy.CODE) {	
+			try {
+				medicals = medicalManager.getMedicalsSortedByCode();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else { //sortBy == MedicalSortBy.NAME
-			medicals = medicalManager.getMedicalsSortedByName();
+			try {
+				medicals = medicalManager.getMedicalsSortedByName();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		if (medicals == null) {
 			throw new OHAPIException(new OHExceptionMessage("Error while retrieving medicals."));
@@ -130,19 +148,39 @@ public class MedicalController {
 		LOGGER.info("Filtering the medicals...");
 		List<Medical> medicals = null;
 		if (description != null && type != null) {
-			medicals = medicalManager.getMedicals(description, type, critical);
+			try {
+				medicals = medicalManager.getMedicals(description, type, critical);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		else if (description != null && type == null) {
-			medicals = medicalManager.getMedicals(description);
+			try {
+				medicals = medicalManager.getMedicals(description);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		else if (description == null && type != null) {
-			medicals = medicalManager.getMedicals(type, nameSorted);
+			try {
+				medicals = medicalManager.getMedicals(type, nameSorted);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		else if (nameSorted){
-			medicals = medicalManager.getMedicals(null, nameSorted);
+			try {
+				medicals = medicalManager.getMedicals(null, nameSorted);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		else {
-			medicalManager.getMedicals();
+			try {
+				medicalManager.getMedicals();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		
 		if (medicals == null) {
@@ -170,7 +208,12 @@ public class MedicalController {
 			@RequestBody MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Creating a new medical ...");
-		Medical isCreatedMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		Medical isCreatedMedical = null;
+		try {
+			isCreatedMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedMedical == null) {
 			LOGGER.info("Medical is not created!");
             throw new OHAPIException(new OHExceptionMessage("Medical not created."));
@@ -191,7 +234,12 @@ public class MedicalController {
 			@RequestBody @Valid MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Updating a medical ...");
-		Medical isUpdatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		Medical isUpdatedMedical = null;
+		try {
+			isUpdatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedMedical == null) {
 			LOGGER.info("Medical is not updated!");
             throw new OHAPIException(new OHExceptionMessage("Medical not updated."));
@@ -208,7 +256,12 @@ public class MedicalController {
 	 */
 	@DeleteMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
-		Medical medical = medicalManager.getMedical(code);
+		Medical medical = null;
+		try {
+			medical = medicalManager.getMedical(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (medical == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
