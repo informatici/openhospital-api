@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -343,7 +344,7 @@ public class PatientControllerTest {
 
 		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
-		when(patientBrowserManagerMock.getPatient(any(int.class), any(int.class)))
+		when(patientBrowserManagerMock.getPatient(anyInt(), anyInt()))
 				.thenReturn(patientList);
 
 		this.mockMvc
