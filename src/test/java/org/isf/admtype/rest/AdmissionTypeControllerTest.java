@@ -40,6 +40,7 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -63,9 +64,11 @@ public class AdmissionTypeControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new AdmissionTypeController(admtManagerMock, admissionTypemapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -74,6 +77,11 @@ public class AdmissionTypeControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(admissionTypemapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test

@@ -68,6 +68,7 @@ import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.ward.data.WardHelper;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -126,9 +127,11 @@ public class AdmissionControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 						.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
 										diseaseManagerMock, operationManagerMock, pregTraitTypeManagerMock,
@@ -141,6 +144,11 @@ public class AdmissionControllerTest {
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(admissionMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(admittedMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 //	@Test
