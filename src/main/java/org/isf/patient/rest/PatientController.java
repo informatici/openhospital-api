@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
+import org.isf.patconsensus.manager.PatientConsensusBrowserManager;
+import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
@@ -71,6 +73,9 @@ public class PatientController {
 	protected AdmissionBrowserManager admissionManager;
 
 	@Autowired
+	private PatientConsensusBrowserManager patientConsensusManager;
+
+	@Autowired
 	protected PatientMapper patientMapper;
 
 	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper) {
@@ -81,6 +86,7 @@ public class PatientController {
 
 	/**
 	 * Create new {@link Patient}.
+	 *
 	 * @param newPatient
 	 * @return
 	 * @throws OHServiceException
@@ -90,13 +96,18 @@ public class PatientController {
 		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + " " + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient {}", name);
 
-		//TODO: remove this line when UI will be ready to collect the patient consensus
+		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
+		Patient patientt = patientMapper.map2Model(newPatient);
+		System.out.println(patientt.getPatientConsensus());
+		Patient patient = patientManager.savePatient(patientt);
 
-		Patient patient = patientManager.savePatient(patientMapper.map2Model(newPatient));
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
 		}
+		PatientConsensus patientConsensus = patient.getPatientConsensus();
+		patientConsensus.setPatient(patient);
+		patientConsensusManager.updatePatientConsensus(patientConsensus);
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
 
@@ -121,8 +132,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientDTO>> getPatients(
-					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+	public ResponseEntity<List<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		List<Patient> patients = patientManager.getPatient(page, size);
@@ -153,8 +163,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientDTO>> searchPatient(
-					@RequestParam(value = "firstName", defaultValue = "", required = false) String firstName,
+	public ResponseEntity<List<PatientDTO>> searchPatient(@RequestParam(value = "firstName", defaultValue = "", required = false) String firstName,
 					@RequestParam(value = "secondName", defaultValue = "", required = false) String secondName,
 					@RequestParam(value = "birthDate", defaultValue = "", required = false) LocalDateTime birthDate,
 					@RequestParam(value = "address", defaultValue = "", required = false) String address) throws OHServiceException {
