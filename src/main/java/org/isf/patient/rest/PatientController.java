@@ -98,16 +98,11 @@ public class PatientController {
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
-		Patient patientt = patientMapper.map2Model(newPatient);
-		System.out.println(patientt.getPatientConsensus());
-		Patient patient = patientManager.savePatient(patientt);
+		Patient patient = patientManager.savePatient( patientMapper.map2Model(newPatient));
 
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
 		}
-		PatientConsensus patientConsensus = patient.getPatientConsensus();
-		patientConsensus.setPatient(patient);
-		patientConsensusManager.updatePatientConsensus(patientConsensus);
 		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
 	}
 
