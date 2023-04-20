@@ -29,8 +29,8 @@ import javax.annotation.PostConstruct;
 import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.model.Patient;
-import org.isf.patient.model.PatientProfilePhoto;
 import org.isf.shared.GenericMapper;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.modelmapper.Provider;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
@@ -47,42 +47,7 @@ public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
 	}
 	@PostConstruct
 	private void postConstruct() {
-	}
-
-	@Override
-	public PatientDTO map2DTO(Patient fromObj) {
-		PatientDTO patientDTO = super.map2DTO(fromObj);
-//		if (fromObj.getPatientProfilePhoto() != null) {
-//			patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
-//		}
-		return patientDTO;
-
-	}
-	@Override
-	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
-		PatientDTO patientDTO = super.map2DTOWS(fromObj, status);
-//		if (fromObj.getPatientProfilePhoto() != null) {
-//			try {
-//				patientDTO.setBlobPhoto(fromObj.getPatientProfilePhoto().getPhoto());
-//			} catch (Exception e) {
-//				LOGGER.error("Error while trying to retrieve the profile photo.");
-//			}
-//		}
-		return patientDTO;
-
-	}
-
-	@Override
-	public Patient map2Model(PatientDTO toObj) {
-
-		Patient patient = super.map2Model(toObj);
-//		if (toObj.getBlobPhoto() != null) {
-//			PatientProfilePhoto photo = new PatientProfilePhoto();
-//			photo.setPatient(patient);
-//			photo.setPhoto(toObj.getBlobPhoto());
-//			patient.setPatientProfilePhoto(photo);
-//		}
-		return patient;
+		PatientMapping.addMapping(modelMapper);
 	}
 
 	@Override
