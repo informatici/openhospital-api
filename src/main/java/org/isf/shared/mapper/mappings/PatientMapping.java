@@ -22,7 +22,6 @@ public class PatientMapping {
 			mapper.<Boolean> map(src -> src.isConsensusServiceFlag(), (db, value) -> db.getPatientConsensus().setServiceFlag(value));
 			mapper.<Byte[]> map(src -> src.getBlobPhoto(), (db, value) -> db.getPatientProfilePhoto().setPhoto(value));
 			mapper.<Patient> map(src -> src, (db, value) -> {
-
 				db.getPatientConsensus().setPatient(value);
 			});
 		});
