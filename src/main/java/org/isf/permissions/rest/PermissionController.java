@@ -181,7 +181,7 @@ public class PermissionController {
 	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("deletePermission({})", id);
 		Boolean result = this.permissionManager.deletePermission(id);
-		return ResponseEntity.status(result.booleanValue() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+		return ResponseEntity.status(result ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 	}
 
 }

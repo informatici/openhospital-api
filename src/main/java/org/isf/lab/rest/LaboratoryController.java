@@ -313,7 +313,7 @@ public class LaboratoryController {
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
 
-		boolean updated = laboratoryManager.updateExamRequest(code.intValue(),
+		boolean updated = laboratoryManager.updateExamRequest(code,
 				LaboratoryStatus.valueOf(status.toUpperCase()));
 
 		if (!updated) {
