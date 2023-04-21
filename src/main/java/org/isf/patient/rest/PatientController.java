@@ -84,6 +84,13 @@ public class PatientController {
 		this.admissionManager = admissionManager;
 		this.patientMapper = patientMapper;
 	}
+	
+	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper, PatientConsensusBrowserManager patientConsensusManager) {
+		this.patientManager = patientManager;
+		this.admissionManager = admissionManager;
+		this.patientMapper = patientMapper;
+		this.patientConsensusManager = patientConsensusManager;
+	}
 
 	/**
 	 * Create new {@link Patient}.

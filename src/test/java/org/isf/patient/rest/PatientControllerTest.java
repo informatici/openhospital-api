@@ -31,7 +31,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
-import org.isf.shared.mapper.mappings.PatientMapping;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,6 +46,8 @@ import java.util.Optional;
 import org.isf.admission.data.AdmissionHelper;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
+import org.isf.patconsensus.manager.PatientConsensusBrowserManager;
+import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.dto.PatientSTATUS;
@@ -57,6 +58,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +87,9 @@ public class PatientControllerTest {
 	@Mock
 	private AdmissionBrowserManager admissionBrowserManagerMock;
 
+	@Mock
+	private PatientConsensusBrowserManager patientConsensusManagerMock;
+
 	private PatientMapper patientMapper = new PatientMapper();
 
 	private MockMvc mockMvc;
@@ -95,9 +100,10 @@ public class PatientControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+						.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper,
+										patientConsensusManagerMock))
+						.setControllerAdvice(new OHResponseEntityExceptionHandler())
+						.build();
 		ModelMapper modelMapper = new ModelMapper();
 		PatientMapping.addMapping(modelMapper);
 		modelMapper.addConverter(new BlobToByteArrayConverter());
@@ -120,12 +126,12 @@ public class PatientControllerTest {
 		String request = "/patients";
 
 		MvcResult result = this.mockMvc
-				.perform(post(request).content(new byte[] { 'a', 'b', 'c' }))
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isUnsupportedMediaType())
-				.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
-				.andReturn();
+						.perform(post(request).content(new byte[] { 'a', 'b', 'c' }))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isUnsupportedMediaType())
+						.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
@@ -144,16 +150,15 @@ public class PatientControllerTest {
 		String empty_body = "";
 
 		MvcResult result = this.mockMvc
-				.perform(
-						post(request)
-								.content(empty_body.getBytes())
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest())
-				.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
-				.andReturn();
+						.perform(
+										post(request)
+														.content(empty_body.getBytes())
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest())
+						.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
@@ -171,21 +176,20 @@ public class PatientControllerTest {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
-		when(patientBrowserManagerMock.getPatientByName(any(String.class))).thenReturn(null);  //FIXME: why we were searching by name?
+		when(patientBrowserManagerMock.getPatientByName(any(String.class))).thenReturn(null); // FIXME: why we were searching by name?
 
 		MvcResult result = this.mockMvc
-				.perform(
-						post(request)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(PatientHelper.asJsonString(newPatientDTO))
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient not created.")))
-				.andReturn();
+						.perform(
+										post(request)
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(PatientHelper.asJsonString(newPatientDTO)))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest()) // TODO Create OHCreateAPIException
+						.andExpect(content().string(containsString("Patient not created.")))
+						.andReturn();
 
-		//TODO Create OHCreateAPIException
+		// TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
@@ -204,18 +208,18 @@ public class PatientControllerTest {
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 		newPatientDTO.setCode(code);
 
-		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(patientMapper.map2Model(newPatientDTO)); //TODO: verify if it's correct
+		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(patientMapper.map2Model(newPatientDTO)); // TODO: verify if it's correct
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(PatientHelper.asJsonString(newPatientDTO)))
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString(code.toString())))
-				.andReturn();
+						.perform(post(request)
+										.contentType(MediaType.APPLICATION_JSON)
+										.content(PatientHelper.asJsonString(newPatientDTO)))
+						.andDo(log())
+						.andExpect(status().isCreated())
+						.andExpect(content().string(containsString(code.toString())))
+						.andReturn();
 
-		//TODO Create OHCreateAPIException
+		// TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
@@ -240,13 +244,13 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.getPatientByName(any(String.class))).thenReturn(newPatient);
 
 		this.mockMvc
-				.perform(
-						post(request)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(PatientHelper.asJsonString(newPatientDTO)))
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString(code.toString())));
+						.perform(
+										post(request)
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(PatientHelper.asJsonString(newPatientDTO)))
+						.andDo(log())
+						.andExpect(status().isCreated())
+						.andExpect(content().string(containsString(code.toString())));
 	}
 
 	/**
@@ -266,20 +270,26 @@ public class PatientControllerTest {
 		updatedAfterReadPatient.setCode(code);
 		updatedAfterReadPatient.setLock(3);
 
+		PatientConsensus newPatientConsensus = new PatientConsensus();
+		newPatientConsensus.setConsensusFlag(true);
+		newPatientConsensus.setPatient(updatedAfterReadPatient);
+
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(updatedAfterReadPatient);
+
+		when(patientConsensusManagerMock.getPatientConsensusByUserId(code)).thenReturn(Optional.ofNullable(newPatientConsensus));
 
 		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(null);
 
 		this.mockMvc
-				.perform(
-						put(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(PatientHelper.asJsonString(newPatientDTO)))
-				.andDo(log())
-				.andDo(print())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Patient not updated.")));
+						.perform(
+										put(request, code)
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(PatientHelper.asJsonString(newPatientDTO)))
+						.andDo(log())
+						.andDo(print())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest())
+						.andExpect(content().string(containsString("Patient not updated.")));
 
 	}
 
@@ -294,14 +304,14 @@ public class PatientControllerTest {
 		String request = "/patients/{code}";
 
 		MvcResult result = this.mockMvc
-				.perform(
-						put(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(new byte[3]))
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+						.perform(
+										put(request, code)
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(new byte[3]))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest())
+						.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", exception);
@@ -325,14 +335,14 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
-						.content(PatientHelper.asJsonString(newPatientDTO)))
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHUpdateAPIException
-				.andExpect(content().string(containsString("Patient not found."))).andReturn();
+						.perform(put(request, code).contentType(MediaType.APPLICATION_JSON)
+										.content(PatientHelper.asJsonString(newPatientDTO)))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest()) // TODO Create OHUpdateAPIException
+						.andExpect(content().string(containsString("Patient not found."))).andReturn();
 
-		//TODO Create OHUpdateAPIException
+		// TODO Create OHUpdateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
@@ -355,17 +365,16 @@ public class PatientControllerTest {
 		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
 		when(patientBrowserManagerMock.getPatient(anyInt(), anyInt()))
-				.thenReturn(patientList);
+						.thenReturn(patientList);
 
 		this.mockMvc
-				.perform(
-						get(request)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
-				.andReturn();
+						.perform(
+										get(request)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
+						.andReturn();
 
 	}
 
@@ -389,15 +398,13 @@ public class PatientControllerTest {
 		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(null);
 
 		this.mockMvc
-				.perform(
-						get(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-				.andReturn();
-
+						.perform(
+										get(request, code)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
+						.andReturn();
 
 	}
 
@@ -423,20 +430,20 @@ public class PatientControllerTest {
 		when(admissionBrowserManagerMock.getCurrentAdmission(patient)).thenReturn(admission);
 
 		this.mockMvc
-				.perform(
-						get(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-				.andReturn();
-
+						.perform(
+										get(request, code)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
+						.andReturn();
 
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * Test method for
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -447,17 +454,18 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		this.mockMvc
-				.perform(
-						get(request)
-								.param("code", code.toString())
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isNoContent());
+						.perform(
+										get(request)
+														.param("code", code.toString())
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isNoContent());
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * Test method for
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -465,17 +473,17 @@ public class PatientControllerTest {
 		String request = "/patients/search";
 
 		this.mockMvc
-				.perform(
-						get(request)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isNoContent());
+						.perform(
+										get(request)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isNoContent());
 	}
 
-
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * Test method for
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -486,13 +494,12 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.getPatientByName(name)).thenReturn(null);
 
 		this.mockMvc
-				.perform(
-						get(request)
-								.param("name", name)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isNoContent());
+						.perform(
+										get(request)
+														.param("name", name)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isNoContent());
 	}
 
 	/**
@@ -512,13 +519,12 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(true);
 
 		this.mockMvc
-				.perform(
-						delete(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")));
+						.perform(
+										delete(request, code)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString("true")));
 	}
 
 	/**
@@ -534,12 +540,11 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
 
 		this.mockMvc
-				.perform(
-						delete(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isNotFound());
+						.perform(
+										delete(request, code)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isNotFound());
 	}
 
 	/**
@@ -559,17 +564,16 @@ public class PatientControllerTest {
 		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(false);
 
 		MvcResult result = this.mockMvc
-				.perform(
-						delete(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHDeleteAPIException
-				.andExpect(content().string(containsString("Patient not deleted.")))
-				.andReturn();
+						.perform(
+										delete(request, code)
+														.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().is4xxClientError())
+						.andExpect(status().isBadRequest()) // TODO Create OHDeleteAPIException
+						.andExpect(content().string(containsString("Patient not deleted.")))
+						.andReturn();
 
-		//TODO Create OHDeleteAPIException
+		// TODO Create OHDeleteAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
 		LOGGER.debug("oHAPIException: {}", oHAPIException);
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
