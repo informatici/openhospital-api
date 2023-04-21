@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -98,7 +99,9 @@ public class PatientController {
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
-		Patient patient = patientManager.savePatient( patientMapper.map2Model(newPatient));
+		Patient patientModel = patientMapper.map2Model(newPatient);
+
+		Patient patient = patientManager.savePatient(patientModel);
 
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
@@ -116,7 +119,13 @@ public class PatientController {
 		if (patientRead == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
+		Optional<PatientConsensus> patientConsensus = patientConsensusManager.getPatientConsensusByUserId(patientRead.getCode());
+		if (patientConsensus.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
+		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
+		updatePatientModel.getPatientConsensus().setPatient(updatePatientModel);
+		updatePatientModel.getPatientConsensus().setId(patientConsensus.get().getId());
 		updatePatientModel.setLock(patientRead.getLock());
 		Patient patient = patientManager.savePatient(updatePatientModel);
 		if (patient == null) {
