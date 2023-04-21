@@ -81,7 +81,7 @@ public class PermissionController {
 
 	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrieveAllPermissions({})");
+		LOGGER.info("retrieving permissions: retrieveAllPermissions()");
 		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
 		if (permissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -126,7 +126,7 @@ public class PermissionController {
 
 	@PutMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable int id, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("Update permission id:"  +  id);
+		LOGGER.info("Update permission id: {}", id);
 		permissionDTO.setId(id);
 
 		if (!this.permissionManager.exists(permissionDTO.getId())) {
@@ -181,7 +181,7 @@ public class PermissionController {
 	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("deletePermission({})", id);
 		Boolean result = this.permissionManager.deletePermission(id);
-		return ResponseEntity.status(result.booleanValue() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+		return ResponseEntity.status(result ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 	}
 
 }

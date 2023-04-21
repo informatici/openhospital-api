@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import org.isf.shared.mapper.mappings.PatientMapping;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -56,6 +57,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -87,9 +89,11 @@ public class PatientControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -99,6 +103,11 @@ public class PatientControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	/**
@@ -331,7 +340,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(java.lang.Integer, java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(int, int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -345,7 +354,7 @@ public class PatientControllerTest {
 
 		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
 
-		when(patientBrowserManagerMock.getPatient(any(Integer.class), any(Integer.class)))
+		when(patientBrowserManagerMock.getPatient(anyInt(), anyInt()))
 				.thenReturn(patientList);
 
 		this.mockMvc
@@ -361,13 +370,13 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
 	@Test
 	public void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
@@ -393,13 +402,13 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(java.lang.Integer)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
 	@Test
 	public void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
 		Admission admission = AdmissionHelper.setup();
@@ -427,7 +436,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -448,7 +457,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test
@@ -466,7 +475,7 @@ public class PatientControllerTest {
 
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+	 * Test method for {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
 	 * @throws Exception
 	 */
 	@Test

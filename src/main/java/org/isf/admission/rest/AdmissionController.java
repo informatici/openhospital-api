@@ -137,7 +137,7 @@ public class AdmissionController {
 	/**
 	 * Get {@link Admission} for the specified id.
 	 * 
-	 * @param id
+	 * @param patientCode
 	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
@@ -308,7 +308,7 @@ public class AdmissionController {
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
-		boolean isDeleted = false;
+		boolean isDeleted;
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission != null) {
 			isDeleted = admissionManager.setDeleted(id);
@@ -332,7 +332,7 @@ public class AdmissionController {
 
 		LOGGER.info("discharge the patient");
 		Patient patient = patientManager.getPatientById(patientCode);
-		Admission admissionUpdated = null;
+		Admission admissionUpdated;
 
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);

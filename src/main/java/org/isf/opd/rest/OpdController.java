@@ -121,7 +121,7 @@ public class OpdController {
 
 	/**
 	 * Create a new {@link OpdWithOperatioRowDTO}.
-	 * @param OpdWithOperatioRowDTO
+	 * @param opdWithOperatioRowDTO
 	 * @return the OpdWithOperatioRowDTO stored
 	 * @throws OHServiceException
 	 */
@@ -193,7 +193,7 @@ public class OpdController {
 	/**
 	 * Updates the specified {@link OpdWithOperatioRowDTO}.
 	 * @param code
-	 * @param OpdWithOperatioRowDTO
+	 * @param opdWithOperatioRowDTO
 	 * @return the OpdWithOperatioRowDTO updated
 	 * @throws OHServiceException
 	 */
@@ -288,7 +288,7 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("patientCode: {}", patientCode);
-		List<Opd> opds = null;
+		List<Opd> opds;
 		if (patientCode != 0) {
 			opds = opdManager.getOpdList(patientCode);
 		} else {

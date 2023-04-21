@@ -193,8 +193,7 @@ public class PatientController {
 		}
 
 		patientListDTO = patientList.stream().map(patient -> {
-			Admission admission = null;
-			admission = admissionManager.getCurrentAdmission(patient);
+			Admission admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
 			return patientMapper.map2DTOWS(patient, status);
 		}).collect(Collectors.toList());
