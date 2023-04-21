@@ -40,6 +40,7 @@ import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.ward.manager.WardBrowserManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -72,9 +73,11 @@ public class OpdControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowManager, opRowMapper, wardManager))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -83,6 +86,11 @@ public class OpdControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(opdMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test

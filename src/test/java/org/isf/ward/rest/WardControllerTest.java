@@ -41,6 +41,7 @@ import org.isf.ward.dto.WardDTO;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
 import org.isf.ward.model.Ward;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -64,9 +65,11 @@ public class WardControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new WardController(wardBrowserManagerMock, wardMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -75,6 +78,11 @@ public class WardControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(wardMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test

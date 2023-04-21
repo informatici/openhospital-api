@@ -41,6 +41,7 @@ import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -64,9 +65,11 @@ public class VaccineControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineController(vaccineBrowserManagerMock, vaccineMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -75,6 +78,11 @@ public class VaccineControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(vaccineMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test

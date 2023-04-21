@@ -40,6 +40,7 @@ import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -63,9 +64,11 @@ public class VisitsControllerTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VisitsController(visitManagerMock, visitMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -74,6 +77,11 @@ public class VisitsControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(visitMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test

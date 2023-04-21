@@ -76,6 +76,7 @@ import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.testing.rest.ControllerBaseTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -117,9 +118,11 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -135,6 +138,11 @@ public class BillControllerTest extends ControllerBaseTest {
 		ReflectionTestUtils.setField(billPaymentsMapper, "modelMapper", modelMapper);
 
 		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test
