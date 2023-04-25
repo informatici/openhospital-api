@@ -32,6 +32,7 @@ import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.ErrorDescription;
@@ -79,7 +80,7 @@ public class LoginController {
 			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		} catch (Exception e) {
-			throw new OHAPIException(new OHExceptionMessage("user.wrongusernameorpassword"));
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
 		}
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
