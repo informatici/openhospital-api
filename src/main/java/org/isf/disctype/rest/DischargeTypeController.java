@@ -75,7 +75,7 @@ public class DischargeTypeController {
 	ResponseEntity<DischargeTypeDTO> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
 		LOGGER.info("Create discharge type {}", code);
-		boolean isCreated = false;
+		boolean isCreated;
 		try {
 			isCreated = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		} catch (OHServiceException e) {
@@ -108,7 +108,7 @@ public class DischargeTypeController {
 	ResponseEntity<DischargeTypeDTO> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update dischargetypes code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = discTypeManager.isCodePresent(dischTypeDTO.getCode());
 		} catch (OHServiceException e) {
@@ -117,7 +117,7 @@ public class DischargeTypeController {
 		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("Discharge Type not found."));
 		}
-		boolean isUpdated = false;
+		boolean isUpdated;
 		try {
 			isUpdated = discTypeManager.updateDischargeType(dischType);
 		} catch (OHServiceException e) {
@@ -161,7 +161,7 @@ public class DischargeTypeController {
 	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete discharge type code: {}", code);
 		boolean isDeleted = false;
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = discTypeManager.isCodePresent(code);
 		} catch (OHServiceException e) {

@@ -85,7 +85,7 @@ public class ExamTypeController {
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
-    	boolean isPresent = false;
+    	boolean isPresent;
     	try {
     		isPresent = examTypeBrowserManager.isCodePresent(code);
 		} catch (OHServiceException e) {
@@ -141,7 +141,7 @@ public class ExamTypeController {
         if (!examType.isPresent()) {
             throw new OHAPIException(new OHExceptionMessage("examtype.notfound"));
         }
-        boolean isDeleted = false;
+        boolean isDeleted;
         try {
         	isDeleted = examTypeBrowserManager.deleteExamType(examType.get());
 		} catch (OHServiceException e) {

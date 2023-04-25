@@ -75,7 +75,7 @@ public class DeliveryTypeController {
 	ResponseEntity<DeliveryTypeDTO> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		String code = dlvrTypeDTO.getCode();
 		LOGGER.info("Create Delivery type {}", code);
-		boolean isCreated = false; 
+		boolean isCreated; 
         try {
         	isCreated = dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
 		} catch (OHServiceException e) {
@@ -108,7 +108,7 @@ public class DeliveryTypeController {
 	ResponseEntity<DeliveryTypeDTO> updateDeliveryTypet(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		LOGGER.info("Update deliverytypes code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
-		boolean isPresent = false; 
+		boolean isPresent; 
         try {
 			isPresent = dlvrtypeManager.isCodePresent(dlvrType.getCode());
 		} catch (OHServiceException e) {
@@ -117,7 +117,7 @@ public class DeliveryTypeController {
 		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("deliverytype.notfound"));
 		}
-		boolean isUpdated = false;
+		boolean isUpdated;
 		try {
 			isUpdated = dlvrtypeManager.updateDeliveryType(dlvrType);
 			} catch (OHServiceException e) {
@@ -161,7 +161,7 @@ public class DeliveryTypeController {
 	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Delivery type code: {}", code);
 		boolean isDeleted = false;
-		boolean isPresent = false; 
+		boolean isPresent; 
         try {
         	isPresent = dlvrtypeManager.isCodePresent(code);
 		} catch (OHServiceException e) {

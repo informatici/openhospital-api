@@ -304,7 +304,7 @@ public class AdmissionController {
 	public ResponseEntity<Integer> getNextYProg(@RequestParam("wardcode") String wardCode) throws OHServiceException {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = wardManager.isCodePresent(wardCode);
 		} catch (OHServiceException e) {
@@ -331,7 +331,7 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/getBedsOccupationInWard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = wardManager.isCodePresent(wardCode);
 		} catch (OHServiceException e) {
@@ -357,7 +357,7 @@ public class AdmissionController {
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
-		boolean isDeleted = false;
+		boolean isDeleted;
 		Admission admission = new Admission();
 		try {
 			admission = admissionManager.getAdmission(id);

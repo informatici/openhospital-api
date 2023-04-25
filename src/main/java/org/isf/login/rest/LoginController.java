@@ -32,7 +32,6 @@ import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
-import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.ErrorDescription;
@@ -73,14 +72,14 @@ public class LoginController {
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		if (loginRequest.getPassword().length() < 10) {
 			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,
-					"password too short", OHSeverityLevel.ERROR));
+					"user.passwordtooshort", OHSeverityLevel.ERROR));
 		}
 		Authentication authentication = null;
 		try {
 			authentication = authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		} catch (Exception e) {
-			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+			throw new OHAPIException(new OHExceptionMessage("user.wrongusernameorpassword"));
 		}
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -93,8 +92,8 @@ public class LoginController {
 					sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
-			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e1.getMessage())));
-		}
+			throw new OHAPIException(new OHExceptionMessage("user.unabletologuserlogininthesessionaudittable"));
+		}	
 
 		return ResponseEntity.ok(new LoginResponse(jwt, userDetails));
 	}

@@ -124,11 +124,11 @@ public class MedicalStockWardController {
 			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			throw new OHAPIException(new OHExceptionMessage("medical.notfound"));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("Ward not found."));
+			throw new OHAPIException(new OHExceptionMessage("ward.notfound"));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
@@ -268,24 +268,24 @@ public class MedicalStockWardController {
 	@PutMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateMovementWard(@Valid @RequestBody MovementWardDTO movementWardDTO) throws OHServiceException {
 		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
 		if (!isPresent) {
-			throw new OHAPIException(new OHExceptionMessage("Movement ward not found."));
+			throw new OHAPIException(new OHExceptionMessage("medicalstockward.movementwardnotfound"));
 		}
 
-		boolean isUpdated = false;
+		boolean isUpdated;
 		try {
 			isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
 		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Movement ward not updated."));
+			throw new OHAPIException(new OHExceptionMessage("medicalstockward.movementwardnotupdated"));
 		}
 		return ResponseEntity.ok(isUpdated);
 	}

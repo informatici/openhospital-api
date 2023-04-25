@@ -25,6 +25,7 @@ package org.isf.visits.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -77,6 +78,11 @@ public class VisitsController {
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
+        try {
+        	visit = visitManager.getVisits(patID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<VisitDTO> listVisit = new ArrayList<>();
         for(Visit visitP : visit) {	
 			VisitDTO visitDTO =  mapper.map2DTO(visitP);
@@ -100,7 +106,12 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 	    LOGGER.info("Create Visit: {}", newVisit);
 	    Visit visitD = mapper.map2Model(newVisit);
-        Visit visit = visitManager.newVisit(visitD);
+        Visit visit;
+        try {
+        	visit = visitManager.newVisit(visitD);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); //TODO: verify if it's correct
     }
 
@@ -115,9 +126,14 @@ public class VisitsController {
     public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
         LOGGER.info("Create Visits");
         List<Visit> listVisits = mapper.map2ModelList(newVisits);
-        boolean areCreated = visitManager.newVisits(listVisits);
+        boolean areCreated;
+        try {
+        	areCreated = visitManager.newVisits(listVisits);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (!areCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "visit.arenotcreated", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
@@ -132,9 +148,14 @@ public class VisitsController {
     @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
-        boolean areDeleted = visitManager.deleteAllVisits(patID);
+        boolean areDeleted;
+        try {
+        	areDeleted = visitManager.deleteAllVisits(patID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (!areDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "visit.arenotdeleted", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(true);
     }
@@ -149,9 +170,14 @@ public class VisitsController {
     @PutMapping(value = "/visit/{visitID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
-        Visit visit = visitManager.findVisit(visitID);
+        Visit visit;
+        try {
+        	visit = visitManager.findVisit(visitID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (visit == null) {
-            throw new OHAPIException( new OHExceptionMessage(null, "Visit not found.", OHSeverityLevel.ERROR));
+            throw new OHAPIException( new OHExceptionMessage(null, "visit.notfound", OHSeverityLevel.ERROR));
         }
         
         if (visit.getVisitID() != updateVisit.getVisitID()) {
@@ -159,9 +185,14 @@ public class VisitsController {
         }
         
         Visit visitUp = mapper.map2Model(updateVisit);
-        Visit visitUpdate = visitManager.newVisit(visitUp);
+        Visit visitUpdate = null;
+        try {
+        	visitUpdate = visitManager.newVisit(visitUp);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (visitUpdate == null) {
-        	throw new OHAPIException( new OHExceptionMessage(null, "visit is not updated.", OHSeverityLevel.ERROR));
+        	throw new OHAPIException( new OHExceptionMessage(null, "visit.isnotupdated", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }

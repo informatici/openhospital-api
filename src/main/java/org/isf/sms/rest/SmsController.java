@@ -23,10 +23,12 @@ package org.isf.sms.rest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.sms.dto.SmsDTO;
 import org.isf.sms.manager.SmsManager;
@@ -73,9 +75,14 @@ public class SmsController {
 			@RequestParam(required = true) String dateFrom,
 			@RequestParam(required = true) String dateTo) throws OHServiceException {
 		LOGGER.info("Fetching the list of sms");
-		LocalDateTime from = LocalDate.parse(dateFrom).atStartOfDay();
-		LocalDateTime to = LocalDate.parse(dateTo).atStartOfDay();
-		List<Sms> smsList = smsManager.getAll(from, to);
+		List<Sms> smsList = new ArrayList<>();
+		try {
+			LocalDateTime from = LocalDate.parse(dateFrom).atStartOfDay();
+			LocalDateTime to = LocalDate.parse(dateTo).atStartOfDay();
+			smsList = smsManager.getAll(from, to);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);
 		if (mappedSmsList.isEmpty()) {
 			LOGGER.info("No sms found");
@@ -96,7 +103,11 @@ public class SmsController {
 	public ResponseEntity<Boolean> saveSms(
 			@RequestBody @Valid SmsDTO smsDTO,
 			@RequestParam(defaultValue="false") boolean split) throws OHServiceException {
-		smsManager.saveOrUpdate(smsMapper.map2Model(smsDTO), split);
+		try {
+			smsManager.saveOrUpdate(smsMapper.map2Model(smsDTO), split);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.ok(true);
 	}
 	
@@ -110,9 +121,13 @@ public class SmsController {
 	public ResponseEntity<Boolean> deleteSms(@RequestBody @Valid List<SmsDTO> smsDTOList) throws OHServiceException {
 		List<Sms> smsList = smsMapper.map2ModelList(smsDTOList);
 		if (smsList.stream().anyMatch(sms -> sms.getSmsId() <= 0)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Some Sms are not found.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "sms.somesmsarenotfound", OHSeverityLevel.ERROR));
 		}
-		smsManager.delete(smsList);
+		try {
+			smsManager.delete(smsList);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.ok(true);
 	}
 }

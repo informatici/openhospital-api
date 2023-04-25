@@ -69,17 +69,17 @@ public class ReportsController {
 		try {
 			resource = new UrlResource(report.toUri());
 			if (!resource.exists()) {
-				throw new OHAPIException(new OHExceptionMessage(null, "File not found", OHSeverityLevel.ERROR));
+				throw new OHAPIException(new OHExceptionMessage(null, "stats.filenotfound", OHSeverityLevel.ERROR));
 			}
 		} catch (MalformedURLException e) {
-			throw new OHAPIException(new OHExceptionMessage(null, "File not found", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "stats.filenotfound", OHSeverityLevel.ERROR));
 		}
 
 		String contentType;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 		} catch (IOException ex) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Failed to load the file's type", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "stats.failedtoloadthefiletype", OHSeverityLevel.ERROR));
 		}
 
 		// Fallback to the default content type if type could not be determined

@@ -293,7 +293,7 @@ public class DiseaseController {
 	@PostMapping(value = "/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 	    	isPresent = diseaseManager.isCodePresent(disease.getCode());
 		} catch (OHServiceException e) {
@@ -302,7 +302,7 @@ public class DiseaseController {
 		if (isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("Duplicated disease code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		boolean isSame = false;
+		boolean isSame;
 		try {
 	    	isSame = diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode());
 		} catch (OHServiceException e) {
@@ -333,7 +333,7 @@ public class DiseaseController {
 	@PutMapping(value="/diseases", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseDTO> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 	    	isPresent = diseaseManager.isCodePresent(disease.getCode());
 		} catch (OHServiceException e) {

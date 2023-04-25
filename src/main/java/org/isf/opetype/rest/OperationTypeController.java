@@ -21,6 +21,7 @@
  */
 package org.isf.opetype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.isf.opetype.dto.OperationTypeDTO;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.mapper.OperationTypeMapper;
 import org.isf.opetype.model.OperationType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -74,9 +76,14 @@ public class OperationTypeController {
 	ResponseEntity<OperationTypeDTO> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
 		String code = operationTypeDTO.getCode();
 		LOGGER.info("Create operation Type {}", code);
-		OperationType isCreatedOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
+		OperationType isCreatedOperationType;
+		try {
+			isCreatedOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "operationtype.isnotcreated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperationType));
 	}
@@ -92,12 +99,23 @@ public class OperationTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
-		if (!opeTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type not found.", OHSeverityLevel.ERROR));
+		boolean isPresent;
+		try {
+        	isPresent = opeTypeManager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		OperationType isUpdatedOperationType = opeTypeManager.updateOperationType(opeType);
+		if (!isPresent) {
+			throw new OHAPIException(new OHExceptionMessage(null, "operationtype.notfound", OHSeverityLevel.ERROR));
+		}
+		OperationType isUpdatedOperationType;
+		try {
+			isUpdatedOperationType = opeTypeManager.updateOperationType(opeType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Operation Type is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "operationtype.isnotupdated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperationType));
 	}
@@ -110,7 +128,12 @@ public class OperationTypeController {
 	@GetMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationTypeDTO>> getOperationTypes() throws OHServiceException {
 		LOGGER.info("Get all operation Types ");
-		List<OperationType> operationTypes = opeTypeManager.getOperationType();
+		List<OperationType> operationTypes = new ArrayList<>();
+		try {
+			operationTypes = opeTypeManager.getOperationType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<OperationTypeDTO> operationTypeDTOs = mapper.map2DTOList(operationTypes);
 		if (operationTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationTypeDTOs);
@@ -129,15 +152,19 @@ public class OperationTypeController {
 	public ResponseEntity<Boolean> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation Type code: {}", code);
 		boolean isDeleted = false;
-		if (opeTypeManager.isCodePresent(code)) {
-			List<OperationType> opeTypes = opeTypeManager.getOperationType();
-			List<OperationType> opeTypeFounds = opeTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
-			if (!opeTypeFounds.isEmpty()) {
-				isDeleted = opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
+		try {
+			if (opeTypeManager.isCodePresent(code)) {
+				List<OperationType> opeTypes = opeTypeManager.getOperationType();
+				List<OperationType> opeTypeFounds = opeTypes.stream().filter(ad -> ad.getCode().equals(code))
+						.collect(Collectors.toList());
+				if (!opeTypeFounds.isEmpty()) {
+					isDeleted = opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
+				}
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
 
 		return ResponseEntity.ok(isDeleted);

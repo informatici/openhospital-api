@@ -21,8 +21,10 @@
  */
 package org.isf.ward.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -73,7 +75,12 @@ public class WardController {
     @GetMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWards() throws OHServiceException {
         LOGGER.info("Get wards");
-        List<Ward> wards = wardManager.getWards();
+        List<Ward> wards = new ArrayList<>();
+        try {
+        	wards = wardManager.getWards();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -91,7 +98,12 @@ public class WardController {
     @GetMapping(value = "/wardsNoMaternity", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<WardDTO>> getWardsNoMaternity() throws OHServiceException {
         LOGGER.info("Get wards no maternity");
-        List<Ward> wards = wardManager.getWardsNoMaternity();
+        List<Ward> wards = new ArrayList<>();
+        try {
+        	wards = wardManager.getWardsNoMaternity();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -110,8 +122,18 @@ public class WardController {
     @GetMapping(value = "/wards/occupation/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> getCurrentOccupation(@PathVariable String code) throws OHServiceException {
     	LOGGER.info("Get current occupation ward code: {}", code);
-        Ward ward = wardManager.findWard(code);
-        int numberOfPatients = wardManager.getCurrentOccupation(ward);
+        Ward ward;
+        try {
+        	ward = wardManager.findWard(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        int numberOfPatients = 0;
+        try {
+        	numberOfPatients = wardManager.getCurrentOccupation(ward);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (numberOfPatients == -1) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } else {
@@ -129,7 +151,12 @@ public class WardController {
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<WardDTO> newWard(@RequestBody WardDTO newWard) throws OHServiceException {
 	    LOGGER.info("Create Ward: {}", newWard);
-        Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
+        Ward wardCreated = null;
+        try {
+        	wardCreated = wardManager.newWard(mapper.map2Model(newWard));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (wardCreated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created.", OHSeverityLevel.ERROR));
         }
@@ -148,7 +175,12 @@ public class WardController {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
 	    Ward ward = mapper.map2Model(updateWard);
 	    ward.setLock(updateWard.getLock());
-        Ward wardUpdated = wardManager.updateWard(ward);
+        Ward wardUpdated = null;
+        try {
+        	wardUpdated = wardManager.updateWard(ward);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (wardUpdated == null) {
             throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated.", OHSeverityLevel.ERROR));
         }
@@ -167,7 +199,12 @@ public class WardController {
     public ResponseEntity<Boolean> deleteWard(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete Ward with code: {}", code);
         boolean isDeleted;
-        Ward ward = wardManager.findWard(code);
+        Ward ward;
+        try {
+        	ward = wardManager.findWard(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (ward != null) {
             isDeleted = wardManager.deleteWard(ward);
             if (!isDeleted) {
@@ -188,7 +225,12 @@ public class WardController {
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardCode(@PathVariable(value = "code") String code) throws OHServiceException {
 	    LOGGER.info("Check ward code: {}", code);
-        boolean check = wardManager.isCodePresent(code);
+        boolean check;
+        try {
+        	check = wardManager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         return ResponseEntity.ok(check);
     }
 
@@ -203,7 +245,12 @@ public class WardController {
     @GetMapping(value = "/wards/check/maternity/{createIfNotExist}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkWardMaternityCode(@PathVariable Boolean createIfNotExist) throws OHServiceException {
         LOGGER.info("Check ward maternity code");
-        boolean check = wardManager.maternityControl(createIfNotExist);
+        boolean check;
+        try {
+        	check = wardManager.maternityControl(createIfNotExist);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         return ResponseEntity.ok(check);
     }
 

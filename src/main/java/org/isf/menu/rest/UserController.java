@@ -42,6 +42,7 @@ import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
 import org.isf.permissions.model.Permission;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -97,9 +98,17 @@ public class UserController {
 		LOGGER.info("Fetching the list of users");
 		List<User> users;
 		if (groupID != null) {
-			users = userManager.getUser(groupID);
+			try {
+				users = userManager.getUser(groupID);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
-			users = userManager.getUser();
+			try {
+				users = userManager.getUser();
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
 		if (mappedUsers.isEmpty()) {
@@ -118,9 +127,14 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
-		User user = userManager.getUserByName(userName);
+		User user = null;
+		try {
+			user = userManager.getUserByName(userName);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+			throw new OHAPIException(new OHExceptionMessage("user.notfound"));
 		}
 		return ResponseEntity.ok(userMapper.map2DTO(user));
 	}
@@ -135,10 +149,15 @@ public class UserController {
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create a user");
 		User user = userMapper.map2Model(userDTO);
-		boolean isCreated = userManager.newUser(user);
+		boolean isCreated;
+		try {
+			isCreated = userManager.newUser(user);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isCreated) {
 			LOGGER.info("User is not created!");
-            throw new OHAPIException(new OHExceptionMessage("User not created."));
+            throw new OHAPIException(new OHExceptionMessage("user.notcreated"));
         }
 		LOGGER.info("User successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
@@ -155,20 +174,33 @@ public class UserController {
 			@Valid @RequestBody UserDTO userDTO, 
 			@RequestParam(name="password", defaultValue="false") boolean updatePassword) throws OHServiceException {
 		User user = userMapper.map2Model(userDTO);
-		User foundUser = userManager.getUserByName(user.getUserName());
+		User foundUser;
+		try {
+			foundUser = userManager.getUserByName(user.getUserName());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+			throw new OHAPIException(new OHExceptionMessage("user.notfound"));
 		}
 		boolean isUpdated;
 		if (updatePassword) {
-			isUpdated = userManager.updatePassword(user);
+			try {
+				isUpdated = userManager.updatePassword(user);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
-			isUpdated = userManager.updateUser(user);
+			try {
+				isUpdated = userManager.updateUser(user);
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		}
 		if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("User not updated."));
+			throw new OHAPIException(new OHExceptionMessage("user.notupdated"));
 		}
 	}
 	
@@ -179,15 +211,25 @@ public class UserController {
 	 */
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteUser(@PathVariable String username) throws OHServiceException {
-		User foundUser = userManager.getUserByName(username);
-		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+		User foundUser;
+		try {
+			foundUser = userManager.getUserByName(username);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		boolean isDelete = userManager.deleteUser(foundUser);
+		if (foundUser == null) {
+			throw new OHAPIException(new OHExceptionMessage("user.notfound"));
+		}
+		boolean isDelete;
+		try {
+			isDelete = userManager.deleteUser(foundUser);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isDelete) {
 			return ResponseEntity.ok(isDelete);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("User not deleted."));
+			throw new OHAPIException(new OHExceptionMessage("user.notdeleted"));
 		}
 	}
 	
@@ -198,7 +240,12 @@ public class UserController {
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserGroupDTO>> getUserGroup() throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user groups");
-        List<UserGroup> groups = userManager.getUserGroup();
+        List<UserGroup> groups = new ArrayList<>();
+        try {
+        	 groups = userManager.getUserGroup();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
         if (mappedGroups.isEmpty()) {
 			LOGGER.info("No group found");
@@ -218,9 +265,14 @@ public class UserController {
 	public ResponseEntity<List<UserMenuItemDTO>> getMenu(@PathVariable String username) throws OHServiceException {
 		User user = userManager.getUserByName(username);
 		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+			throw new OHAPIException(new OHExceptionMessage("user.notfound"));
 		}
-        List<UserMenuItem> menuItems = userManager.getMenu(user);
+        List<UserMenuItem> menuItems = new ArrayList<>();
+        try {
+        	menuItems = userManager.getMenu(user);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<UserMenuItemDTO> mappedMenuItems = userMenuItemMapper.map2DTOList(menuItems);
         if (mappedMenuItems.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMenuItems);
@@ -236,7 +288,12 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/group-menus/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserMenuItemDTO>> getGroupMenu(@PathVariable("group_code") String code) throws OHServiceException {
-        UserGroup group = loadUserGroup(code);
+        UserGroup group;
+        try {
+        	group = loadUserGroup(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<UserMenuItemDTO> menus = userMenuItemMapper.map2DTOList(userManager.getGroupMenu(group));
         if (menus.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(menus);
@@ -255,14 +312,24 @@ public class UserController {
 	public ResponseEntity<Boolean> setGroupMenu(
 			@PathVariable("group_code") String code, 
 			@Valid @RequestBody List<UserMenuItemDTO> menusDTO) throws OHServiceException {
-		UserGroup group = loadUserGroup(code);
+		UserGroup group;
+		try {
+        	group = loadUserGroup(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<UserMenuItem> menus = new ArrayList<>();
 		menus.addAll(userMenuItemMapper.map2ModelList(menusDTO));
-        boolean done = userManager.setGroupMenu(group, menus);
+        boolean done;
+        try {
+        	done = userManager.setGroupMenu(group, menus);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (done) {
         	return ResponseEntity.ok(done);
         } else {
-        	throw new OHAPIException(new OHExceptionMessage("Group rights not updated."));
+        	throw new OHAPIException(new OHExceptionMessage("user.grouprightsnotupdate"));
         }
 	}
 	
@@ -273,12 +340,22 @@ public class UserController {
 	 */
 	@DeleteMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		UserGroup group = loadUserGroup(code);
-		boolean isDeleted = userManager.deleteGroup(group);
+		UserGroup group;
+		try {
+			group = loadUserGroup(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		boolean isDeleted;
+		try {
+			isDeleted = userManager.deleteGroup(group);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isDeleted) {
 			return ResponseEntity.ok(isDeleted);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
+			throw new OHAPIException(new OHExceptionMessage("user.usergroupnotdeleted"));
 		}
 	}
 	
@@ -290,9 +367,14 @@ public class UserController {
 	@PostMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
 		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
-		boolean isCreated = userManager.newUserGroup(userGroup);
+		boolean isCreated;
+		try {
+			isCreated = userManager.newUserGroup(userGroup);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isCreated) {
-            throw new OHAPIException(new OHExceptionMessage("User group not created."));
+            throw new OHAPIException(new OHExceptionMessage("user.usergroupenotcreated"));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
@@ -305,21 +387,37 @@ public class UserController {
 	@PutMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
         UserGroup group = userGroupMapper.map2Model(aGroup);
-        if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
-        	throw new OHAPIException(new OHExceptionMessage("User group not found."));
+        boolean isPresent;
+        try {
+			isPresent= userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+        if (isPresent) {
+        	throw new OHAPIException(new OHExceptionMessage("user.usergroupnotfound"));
         }
-        boolean isUpdated = userManager.updateUserGroup(group);
+        boolean isUpdated;
+        try {
+        	isUpdated = userManager.updateUserGroup(group);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (isUpdated) {
 			return ResponseEntity.ok(isUpdated);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
+			throw new OHAPIException(new OHExceptionMessage("user.usergroupenotupdated"));
 		}
 	}
 	
 	private UserGroup loadUserGroup(String code) throws OHServiceException {
-		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
+		List<UserGroup> group = new ArrayList<>();
+		try {
+			group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (group.isEmpty()) {
-        	throw new OHAPIException(new OHExceptionMessage("User group not found."));
+        	throw new OHAPIException(new OHExceptionMessage("user.usergroupnotfound"));
         }
         return group.get(0);
 	}

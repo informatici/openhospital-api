@@ -23,6 +23,7 @@ package org.isf.shared.exceptions;
 
 import java.util.Locale;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.utils.exception.OHDBConnectionException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHDataLockFailureException;
@@ -46,22 +47,26 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
 
     @ExceptionHandler(value = {OHDataValidationException.class})
     protected ResponseEntity<Object> handleOHServiceValidationException(OHServiceException ex) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.BAD_REQUEST, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.BAD_REQUEST, ex));
     }
 
     @ExceptionHandler(value = {OHServiceException.class})
     protected ResponseEntity<Object> handleOHServiceException(OHServiceException ex) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHReportException.class})
     protected ResponseEntity<Object> handleReportException(OHReportException ex, Locale locale) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHInvalidSQLException.class})
     protected ResponseEntity<Object> handleInvalidSqlException(OHInvalidSQLException ex, Locale locale) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHOperationNotAllowedException.class})
@@ -71,27 +76,32 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
 
     @ExceptionHandler(value = {OHDicomException.class})
     protected ResponseEntity<Object> handleDicomException(OHDicomException ex, Locale locale) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHDBConnectionException.class})
     protected ResponseEntity<Object> handleDbConnectionException(OHDBConnectionException ex, Locale locale) {
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
         return buildResponseEntity(new OHAPIError(HttpStatus.SERVICE_UNAVAILABLE, ex));
     }
 
     @ExceptionHandler(value = {OHDataIntegrityViolationException.class})
     protected ResponseEntity<Object> handleDataIntegrityViolationException(OHDataIntegrityViolationException ex, Locale locale) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHDataLockFailureException.class})
     protected ResponseEntity<Object> handleDbLockFailureException(OHDataLockFailureException ex, Locale locale) {
-        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
     @ExceptionHandler(value = {OHAPIException.class})
     protected ResponseEntity<Object> handleOHAPIException(OHAPIException ex) {
-        return buildResponseEntity(new OHAPIError(ex.getStatus(), ex));
+    	ex.getMessages().get(0).setMessage(FormatErrorMessage.format(ex.getMessages().get(0).getMessage()));
+    	return buildResponseEntity(new OHAPIError(ex.getStatus(), ex));
     }
 
     private ResponseEntity<Object> buildResponseEntity(OHAPIError apiError) {

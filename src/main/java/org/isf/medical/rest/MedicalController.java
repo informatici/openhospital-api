@@ -208,7 +208,7 @@ public class MedicalController {
 			@RequestBody MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Creating a new medical ...");
-		Medical isCreatedMedical = null;
+		Medical isCreatedMedical;
 		try {
 			isCreatedMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		} catch (OHServiceException e) {
@@ -234,7 +234,7 @@ public class MedicalController {
 			@RequestBody @Valid MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Updating a medical ...");
-		Medical isUpdatedMedical = null;
+		Medical isUpdatedMedical;
 		try {
 			isUpdatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		} catch (OHServiceException e) {
@@ -256,7 +256,7 @@ public class MedicalController {
 	 */
 	@DeleteMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
-		Medical medical = null;
+		Medical medical;
 		try {
 			medical = medicalManager.getMedical(code);
 		} catch (OHServiceException e) {

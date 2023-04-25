@@ -131,7 +131,7 @@ public class PermissionController {
 		permissionDTO.setId(id);
 
 		if (!this.permissionManager.exists(permissionDTO.getId())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage(null, "permission.notfound", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
@@ -143,7 +143,7 @@ public class PermissionController {
 			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage(null, "permission.isnotupdated", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/*

@@ -22,12 +22,14 @@
 package org.isf.patvac.rest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.patvac.dto.PatientVaccineDTO;
 import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.mapper.PatVacMapper;
 import org.isf.patvac.model.PatientVaccine;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -75,9 +77,14 @@ public class PatVacController {
 	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		LOGGER.info("Create patient vaccine {}", code);
-		PatientVaccine isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
+		PatientVaccine isCreatedPatientVaccine;
+		try {
+			isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "patientvaccine.isnotcreated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPatientVaccine));
 	}
@@ -94,9 +101,14 @@ public class PatVacController {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
 		patvac.setLock(patientVaccineDTO.getLock());
-		PatientVaccine isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
+		PatientVaccine isUpdatedPatientVaccine;
+		try {
+			isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedPatientVaccine == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "patientvaccine.isnotupdated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPatientVaccine));
 	}
@@ -112,7 +124,12 @@ public class PatVacController {
 		if (oneWeek == null) {
 			oneWeek = false;
 		}
-		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(oneWeek);
+		List<PatientVaccine> patientVaccines = new ArrayList<>();
+		try {
+			patientVaccines = patVacManager.getPatientVaccine(oneWeek);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
 		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
@@ -131,7 +148,12 @@ public class PatVacController {
 			@RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo, @RequestParam char sex, @RequestParam int ageFrom, @RequestParam int ageTo) throws OHServiceException {
 		LOGGER.info("filter patient vaccine by dates ranges");
 
-		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom.atStartOfDay(), dateTo.atStartOfDay(), sex, ageFrom, ageTo);
+		List<PatientVaccine> patientVaccines = new ArrayList<>();
+		try {
+			patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom.atStartOfDay(), dateTo.atStartOfDay(), sex, ageFrom, ageTo);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
 		if (patientVaccineDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
@@ -149,6 +171,11 @@ public class PatVacController {
 	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
 		LOGGER.info("Get progressive number within specified year");
 		int yProg = patVacManager.getProgYear(year);
+		try {
+			yProg = patVacManager.getProgYear(year);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.ok(yProg);
 	}
 
@@ -163,9 +190,14 @@ public class PatVacController {
 		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
-		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
+		boolean isDeleted;
+		try {
+			isDeleted = patVacManager.deletePatientVaccine(patVac);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isDeleted) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Patient vaccine is not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "patientvaccine.isnotdeleted", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isDeleted);
 	}

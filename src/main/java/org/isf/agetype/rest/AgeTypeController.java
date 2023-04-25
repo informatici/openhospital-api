@@ -106,7 +106,7 @@ public class AgeTypeController {
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
-		boolean isupdate = false;
+		boolean isupdate;
 		try {
 			isupdate = ageTypeManager.updateAgeType(ageTypes);
 		} catch (OHServiceException e) {

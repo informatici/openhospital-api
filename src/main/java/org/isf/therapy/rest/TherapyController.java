@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.model.Medical;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.therapy.dto.TherapyDTO;
 import org.isf.therapy.dto.TherapyRowDTO;
@@ -84,10 +85,14 @@ public class TherapyController {
 	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
 		if (thRowDTO.getPatID() == null) {
 			throw new OHAPIException(
-					new OHExceptionMessage(null, "Patient not found.", OHSeverityLevel.ERROR));
+					new OHExceptionMessage(null, "patient.notfound", OHSeverityLevel.ERROR));
 		}
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
-		thRow = manager.newTherapy(thRow);
+		try {
+			thRow = manager.newTherapy(thRow);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(therapyRowMapper.map2DTO(thRow));
 	}
 	
@@ -100,11 +105,16 @@ public class TherapyController {
 	@PostMapping(value = "/therapies/replace", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TherapyRow> replaceTherapies(@RequestBody @Valid List<TherapyRowDTO> thRowDTOs) throws OHServiceException {
 		ArrayList<TherapyRow> therapies = (ArrayList<TherapyRow>)therapyRowMapper.map2ModelList(thRowDTOs);
-		TherapyRow done = manager.newTherapy(therapies.get(0));
+		TherapyRow done = null;
+		try {
+			done = manager.newTherapy(therapies.get(0));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (done != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not replaced.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "therapy.arenotreplaced", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -116,11 +126,16 @@ public class TherapyController {
 	 */
 	@DeleteMapping(value = "/therapies/{code_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAllTherapies(@PathVariable("code_patient") Integer code) throws OHServiceException {
-		boolean done = manager.deleteAllTherapies(code);
+		boolean done;
+		try {
+			done = manager.deleteAllTherapies(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (done) {
 			return ResponseEntity.ok(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage(null, "Therapies are not deleted.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "therapy.arenotdeleted", OHSeverityLevel.ERROR));
 		}
 	}
 	
@@ -133,7 +148,12 @@ public class TherapyController {
 	@PostMapping(value = "/therapies/meds-out-of-stock", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MedicalDTO>> getMedicalsOutOfStock(@RequestBody List<TherapyDTO> therapyDTOs) throws OHServiceException {
 		List<Therapy> therapyRows = therapyMapper.map2ModelList(therapyDTOs);
-		List<Medical> meds = manager.getMedicalsOutOfStock(therapyRows);
+		List<Medical> meds = new ArrayList<>();
+		try {
+			meds = manager.getMedicalsOutOfStock(therapyRows);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<MedicalDTO> mappedMeds = medicalMapper.map2DTOList(meds);
 		if (mappedMeds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
@@ -151,7 +171,12 @@ public class TherapyController {
 	 */
 	@GetMapping(value = "/therapies/{code_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TherapyRowDTO>> getTherapyRows(@PathVariable("code_patient") Integer patientID) throws OHServiceException {
-		List<TherapyRow> thRows = manager.getTherapyRows(patientID);
+		List<TherapyRow> thRows = new ArrayList<>();
+		try {
+			thRows = manager.getTherapyRows(patientID);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<TherapyRowDTO> mappedThRows = therapyRowMapper.map2DTOList(thRows);
 		if (mappedThRows.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
@@ -170,7 +195,12 @@ public class TherapyController {
 	@PostMapping(value = "/therapies/from-rows", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<TherapyDTO>> getTherapies(@RequestBody @Valid List<TherapyRowDTO> thRowDTOs) throws OHServiceException {
 		List<TherapyRow> thRows = therapyRowMapper.map2ModelList(thRowDTOs);
-		List<Therapy> therapies = manager.getTherapies(thRows);
+		List<Therapy> therapies = new ArrayList<>();
+		try {
+			therapies = manager.getTherapies(thRows);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<TherapyDTO> mappedTherapies = therapies != null? therapyMapper.map2DTOList(therapies) : null;
 		if (mappedTherapies == null || mappedTherapies.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
@@ -189,7 +219,12 @@ public class TherapyController {
 	@PostMapping(value = "/therapies/from-row", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TherapyDTO> getTherapy(@RequestBody @Valid TherapyRowDTO thRowDTO) throws OHServiceException {
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
-		TherapyDTO mappedTherapy = therapyMapper.map2DTO(manager.createTherapy(thRow));
+		TherapyDTO mappedTherapy;
+		try {
+			mappedTherapy =  therapyMapper.map2DTO(manager.createTherapy(thRow));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		return ResponseEntity.ok(mappedTherapy);
 	}
 }

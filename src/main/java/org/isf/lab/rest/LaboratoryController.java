@@ -143,7 +143,7 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		boolean inserted = false;
+		boolean inserted;
 		try {
 			inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
 		} catch (OHServiceException e) {
@@ -210,7 +210,7 @@ public class LaboratoryController {
 			}
 		}
 
-		boolean inserted = false;
+		boolean inserted;
 		try {
 			inserted = laboratoryManager.newExamRequest(labToInsert);
 		} catch (OHServiceException e) {
@@ -277,7 +277,7 @@ public class LaboratoryController {
 			}
 		}
 
-		boolean inserted = false;
+		boolean inserted;
 		try {
 			inserted = laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
 		} catch (OHServiceException e) {
@@ -352,7 +352,7 @@ public class LaboratoryController {
 			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
 		}
 
-		boolean updated = false;
+		boolean updated;
 		try {
 			updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
 		} catch (OHServiceException e) {
@@ -378,7 +378,7 @@ public class LaboratoryController {
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
 
-		boolean updated = false;
+		boolean updated;
 		try {
 			updated = laboratoryManager.updateExamRequest(code.intValue(),
 					LaboratoryStatus.valueOf(status.toUpperCase()));
@@ -402,19 +402,19 @@ public class LaboratoryController {
 	@DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
-		Optional<Laboratory> lab = null;
+		Optional<Laboratory> lab;
 		try {
 			lab = laboratoryManager.getLaboratory(code);
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		Laboratory labToDelete = null;
+		Laboratory labToDelete;
 		if (lab.isPresent()) {
 			labToDelete = lab.get();
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		boolean isDeleted = false;
+		boolean isDeleted;
 		try {
 			isDeleted = laboratoryManager.deleteLaboratory(labToDelete);
 		} catch (OHServiceException e) {

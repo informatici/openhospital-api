@@ -21,8 +21,10 @@
  */
 package org.isf.vactype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
@@ -74,7 +76,12 @@ public class VaccineTypeController {
     @GetMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineTypeDTO>> getVaccineType() throws OHServiceException {
         LOGGER.info("Get vaccines type");
-        List<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
+        List<VaccineType> vaccinesTypes = new ArrayList<>();
+        try {
+        	vaccinesTypes = vaccineTypeManager.getVaccineType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
         if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
@@ -97,10 +104,10 @@ public class VaccineTypeController {
         try {
             isCreatedVaccineType = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
         }catch(OHDataIntegrityViolationException e){
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type already present.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, FormatErrorMessage.format(e.getMessages().get(0).getMessage()), OHSeverityLevel.ERROR));
         }
         if (isCreatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not created.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "vaccinetype.isnotcreated", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccineType));
     }
@@ -115,9 +122,14 @@ public class VaccineTypeController {
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VaccineTypeDTO> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
         LOGGER.info("Update vaccine type: {}", updateVaccineType);
-        VaccineType isUpdatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
+        VaccineType isUpdatedVaccineType = null;
+        try {
+        	isUpdatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
+        }catch(OHDataIntegrityViolationException e){
+            throw new OHAPIException(new OHExceptionMessage(null, FormatErrorMessage.format(e.getMessages().get(0).getMessage()), OHSeverityLevel.ERROR));
+        }
         if (isUpdatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not updated.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "vaccinetype.isnotupdated", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccineType));
 
@@ -134,11 +146,20 @@ public class VaccineTypeController {
     public ResponseEntity<Boolean> deleteVaccineType(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete vaccine type code: {}", code);
         boolean isDeleted;
-        VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
+        VaccineType vaccineType;
+        try {
+        	vaccineType = vaccineTypeManager.findVaccineType(code);
+		} catch (Exception e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+		}
         if (vaccineType!=null){
-            isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
+        	try {
+        		isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
+    		} catch (Exception e) {
+    			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+    		}
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine Type is not deleted.", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage(null, "Vvaccinetype.isnotdeleted", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
         }
@@ -156,6 +177,11 @@ public class VaccineTypeController {
     public ResponseEntity<Boolean> checkVaccineTypeCode(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Check vaccine type code: {}", code);
         boolean check = vaccineTypeManager.isCodePresent(code);
+        try {
+        	check = vaccineTypeManager.isCodePresent(code);
+		} catch (Exception e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+		}
         return ResponseEntity.ok(check);
     }
 }

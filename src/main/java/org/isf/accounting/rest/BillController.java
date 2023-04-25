@@ -143,7 +143,7 @@ public class BillController {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(newBillDto.getBillPayments());
 
-		boolean isCreated = false;
+		boolean isCreated;
 		
 		try {
 			isCreated = billManager.newBill(bill, billItems, billPayments);
@@ -178,7 +178,7 @@ public class BillController {
 
 		Patient pat = new Patient();
 		try {
-			 pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+			pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
@@ -208,7 +208,7 @@ public class BillController {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(odBillDto.getBillPayments());
 
-		boolean isUpdated = false;
+		boolean isUpdated;
 		
 		try {
 			isUpdated = billManager.updateBill(bill, billItems, billPayments);

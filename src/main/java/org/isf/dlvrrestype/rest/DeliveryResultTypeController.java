@@ -76,7 +76,7 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
 		LOGGER.info("Create Delivery result type {}", code);
-		boolean isCreated = false;
+		boolean isCreated;
 		try {
 			isCreated = dlvrrestManager
     				.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
@@ -111,7 +111,7 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
-		boolean isPresent = false; 
+		boolean isPresent; 
         try {
 			isPresent = dlvrrestManager.isCodePresent(dlvrrestType.getCode());
 		} catch (OHServiceException e) {
@@ -120,7 +120,7 @@ public class DeliveryResultTypeController {
 		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("deliveryresulttype.notfound"));
 		}
-		boolean isUpdated = false;
+		boolean isUpdated;
 		try {
 			isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
 			} catch (OHServiceException e) {
@@ -165,7 +165,7 @@ public class DeliveryResultTypeController {
 			throws OHServiceException {
 		LOGGER.info("Delete Delivery result type code: {}", code);
 		boolean isDeleted = false;
-		boolean isPresent = false; 
+		boolean isPresent; 
         try {
 			isPresent = dlvrrestManager.isCodePresent(code);
 		} catch (OHServiceException e) {

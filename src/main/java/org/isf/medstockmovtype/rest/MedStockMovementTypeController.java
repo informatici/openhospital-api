@@ -21,6 +21,7 @@
  */
 package org.isf.medstockmovtype.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,7 @@ import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
 import org.isf.medstockmovtype.mapper.MovementTypeMapper;
 import org.isf.medstockmovtype.model.MovementType;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -68,7 +70,12 @@ public class MedStockMovementTypeController {
 	@GetMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementTypeDTO>> getMedicaldsrstockmovType() throws OHServiceException {
 		LOGGER.info("Retrieving all the movement types ...");
-		List<MovementType> movementTypes = manager.getMedicaldsrstockmovType();
+		List<MovementType> movementTypes = new ArrayList<>();
+		try {
+			movementTypes = manager.getMedicaldsrstockmovType();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<MovementTypeDTO> mappedMovements = mapper.map2DTOList(movementTypes);
 		if (mappedMovements.isEmpty()) {
 			LOGGER.info("No movement type found");
@@ -86,9 +93,14 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MovementTypeDTO> getMovementType(@PathVariable("code") String code) throws OHServiceException {
-		MovementType foundMvmntType = manager.getMovementType(code);
+		MovementType foundMvmntType;
+		try {
+			foundMvmntType = manager.getMovementType(code);
+		} catch (Exception e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+		}
 		if (foundMvmntType == null) {
-			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
+			throw new OHAPIException(new OHExceptionMessage("medicalstockmovementtype.notfound"));
 		}
 		else {
 			return ResponseEntity.ok(mapper.map2DTO(foundMvmntType));
@@ -104,8 +116,13 @@ public class MedStockMovementTypeController {
 	@PostMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MovementTypeDTO> newMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovType) throws OHServiceException {
 		MovementType isCreatedMovementType = manager.newMedicaldsrstockmovType(mapper.map2Model(medicaldsrstockmovType));
+		try {
+			isCreatedMovementType = manager.newMedicaldsrstockmovType(mapper.map2Model(medicaldsrstockmovType));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedMovementType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Movement type not created."));
+            throw new OHAPIException(new OHExceptionMessage("medicalstockmovementtype.notcreated"));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
 	}
@@ -119,12 +136,23 @@ public class MedStockMovementTypeController {
 	@PutMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MovementTypeDTO> updateMedicaldsrstockmovType(@RequestBody @Valid MovementTypeDTO medicaldsrstockmovTypeDTO) throws OHServiceException {
 		MovementType medicaldsrstockmovType = mapper.map2Model(medicaldsrstockmovTypeDTO);
-		if (!manager.isCodePresent(medicaldsrstockmovType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
+		boolean isPresent;
+		try {
+			isPresent = manager.isCodePresent(medicaldsrstockmovType.getCode());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
 		}
-		MovementType isUpdatedMovementType = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+		if (!isPresent) {
+			throw new OHAPIException(new OHExceptionMessage("medicalstockmovementtype.notfound"));
+		}
+		MovementType isUpdatedMovementType;
+		try {
+			isUpdatedMovementType = manager.updateMedicaldsrstockmovType(medicaldsrstockmovType);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedMovementType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Movement type not updated."));
+            throw new OHAPIException(new OHExceptionMessage("medicalstockmovementtype.notupdated"));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedMovementType));
 	}
@@ -137,7 +165,13 @@ public class MedStockMovementTypeController {
 	 */
 	@GetMapping(value = "/medstockmovementtype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
-		return ResponseEntity.ok(manager.isCodePresent(code));
+		boolean isPresent;
+		try {
+			isPresent = manager.isCodePresent(code);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
+		return ResponseEntity.ok(isPresent);
 	}
 	
 	/**
@@ -148,14 +182,19 @@ public class MedStockMovementTypeController {
 	 */
 	@DeleteMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicaldsrstockmovType(@PathVariable("code") String code) throws OHServiceException {
-		List<MovementType> matchedMvmntTypes = manager.getMedicaldsrstockmovType()
-				.stream()
-				.filter(item -> item.getCode().equals(code))
-				.collect(Collectors.toList());
+		List<MovementType> matchedMvmntTypes = new ArrayList<>();
+		try {
+			matchedMvmntTypes = manager.getMedicaldsrstockmovType()
+					.stream()
+					.filter(item -> item.getCode().equals(code))
+					.collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!matchedMvmntTypes.isEmpty()) {
 			return ResponseEntity.ok(manager.deleteMedicaldsrstockmovType(matchedMvmntTypes.get(0)));
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
+			throw new OHAPIException(new OHExceptionMessage("medicalstockmovementtype.notfound"));
 		}
 	}
 	

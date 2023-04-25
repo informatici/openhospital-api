@@ -85,7 +85,7 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>();
 		movements.addAll(movMapper.map2ModelList(movementDTOs));
-		boolean done = false;
+		boolean done;
 		try {
 			done = movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
 		} catch (OHServiceException e) {
@@ -108,7 +108,7 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>();
 		movements.addAll(movMapper.map2ModelList(movementDTOs));
-		boolean done = false;
+		boolean done;
 		try {
 			done = movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
 		} catch (OHServiceException e) {
@@ -218,7 +218,7 @@ public class StockMovementController {
 	 */
 	@GetMapping(value = "/stockmovements/lot/{med_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LotDTO>> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
-		Medical med = null;
+		Medical med;
 		try {
 			med = medicalManager.getMedical(medCode);
 		} catch (OHServiceException e) {
@@ -247,7 +247,7 @@ public class StockMovementController {
 	public ResponseEntity<Boolean> alertCriticalQuantity(
 			@RequestParam("med_code") int medCode,
 			@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
-		Medical med = null;
+		Medical med;
 		try {
 			med = medicalManager.getMedical(medCode);
 		} catch (OHServiceException e) {

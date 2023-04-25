@@ -104,7 +104,7 @@ public class AdmissionTypeController {
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		boolean isPresent = false;
+		boolean isPresent;
 		try {
 			isPresent = admtManager.isCodePresent(admt.getCode());
 		} catch (OHServiceException e) {
@@ -113,7 +113,7 @@ public class AdmissionTypeController {
 		if (!isPresent) {
 			throw new OHAPIException(new OHExceptionMessage("admissiontype.notfound"));
 		}
-		boolean isUpdated = false;
+		boolean isUpdated;
 		try {
 			isUpdated = admtManager.updateAdmissionType(admt);
 		} catch (OHServiceException e) {

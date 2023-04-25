@@ -86,7 +86,7 @@ public class ExamController {
         Exam exam = examMapper.map2Model(newExam);
         exam.setExamtype(examType);
 
-        boolean isCreated = false;
+        boolean isCreated;
         try {
         	isCreated = examManager.newExam(exam);
 		} catch (OHServiceException e) {
@@ -104,7 +104,7 @@ public class ExamController {
         if (!updateExam.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage("exam.codemismatch"));
         }
-        boolean isPresent = false;
+        boolean isPresent;
         try {
         	isPresent = examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code));
 		} catch (OHServiceException e) {

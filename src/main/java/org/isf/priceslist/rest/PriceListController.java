@@ -21,6 +21,7 @@
  */
 package org.isf.priceslist.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ import org.isf.priceslist.mapper.PriceListMapper;
 import org.isf.priceslist.mapper.PriceMapper;
 import org.isf.priceslist.model.Price;
 import org.isf.priceslist.model.PriceList;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -80,9 +82,14 @@ public class PriceListController {
 	@PostMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PriceListDTO> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		LOGGER.info("Create price list {}", priceListDTO.getCode());
-		PriceList isCreatedPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
+		PriceList isCreatedPriceList;
+		try {
+			isCreatedPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedPriceList == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricelist.isnotcreated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPriceList));
 	}
@@ -98,9 +105,14 @@ public class PriceListController {
 			throws OHServiceException {
 		LOGGER.info("Update pricelists code: {}", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);
-		PriceList isUpdatedPriceList = priceListManager.updateList(priceList);
+		PriceList isUpdatedPriceList;
+		try {
+			isUpdatedPriceList = priceListManager.updateList(priceList);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedPriceList == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricelist.isnotupdated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPriceList));
 	}
@@ -113,7 +125,12 @@ public class PriceListController {
 	@GetMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PriceListDTO>> getPriceLists() throws OHServiceException {
 		LOGGER.info("Get all price lists ");
-		List<PriceList> priceLists = priceListManager.getLists();
+		List<PriceList> priceLists = new ArrayList<>();
+		try {
+			priceLists = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PriceListDTO> priceListDTOs = mapper.map2DTOList(priceLists);
 		if (priceListDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
@@ -130,7 +147,12 @@ public class PriceListController {
 	@GetMapping(value = "/pricelists/prices", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PriceDTO>> getPrices() throws OHServiceException {
 		LOGGER.info("Get all price");
-		List<Price> prices = priceListManager.getPrices();
+		List<Price> prices = new ArrayList<>();
+		try {
+			prices = priceListManager.getPrices();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PriceDTO> priceListDTOs = priceMapper.map2DTOList(prices);
 		if (priceListDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
@@ -149,10 +171,19 @@ public class PriceListController {
 	public ResponseEntity<Boolean> deletePriceList(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete price list id: {}", id);
 		boolean isDeleted;
-		List<PriceList> priceLists = priceListManager.getLists();
+		List<PriceList> priceLists = new ArrayList<>();
+		try {
+			priceLists = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (!priceListFounds.isEmpty()) {
-			isDeleted = priceListManager.deleteList(priceListFounds.get(0));
+			try {
+				isDeleted = priceListManager.deleteList(priceListFounds.get(0));
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -167,15 +198,24 @@ public class PriceListController {
 	@GetMapping(value = "/pricelists/duplicate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyList(@PathVariable Long id) throws OHServiceException {
 		LOGGER.info("duplicate list for price list id : {}", id);
-		List<PriceList> priceLists = priceListManager.getLists();
+		List<PriceList> priceLists = new ArrayList<>();
+		try {
+			priceLists = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied;
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		isCopied = priceListManager.copyList(priceListFounds.get(0));
+		try {
+			isCopied = priceListManager.copyList(priceListFounds.get(0));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isCopied) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list has not been duplicated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricelist.hasnotbeenduplicated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isCopied);
 	}
@@ -188,15 +228,24 @@ public class PriceListController {
 	@GetMapping(value = "/pricelists/duplicate/byfactor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyByFactorAndStep(@PathVariable Long id, @RequestParam double factor, @RequestParam double step) throws OHServiceException {
 		LOGGER.info("duplicate list for price list id : {}", id);
-		List<PriceList> priceLists = priceListManager.getLists();
+		List<PriceList> priceLists = new ArrayList<>();
+		try {
+			priceLists = priceListManager.getLists();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		boolean isCopied;
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
+		try {
+			isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (!isCopied) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Price list has not been duplicated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricelist.hasnotbeenduplicated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(isCopied);
 	}

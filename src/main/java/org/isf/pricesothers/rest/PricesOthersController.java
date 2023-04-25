@@ -21,6 +21,7 @@
  */
 package org.isf.pricesothers.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import org.isf.pricesothers.dto.PricesOthersDTO;
 import org.isf.pricesothers.manager.PricesOthersManager;
 import org.isf.pricesothers.mapper.PricesOthersMapper;
 import org.isf.pricesothers.model.PricesOthers;
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -73,9 +75,14 @@ public class PricesOthersController {
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PricesOthersDTO> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
-		PricesOthers isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
+		PricesOthers isCreatedPricesOthers;
+		try {
+			isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isCreatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not created.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricesothers.isnotcreated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPricesOthers));
 	}
@@ -91,13 +98,23 @@ public class PricesOthersController {
 			throws OHServiceException {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
-		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
+		List<PricesOthers> pricesOthersFounds = new ArrayList<>();
+		try {
+			pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (pricesOthersFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		PricesOthers isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
+		PricesOthers isUpdatedPricesOthers;
+		try {
+			isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		if (isUpdatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Prices Others is not updated.", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage(null, "pricesothers.isnotupdated", OHSeverityLevel.ERROR));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
 	}
@@ -110,7 +127,12 @@ public class PricesOthersController {
 	@GetMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PricesOthersDTO>> getPricesOtherss() throws OHServiceException {
 		LOGGER.info("Get all prices others ");
-		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
+		List<PricesOthers> pricesOthers = new ArrayList<>();
+		try {
+			pricesOthers = pricesOthersManager.getOthers();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PricesOthersDTO> pricesOthersDTOs = mapper.map2DTOList(pricesOthers);
 		if (pricesOthersDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pricesOthersDTOs);
@@ -130,10 +152,19 @@ public class PricesOthersController {
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete prices others id: {}", id);
 		boolean isDeleted;
-		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
+		List<PricesOthers> pricesOthers = new ArrayList<>();
+		try {
+			pricesOthers = pricesOthersManager.getOthers();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
 		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
 		if (!pricesOthersFounds.isEmpty()) {
-			isDeleted = pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
+			try {
+				isDeleted = pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
+			} catch (OHServiceException e) {
+				throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}

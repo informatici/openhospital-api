@@ -50,10 +50,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             user = manager.getUserByName(username);
         } catch (OHServiceException e) {
             LOGGER.error("User login received an unexpected OHServiceException", e);
-            throw new UsernameNotFoundException(username + " authentication failed", e);
+            throw new UsernameNotFoundException("authentication.failed");
         }
         if (user == null) {
-            throw new UsernameNotFoundException(username + " was not found");
+            throw new UsernameNotFoundException("username.notfound");
         }
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(user.getUserGroupName().getCode()));

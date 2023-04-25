@@ -21,8 +21,10 @@
  */
 package org.isf.vaccine.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.isf.shared.FormatErrorMessage;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
@@ -74,7 +76,12 @@ public class VaccineController {
     @GetMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
         LOGGER.info("Get vaccines");
-        List<Vaccine> vaccines = vaccineManager.getVaccine();
+        List<Vaccine> vaccines = new ArrayList<>();
+        try {
+        	vaccines = vaccineManager.getVaccine();
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
@@ -93,7 +100,12 @@ public class VaccineController {
     @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
         LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
-        List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
+        List<Vaccine> vaccines = new ArrayList<>();
+        try {
+        	vaccines = vaccineManager.getVaccine(vaccineTypeCode);
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
@@ -116,10 +128,10 @@ public class VaccineController {
         try {
              isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, e.getMessages().get(0).getMessage(), OHSeverityLevel.ERROR));
         }
         if (isCreatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, FormatErrorMessage.format("vaccine.isnotcreated"), OHSeverityLevel.ERROR));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
@@ -134,9 +146,14 @@ public class VaccineController {
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VaccineDTO> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         LOGGER.info("Update vaccine: {}", updateVaccine);
-        Vaccine isUpdatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+        Vaccine isUpdatedVaccine;
+        try {
+        	isUpdatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+		} catch (OHServiceException e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+		}
         if (isUpdatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated.", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage(null, "vaccine.isnotupdated", OHSeverityLevel.ERROR));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccine));
     }
@@ -152,11 +169,20 @@ public class VaccineController {
     public ResponseEntity<Boolean> deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Delete vaccine code: {}", code);
         boolean isDeleted;
-        Vaccine vaccine = vaccineManager.findVaccine(code);
+        Vaccine vaccine;
+        try {
+        	vaccine = vaccineManager.findVaccine(code);
+		} catch (Exception e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+		}
         if (vaccine!=null){
-            isDeleted = vaccineManager.deleteVaccine(vaccine);
+        	try {
+        		 isDeleted = vaccineManager.deleteVaccine(vaccine);
+    		} catch (OHServiceException e) {
+    			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessages().get(0).getMessage())));
+    		}
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted.", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage(null, "vaccine.isnotdeleted", OHSeverityLevel.ERROR));
             }
             return ResponseEntity.ok(isDeleted);
         }
@@ -173,7 +199,12 @@ public class VaccineController {
     @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> checkVaccineCode(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Check vaccine code: {}", code);
-        boolean check = vaccineManager.isCodePresent(code);
+        boolean check;
+        try {
+        	check = vaccineManager.isCodePresent(code);
+		} catch (Exception e) {
+			throw new OHAPIException(new OHExceptionMessage(FormatErrorMessage.format(e.getMessage())));
+		}
         return ResponseEntity.ok(check);
     }
 }
