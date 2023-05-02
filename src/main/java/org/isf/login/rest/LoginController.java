@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.isf.generaldata.GeneralData;
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.security.CustomAuthenticationManager;
@@ -70,7 +71,7 @@ public class LoginController {
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
-		if (loginRequest.getPassword().length() < 10) {
+		if (loginRequest.getPassword().length() < GeneralData.STRONGLENGTH) {
 			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,
 					"password too short", OHSeverityLevel.ERROR));
 		}
