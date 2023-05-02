@@ -320,10 +320,10 @@ public class AdmissionController {
 	}
 
 	/**
-	 * discharge the {@link Admission}s for the specified {@link Patient} code.
+	 * Discharge the {@link Admission}s for the specified {@link Patient} code.
 	 * 
 	 * @param patientCode
-	 * @return <code>true</code> if the record has been set to discharge.
+	 * @return {@code true} if the record has been set to discharge.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/admissions/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
