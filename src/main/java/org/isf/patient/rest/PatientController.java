@@ -79,12 +79,6 @@ public class PatientController {
 	@Autowired
 	protected PatientMapper patientMapper;
 
-	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper) {
-		this.patientManager = patientManager;
-		this.admissionManager = admissionManager;
-		this.patientMapper = patientMapper;
-	}
-	
 	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper, PatientConsensusBrowserManager patientConsensusManager) {
 		this.patientManager = patientManager;
 		this.admissionManager = admissionManager;
