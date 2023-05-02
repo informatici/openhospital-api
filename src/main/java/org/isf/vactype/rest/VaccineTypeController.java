@@ -148,7 +148,7 @@ public class VaccineTypeController {
      * Check if the code is already used by other vaccine type.
      *
      * @param code
-     * @return true if it is already use, false otherwise
+     * @return {@code true} if it is already used, false otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
