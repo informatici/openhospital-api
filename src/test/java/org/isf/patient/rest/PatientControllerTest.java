@@ -443,7 +443,7 @@ public class PatientControllerTest {
 	/**
 	 * Test method for
 	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -465,7 +465,7 @@ public class PatientControllerTest {
 	/**
 	 * Test method for
 	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -483,7 +483,7 @@ public class PatientControllerTest {
 	/**
 	 * Test method for
 	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
