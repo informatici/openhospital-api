@@ -70,7 +70,7 @@ public class LoginController {
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
+	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		if (loginRequest.getPassword().length() < GeneralData.STRONGLENGTH) {
 			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,
 					"password too short", OHSeverityLevel.ERROR));
