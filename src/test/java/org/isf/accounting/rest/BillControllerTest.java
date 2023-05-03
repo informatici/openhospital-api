@@ -75,6 +75,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.testing.rest.ControllerBaseTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -132,7 +133,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		modelMapper.registerModule(new Jsr310Module());
-
+		PatientMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(billMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billItemsMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billPaymentsMapper, "modelMapper", modelMapper);
@@ -280,8 +281,8 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO open a ticket for suggesting refactoring for updateBill() method in order to accept generic List instead of ArrayList  like:
 		// public boolean updateBill(Bill updateBill,
-		//		List<BillItems> billItems, 
-		//		List<BillPayments> billPayments) throws OHServiceException 
+		//		List<BillItems> billItems,
+		//		List<BillPayments> billPayments) throws OHServiceException
 		//List<BillItems> billItemsList = new ArrayList(newFullBillDTO.getBillItems());
 		//billItemsList.addAll(newFullBillDTO.getBillItems());
 

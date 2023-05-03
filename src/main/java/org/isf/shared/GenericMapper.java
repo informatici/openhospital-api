@@ -37,7 +37,7 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 	protected ModelMapper modelMapper;
 	private Type sourceClass;
 	private Type destClass;
-	
+
 	public GenericMapper(Class<SourceType> sourceClass, Class<DestType> destClass) {
 		this.sourceClass = sourceClass;
 		this.destClass = destClass;
@@ -63,16 +63,20 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		return (List<SourceType>) list.stream().map(it -> modelMapper.map(it, sourceClass)).collect(Collectors.toList());
 	}
 
+	public ModelMapper getMapper() {
+		return this.modelMapper;
+	}
+
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
 		// TODO Auto-generated method stub
 		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
-		
+
 		if (status) {
 			patientDTO.setStatus(PatientSTATUS.I);
 		} else {
 			patientDTO.setStatus(PatientSTATUS.O);
 		}
-		
+
 		return patientDTO;
 	}
 }

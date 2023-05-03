@@ -30,18 +30,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModelMapperConfig {
 
-    @Autowired
-    protected BlobToByteArrayConverter blobToByteArrayConverter;
+	@Autowired
+	protected BlobToByteArrayConverter blobToByteArrayConverter;
 
-    @Autowired
-    protected ByteArrayToBlobConverter byteArrayToBlobConverter;
+	@Autowired
+	protected ByteArrayToBlobConverter byteArrayToBlobConverter;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addConverter(blobToByteArrayConverter);
-        modelMapper.addConverter(byteArrayToBlobConverter);
-        modelMapper.registerModule(new Jsr310Module());
-        return modelMapper;
-    }
+	@Bean
+	public ModelMapper modelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addConverter(blobToByteArrayConverter);
+		modelMapper.addConverter(byteArrayToBlobConverter);
+		modelMapper.registerModule(new Jsr310Module());
+		return modelMapper;
+	}
 }
