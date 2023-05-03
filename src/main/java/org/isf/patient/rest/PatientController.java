@@ -79,7 +79,8 @@ public class PatientController {
 	@Autowired
 	protected PatientMapper patientMapper;
 
-	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper, PatientConsensusBrowserManager patientConsensusManager) {
+	public PatientController(PatientBrowserManager patientManager, AdmissionBrowserManager admissionManager, PatientMapper patientMapper,
+					PatientConsensusBrowserManager patientConsensusManager) {
 		this.patientManager = patientManager;
 		this.admissionManager = admissionManager;
 		this.patientMapper = patientMapper;
@@ -101,7 +102,6 @@ public class PatientController {
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
 		Patient patientModel = patientMapper.map2Model(newPatient);
-
 		Patient patient = patientManager.savePatient(patientModel);
 
 		if (patient == null) {
