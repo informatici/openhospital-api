@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.isf.generaldata.GeneralData;
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.security.CustomAuthenticationManager;
@@ -35,9 +34,6 @@ import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.ErrorDescription;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -71,10 +67,6 @@ public class LoginController {
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
-		if (loginRequest.getPassword().length() < GeneralData.STRONGLENGTH) {
-			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT,
-					"password too short", OHSeverityLevel.ERROR));
-		}
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
