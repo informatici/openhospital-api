@@ -65,6 +65,7 @@ import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.ward.data.WardHelper;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
@@ -142,6 +143,7 @@ public class AdmissionControllerTest {
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
+		PatientMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(admissionMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(admittedMapper, "modelMapper", modelMapper);
 	}

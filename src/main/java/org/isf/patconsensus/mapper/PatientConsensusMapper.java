@@ -17,39 +17,49 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.isf.patient.mapper;
-
-import java.util.List;
-import java.util.stream.Collectors;
+package org.isf.patconsensus.mapper;
 
 import javax.annotation.PostConstruct;
 
-import org.isf.patient.dto.PatientDTO;
+import org.isf.patconsensus.dto.PatientConsensusDTO;
+import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.model.Patient;
 import org.isf.shared.GenericMapper;
 import org.isf.shared.mapper.mappings.PatientMapping;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PatientMapper extends GenericMapper<Patient, PatientDTO> {
+public class PatientConsensusMapper extends GenericMapper<PatientConsensus, PatientConsensusDTO> {
 
-	public PatientMapper() {
-		super(Patient.class, PatientDTO.class);
+	public PatientConsensusMapper() {
+		super(PatientConsensus.class, PatientConsensusDTO.class);
 	}
+
 	@PostConstruct
 	private void postConstruct() {
 		PatientMapping.addMapping(modelMapper);
 	}
 
 	@Override
-	public List<PatientDTO> map2DTOList(List<Patient> list) {
-		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+	public PatientConsensus map2Model(PatientConsensusDTO fromObj) {
+		PatientConsensus patientConsensus = super.map2Model(fromObj);
+		if (fromObj.getPatientId() != null) {
+			Patient patient = new Patient();
+			patient.setCode(fromObj.getPatientId());
+			patientConsensus.setPatient(patient);
+		}
+		return patientConsensus;
 	}
 
 	@Override
-	public List<Patient> map2ModelList(List<PatientDTO> list) {
-		return list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
+	public PatientConsensusDTO map2DTO(PatientConsensus fromObj) {
+		PatientConsensusDTO patientConsensus = super.map2DTO(fromObj);
+		if (fromObj.getPatient() != null) {
+			patientConsensus.setPatientId(fromObj.getPatient().getCode());
+		}
+		return patientConsensus;
 	}
+
 }
