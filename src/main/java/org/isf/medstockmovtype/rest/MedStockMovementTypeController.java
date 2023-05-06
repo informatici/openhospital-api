@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.isf.medstockmovtype.dto.MovementTypeDTO;
-import org.isf.medstockmovtype.manager.MedicaldsrstockmovTypeBrowserManager;
+import org.isf.medstockmovtype.manager.MedicalStockMovementTypeBrowserManager;
 import org.isf.medstockmovtype.mapper.MovementTypeMapper;
 import org.isf.medstockmovtype.model.MovementType;
 import org.isf.shared.exceptions.OHAPIException;
@@ -58,7 +58,7 @@ public class MedStockMovementTypeController {
 	private MovementTypeMapper mapper;
 	
 	@Autowired
-	private MedicaldsrstockmovTypeBrowserManager manager;
+	private MedicalStockMovementTypeBrowserManager manager;
 	
 	/**
 	 * Returns all the medical stock movement types.
