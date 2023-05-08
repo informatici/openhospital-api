@@ -176,7 +176,7 @@ public class PatientControllerTest {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
-		when(patientBrowserManagerMock.getPatientByName(any(String.class))).thenReturn(null); // FIXME: why we were searching by name?
+		when(patientBrowserManagerMock.getPatientById(anyInt())).thenReturn(null);
 
 		MvcResult result = this.mockMvc
 						.perform(
@@ -241,7 +241,7 @@ public class PatientControllerTest {
 		newPatient.setCode(code);
 
 		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
-		when(patientBrowserManagerMock.getPatientByName(any(String.class))).thenReturn(newPatient);
+		when(patientBrowserManagerMock.getPatientById(anyInt())).thenReturn(newPatient);
 
 		this.mockMvc
 						.perform(
@@ -488,10 +488,10 @@ public class PatientControllerTest {
 	 */
 	@Test
 	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
-		String name = "unexistent_name";
+		String name = null;
 		String request = "/patients/search";
 
-		when(patientBrowserManagerMock.getPatientByName(name)).thenReturn(null);
+		when(patientBrowserManagerMock.getPatientById(null)).thenReturn(null);
 
 		this.mockMvc
 						.perform(
