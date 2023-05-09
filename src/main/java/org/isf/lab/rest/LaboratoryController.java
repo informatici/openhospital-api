@@ -281,7 +281,7 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-		labToInsert.setDate(laboratoryDTO.getDate());
+		labToInsert.setLabDate(laboratoryDTO.getDate());
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
