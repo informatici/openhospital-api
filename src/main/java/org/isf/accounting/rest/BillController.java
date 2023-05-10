@@ -111,7 +111,7 @@ public class BillController {
 
 		Bill bill = billMapper.map2Model(newBillDto.getBill());
 
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
 
 		List<PriceList> list = priceListManager.getLists();
 
@@ -160,7 +160,7 @@ public class BillController {
 			throw new OHAPIException(new OHExceptionMessage("Bill to update not found."));
 		}
 
-		Patient pat = patientManager.getPatientByName(bill.getPatName()); // FIXME: verify why we were searching by name
+		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
 
 		List<PriceList> list = priceListManager.getLists();
 

@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -199,7 +200,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		newFullBillDTO.getBill().setPatientTrue(true);
 
-		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(anyInt())).thenReturn(null);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -231,7 +232,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().getPatient().setCode(code);
 		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
-		when(patientManagerMock.getPatientByName(bill.getPatName())).thenReturn(null); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(bill.getBillPatient().getCode())).thenReturn(null);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
@@ -268,7 +269,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Patient patient = bill.getBillPatient();
 		//Patient patient = bill.getPatient();
 
-		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(anyInt())).thenReturn(patient);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 		List<PriceList> priceListList = new ArrayList<>();
 
