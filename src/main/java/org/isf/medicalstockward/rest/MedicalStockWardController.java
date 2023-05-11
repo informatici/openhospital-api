@@ -122,6 +122,7 @@ public class MedicalStockWardController {
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
 
+// TODO: needs update when UI supports movements wards
 //	/**
 //	 * Gets all the {@link MovementWard}s.
 //	 *
@@ -209,6 +210,7 @@ public class MedicalStockWardController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
+// TODO: needs update when UI supports movements wards
 //	/**
 //	 * Persists the specified movements.
 //	 *
@@ -224,6 +226,7 @@ public class MedicalStockWardController {
 //		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 //	}
 //
+// TODO: needs update when UI supports movements wards
 //	/**
 //	 * Updates the specified {@link MovementWard}.
 //	 *
