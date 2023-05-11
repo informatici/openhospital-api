@@ -149,7 +149,7 @@ public class AdmissionController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
-		if (listAdmissions == null || listAdmissions.isEmpty()) {
+		if (listAdmissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<AdmissionDTO> listAdmissionsDTO = listAdmissions.stream().map(admission -> {
