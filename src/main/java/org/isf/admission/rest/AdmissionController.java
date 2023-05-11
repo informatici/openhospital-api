@@ -145,8 +145,11 @@ public class AdmissionController {
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
+		if (patient == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
-		if (listAdmissions == null) {
+		if (listAdmissions == null || listAdmissions.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<AdmissionDTO> listAdmissionsDTO = listAdmissions.stream().map(admission -> {
