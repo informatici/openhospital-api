@@ -281,7 +281,6 @@ public class LaboratoryController {
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
-		labToInsert.setLabDate(laboratoryDTO.getDate());
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
@@ -380,6 +379,7 @@ public class LaboratoryController {
 				}
 
 			}
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 			labDTO.setLaboratoryDTO(laboratoryDTO);
@@ -427,6 +427,7 @@ public class LaboratoryController {
 				}
 
 			}
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 			labDTO.setLaboratoryDTO(laboratoryDTO);
@@ -460,6 +461,7 @@ public class LaboratoryController {
 
 		return ResponseEntity.ok(labList.stream().map(lab -> {
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 			return laboratoryDTO;
@@ -484,6 +486,7 @@ public class LaboratoryController {
 
 		return ResponseEntity.ok(labList.stream().map(lab -> {
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 			return laboratoryDTO;
@@ -572,6 +575,7 @@ public class LaboratoryController {
 					}
 
 				}
+				laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 				labDTO.setLaboratoryDTO(laboratoryDTO);
@@ -599,6 +603,7 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+		laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 		laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
 		laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
 		return ResponseEntity.ok(laboratoryDTO);
@@ -624,6 +629,7 @@ public class LaboratoryController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
+		labDTO.setRegistrationDate(laboratory.getCreatedDate());
 		labDTO.setInOutPatient(PatientSTATUS.valueOf(laboratory.getInOutPatient()));
 		labDTO.setStatus(LaboratoryStatus.valueOf(laboratory.getStatus().toUpperCase()));
 		lab.setLaboratoryDTO(labDTO);

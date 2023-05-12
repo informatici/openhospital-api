@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import org.isf.exam.dto.ExamDTO;
 import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
+import org.isf.utils.time.TimeTools;
 
 import com.drew.lang.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public class LaboratoryDTO {
 
 	@NotNull
 	@ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-	private LocalDateTime date;
+	private LocalDateTime labDate;
 
 	@ApiModelProperty(notes = "Laboratory Result", position = 6)
 	private String result;
@@ -100,8 +101,8 @@ public class LaboratoryDTO {
 		return this.registrationDate;
 	}
 
-	public LocalDateTime getDate() {
-		return this.date;
+	public LocalDateTime getLabDate() {
+		return labDate;
 	}
 
 	public String getResult() {
@@ -148,8 +149,8 @@ public class LaboratoryDTO {
 		this.registrationDate = registrationDate;
 	}
 
-	public void setDate(LocalDateTime examDate) {
-		this.date = examDate;
+	public void setLabDate(LocalDateTime aDate) {
+		labDate = TimeTools.truncateToSeconds(aDate);
 	}
 
 	public void setResult(String result) {
