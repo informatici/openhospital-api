@@ -31,14 +31,12 @@ public class PatientMapping {
 
 		modelMapper.getConfiguration().setAmbiguityIgnored(true);
 		modelMapper.typeMap(Patient.class, PatientDTO.class).addMappings(mapper -> {
-			mapper.<Boolean> map(src -> src.getPatientConsensus().isAdministrativeFlag(), PatientDTO::setConsensusAdministrativeFlag);
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isConsensusFlag(), PatientDTO::setConsensusFlag);
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isServiceFlag(), PatientDTO::setConsensusServiceFlag);
 			mapper.map(src -> src.getPatientProfilePhoto().getPhoto(), PatientDTO::setBlobPhoto);
 		});
 
 		modelMapper.typeMap(PatientDTO.class, Patient.class).addMappings(mapper -> {
-			mapper.<Boolean> map(src -> src.isConsensusAdministrativeFlag(), (db, value) -> db.getPatientConsensus().setAdministrativeFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusFlag(), (db, value) -> db.getPatientConsensus().setConsensusFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusServiceFlag(), (db, value) -> db.getPatientConsensus().setServiceFlag(value));
 			mapper.<Patient> map(src -> src, (db, value) -> {

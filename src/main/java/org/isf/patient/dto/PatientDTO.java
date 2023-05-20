@@ -124,9 +124,6 @@ public class PatientDTO {
 	@ApiModelProperty(notes = "consensus flag", example = "true", position = 25)
 	private boolean consensusFlag;
 
-	@ApiModelProperty(notes = "consensus administrative flag", example = "true", position = 26)
-	private boolean consensusAdministrativeFlag;
-
 	@ApiModelProperty(notes = "consensus service flag", example = "true", position = 27)
 	private boolean consensusServiceFlag;
 
@@ -136,14 +133,6 @@ public class PatientDTO {
 
 	public void setConsensusFlag(boolean consensusFlag) {
 		this.consensusFlag = consensusFlag;
-	}
-
-	public boolean isConsensusAdministrativeFlag() {
-		return consensusAdministrativeFlag;
-	}
-
-	public void setConsensusAdministrativeFlag(boolean consensusAdministrativeFlag) {
-		this.consensusAdministrativeFlag = consensusAdministrativeFlag;
 	}
 
 	public boolean isConsensusServiceFlag() {
