@@ -74,7 +74,7 @@ public class LoginController {
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
-		MDC.put("OHUser",loginRequest.getUserName());
+		MDC.put("OHUser", loginRequest.getUserName());
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
