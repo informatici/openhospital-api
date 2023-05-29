@@ -51,7 +51,7 @@ public class UserSettingController {
 	 * @return {@link UserSetting} if the userSetting has been inserted, null otherwise.
 	 * @throws OHServiceException 
 	 */
-	@PostMapping(value = "/usersetting", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> newUserSetting(@RequestParam(name="userId", required=true) String userId, @Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create a userSetting");
 		User user = userManager.getUserByName(userId);
@@ -68,7 +68,7 @@ public class UserSettingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(isCreated));
 	}
 	
-	@GetMapping(value = "/usersetting", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserSettingDTO>> getUserSetting(@RequestParam(name="userId", required=true) String userId) throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user settings");
 		User user = userManager.getUserByName(userId);
