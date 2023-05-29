@@ -404,7 +404,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> !e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString()) || e.getStatus().equals(LaboratoryStatus.OPEN.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -454,7 +454,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString()) || e.getStatus().equals(LaboratoryStatus.OPEN.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -479,7 +479,7 @@ public class LaboratoryController {
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString()) || e.getStatus().equals(LaboratoryStatus.OPEN.toString())).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
