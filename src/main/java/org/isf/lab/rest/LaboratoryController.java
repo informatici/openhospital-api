@@ -69,6 +69,10 @@ import io.swagger.annotations.Authorization;
 public class LaboratoryController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LaboratoryController.class);
+	
+	private static String draft = LaboratoryStatus.DRAFT.toString();
+	
+	private static String open = LaboratoryStatus.OPEN.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -662,7 +666,7 @@ public class LaboratoryController {
 		Laboratory lab = new Laboratory();
 		if (labo.isPresent()) {
 			lab = labo.get();
-			if (!lab.getStatus().toUpperCase().equalsIgnoreCase(LaboratoryStatus.DRAFT.toString()) && !lab.getStatus().toUpperCase().equalsIgnoreCase(LaboratoryStatus.OPEN.toString())) {
+			if (!lab.getStatus().toUpperCase().equalsIgnoreCase(draft) && !lab.getStatus().toUpperCase().equalsIgnoreCase(open)) {
 				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is "+lab.getStatus().toUpperCase()));
 			}
 		} else {
