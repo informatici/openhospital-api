@@ -338,8 +338,8 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.deleteLaboratory(labToDelete)) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not deleted."));
+		if (!laboratoryManager.updateExamRequest(code, LaboratoryStatus.DELETED)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -646,5 +646,31 @@ public class LaboratoryController {
 		lab.setLaboratoryRowList(labDescription);
 		return ResponseEntity.ok(lab);
 	}
-
+	
+	/**
+	 * Set an {@link Laboratory} record to deleted.
+	 * 
+	 * @param code
+	 * @return {@code true} if the record has been set to invalid, {@code false} otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
+	@DeleteMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
+		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
+		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+		Laboratory lab = new Laboratory();
+		if (labo.isPresent()) {
+			lab = labo.get();
+			if (!lab.getStatus().toUpperCase().equalsIgnoreCase(LaboratoryStatus.DRAFT.toString()) && !lab.getStatus().toUpperCase().equalsIgnoreCase(LaboratoryStatus.OPEN.toString())) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is "+lab.getStatus().toUpperCase()));
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		if (!laboratoryManager.updateExamRequest(code, LaboratoryStatus.INVALID)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
+		}
+		return ResponseEntity.ok(true);
+	}
 }
