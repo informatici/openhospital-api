@@ -21,16 +21,22 @@
  */
 package org.isf.menu.dto;
 
-import org.isf.menu.model.User;
+import javax.validation.constraints.NotNull;
+
+import io.swagger.annotations.ApiModelProperty;
 
 public class UserSettingDTO {
 	
+	@NotNull
+	@ApiModelProperty(notes="the id of the setting (must be unique)", example = "1", position = 1)	
 	private int id;
 	
-	private String user;
-	
+	@NotNull
+	@ApiModelProperty(notes="the the name of the setting", example = "dashboard", position = 2)
 	private String configName;
 	
+	@NotNull
+	@ApiModelProperty(notes="the the value of the user", position = 3)
 	private String configValue;
 
 	public int getId() {
@@ -39,14 +45,6 @@ public class UserSettingDTO {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
 	}
 
 	public String getConfigName() {
