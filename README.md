@@ -96,7 +96,6 @@ Make sure you have docker with docker-compose installed, then run the following 
 - run `make`
 - run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
 - (optional - demo data) run `docker compose run --rm oh-database-init`
-- run `docker compose run --rm oh-database-password` (for strong password 'Admin2022test!')
 - run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
