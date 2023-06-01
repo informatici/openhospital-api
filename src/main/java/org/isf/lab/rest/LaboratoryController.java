@@ -73,6 +73,10 @@ public class LaboratoryController {
 	private static String draft = LaboratoryStatus.DRAFT.toString();
 	
 	private static String open = LaboratoryStatus.OPEN.toString();
+	
+	private static String deleted = LaboratoryStatus.DELETED.toString();
+	
+	private static String invalid = LaboratoryStatus.INVALID.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -270,7 +274,10 @@ public class LaboratoryController {
 		if (!labo.isPresent()) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not found."));
 		}
-
+		Laboratory lab = labo.get();
+		if (lab.getStatus().equalsIgnoreCase(deleted) || lab.getStatus().equalsIgnoreCase(invalid)) {
+			throw new OHAPIException(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus().toUpperCase()));
+		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
@@ -339,6 +346,9 @@ public class LaboratoryController {
 		Laboratory labToDelete;
 		if (lab.isPresent()) {
 			labToDelete = lab.get();
+			if (labToDelete.getStatus().equalsIgnoreCase(deleted)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus().toUpperCase()));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
