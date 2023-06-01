@@ -57,17 +57,18 @@ public class UserSettingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(isCreated));
 	}
 	
-	@GetMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<UserSettingDTO>> getUserSetting() throws OHServiceException {
+	@GetMapping(value = "/usersettings/dashBoard", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> getUserSettingDashBoard() throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user settings");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<UserSettingDTO> listUserSetting = userSettingMapper.map2DTOList(userSettingManager.getUserSetting(userName));
-        if (listUserSetting.isEmpty()) {
+		String dashBoard = "dashboard";
+        UserSettingDTO userSettingDashBoard = userSettingMapper.map2DTO(userSettingManager.getUserSettingDashBoard(userName, dashBoard));
+        if (userSettingDashBoard == null) {
 			LOGGER.info("No settings for the current user");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listUserSetting);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userSettingDashBoard);
 		} else {
-	        LOGGER.info("Found {} user settings", listUserSetting.size());
-			return ResponseEntity.ok(listUserSetting);
+	        LOGGER.info("Found {} user settings", userSettingDashBoard);
+			return ResponseEntity.ok(userSettingDashBoard);
 		}
 	}
 }
