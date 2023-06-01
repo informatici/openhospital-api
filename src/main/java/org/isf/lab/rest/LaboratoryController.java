@@ -666,8 +666,8 @@ public class LaboratoryController {
 		Laboratory lab = new Laboratory();
 		if (labo.isPresent()) {
 			lab = labo.get();
-			if (!lab.getStatus().toUpperCase().equalsIgnoreCase(draft) && !lab.getStatus().toUpperCase().equalsIgnoreCase(open)) {
-				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is "+lab.getStatus().toUpperCase()));
+			if (!lab.getStatus().equalsIgnoreCase(draft) && !lab.getStatus().equalsIgnoreCase(open)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus().toUpperCase()));
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
