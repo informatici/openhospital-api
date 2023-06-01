@@ -1,7 +1,5 @@
 package org.isf.menu.rest;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.isf.menu.dto.UserSettingDTO;
@@ -59,16 +57,19 @@ public class UserSettingController {
 	
 	@GetMapping(value = "/usersettings/dashBoard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingDashBoard() throws OHServiceException {
-		LOGGER.info("Attempting to fetch the list of user settings");
+		LOGGER.info("Attempting to fetch the list of user settings:");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		String dashBoard = "dashboard";
-        UserSettingDTO userSettingDashBoard = userSettingMapper.map2DTO(userSettingManager.getUserSettingDashBoard(userName, dashBoard));
-        if (userSettingDashBoard == null) {
+		LOGGER.info("user {}:", userName);
+		UserSetting userSetting = userSettingManager.getUserSettingDashBoard(userName, dashBoard);
+		if (userSetting == null) {
 			LOGGER.info("No settings for the current user");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(userSettingDashBoard);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
+			UserSettingDTO userSettingDashBoard = userSettingMapper.map2DTO(userSetting);
 	        LOGGER.info("Found {} user settings", userSettingDashBoard);
 			return ResponseEntity.ok(userSettingDashBoard);
 		}
+        
 	}
 }
