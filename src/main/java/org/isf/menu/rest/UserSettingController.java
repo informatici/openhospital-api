@@ -1,3 +1,24 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.isf.menu.rest;
 
 import javax.validation.Valid;
@@ -34,22 +55,29 @@ public class UserSettingController {
 	@Autowired
 	private UserSettingManager userSettingManager;
 	
+	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager) {
+		this.userSettingMapper = userSettingMapper;
+		this.userSettingManager = userSettingManager;
+	}
+	
 	/**
-	 * Creates a new {@link UserSetting}.
+	 * Create or update {@link UserSetting}.
 	 * @param userSettingDTO - the {@link UserSetting} to insert
 	 * @return {@link UserSetting} if the userSetting has been inserted, null otherwise.
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
-		LOGGER.info("Attempting to create a userSetting");
+		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserSetting userSetting = userSettingManager.getUserSettingDashBoard(userName, userSettingDTO.getConfigName());
+		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated = new UserSetting();
 		if (userSetting != null) {
+			LOGGER.info("update a UserSetting");
 			userSetting.setConfigValue(userSettingDTO.getConfigValue());
 			isCreated = userSettingManager.updateUserSetting(userSetting);
 		} else {
+			LOGGER.info("create a UserSetting");
 			userSetting = userSettingMapper.map2Model(userSettingDTO);
 			userSetting.setUser(userName);
 			isCreated = userSettingManager.newUserSetting(userSetting);
@@ -63,20 +91,24 @@ public class UserSettingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
 	}
 	
+	/**
+	 * Returns a {@link UserSetting} of dashboard.
+	 * 
+	 * @return {@link UserSetting} if the userSetting of configName dashboard exist, null otherwise.
+	 */
 	@GetMapping(value = "/usersettings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> getUserSettingDashBoard() throws OHServiceException {
-		LOGGER.info("Attempting to fetch the list of user settings:");
+	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
+		LOGGER.info("Attempting to fetch the UserSetting of dashboard of the current user");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		String dashboard = "dashboard";
-		LOGGER.info("user {}:", userName);
 		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, dashboard);
 		if (userSetting == null) {
 			LOGGER.info("No settings for the current user");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			UserSettingDTO userSettingDashBoard = userSettingMapper.map2DTO(userSetting);
-	        LOGGER.info("Found {} user settings", userSettingDashBoard);
-			return ResponseEntity.ok(userSettingDashBoard);
+			UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
+	        LOGGER.info("Found {} user settings", userSettingDashboard);
+			return ResponseEntity.ok(userSettingDashboard);
 		}
         
 	}
