@@ -44,15 +44,22 @@ public class UserSettingController {
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create a userSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
-		userSetting.setUser(userName);
-		UserSetting isCreated = userSettingManager.newUserSetting(userSetting);
+		UserSetting userSetting = userSettingManager.getUserSettingDashBoard(userName, userSettingDTO.getConfigName());
+		UserSetting isCreated = new UserSetting();
+		if (userSetting != null) {
+			userSetting.setConfigValue(userSettingDTO.getConfigValue());
+			isCreated = userSettingManager.newUserSetting(userSetting);
+		} else {
+			userSetting = userSettingMapper.map2Model(userSettingDTO);
+			userSetting.setUser(userName);
+			isCreated = userSettingManager.newUserSetting(userSetting);
+		}
 		if (isCreated == null) {
 			LOGGER.info("UserSetting is not created!");
             throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
         }
 		LOGGER.info("UserSetting successfully created!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(isCreated));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
 	}
 	
 	@GetMapping(value = "/usersettings/dashBoard", produces = MediaType.APPLICATION_JSON_VALUE)
