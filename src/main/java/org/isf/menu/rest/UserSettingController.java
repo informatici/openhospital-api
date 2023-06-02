@@ -67,9 +67,9 @@ public class UserSettingController {
 	public ResponseEntity<UserSettingDTO> getUserSettingDashBoard() throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user settings:");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		String dashBoard = "dashboard";
+		String dashboard = "dashboard";
 		LOGGER.info("user {}:", userName);
-		UserSetting userSetting = userSettingManager.getUserSettingDashBoard(userName, dashBoard);
+		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, dashboard);
 		if (userSetting == null) {
 			LOGGER.info("No settings for the current user");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
