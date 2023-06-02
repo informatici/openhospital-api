@@ -48,12 +48,13 @@ public class UserSettingController {
 		UserSetting isCreated = new UserSetting();
 		if (userSetting != null) {
 			userSetting.setConfigValue(userSettingDTO.getConfigValue());
-			isCreated = userSettingManager.newUserSetting(userSetting);
+			isCreated = userSettingManager.updateUserSetting(userSetting);
 		} else {
 			userSetting = userSettingMapper.map2Model(userSettingDTO);
 			userSetting.setUser(userName);
 			isCreated = userSettingManager.newUserSetting(userSetting);
 		}
+		
 		if (isCreated == null) {
 			LOGGER.info("UserSetting is not created!");
             throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
