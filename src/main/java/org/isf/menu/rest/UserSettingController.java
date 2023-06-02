@@ -63,7 +63,7 @@ public class UserSettingController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
 	}
 	
-	@GetMapping(value = "/usersettings/dashBoard", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usersettings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingDashBoard() throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user settings:");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
