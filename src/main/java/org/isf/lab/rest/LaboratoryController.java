@@ -73,6 +73,8 @@ public class LaboratoryController {
 	private static String draft = LaboratoryStatus.DRAFT.toString();
 	
 	private static String open = LaboratoryStatus.OPEN.toString();
+	
+	private static String done = LaboratoryStatus.DONE.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -317,7 +319,8 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
-		if (LaboratoryStatus.valueOf(status) != null) {
+		LaboratoryStatus stat = LaboratoryStatus.valueOf(status);
+		if (stat!= null) {
 			boolean updated = laboratoryManager.updateExamRequest(code, status);
 			if (!updated) {
 				throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
@@ -412,7 +415,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> !e.getStatus().equals(draft) && !e.getStatus().equals(open)).collect(Collectors.toList());
+				.filter(e -> !e.getStatus().equalsIgnoreCase(draft) && !e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -462,7 +465,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(draft) || e.getStatus().equals(open)).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -487,7 +490,7 @@ public class LaboratoryController {
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
-				.filter(e -> e.getStatus().equals(draft) || e.getStatus().equals(open)).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
