@@ -95,8 +95,8 @@ public class SecurityConfig {
 		// "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
 		config.setAllowedMethods(Arrays.asList("*"));
 		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		// config.setAllowCredentials(true);
-		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setAllowCredentials(true);
+		config.addAllowedOriginPattern("*");
 		config.setMaxAge(3600L);
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
@@ -156,7 +156,7 @@ public class SecurityConfig {
 						.hasAuthority("admin").antMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PATCH, "/hospitals/**").hasAuthority("admin")
-						//.antMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("admin", "guest")
+						// .antMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("admin", "guest")
 						.antMatchers(HttpMethod.POST, "/laboratories/**").hasAuthority("admin").antMatchers(HttpMethod.PUT, "/laboratories/**")
 						.hasAuthority("admin").antMatchers(HttpMethod.DELETE, "/laboratories/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PATCH, "/laboratories/**").hasAuthority("admin").antMatchers(HttpMethod.GET, "/laboratories/**")
