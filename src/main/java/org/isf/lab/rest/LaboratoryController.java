@@ -39,7 +39,7 @@ import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.model.LaboratoryStatus;
+import org.isf.lab.dto.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -172,6 +172,8 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
+		labToInsert.setStatus(draft);
+		labToInsert.setResult("");
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
 				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
@@ -315,14 +317,16 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
-
-		boolean updated = laboratoryManager.updateExamRequest(code,
-				LaboratoryStatus.valueOf(status.toUpperCase()));
-
-		if (!updated) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
+		if (LaboratoryStatus.valueOf(status) != null) {
+			boolean updated = laboratoryManager.updateExamRequest(code, status);
+			if (!updated) {
+				throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
+			}
+			return ResponseEntity.ok(true);
+		} else {
+			throw new OHAPIException(new OHExceptionMessage("This status doesn't exist."));
 		}
-		return ResponseEntity.ok(true);
+		
 	}
 	
 	/**
