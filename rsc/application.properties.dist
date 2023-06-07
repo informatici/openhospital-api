@@ -9,7 +9,7 @@ server.servlet.context-path=/
 server.address=localhost
 server.port=8080
 server.servlet.session.cookie.http-only=true
-#server.servlet.session.cookie.secure=true
+#server.servlet.session.cookie.secure=true # only over HTTPS
 
 ### Swagger-UI (info)
 api.host=localhost:8080
