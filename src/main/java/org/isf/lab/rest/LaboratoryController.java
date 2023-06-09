@@ -106,7 +106,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a new {@link LaboratoryRow}.
+	 * Create a new {@link LaboratoryRowDTO}.
 	 * 
 	 * @param labWithRowsDTO
 	 * @return {@code true} if the record has been created,  {@code false} otherwise.
@@ -148,7 +148,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Create a new {@link Laboratory}.
+	 * Create a new {@link LaboratoryDTO}.
 	 * 
 	 * @param laboratoryDTO
 	 * @return {@code true} if the record has been create,  {@code false} otherwise.
@@ -199,7 +199,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a {@link List} of {@link LaboratoryRow}.
+	 * Create a {@link List} of {@link LaboratoryRowDTO}.
 	 * 
 	 * @param labsWithRows
 	 * @return {@code true} if the record has been create,  {@code false} otherwise.
@@ -252,7 +252,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Updates the specified {@link LaboratoryRow} object.
+	 * Updates the specified {@link LaboratoryRowDTO} object.
 	 * 
 	 * @param code
 	 * @param labWithRowsDTO
@@ -307,7 +307,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Updates the specified {@link Laboratory} object.
+	 * Updates the specified {@link LaboratoryDTO} object.
 	 * 
 	 * @param code
 	 * @param status
@@ -333,7 +333,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Set an {@link Laboratory} record to deleted.
+	 * Set an {@link LaboratoryDTO} record to deleted.
 	 * 
 	 * @param code
 	 * @return {@code true} if the record has been set to delete, {@code false} otherwise.
@@ -356,12 +356,12 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get the list of exams {@link LaboratoryRow}s divided by pages.
+	 * Get the list of exams {@link LaboratoryRowDTO}s divided by pages.
 	 * 
 	 * @param onWeek
 	 * @param pageNo
 	 * @param pageSize
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -400,10 +400,10 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link LaboratoryRow}s for the specified id.
+	 * Get all {@link LaboratoryRowDTO}s for the specified id.
 	 * 
 	 * @param patId
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -448,10 +448,10 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link Laboratory}s for the specified id.
+	 * Get all {@link LaboratoryDTO}s for the specified id.
 	 * 
 	 * @param patId
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
@@ -480,9 +480,9 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link Laboratory}s.
+	 * Get all {@link LaboratoryDTO}s.
 	 * 
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
@@ -522,7 +522,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LaboratoryRow}s based on the applied filters.
+	 * Get all the {@link LaboratoryRowDTO}s based on the applied filters.
 	 * 
 	 * @param examName
 	 * @param dateFrom
@@ -597,10 +597,10 @@ public class LaboratoryController {
 	}
 
    /**
-	 * Get all the {@link Laboratory}s for the specified id.
+	 * Get all the {@link LaboratoryDTO}s for the specified id.
 	 * 
 	 * @param code
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -621,10 +621,10 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LaboratoryRow}s for the specified id.
+	 * Get all the {@link LaboratoryRowDTO}s for the specified id.
 	 * 
 	 * @param code
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
