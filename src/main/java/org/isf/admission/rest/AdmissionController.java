@@ -241,7 +241,11 @@ public class AdmissionController {
 		if (admissions.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionMapper.map2ListDTOPageable(admissions));
+		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
+		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
+		admissionsPageableDTO.setData(admissionsDTO);
+		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
+		return ResponseEntity.ok(admissionsPageableDTO);
 	}
 
 	/**
@@ -263,7 +267,11 @@ public class AdmissionController {
 		if (admissionsPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(admissionMapper.map2ListDTOPageable(admissionsPageable));
+		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
+		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
+		admissionsPageableDTO.setData(admissionsDTO);
+		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissionsPageable.getPageInfo()));
+		return ResponseEntity.ok(admissionsPageableDTO);
 	}
 
 	/**

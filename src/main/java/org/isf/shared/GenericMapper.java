@@ -29,9 +29,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.model.Patient;
 import org.isf.shared.pagination.PageInfoDTO;
-import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.pagination.PageInfo;
-import org.isf.utils.pagination.PagedResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -82,17 +80,6 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		}
 
 		return patientDTO;
-	}
-
-	@Override
-	public PagedResponseDTO<DestType> map2ListDTOPageable(PagedResponse<SourceType> list) {
-		// TODO Auto-generated method stub
-		PagedResponseDTO<DestType> dataPageble = new PagedResponseDTO<DestType>();
-		List<DestType> data = this.map2DTOList(list.getData());
-		dataPageble.setData(data);
-		PageInfoDTO pageInfo = this.setParameterPageInfo(list.getPageInfo());
-		dataPageble.setPageInfo(pageInfo);
-		return null;
 	}
 	
 	public PageInfoDTO setParameterPageInfo(PageInfo pageInfo) {

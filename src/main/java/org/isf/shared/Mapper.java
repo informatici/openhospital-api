@@ -23,8 +23,6 @@ package org.isf.shared;
 
 import java.util.List;
 
-import org.isf.shared.pagination.PagedResponseDTO;
-import org.isf.utils.pagination.PagedResponse;
 import org.modelmapper.ModelMapper;
 
 public interface Mapper<FromType, ToType> {
@@ -33,6 +31,5 @@ public interface Mapper<FromType, ToType> {
 	FromType map2Model(ToType toObj);
 	List<ToType> map2DTOList(List<FromType> list);
 	List<FromType> map2ModelList(List<ToType> list);
-	PagedResponseDTO<ToType> map2ListDTOPageable(PagedResponse<FromType> list);
 	public ModelMapper getMapper();
 }
