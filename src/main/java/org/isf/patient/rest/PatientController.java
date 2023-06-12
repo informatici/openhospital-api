@@ -144,7 +144,7 @@ public class PatientController {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
 		if (patients.getData().isEmpty()) {
-			LOGGER.info("the list is empty");
+			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		PagedResponseDTO<PatientDTO> patientPageableDTO = new PagedResponseDTO<PatientDTO>();
