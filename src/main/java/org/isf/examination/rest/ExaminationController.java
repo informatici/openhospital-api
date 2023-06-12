@@ -243,7 +243,7 @@ public class ExaminationController {
 		PagedResponse<PatientExamination> patientExaminationListPageable = examinationBrowserManager.getLastNByPatIDPageable(patId, limit);
 
 		if (patientExaminationListPageable == null || patientExaminationListPageable.getData().isEmpty()) {
-			LOGGER.info("the list is empty");
+			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			PagedResponseDTO<PatientExaminationDTO> patientExaminationPageableDTO = new PagedResponseDTO<PatientExaminationDTO>();
