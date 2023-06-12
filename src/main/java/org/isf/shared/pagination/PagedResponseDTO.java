@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -19,20 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.shared;
+
+package org.isf.shared.pagination;
 
 import java.util.List;
 
-import org.isf.shared.pagination.PagedResponseDTO;
-import org.isf.utils.pagination.PagedResponse;
-import org.modelmapper.ModelMapper;
+import org.apache.poi.ss.formula.functions.T;
 
-public interface Mapper<FromType, ToType> {
+public class PagedResponseDTO<T> {
+	
+	List<T> data;
+	PageInfoDTO pageInfoDTO;
 
-	ToType map2DTO(FromType fromObj);
-	FromType map2Model(ToType toObj);
-	List<ToType> map2DTOList(List<FromType> list);
-	List<FromType> map2ModelList(List<ToType> list);
-	PagedResponseDTO<ToType> map2ListDTOPageable(PagedResponse<FromType> list);
-	public ModelMapper getMapper();
+	public List<T> getData() {
+		return data;
+	}
+	public void setData(List<T> data) {
+		this.data = data;
+	}
+	public PageInfoDTO getPageInfo() {
+		return pageInfoDTO;
+	}
+	public void setPageInfo(PageInfoDTO pageInfoDTO) {
+		this.pageInfoDTO = pageInfoDTO;
+	}
 }

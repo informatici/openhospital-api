@@ -29,11 +29,14 @@ import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -236,17 +239,19 @@ public class ExaminationController {
 	}
 
 	@GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
+	public ResponseEntity<PagedResponseDTO<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
+		LOGGER.info("Get examinations limit: {}", limit);
+		PagedResponse<PatientExamination> patientExaminationListPageable = examinationBrowserManager.getLastNByPatIDPageable(patId, limit);
 
-		List<PatientExamination> patientExaminationList = examinationBrowserManager.getLastNByPatID(patId, limit);
-
-		if (patientExaminationList == null || patientExaminationList.isEmpty()) {
+		if (patientExaminationListPageable == null || patientExaminationListPageable.getData().isEmpty()) {
+			LOGGER.info("the list is empty");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			List<PatientExaminationDTO> patientExamList = patientExaminationList.stream().map(pat -> {
-				return patientExaminationMapper.map2DTO(pat);
-			}).collect(Collectors.toList());
-			return ResponseEntity.ok(patientExamList);
+			PagedResponseDTO<PatientExaminationDTO> patientExaminationPageableDTO = new PagedResponseDTO<PatientExaminationDTO>();
+			List<PatientExaminationDTO> patientExaminationDTO = patientExaminationMapper.map2DTOList(patientExaminationListPageable.getData());
+			patientExaminationPageableDTO.setData(patientExaminationDTO);
+			patientExaminationPageableDTO.setPageInfo(patientExaminationMapper.setParameterPageInfo(patientExaminationListPageable.getPageInfo()));
+			return ResponseEntity.ok(patientExaminationPageableDTO);
 		}
 	}
 

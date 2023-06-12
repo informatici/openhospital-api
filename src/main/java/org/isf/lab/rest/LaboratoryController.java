@@ -44,8 +44,10 @@ import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -354,13 +356,13 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@RequestParam boolean onWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
+	public ResponseEntity<PagedResponseDTO<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
-		List<Laboratory> labList = laboratoryManager.getLaboratory(onWeek, pageNo, pageSize);
-		if (labList == null || labList.isEmpty()) {
+		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, pageNo, pageSize);
+		if (labListPageable == null || labListPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(labList.stream().map(lab -> {
+		List<LabWithRowsDTO> labWithRowsDto = labListPageable.getData().stream().map(lab -> {
 			LabWithRowsDTO labDTO = new LabWithRowsDTO();
 			List<String> labDescription = new ArrayList<>();
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
@@ -385,7 +387,11 @@ public class LaboratoryController {
 			labDTO.setLaboratoryDTO(laboratoryDTO);
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
-		}).collect(Collectors.toList()));
+		}).collect(Collectors.toList());
+		PagedResponseDTO<LabWithRowsDTO> labWithRowsDtoPageable = new PagedResponseDTO<LabWithRowsDTO>();
+		labWithRowsDtoPageable.setPageInfo(laboratoryMapper.setParameterPageInfo(labListPageable.getPageInfo()));
+		labWithRowsDtoPageable.setData(labWithRowsDto);
+		return ResponseEntity.ok(labWithRowsDtoPageable);
 	}
 	
 	/**
