@@ -32,7 +32,10 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
+import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.exception.OHException;
+import org.isf.utils.pagination.PageInfo;
+import org.isf.utils.pagination.PagedResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,6 +55,15 @@ public class PatientHelper {
 	public static String asJsonString(PatientDTO patientDTO) {
 		try {
 			return getObjectMapper().writeValueAsString(patientDTO);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static String asJsonStringPageable(PagedResponseDTO<PatientDTO> patientDTOPageable) {
+		try {
+			return getObjectMapper().writeValueAsString(patientDTOPageable);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -102,6 +114,18 @@ public class PatientHelper {
 					.registerModule(new JavaTimeModule());
 		}
 		return objectMapper;
+	}
+	
+	public static PageInfo  setParameterPage() {
+		PageInfo pageInfo = new PageInfo();
+		pageInfo.setHasNextPage(false);
+		pageInfo.setHasPreviousPage(false);
+		pageInfo.setNbOfElements(10);
+		pageInfo.setPage(0);
+		pageInfo.setSize(1);
+		pageInfo.setTotalCount(10);
+		
+		return pageInfo;
 	}
 
 }

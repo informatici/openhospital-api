@@ -38,8 +38,10 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -137,17 +139,19 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+	public ResponseEntity<PagedResponseDTO<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
-		List<Patient> patients = patientManager.getPatient(page, size);
-		List<PatientDTO> patientDTOS = patients.stream().map(pat -> {
-			return patientMapper.map2DTO(pat);
-		}).collect(Collectors.toList());
-		if (patientDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientDTOS);
+		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
+		if (patients.getData().isEmpty()) {
+			LOGGER.info("The patient list is empty.");
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(patientDTOS);
+		PagedResponseDTO<PatientDTO> patientPageableDTO = new PagedResponseDTO<PatientDTO>();
+		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients.getData());
+		patientPageableDTO.setData(patientsDTO);
+		patientPageableDTO.setPageInfo(patientMapper.setParameterPageInfo(patients.getPageInfo()));
+		return ResponseEntity.ok(patientPageableDTO);
 	}
 
 	@GetMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
