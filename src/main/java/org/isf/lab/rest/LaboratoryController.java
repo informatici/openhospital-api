@@ -76,6 +76,8 @@ public class LaboratoryController {
 	
 	private static String open = LaboratoryStatus.OPEN.toString();
 	
+	private static String done = LaboratoryStatus.DONE.toString();
+	
 	private static String deleted = LaboratoryStatus.DELETED.toString();
 	
 	private static String invalid = LaboratoryStatus.INVALID.toString();
@@ -110,7 +112,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a new {@link LaboratoryRow}.
+	 * Create a new {@link LaboratoryRowDTO}.
 	 * 
 	 * @param labWithRowsDTO
 	 * @return {@code true} if the record has been created,  {@code false} otherwise.
@@ -152,7 +154,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Create a new {@link Laboratory}.
+	 * Create a new {@link LaboratoryDTO}.
 	 * 
 	 * @param laboratoryDTO
 	 * @return {@code true} if the record has been create,  {@code false} otherwise.
@@ -178,6 +180,8 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
+		labToInsert.setStatus(draft);
+		labToInsert.setResult("");
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
 				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
@@ -201,7 +205,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Create a {@link List} of {@link LaboratoryRow}.
+	 * Create a {@link List} of {@link LaboratoryRowDTO}.
 	 * 
 	 * @param labsWithRows
 	 * @return {@code true} if the record has been create,  {@code false} otherwise.
@@ -254,7 +258,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Updates the specified {@link LaboratoryRow} object.
+	 * Updates the specified {@link LaboratoryRowDTO} object.
 	 * 
 	 * @param code
 	 * @param labWithRowsDTO
@@ -312,7 +316,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Updates the specified {@link Laboratory} object.
+	 * Updates the specified {@link LaboratoryDTO} object.
 	 * 
 	 * @param code
 	 * @param status
@@ -324,18 +328,21 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
-
-		boolean updated = laboratoryManager.updateExamRequest(code,
-				LaboratoryStatus.valueOf(status.toUpperCase()));
-
-		if (!updated) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
+		LaboratoryStatus stat = LaboratoryStatus.valueOf(status);
+		if (stat!= null) {
+			boolean updated = laboratoryManager.updateExamRequest(code, status);
+			if (!updated) {
+				throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
+			}
+			return ResponseEntity.ok(true);
+		} else {
+			throw new OHAPIException(new OHExceptionMessage("This status doesn't exist."));
 		}
-		return ResponseEntity.ok(true);
+		
 	}
 	
 	/**
-	 * Set an {@link Laboratory} record to deleted.
+	 * Set an {@link LaboratoryDTO} record to deleted.
 	 * 
 	 * @param code
 	 * @return {@code true} if the record has been set to delete, {@code false} otherwise.
@@ -354,19 +361,19 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.updateExamRequest(code, LaboratoryStatus.DELETED)) {
+		if (!laboratoryManager.updateExamRequest(code, deleted)) {
 			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
 
 	/**
-	 * Get the list of exams {@link LaboratoryRow}s divided by pages.
+	 * Get the list of exams {@link LaboratoryRowDTO}s divided by pages.
 	 * 
 	 * @param onWeek
 	 * @param pageNo
 	 * @param pageSize
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -409,10 +416,10 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link LaboratoryRow}s for the specified id.
+	 * Get all {@link LaboratoryRowDTO}s for the specified id.
 	 * 
 	 * @param patId
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -424,7 +431,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> !e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> !e.getStatus().equalsIgnoreCase(draft) && !e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -457,10 +464,10 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link Laboratory}s for the specified id.
+	 * Get all {@link LaboratoryDTO}s for the specified id.
 	 * 
 	 * @param patId
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
@@ -474,7 +481,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -489,9 +496,9 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Get all {@link Laboratory}s.
+	 * Get all {@link LaboratoryDTO}s.
 	 * 
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
@@ -499,7 +506,7 @@ public class LaboratoryController {
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -531,7 +538,7 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LaboratoryRow}s based on the applied filters.
+	 * Get all the {@link LaboratoryRowDTO}s based on the applied filters.
 	 * 
 	 * @param examName
 	 * @param dateFrom
@@ -606,10 +613,10 @@ public class LaboratoryController {
 	}
 
    /**
-	 * Get all the {@link Laboratory}s for the specified id.
+	 * Get all the {@link LaboratoryDTO}s for the specified id.
 	 * 
 	 * @param code
-	 * @return the {@link List} of found {@link Laboratory} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -630,10 +637,10 @@ public class LaboratoryController {
 	}
 
 	/**
-	 * Get all the {@link LaboratoryRow}s for the specified id.
+	 * Get all the {@link LaboratoryRowDTO}s for the specified id.
 	 * 
 	 * @param code
-	 * @return the {@link List} of found {@link LaboratoryRow} or NO_CONTENT otherwise.
+	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/exams/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -688,7 +695,7 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.updateExamRequest(code, LaboratoryStatus.INVALID)) {
+		if (!laboratoryManager.updateExamRequest(code, invalid)) {
 			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
 		}
 		return ResponseEntity.ok(true);
