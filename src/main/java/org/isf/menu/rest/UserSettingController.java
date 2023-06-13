@@ -92,7 +92,7 @@ public class UserSettingController {
 	}
 	
 	/**
-	 * Returns a {@link UserSettingDTO} of dashboard.
+	 * Returns a {@link UserSettingDTO} of userSetting.
 	 * 
 	 * @return {@link UserSettingDTO} if the userSetting of configName dashboard exist, null otherwise.
 	 */
