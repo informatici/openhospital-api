@@ -107,7 +107,7 @@ public class UserSettingController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
-	        LOGGER.info("Found {} user settings", userSettingDashboard);
+			LOGGER.info("Found {} user settings", userSettingDashboard);
 			return ResponseEntity.ok(userSettingDashboard);
 		}
         
