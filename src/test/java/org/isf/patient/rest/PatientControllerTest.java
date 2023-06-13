@@ -59,6 +59,8 @@ import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.shared.mapper.mappings.PatientMapping;
+import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.utils.pagination.PagedResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -355,25 +357,28 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void whet_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
+	public void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
 		String request = "/patients";
 
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
 
 		List<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
-
-		List<PatientDTO> expectedPatientDTOList = patientMapper.map2DTOList(patientList);
-
-		when(patientBrowserManagerMock.getPatient(anyInt(), anyInt()))
-						.thenReturn(patientList);
+		
+		PagedResponse<Patient> patientPageable = new PagedResponse<Patient>();
+		patientPageable.setData(patientList);
+		patientPageable.setPageInfo(PatientHelper.setParameterPage());
+		PagedResponseDTO<PatientDTO> expectedPatientDTOList = new PagedResponseDTO<PatientDTO>();		
+		expectedPatientDTOList.setData(patientMapper.map2DTOList(patientList));	
+		expectedPatientDTOList.setPageInfo(patientMapper.setParameterPageInfo(patientPageable.getPageInfo()));
+		when(patientBrowserManagerMock.getPatientsPageable(anyInt(), anyInt())) 
+						.thenReturn(patientPageable);
 
 		this.mockMvc
-						.perform(
-										get(request)
-														.contentType(MediaType.APPLICATION_JSON))
+						.perform(get(request)
+						.contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
 						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList))))
+						.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList.getData()))))
 						.andReturn();
 
 	}
