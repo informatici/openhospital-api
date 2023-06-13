@@ -48,26 +48,29 @@ import io.swagger.annotations.Api;
 public class UserSettingController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserSettingController.class);
-	
+
 	@Autowired
 	private UserSettingMapper userSettingMapper;
-	
+
 	@Autowired
 	private UserSettingManager userSettingManager;
-	
+
 	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager) {
 		this.userSettingMapper = userSettingMapper;
 		this.userSettingManager = userSettingManager;
 	}
-	
+
 	/**
 	 * Create or update {@link UserSettingDTO}.
+	 * 
 	 * @param userSettingDTO - the {@link UserSettingDTO} to insert
-	 * @return {@link UserSettingDTO} if the userSetting has been inserted, null otherwise.
-	 * @throws OHServiceException 
+	 * @return {@link UserSettingDTO} if the userSetting has been inserted, null
+	 *         otherwise.
+	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
+	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO)
+			throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, userSettingDTO.getConfigName());
@@ -82,19 +85,20 @@ public class UserSettingController {
 			userSetting.setUser(userName);
 			isCreated = userSettingManager.newUserSetting(userSetting);
 		}
-		
+
 		if (isCreated == null) {
 			LOGGER.info("UserSetting is not created!");
 			throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
-        }
+		}
 		LOGGER.info("UserSetting successfully created!");
 		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
 	}
-	
+
 	/**
 	 * Returns a {@link UserSettingDTO} of userSetting.
 	 * 
-	 * @return {@link UserSettingDTO} if the userSetting of configName dashboard exist, null otherwise.
+	 * @return {@link UserSettingDTO} if the userSetting with configName dashboard
+	 *         exist, null otherwise.
 	 */
 	@GetMapping(value = "/usersettings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
@@ -110,6 +114,6 @@ public class UserSettingController {
 			LOGGER.info("Found {} user settings", userSettingDashboard);
 			return ResponseEntity.ok(userSettingDashboard);
 		}
-        
+
 	}
 }
