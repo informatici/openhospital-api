@@ -39,13 +39,15 @@ import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.dto.LaboratoryStatus;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.pagination.PagedResponseDTO;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,6 +77,10 @@ public class LaboratoryController {
 	private static String open = LaboratoryStatus.OPEN.toString();
 	
 	private static String done = LaboratoryStatus.DONE.toString();
+	
+	private static String deleted = LaboratoryStatus.DELETED.toString();
+	
+	private static String invalid = LaboratoryStatus.INVALID.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -274,7 +280,10 @@ public class LaboratoryController {
 		if (!labo.isPresent()) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not found."));
 		}
-
+		Laboratory lab = labo.get();
+		if (lab.getStatus().equalsIgnoreCase(deleted) || lab.getStatus().equalsIgnoreCase(invalid)) {
+			throw new OHAPIException(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus().toUpperCase()));
+		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
@@ -346,11 +355,14 @@ public class LaboratoryController {
 		Laboratory labToDelete;
 		if (lab.isPresent()) {
 			labToDelete = lab.get();
+			if (labToDelete.getStatus().equalsIgnoreCase(deleted)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus().toUpperCase()));
+			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.deleteLaboratory(labToDelete)) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not deleted."));
+		if (!laboratoryManager.updateExamRequest(code, deleted)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -365,13 +377,13 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@RequestParam boolean onWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
+	public ResponseEntity<PagedResponseDTO<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
-		List<Laboratory> labList = laboratoryManager.getLaboratory(onWeek, pageNo, pageSize);
-		if (labList == null || labList.isEmpty()) {
+		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, pageNo, pageSize);
+		if (labListPageable == null || labListPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(labList.stream().map(lab -> {
+		List<LabWithRowsDTO> labWithRowsDto = labListPageable.getData().stream().map(lab -> {
 			LabWithRowsDTO labDTO = new LabWithRowsDTO();
 			List<String> labDescription = new ArrayList<>();
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
@@ -396,7 +408,11 @@ public class LaboratoryController {
 			labDTO.setLaboratoryDTO(laboratoryDTO);
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
-		}).collect(Collectors.toList()));
+		}).collect(Collectors.toList());
+		PagedResponseDTO<LabWithRowsDTO> labWithRowsDtoPageable = new PagedResponseDTO<LabWithRowsDTO>();
+		labWithRowsDtoPageable.setPageInfo(laboratoryMapper.setParameterPageInfo(labListPageable.getPageInfo()));
+		labWithRowsDtoPageable.setData(labWithRowsDto);
+		return ResponseEntity.ok(labWithRowsDtoPageable);
 	}
 	
 	/**
@@ -657,5 +673,31 @@ public class LaboratoryController {
 		lab.setLaboratoryRowList(labDescription);
 		return ResponseEntity.ok(lab);
 	}
-
+	
+	/**
+	 * Set an {@link Laboratory} record to deleted.
+	 * 
+	 * @param code
+	 * @return {@code true} if the record has been set to invalid, {@code false} otherwise.
+	 * @throws OHServiceException
+	 * @author Arnaud
+	 */
+	@DeleteMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
+		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
+		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
+		Laboratory lab = new Laboratory();
+		if (labo.isPresent()) {
+			lab = labo.get();
+			if (!lab.getStatus().equalsIgnoreCase(draft) && !lab.getStatus().equalsIgnoreCase(open)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus().toUpperCase()));
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		if (!laboratoryManager.updateExamRequest(code, invalid)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
+		}
+		return ResponseEntity.ok(true);
+	}
 }

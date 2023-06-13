@@ -19,19 +19,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.lab.dto;
 
-public enum LaboratoryStatus {
-	DRAFT("draft"), OPEN("open"), DONE("done");
+package org.isf.shared.pagination;
 
-	private String status;
+import java.util.List;
 
-	private LaboratoryStatus(String s) {
-		status = s;
+import org.apache.poi.ss.formula.functions.T;
+
+public class PagedResponseDTO<T> {
+	
+	List<T> data;
+	PageInfoDTO pageInfoDTO;
+
+	public List<T> getData() {
+		return data;
 	}
-
-	@Override
-	public String toString() {
-		return this.status;
+	public void setData(List<T> data) {
+		this.data = data;
+	}
+	public PageInfoDTO getPageInfo() {
+		return pageInfoDTO;
+	}
+	public void setPageInfo(PageInfoDTO pageInfoDTO) {
+		this.pageInfoDTO = pageInfoDTO;
 	}
 }

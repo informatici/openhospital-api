@@ -24,6 +24,7 @@ package org.isf.lab.dto;
 import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.utils.time.TimeTools;
 

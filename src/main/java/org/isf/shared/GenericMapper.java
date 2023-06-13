@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.model.Patient;
+import org.isf.shared.pagination.PageInfoDTO;
+import org.isf.utils.pagination.PageInfo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,5 +80,16 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		}
 
 		return patientDTO;
+	}
+	
+	public PageInfoDTO setParameterPageInfo(PageInfo pageInfo) {
+		PageInfoDTO pageInfoDTO = new PageInfoDTO();
+		pageInfoDTO.setNbOfElements(pageInfo.getNbOfElements());
+		pageInfoDTO.setPage(pageInfo.getPage());
+		pageInfoDTO.setHasNextPage(pageInfo.isHasNextPage());
+		pageInfoDTO.setHasPreviousPage(pageInfo.isHasPreviousPage());
+		pageInfoDTO.setSize(pageInfo.getSize());
+		pageInfoDTO.setTotalCount(pageInfo.getTotalCount());
+		return pageInfoDTO;
 	}
 }
