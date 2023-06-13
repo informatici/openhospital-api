@@ -85,10 +85,10 @@ public class UserSettingController {
 		
 		if (isCreated == null) {
 			LOGGER.info("UserSetting is not created!");
-            throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
         }
 		LOGGER.info("UserSetting successfully created!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
+		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(userSetting));
 	}
 	
 	/**
