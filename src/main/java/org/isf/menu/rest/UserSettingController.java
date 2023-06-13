@@ -61,9 +61,9 @@ public class UserSettingController {
 	}
 	
 	/**
-	 * Create or update {@link UserSetting}.
-	 * @param userSettingDTO - the {@link UserSetting} to insert
-	 * @return {@link UserSetting} if the userSetting has been inserted, null otherwise.
+	 * Create or update {@link UserSettingDTO}.
+	 * @param userSettingDTO - the {@link UserSettingDTO} to insert
+	 * @return {@link UserSettingDTO} if the userSetting has been inserted, null otherwise.
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -92,9 +92,9 @@ public class UserSettingController {
 	}
 	
 	/**
-	 * Returns a {@link UserSetting} of dashboard.
+	 * Returns a {@link UserSettingDTO} of dashboard.
 	 * 
-	 * @return {@link UserSetting} if the userSetting of configName dashboard exist, null otherwise.
+	 * @return {@link UserSettingDTO} if the userSetting of configName dashboard exist, null otherwise.
 	 */
 	@GetMapping(value = "/usersettings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
