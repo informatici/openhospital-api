@@ -103,7 +103,7 @@ public class UserSettingController {
 		String dashboard = "dashboard";
 		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, dashboard);
 		if (userSetting == null) {
-			LOGGER.info("No settings for the current user");
+			LOGGER.info("No dashboard settings for the current user {}", userName);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
 			UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
