@@ -73,7 +73,7 @@ public class UserSettingController {
 			throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, userSettingDTO.getConfigName());
+		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated = new UserSetting();
 		if (userSetting != null) {
 			LOGGER.info("update a UserSetting");
