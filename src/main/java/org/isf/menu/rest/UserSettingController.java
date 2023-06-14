@@ -105,7 +105,7 @@ public class UserSettingController {
 		LOGGER.info("Attempting to fetch the UserSetting of dashboard of the current user");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		String dashboard = "dashboard";
-		UserSetting userSetting = userSettingManager.getUserSettingDashboard(userName, dashboard);
+		UserSetting userSetting = userSettingManager.getUserSetting(userName, dashboard);
 		if (userSetting == null) {
 			LOGGER.info("No dashboard settings for the current user {}", userName);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
