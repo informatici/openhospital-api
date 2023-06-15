@@ -95,8 +95,8 @@ public class SecurityConfig {
 		// "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
 		config.setAllowedMethods(Arrays.asList("*"));
 		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		// config.setAllowCredentials(true);
-		config.setAllowedOrigins(Arrays.asList("*"));
+		config.setAllowCredentials(true);
+		config.addAllowedOriginPattern("*");
 		config.setMaxAge(3600L);
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
