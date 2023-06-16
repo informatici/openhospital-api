@@ -24,8 +24,6 @@ package org.isf.shared.pagination;
 
 import java.util.List;
 
-import org.apache.poi.ss.formula.functions.T;
-
 public class PagedResponseDTO<T> {
 	
 	List<T> data;
