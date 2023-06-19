@@ -27,6 +27,7 @@ import org.isf.generaldata.GeneralData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.ImportResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,13 +41,15 @@ public class OpenHospitalApiApplication {
 	private ObjectMapper objectMapper;
 
 	public static void main(String[] args) {
-		SpringApplication.run(OpenHospitalApiApplication.class, args);
+		SpringApplication application = new SpringApplication(OpenHospitalApiApplication.class);
+		application.addListeners(new ApplicationPidFileWriter()); // OP-1113 added to control API from scripts
+		application.run(args);
 	}
 
 	@PostConstruct
 	public void setUp() {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		GeneralData.getGeneralData(); //initialize core settings
+		GeneralData.getGeneralData(); // initialize core settings
 	}
 
 }
