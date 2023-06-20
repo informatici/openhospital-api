@@ -38,7 +38,7 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
@@ -139,7 +139,7 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+	public ResponseEntity<Page<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
 		LOGGER.info("Get patients page: {}  size: {}", page, size);
 		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
@@ -147,7 +147,7 @@ public class PatientController {
 			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PagedResponseDTO<PatientDTO> patientPageableDTO = new PagedResponseDTO<PatientDTO>();
+		Page<PatientDTO> patientPageableDTO = new Page<PatientDTO>();
 		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients.getData());
 		patientPageableDTO.setData(patientsDTO);
 		patientPageableDTO.setPageInfo(patientMapper.setParameterPageInfo(patients.getPageInfo()));

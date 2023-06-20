@@ -50,7 +50,7 @@ import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
@@ -229,7 +229,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<AdmissionDTO>> getAdmissions(
+	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
 					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
@@ -241,7 +241,7 @@ public class AdmissionController {
 		if (admissions.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
+		Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
 		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
@@ -256,7 +256,7 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<AdmissionDTO>> getDischarges(
+	public ResponseEntity<Page<AdmissionDTO>> getDischarges(
 					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
@@ -267,7 +267,7 @@ public class AdmissionController {
 		if (admissionsPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
+		Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
 		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissionsPageable.getPageInfo()));

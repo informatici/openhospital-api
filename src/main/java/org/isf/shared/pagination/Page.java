@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.apache.poi.ss.formula.functions.T;
 
-public class PagedResponseDTO<T> {
+public class Page<T> {
 	
 	List<T> data;
 	PageInfoDTO pageInfoDTO;

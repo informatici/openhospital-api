@@ -44,7 +44,7 @@ import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
@@ -377,7 +377,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
+	public ResponseEntity<Page<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
 		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, pageNo, pageSize);
 		if (labListPageable == null || labListPageable.getData().isEmpty()) {
@@ -409,7 +409,7 @@ public class LaboratoryController {
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
 		}).collect(Collectors.toList());
-		PagedResponseDTO<LabWithRowsDTO> labWithRowsDtoPageable = new PagedResponseDTO<LabWithRowsDTO>();
+		Page<LabWithRowsDTO> labWithRowsDtoPageable = new Page<LabWithRowsDTO>();
 		labWithRowsDtoPageable.setPageInfo(laboratoryMapper.setParameterPageInfo(labListPageable.getPageInfo()));
 		labWithRowsDtoPageable.setData(labWithRowsDto);
 		return ResponseEntity.ok(labWithRowsDtoPageable);

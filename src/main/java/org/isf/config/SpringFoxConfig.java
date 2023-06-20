@@ -73,6 +73,7 @@ public class SpringFoxConfig {
 						// .apis(RequestHandlerSelectors.any())
 						.paths(PathSelectors.any())
 						.build()
+						.forCodeGeneration(true)
 						.securityContexts(Arrays.asList(jwtSecurityContext()))
 						.securitySchemes(Arrays.asList(apiKey()));
 	}

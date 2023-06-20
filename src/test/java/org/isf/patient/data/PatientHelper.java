@@ -32,7 +32,7 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
 import org.isf.patient.test.TestPatient;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.pagination.PageInfo;
 import org.isf.utils.pagination.PagedResponse;
@@ -61,7 +61,7 @@ public class PatientHelper {
 		return null;
 	}
 	
-	public static String asJsonStringPageable(PagedResponseDTO<PatientDTO> patientDTOPageable) {
+	public static String asJsonStringPageable(Page<PatientDTO> patientDTOPageable) {
 		try {
 			return getObjectMapper().writeValueAsString(patientDTOPageable);
 		} catch (JsonProcessingException e) {
