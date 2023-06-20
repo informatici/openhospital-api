@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.shared;
 
@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.model.Patient;
+import org.isf.shared.pagination.PageInfoDTO;
+import org.isf.utils.pagination.PageInfo;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +39,7 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 	protected ModelMapper modelMapper;
 	private Type sourceClass;
 	private Type destClass;
-	
+
 	public GenericMapper(Class<SourceType> sourceClass, Class<DestType> destClass) {
 		this.sourceClass = sourceClass;
 		this.destClass = destClass;
@@ -63,15 +65,31 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		return (List<SourceType>) list.stream().map(it -> modelMapper.map(it, sourceClass)).collect(Collectors.toList());
 	}
 
+	public ModelMapper getMapper() {
+		return this.modelMapper;
+	}
+
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
 		// TODO Auto-generated method stub
 		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
-		
-		if (status)
+
+		if (status) {
 			patientDTO.setStatus(PatientSTATUS.I);
-		else 
+		} else {
 			patientDTO.setStatus(PatientSTATUS.O);
-		
+		}
+
 		return patientDTO;
+	}
+	
+	public PageInfoDTO setParameterPageInfo(PageInfo pageInfo) {
+		PageInfoDTO pageInfoDTO = new PageInfoDTO();
+		pageInfoDTO.setNbOfElements(pageInfo.getNbOfElements());
+		pageInfoDTO.setPage(pageInfo.getPage());
+		pageInfoDTO.setHasNextPage(pageInfo.isHasNextPage());
+		pageInfoDTO.setHasPreviousPage(pageInfo.isHasPreviousPage());
+		pageInfoDTO.setSize(pageInfo.getSize());
+		pageInfoDTO.setTotalCount(pageInfo.getTotalCount());
+		return pageInfoDTO;
 	}
 }

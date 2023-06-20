@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.lab.rest;
 
@@ -105,7 +105,7 @@ public class LaboratoryControllerTest {
 		String request = "/laboratories";
 		
 		Laboratory lab = LaboratoryHelper.setup();
-		ArrayList<String> labRows =new ArrayList<String>();
+		ArrayList<String> labRows = new ArrayList<>();
 		labRows.add("good");
 		labRows.add("material");
 		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
@@ -128,7 +128,7 @@ public class LaboratoryControllerTest {
 		Integer code = 5;
 		
 		Laboratory lab = LaboratoryHelper.setup();
-		ArrayList<String> labRows =new ArrayList<String>();
+		ArrayList<String> labRows = new ArrayList<>();
 		labRows.add("lab");
 		labRows.add("material");
 		lab.setCode(code);

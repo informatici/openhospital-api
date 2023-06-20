@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.vaccine.rest;
 
@@ -27,7 +27,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
 import org.isf.vaccine.mapper.VaccineMapper;
@@ -116,10 +115,10 @@ public class VaccineController {
         try {
              isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine type already present."));
         }
         if (isCreatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
@@ -136,7 +135,7 @@ public class VaccineController {
         LOGGER.info("Update vaccine: {}", updateVaccine);
         Vaccine isUpdatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         if (isUpdatedVaccine == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccine));
     }
@@ -156,7 +155,7 @@ public class VaccineController {
         if (vaccine!=null){
             isDeleted = vaccineManager.deleteVaccine(vaccine);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage("Vaccine not deleted."));
             }
             return ResponseEntity.ok(isDeleted);
         }
@@ -167,7 +166,7 @@ public class VaccineController {
      * Check if the code is already used by other vaccine.
      *
      * @param code
-     * @return true if it is already use, false otherwise
+     * @return {@code true} if it is already used, false otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

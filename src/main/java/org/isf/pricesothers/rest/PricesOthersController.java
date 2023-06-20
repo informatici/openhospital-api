@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.pricesothers.rest;
 
@@ -31,7 +31,6 @@ import org.isf.pricesothers.model.PricesOthers;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,7 +74,7 @@ public class PricesOthersController {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
 		PricesOthers isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
 		if (isCreatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Prices Others not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPricesOthers));
 	}
@@ -97,7 +96,7 @@ public class PricesOthersController {
 		}
 		PricesOthers isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
 		if (isUpdatedPricesOthers == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "prices others is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Prices Others not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
 	}

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.opetype.rest;
 
@@ -31,7 +31,6 @@ import org.isf.opetype.model.OperationType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,7 +75,7 @@ public class OperationTypeController {
 		LOGGER.info("Create operation Type {}", code);
 		OperationType isCreatedOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
 		if (isCreatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Operation Type not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperationType));
 	}
@@ -93,11 +92,11 @@ public class OperationTypeController {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Operation Type not found."));
 		}
 		OperationType isUpdatedOperationType = opeTypeManager.updateOperationType(opeType);
 		if (isUpdatedOperationType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "operation Type is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Operation Type not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperationType));
 	}

@@ -17,10 +17,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.visits.rest;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.List;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
@@ -77,7 +75,7 @@ public class VisitsController {
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
-        List<VisitDTO> listVisit = new ArrayList<VisitDTO>();
+        List<VisitDTO> listVisit = new ArrayList<>();
         for(Visit visitP : visit) {	
 			VisitDTO visitDTO =  mapper.map2DTO(visitP);
         	listVisit.add(visitDTO);
@@ -117,7 +115,7 @@ public class VisitsController {
         List<Visit> listVisits = mapper.map2ModelList(newVisits);
         boolean areCreated = visitManager.newVisits(listVisits);
         if (!areCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Visits not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
     }
@@ -134,7 +132,7 @@ public class VisitsController {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);
         if (!areDeleted) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Visits are not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Visits not deleted."));
         }
         return ResponseEntity.ok(true);
     }
@@ -142,7 +140,7 @@ public class VisitsController {
     /**
      * Create new visitors.
      *
-     * @param newVisits a list with all the visitors
+     * @param visitID the id of the visit
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
@@ -150,16 +148,18 @@ public class VisitsController {
     public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
         LOGGER.info("Create Visits");
         Visit visit = visitManager.findVisit(visitID);
-        if (visit == null)
-        	throw new OHAPIException( new OHExceptionMessage(null, "Visit not found!", OHSeverityLevel.ERROR));
+        if (visit == null) {
+            throw new OHAPIException(new OHExceptionMessage("Visit not found."));
+        }
         
-        if (visit.getVisitID() != updateVisit.getVisitID())
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        if (visit.getVisitID() != updateVisit.getVisitID()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
         
         Visit visitUp = mapper.map2Model(updateVisit);
         Visit visitUpdate = visitManager.newVisit(visitUp);
         if (visitUpdate == null) {
-        	throw new OHAPIException( new OHExceptionMessage(null, "visit is not update !", OHSeverityLevel.ERROR));
+        	throw new OHAPIException(new OHExceptionMessage("Visit not updated."));
         }
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
     }

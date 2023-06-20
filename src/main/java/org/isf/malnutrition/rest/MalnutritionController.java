@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.malnutrition.rest;
 
@@ -34,7 +34,6 @@ import org.isf.malnutrition.model.Malnutrition;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,7 +73,7 @@ public class MalnutritionController {
 		Malnutrition isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
 		if (isCreatedMalnutrition == null) {
 			LOGGER.info("Malnutrition is not created!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Malnutrition not created."));
         }
 		LOGGER.info("Malnutrition successfully created!");
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMalnutrition));
@@ -91,7 +90,7 @@ public class MalnutritionController {
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if (malnutritions == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Error while retrieving malnutrition controls!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Error while retrieving malnutrition controls."));
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 		if (mappedMalnutritions.isEmpty()) {
@@ -113,7 +112,7 @@ public class MalnutritionController {
 	public ResponseEntity<MalnutritionDTO> getLastMalnutrition(@PathVariable("id_patient") int patientID) throws OHServiceException {
 		Malnutrition foundMalnutrition = manager.getLastMalnutrition(patientID);
 		if (foundMalnutrition == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "No malnutrition found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("No malnutrition found."));
 		} else {
 			return ResponseEntity.ok(mapper.map2DTO(foundMalnutrition));
 		}
@@ -139,7 +138,7 @@ public class MalnutritionController {
 	 */
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		List<Malnutrition> malnutritions = manager.getMalnutrition(malnutritionDTO.getAdmission().getId()+"");
+		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malnutritionDTO.getAdmission().getId()));
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions
@@ -148,7 +147,7 @@ public class MalnutritionController {
 					.collect(Collectors.toList());
 		}
 		if (matchedMalnutritions.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Malnutrition control not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Malnutrition control not found."));
 		}
 		boolean isDeleted = manager.deleteMalnutrition(matchedMalnutritions.get(0));
 		return ResponseEntity.ok(isDeleted);

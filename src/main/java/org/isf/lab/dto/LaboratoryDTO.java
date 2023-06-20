@@ -17,13 +17,16 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.lab.dto;
 
 import java.time.LocalDateTime;
 
 import org.isf.exam.dto.ExamDTO;
+import org.isf.lab.model.LaboratoryStatus;
+import org.isf.patient.dto.PatientSTATUS;
+import org.isf.utils.time.TimeTools;
 
 import com.drew.lang.annotations.NotNull;
 
@@ -31,147 +34,158 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class LaboratoryDTO {
 
-    @ApiModelProperty(notes = "Laboratory Code", position = 1)
-    private Integer code;
+	@ApiModelProperty(notes = "Laboratory Code", position = 1)
+	private Integer code;
 
-    @ApiModelProperty(notes = "Laboratory Material", position = 2)
-    private String material;
+	@ApiModelProperty(notes = "Laboratory Material", value = "Blood", position = 2)
+	private String material;
 
-    @ApiModelProperty(notes = "Laboratory Exam", position = 3)
-    private ExamDTO exam;
+	@ApiModelProperty(notes = "Laboratory Exam", position = 3)
+	private ExamDTO exam;
 
-    @ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
-    private LocalDateTime registrationDate;
+	@ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
+	private LocalDateTime registrationDate;
 
-    @NotNull
-    @ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
-    private LocalDateTime examDate;
-    
-    @ApiModelProperty(notes = "Laboratory Result", position = 6)
-    private String result;
-    
-    @ApiModelProperty(notes = "lock", example = "0")
-    private int lock;
+	@NotNull
+	@ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
+	private LocalDateTime labDate;
 
-    @ApiModelProperty(notes = "Laboratory Note", position = 7)
-    private String note;
+	@ApiModelProperty(notes = "Laboratory Result", position = 6)
+	private String result;
 
-    @ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
-    private Integer patientCode;
+	@ApiModelProperty(notes = "lock", example = "0")
+	private int lock;
 
-    @ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
-    private String patName;
+	@ApiModelProperty(notes = "Laboratory Note", value = "Note by laboratorist", position = 7)
+	private String note;
 
-    @ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
-    private String inOutPatient;
+	@ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
+	private Integer patientCode;
 
-    @ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
-    private Integer age;
+	@ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
+	private String patName;
 
-    @ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
-    private String sex;
+	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
+	private PatientSTATUS inOutPatient;
 
-    public int getLock() {
-        return lock;
-    }
+	@ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
+	private Integer age;
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	@ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
+	private String sex;
 
-    public Integer getCode() {
-        return this.code;
-    }
+	@ApiModelProperty(notes = "Laboratory status", example = "DRAFT", position = 13)
+	private LaboratoryStatus status;
 
-    public String getMaterial() {
-        return this.material;
-    }
+	public int getLock() {
+		return lock;
+	}
 
-    public ExamDTO getExam() {
-        return this.exam;
-    }
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public LocalDateTime getRegistrationDate() {
-        return this.registrationDate;
-    }
+	public Integer getCode() {
+		return this.code;
+	}
 
-    public LocalDateTime getDate() {
-        return this.examDate;
-    }
+	public String getMaterial() {
+		return this.material;
+	}
 
-    public String getResult() {
-        return this.result;
-    }
+	public ExamDTO getExam() {
+		return this.exam;
+	}
 
-    public String getNote() {
-        return this.note;
-    }
+	public LocalDateTime getRegistrationDate() {
+		return this.registrationDate;
+	}
 
-    public Integer getPatientCode() {
-        return this.patientCode;
-    }
+	public LocalDateTime getLabDate() {
+		return labDate;
+	}
 
-    public String getPatName() {
-        return this.patName;
-    }
+	public String getResult() {
+		return this.result;
+	}
 
-    public String getInOutPatient() {
-        return this.inOutPatient;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public Integer getAge() {
-        return this.age;
-    }
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
 
-    public String getSex() {
-        return this.sex;
-    }
+	public String getPatName() {
+		return this.patName;
+	}
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+	public PatientSTATUS getInOutPatient() {
+		return this.inOutPatient;
+	}
 
-    public void setMaterial(String material) {
-        this.material = material;
-    }
+	public Integer getAge() {
+		return this.age;
+	}
 
-    public void setExam(ExamDTO exam) {
-        this.exam = exam;
-    }
+	public String getSex() {
+		return this.sex;
+	}
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate;
-    }
+	public void setCode(Integer code) {
+		this.code = code;
+	}
 
-    public void setDate(LocalDateTime examDate) {
-        this.examDate = examDate;
-    }
+	public void setMaterial(String material) {
+		this.material = material;
+	}
 
-    public void setResult(String result) {
-        this.result = result;
-    }
+	public void setExam(ExamDTO exam) {
+		this.exam = exam;
+	}
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+	public void setRegistrationDate(LocalDateTime registrationDate) {
+		this.registrationDate = registrationDate;
+	}
 
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
+	public void setLabDate(LocalDateTime aDate) {
+		labDate = TimeTools.truncateToSeconds(aDate);
+	}
 
-    public void setPatName(String patName) {
-        this.patName = patName;
-    }
+	public void setResult(String result) {
+		this.result = result;
+	}
 
-    public void setInOutPatient(String inOutPatient) {
-        this.inOutPatient = inOutPatient;
-    }
+	public void setNote(String note) {
+		this.note = note;
+	}
 
-    public void setAge(Integer age) {
-        this.age = age;
-    }
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
 
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
+	public void setPatName(String patName) {
+		this.patName = patName;
+	}
+
+	public void setInOutPatient(PatientSTATUS inOutPatient) {
+		this.inOutPatient = inOutPatient;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+
+	public LaboratoryStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(LaboratoryStatus status) {
+		this.status = status;
+	}
 }

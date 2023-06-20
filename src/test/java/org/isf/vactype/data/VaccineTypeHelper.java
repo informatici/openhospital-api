@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.vactype.data;
 
@@ -60,7 +60,7 @@ public class VaccineTypeHelper {
 		return IntStream.range(0, size)
 				.mapToObj(i -> {
 					try {
-						return VaccineTypeHelper.setup("" + i);
+						return VaccineTypeHelper.setup(String.valueOf(i));
 					} catch (OHException e) {
 						e.printStackTrace();
 					}

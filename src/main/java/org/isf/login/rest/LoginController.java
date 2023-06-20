@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.login.rest;
 
@@ -34,10 +34,8 @@ import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.ErrorDescription;
-import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,27 +57,24 @@ public class LoginController {
 
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
-	
+
 	@Autowired
 	private TokenProvider tokenProvider;
-	
+
 	@Autowired
-        private CustomAuthenticationManager authenticationManager;
+	private CustomAuthenticationManager authenticationManager;
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
-		if (loginRequest.getPassword().length() < 10) {
-			throw new OHAPIException(new OHExceptionMessage(null, ErrorDescription.PASSWORD_TOO_SHORT, "password too short", OHSeverityLevel.ERROR));
-		}
-		Authentication authentication = authenticationManager
-						.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		Authentication authentication = authenticationManager.authenticate(
+						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
-
+		MDC.put("OHUser", loginRequest.getUsername());
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.permissions.rest;
 
@@ -34,7 +34,6 @@ import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,7 +81,7 @@ public class PermissionController {
 
 	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrieveAllPermissions({})");
+		LOGGER.info("retrieving permissions: retrieveAllPermissions()");
 		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
 		if (permissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -127,11 +126,11 @@ public class PermissionController {
 
 	@PutMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable int id, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("Update permission id:"  +  id);
+		LOGGER.info("Update permission id: {}", id);
 		permissionDTO.setId(id);
 
 		if (!this.permissionManager.exists(permissionDTO.getId())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Permission not found."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
@@ -143,7 +142,7 @@ public class PermissionController {
 			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage("Permission not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/*
@@ -152,17 +151,17 @@ public class PermissionController {
 		LOGGER.info("updatePermission(id: {}, id: {})", optionalPermissionId.isPresent() ? optionalPermissionId.get() : "EMPTY", permissionDTO);
 
 		if (optionalPermissionId == null && (permissionDTO == null || permissionDTO.getId() == null)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "wrong input: no permission id", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
+			throw new OHAPIException(new OHExceptionMessage("wrong input: no permission id", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
 		}
 
 		if (optionalPermissionId.isPresent() && optionalPermissionId.get().compareTo(permissionDTO.getId()) != 0) {
-			throw new OHAPIException(new OHExceptionMessage(null, "wrong input: permissio ids does not match", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
+			throw new OHAPIException(new OHExceptionMessage("wrong input: permissio ids does not match", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
 		}
 
 		final Integer permissionId = optionalPermissionId.isPresent() ? optionalPermissionId.get() : permissionDTO.getId();
 
 		if (!this.permissionManager.exists(permissionId.intValue())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
@@ -174,7 +173,7 @@ public class PermissionController {
 			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
-		throw new OHAPIException(new OHExceptionMessage(null, "permission is not updated!", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new OHAPIException(new OHExceptionMessage("Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	*/
 
@@ -182,7 +181,7 @@ public class PermissionController {
 	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("deletePermission({})", id);
 		Boolean result = this.permissionManager.deletePermission(id);
-		return ResponseEntity.status(result.booleanValue() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+		return ResponseEntity.status(result ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 	}
 
 }

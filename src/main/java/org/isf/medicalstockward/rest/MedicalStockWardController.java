@@ -17,13 +17,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.medicalstockward.rest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,6 @@ import org.isf.medicalstockward.model.MovementWard;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
@@ -52,7 +50,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -114,30 +111,31 @@ public class MedicalStockWardController {
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Medical not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Ward not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Ward not found."));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
 
-	/**
-	 * Gets all the {@link MovementWard}s.
-	 *
-	 * @return all the retrieved movements ward.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MovementWardDTO>> getMovementWard() throws OHServiceException {
-		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movWardBrowserManager.getMovementWard());
-		if (mappedMovs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
-		} else {
-			return ResponseEntity.ok(mappedMovs);
-		}
-	}
+// TODO: needs update when UI supports movements wards
+//	/**
+//	 * Gets all the {@link MovementWard}s.
+//	 *
+//	 * @return all the retrieved movements ward.
+//	 * @throws OHServiceException
+//	 */
+//	@GetMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public ResponseEntity<List<MovementWardDTO>> getMovementWard() throws OHServiceException {
+//		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movWardBrowserManager.getMovementWard());
+//		if (mappedMovs.isEmpty()) {
+//			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
+//		} else {
+//			return ResponseEntity.ok(mappedMovs);
+//		}
+//	}
 
 	/**
 	 * Gets all the movement ward with the specified criteria.
@@ -210,41 +208,43 @@ public class MedicalStockWardController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 
-	/**
-	 * Persists the specified movements.
-	 *
-	 * @param newMovementDTOs the movements to persist.
-	 * @return {@code true} if the movements have been persisted, {@code false} otherwise.
-	 * @throws OHServiceException
-	 */
-	@PostMapping(value = "/medicalstockward/movements/all", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody List<MovementWardDTO> newMovementDTOs) throws OHServiceException {
-		List<MovementWard> newMovements = new ArrayList<>();
-		newMovements.addAll(movementWardMapper.map2ModelList(newMovementDTOs));
-		movWardBrowserManager.newMovementWard(newMovements);
-		return ResponseEntity.status(HttpStatus.CREATED).body(null);
-	}
-
-	/**
-	 * Updates the specified {@link MovementWard}.
-	 *
-	 * @param movementWardDTO the movement ward to update.
-	 * @return {@code true} if the movement has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
-	 */
-	@PutMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateMovementWard(@Valid @RequestBody MovementWardDTO movementWardDTO) throws OHServiceException {
-		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
-		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
-		if (!isPresent) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward not found!", OHSeverityLevel.ERROR));
-		}
-
-		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
-		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Movement ward is not updated!", OHSeverityLevel.ERROR));
-		}
-		return ResponseEntity.ok(isUpdated);
-	}
+// TODO: needs update when UI supports movements wards
+//	/**
+//	 * Persists the specified movements.
+//	 *
+//	 * @param newMovementDTOs the movements to persist.
+//	 * @return {@code true} if the movements have been persisted, {@code false} otherwise.
+//	 * @throws OHServiceException
+//	 */
+//	@PostMapping(value = "/medicalstockward/movements/all", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody List<MovementWardDTO> newMovementDTOs) throws OHServiceException {
+//		List<MovementWard> newMovements = new ArrayList<>();
+//		newMovements.addAll(movementWardMapper.map2ModelList(newMovementDTOs));
+//		movWardBrowserManager.newMovementWard(newMovements);
+//		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+//	}
+//
+// TODO: needs update when UI supports movements wards
+//	/**
+//	 * Updates the specified {@link MovementWard}.
+//	 *
+//	 * @param movementWardDTO the movement ward to update.
+//	 * @return {@code true} if the movement has been updated, {@code false} otherwise.
+//	 * @throws OHServiceException
+//	 */
+//	@PutMapping(value = "/medicalstockward/movements", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public ResponseEntity<Boolean> updateMovementWard(@Valid @RequestBody MovementWardDTO movementWardDTO) throws OHServiceException {
+//		MovementWard movementWard = movementWardMapper.map2Model(movementWardDTO);
+//		boolean isPresent = movWardBrowserManager.getMovementWard().stream().anyMatch(mov -> mov.getCode() == movementWard.getCode());
+//		if (!isPresent) {
+//			throw new OHAPIException(new OHExceptionMessage("Movement ward not found."));
+//		}
+//
+//		boolean isUpdated = movWardBrowserManager.updateMovementWard(movementWard);
+//		if (!isUpdated) {
+//			throw new OHAPIException(new OHExceptionMessage("Movement ward not updated."));
+//		}
+//		return ResponseEntity.ok(isUpdated);
+//	}
 
 }

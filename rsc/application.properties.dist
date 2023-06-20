@@ -6,7 +6,12 @@ server.tomcat.accesslog.pattern=%t %a "%r" %s (%D ms)
 spring.jpa.hibernate.use-new-id-generator-mappings=false
 spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 server.servlet.context-path=/
+server.address=localhost
 server.port=8080
+server.servlet.session.cookie.http-only=true
+#server.servlet.session.cookie.secure=true # only over HTTPS
+spring.pid.fail-on-write-error=true
+spring.pid.file=OH_API_PID
 
 ### Swagger-UI (info)
 api.host=localhost:8080

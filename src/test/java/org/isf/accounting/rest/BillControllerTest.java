@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.accounting.rest;
 
@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -75,7 +76,9 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.testing.rest.ControllerBaseTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -117,9 +120,11 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setup() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
@@ -129,12 +134,17 @@ public class BillControllerTest extends ControllerBaseTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		modelMapper.registerModule(new Jsr310Module());
-
+		PatientMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(billMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billItemsMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(billPaymentsMapper, "modelMapper", modelMapper);
 
 		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test
@@ -190,7 +200,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		newFullBillDTO.getBill().setPatientTrue(true);
 
-		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(null); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(anyInt())).thenReturn(null);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -201,7 +211,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient Not found!")))
+				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException
@@ -222,7 +232,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		newFullBillDTO.getBill().getPatient().setCode(code);
 		newFullBillDTO.getBill().setPatientTrue(true);
 		Bill bill = BillHelper.setup();
-		when(patientManagerMock.getPatientByName(bill.getPatName())).thenReturn(null); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(bill.getBillPatient().getCode())).thenReturn(null);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
@@ -235,7 +245,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient Not found!")))
+				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
 		//TODO Create OHCreateAPIException
@@ -259,7 +269,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		Patient patient = bill.getBillPatient();
 		//Patient patient = bill.getPatient();
 
-		when(patientManagerMock.getPatientByName(any(String.class))).thenReturn(patient); //FIXME: why we were searching by name?
+		when(patientManagerMock.getPatientById(anyInt())).thenReturn(patient);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 		List<PriceList> priceListList = new ArrayList<>();
 
@@ -272,8 +282,8 @@ public class BillControllerTest extends ControllerBaseTest {
 
 		//TODO open a ticket for suggesting refactoring for updateBill() method in order to accept generic List instead of ArrayList  like:
 		// public boolean updateBill(Bill updateBill,
-		//		List<BillItems> billItems, 
-		//		List<BillPayments> billPayments) throws OHServiceException 
+		//		List<BillItems> billItems,
+		//		List<BillPayments> billPayments) throws OHServiceException
 		//List<BillItems> billItemsList = new ArrayList(newFullBillDTO.getBillItems());
 		//billItemsList.addAll(newFullBillDTO.getBillItems());
 

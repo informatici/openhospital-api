@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.ward.rest;
 
@@ -26,7 +26,6 @@ import java.util.List;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.ward.dto.WardDTO;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
@@ -131,7 +130,7 @@ public class WardController {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (wardCreated == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Ward not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(wardCreated));
     }
@@ -150,7 +149,7 @@ public class WardController {
 	    ward.setLock(updateWard.getLock());
         Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Ward is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Ward not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(wardUpdated));
 
@@ -171,7 +170,7 @@ public class WardController {
         if (ward != null) {
             isDeleted = wardManager.deleteWard(ward);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Wards is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage("Ward not deleted."));
             }
             return ResponseEntity.ok(isDeleted);
         }
@@ -182,7 +181,7 @@ public class WardController {
      * Check if the code is already used by other ward.
      *
      * @param code
-     * @return true if it is already use, false otherwise
+     * @return {@code true} if it is already used, false otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/wards/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

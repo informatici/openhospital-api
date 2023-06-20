@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.therapy.mapper;
 
@@ -70,12 +70,12 @@ public class TherapyRowMapper extends GenericMapper<TherapyRow, TherapyRowDTO> {
 
 	@Override
 	public List<TherapyRowDTO> map2DTOList(List<TherapyRow> list) {
-		return (List<TherapyRowDTO>) list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
+		return list.stream().map(it -> map2DTO(it)).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<TherapyRow> map2ModelList(List<TherapyRowDTO> list) {
-		return (List<TherapyRow>) list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
+		return list.stream().map(it -> map2Model(it)).collect(Collectors.toList());
 	}
 
 }

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.hospital.rest;
 
@@ -28,7 +28,6 @@ import org.isf.hospital.model.Hospital;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,10 +63,10 @@ public class HospitalController {
     public ResponseEntity<HospitalDTO> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
 
         if (!hospitalDTO.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Hospital code mismatch", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Hospital code mismatch."));
         }
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Hospital not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Hospital not found."));
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);

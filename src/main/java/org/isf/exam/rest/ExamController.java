@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.exam.rest;
 
@@ -33,7 +33,6 @@ import org.isf.exatype.model.ExamType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,7 +74,7 @@ public class ExamController {
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> newExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
 
         if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type not found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(newExam);
@@ -83,7 +82,7 @@ public class ExamController {
 
         boolean isCreated = examManager.newExam(exam);
         if (!isCreated) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam not created."));
         }
         return ResponseEntity.ok(examMapper.map2DTO(exam));
     }
@@ -92,15 +91,15 @@ public class ExamController {
     public ResponseEntity<ExamDTO> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam code mismatch", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
         }
         if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Exam not found."));
         }
 
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> updateExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
         if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam type not found!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(updateExam);
@@ -108,7 +107,7 @@ public class ExamController {
         exam.setLock(updateExam.getLock());
         Exam examUpdated = examManager.updateExam(exam);
         if (examUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam not updated."));
         }
 
         return ResponseEntity.ok(examMapper.map2DTO(examUpdated));
@@ -141,10 +140,10 @@ public class ExamController {
     public ResponseEntity<Boolean> deleteExam(@PathVariable String code) throws OHServiceException {
         Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!exam.isPresent()) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam not Found!", OHSeverityLevel.WARNING));
+            throw new OHAPIException(new OHExceptionMessage("Exam not found."));
         }
         if (!examManager.deleteExam(exam.get())) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Exam is not deleted!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Exam not deleted."));
         }
         return ResponseEntity.ok(true);
     }

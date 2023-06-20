@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.dlvrrestype.rest;
 
@@ -31,7 +31,6 @@ import org.isf.dlvrrestype.model.DeliveryResultType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,9 +83,7 @@ public class DeliveryResultTypeController {
 			dlvrrestTypeCreated = dlvrrestTypeFounds.get(0);
 		}
 		if (!isCreated || dlvrrestTypeCreated == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not created!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Delivery result type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dlvrrestTypeCreated));
 	}
@@ -103,14 +100,11 @@ public class DeliveryResultTypeController {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Delivery Result Type not found."));
 		}
 		boolean isUpdated = dlvrrestManager.updateDeliveryResultType(dlvrrestType);
 		if (!isUpdated) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Delivery result type is not updated!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Delivery Result Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dlvrrestType));
 	}

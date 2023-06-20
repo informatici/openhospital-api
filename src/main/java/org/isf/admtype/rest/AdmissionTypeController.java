@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.admtype.rest;
 
@@ -31,7 +31,6 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -82,9 +81,7 @@ public class AdmissionTypeController {
 			admtCreated = admtFounds.get(0);
 		}
 		if (!isCreated || admtCreated == null) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not created!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
 	}
@@ -101,13 +98,11 @@ public class AdmissionTypeController {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Admission Type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
 		}
 		boolean isUpdated = admtManager.updateAdmissionType(admt);
 		if (!isUpdated) {
-			throw new OHAPIException(
-					new OHExceptionMessage(null, "Admission Type is not updated!", OHSeverityLevel.ERROR),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("Admission Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(admt));
 	}

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.pregtreattype.rest;
 
@@ -31,7 +31,6 @@ import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -76,7 +75,7 @@ public class PregnantTreatmentTypeController {
 		LOGGER.info("Create pregnant treatment Type {}", code);
 		PregnantTreatmentType isCreatedPregnantTreatmentType = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
 		if (isCreatedPregnantTreatmentType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "pregnant treatment Type is not created!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPregnantTreatmentType));
 	}
@@ -93,11 +92,11 @@ public class PregnantTreatmentTypeController {
 		LOGGER.info("Update pregnanttreatmenttypes code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not found."));
 		}
 		PregnantTreatmentType isUpdatedPregnantTreatmentType = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
 		if (isUpdatedPregnantTreatmentType == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "pregnantTreatment Type is not updated!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPregnantTreatmentType));
 	}

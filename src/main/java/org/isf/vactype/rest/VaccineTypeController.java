@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.vactype.rest;
 
@@ -27,7 +27,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.isf.vactype.dto.VaccineTypeDTO;
 import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
@@ -97,10 +96,10 @@ public class VaccineTypeController {
         try {
             isCreatedVaccineType = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
         }catch(OHDataIntegrityViolationException e){
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type already present!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine Type already present."));
         }
         if (isCreatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine Type not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccineType));
     }
@@ -117,7 +116,7 @@ public class VaccineTypeController {
         LOGGER.info("Update vaccine type: {}", updateVaccineType);
         VaccineType isUpdatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
         if (isUpdatedVaccineType == null) {
-            throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Vaccine Type not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccineType));
 
@@ -138,7 +137,7 @@ public class VaccineTypeController {
         if (vaccineType!=null){
             isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
             if (!isDeleted) {
-                throw new OHAPIException(new OHExceptionMessage(null, "Vaccine type is not deleted!", OHSeverityLevel.ERROR));
+                throw new OHAPIException(new OHExceptionMessage("Vaccine Type not deleted."));
             }
             return ResponseEntity.ok(isDeleted);
         }
@@ -149,7 +148,7 @@ public class VaccineTypeController {
      * Check if the code is already used by other vaccine type.
      *
      * @param code
-     * @return true if it is already use, false otherwise
+     * @return {@code true} if it is already used, false otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.shared.mapper.converter;
 
@@ -30,18 +30,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ModelMapperConfig {
 
-    @Autowired
-    protected BlobToByteArrayConverter blobToByteArrayConverter;
+	@Autowired
+	protected BlobToByteArrayConverter blobToByteArrayConverter;
 
-    @Autowired
-    protected ByteArrayToBlobConverter byteArrayToBlobConverter;
+	@Autowired
+	protected ByteArrayToBlobConverter byteArrayToBlobConverter;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.addConverter(blobToByteArrayConverter);
-        modelMapper.addConverter(byteArrayToBlobConverter);
-        modelMapper.registerModule(new Jsr310Module());
-        return modelMapper;
-    }
+	@Bean
+	public ModelMapper modelMapper() {
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.addConverter(blobToByteArrayConverter);
+		modelMapper.addConverter(byteArrayToBlobConverter);
+		modelMapper.registerModule(new Jsr310Module());
+		return modelMapper;
+	}
 }

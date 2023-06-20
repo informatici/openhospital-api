@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.sms.dto;
 
@@ -45,7 +45,7 @@ public class SmsDTO {
 	private String smsNumber;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS content text", example="Hi Mario!", position = 5)
+	@ApiModelProperty(notes = "SMS content text", example="Hi Mario.", position = 5)
 	private String smsText;
 	
 	@ApiModelProperty(notes = "SMS sent date", example="2020-07-28T00:00:00", position = 6)

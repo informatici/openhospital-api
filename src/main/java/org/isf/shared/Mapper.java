@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2020 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -17,15 +17,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.shared;
 
 import java.util.List;
 
-public interface Mapper <FromType, ToType> {
-    ToType map2DTO(FromType fromObj);
-    FromType map2Model(ToType toObj);
-    List<ToType> map2DTOList(List<FromType> list);
-    List<FromType> map2ModelList(List<ToType> list);
+import org.modelmapper.ModelMapper;
+
+public interface Mapper<FromType, ToType> {
+
+	ToType map2DTO(FromType fromObj);
+	FromType map2Model(ToType toObj);
+	List<ToType> map2DTOList(List<FromType> list);
+	List<FromType> map2ModelList(List<ToType> list);
+
+	public ModelMapper getMapper();
 }

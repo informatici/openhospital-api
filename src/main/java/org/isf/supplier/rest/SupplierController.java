@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.supplier.rest;
 
@@ -32,7 +32,6 @@ import org.isf.supplier.mapper.SupplierMapper;
 import org.isf.supplier.model.Supplier;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.isf.utils.exception.model.OHSeverityLevel;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class SupplierController {
 		Supplier isCreatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (isCreatedSupplier == null) {
 			LOGGER.error("Supplier is not created!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not created!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
         }
 		LOGGER.info("Supplier saved successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedSupplier));
@@ -88,13 +87,13 @@ public class SupplierController {
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		if (supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
-			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
 		}
 		LOGGER.info("Updating supplier...");
 		Supplier isUpdatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 		if (isUpdatedSupplier == null) {
 			LOGGER.error("Supplier is not updated!");
-            throw new OHAPIException(new OHExceptionMessage(null, "Supplier is not updated!", OHSeverityLevel.ERROR));
+            throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
         }
 		LOGGER.info("Supplier updated successfully");
         return ResponseEntity.ok(mapper.map2DTO(isUpdatedSupplier));
@@ -133,7 +132,7 @@ public class SupplierController {
 		Supplier supplier = manager.getByID(id);
 		if (supplier == null) {
 			LOGGER.info("Supplier not found");
-			throw new OHAPIException(new OHExceptionMessage(null, "Supplier not found!", OHSeverityLevel.ERROR));
+			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
 		} else {
 			LOGGER.info("Found supplier!");
 			return ResponseEntity.ok(mapper.map2DTO(supplier));
