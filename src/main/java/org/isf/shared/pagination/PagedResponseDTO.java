@@ -25,7 +25,7 @@ package org.isf.shared.pagination;
 import java.util.List;
 
 public class PagedResponseDTO<T> {
-	
+
 	List<T> data;
 	PageInfoDTO pageInfoDTO;
 
