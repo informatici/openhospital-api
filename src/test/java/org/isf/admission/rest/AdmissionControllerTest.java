@@ -266,7 +266,7 @@ public class AdmissionControllerTest {
 	@Test
 	public void testGetPatientAdmissions_200() throws Exception {
 		int patientCode = 1;
-		String request = "/admissions/" + patientCode;
+		String request = "/admissions/patient/{patientCode}" ;
 
 		Patient patient = PatientHelper.setup();
 		when(patientManagerMock.getPatientById(patientCode))

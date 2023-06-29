@@ -88,7 +88,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testGetVisit_200() throws Exception {
-		String request = "/visit/{patID}";
+		String request = "/visit/patient/{patID}";
 
 		int patID = 0;
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
@@ -158,7 +158,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testDeleteVisitsRelatedToPatient_200() throws Exception {
-		String request = "/visit/{patId}";
+		String request = "/visit/delete/{patId}";
 
 		int id = 1;
 
