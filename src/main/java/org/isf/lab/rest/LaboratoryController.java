@@ -471,7 +471,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
-	@GetMapping(value = "/laboratories/examRequest/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/laboratories/examRequest/patient/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest(@PathVariable Integer patId)
 			throws OHServiceException {
 		LOGGER.info("Get Exam requested by patient Id: {}", patId);

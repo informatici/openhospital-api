@@ -35,7 +35,7 @@ public class TherapyDTO {
 	@ApiModelProperty(notes="The patient's ID", example = "1", position = 2)
 	private Integer patID;
 	
-	@ApiModelProperty(notes="The dates of the therapy", position = 3)
+	@ApiModelProperty(notes="The dates of the therapy", dataType ="LocalDateTime[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]", position = 3)
 	private LocalDateTime[] dates;
 	
 	@ApiModelProperty(notes="The medical associated to the therapy", position = 4)

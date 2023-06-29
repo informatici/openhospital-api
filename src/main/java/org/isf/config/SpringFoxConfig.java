@@ -87,11 +87,7 @@ public class SpringFoxConfig {
 	}
 
 	List<SecurityReference> defaultAuth() {
-		// return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
-		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-		authorizationScopes[0] = authorizationScope;
-		return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+		return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
 	}
 
 	private ApiKey apiKey() {
