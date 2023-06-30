@@ -166,8 +166,7 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.PUT, "/vaccinetype/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.DELETE, "/vaccinetype/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PATCH, "/vaccinetype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/vaccinetype/**")
-						.hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.GET, "/vaccinetype/**").hasAnyAuthority("admin", "guest")
 						// visit
 						.antMatchers(HttpMethod.POST, "/visit/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PUT, "/visit/**").hasAuthority("admin")
@@ -250,8 +249,7 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PATCH, "/pregnanttreatmenttypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**")
-						.hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("admin", "guest")
 						// pricelists
 						.antMatchers(HttpMethod.POST, "/pricelists/**").hasAuthority("admin")
 						.antMatchers(HttpMethod.PUT, "/pricelists/**").hasAuthority("admin")
