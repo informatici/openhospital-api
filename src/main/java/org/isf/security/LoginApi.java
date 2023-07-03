@@ -54,7 +54,7 @@ public class LoginApi {
      * Implemented by Spring Security
      */
     @ApiOperation(value = "Logout", notes = "Logout the current user.")
-    @ApiResponses({@ApiResponse(code = 200, message = "")})
+    @ApiResponses({@ApiResponse(code = 200, message = "Ok")})
     @PostMapping(value = "/auth/logout")
     void logout() {
         throw new IllegalStateException("Add Spring Security to handle authentication");
