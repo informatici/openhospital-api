@@ -22,6 +22,7 @@
 package org.isf.admission.rest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -237,20 +238,27 @@ public class AdmissionController {
 	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
 					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
+					@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
+		
+			Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
+			List<AdmissionDTO> admissionsDTO = new ArrayList<>();
 
-		PagedResponse<Admission> admissions = admissionManager.getAdmissionsPageable(admissionRange[0], admissionRange[1], page, size);
-
-		if (admissions.getData().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
-		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
-		admissionsPageableDTO.setData(admissionsDTO);
-		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
-		return ResponseEntity.ok(admissionsPageableDTO);
+			if (paged) {
+				PagedResponse<Admission> admissions = admissionManager.getAdmissionsPageable(admissionRange[0], admissionRange[1], page, size);
+				admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
+				admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
+			} else {
+				List<Admission> adms = admissionManager.getAdmissionsByDate(admissionRange[0], admissionRange[1]);
+				admissionsDTO = admissionMapper.map2DTOList(adms);
+			}
+			if (admissionsDTO.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			}
+			admissionsPageableDTO.setData(admissionsDTO);
+			return ResponseEntity.ok(admissionsPageableDTO);
 	}
 
 	/**

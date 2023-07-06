@@ -75,6 +75,9 @@ public class LaboratoryController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LaboratoryController.class);
 	
+	// TODO: to centralize
+	protected static final String DEFAULT_PAGE_SIZE = "80";
+	
 	private static String draft = LaboratoryStatus.DRAFT.toString();
 	
 	private static String open = LaboratoryStatus.OPEN.toString();
@@ -380,9 +383,9 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int pageNo, @RequestParam int pageSize) throws OHServiceException {
+	public ResponseEntity<Page<LabWithRowsDTO>> getLaboratory(@RequestParam boolean oneWeek, @RequestParam int page, @RequestParam int size) throws OHServiceException {
 		LOGGER.info("Get all LabWithRows");
-		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, pageNo, pageSize);
+		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, page, size);
 		if (labListPageable == null || labListPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -552,11 +555,14 @@ public class LaboratoryController {
 	 */
 	
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratoryForPrint(
+	public ResponseEntity<Page<LabWithRowsDTO>> getLaboratoryForPrint(
 			@RequestParam(required = false, defaultValue = "") String examName,
 			@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
 			@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode,
-			@RequestParam(value = "status", required = false, defaultValue = "") String status)
+			@RequestParam(value = "status", required = false, defaultValue = "") String status,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
+			@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
 			throws OHServiceException {
 		LOGGER.info("Get labWithRow within specified date");
 		LOGGER.debug("examName: {}", examName);
@@ -564,11 +570,15 @@ public class LaboratoryController {
 		LOGGER.debug("dateTo: {}", dateTo);
 		LOGGER.debug("patientCode: {}", patientCode);
 		LOGGER.debug("status: {}", status);
+		LOGGER.debug("page: {}", page);
+		LOGGER.debug("size: {}", size);
+		LOGGER.debug("paged: {}", paged);
 		Patient patient = null;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-
+		Page<LabWithRowsDTO> result = new Page<LabWithRowsDTO>();
+		
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
@@ -576,17 +586,50 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		List<Laboratory> laboratoryList = new ArrayList<>();
-		if (!status.equals("")) {
-			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
-                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<Laboratory>();
+		List<Laboratory> labList = new ArrayList<>();
+		if (paged) {
+			if (!status.equals("")) {
+				if(examName.equals("")) {
+					Exam exam = examManager.getExams(examName).get(0); 
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
+				} else {
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(null, dateF, dateT, patient, page, size);
+				}
+				labList = laboratoryPageable.getData()
+	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+				laboratoryPageable.setData(labList);
+			} else {
+				if(examName.equals("")) {
+					Exam exam = examManager.getExams(examName).get(0); 
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
+				} else {
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(null, dateF, dateT, patient, page, size);
+				}
+
+			}
+			result.setPageInfo(laboratoryMapper.setParameterPageInfo(laboratoryPageable.getPageInfo()));
 		} else {
-			laboratoryList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
+			if (!status.equals("")) {
+				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
+	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+				laboratoryPageable.setData(labList);
+			} else {
+				if(examName.equals("")) {
+					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
+					laboratoryPageable.setData(labList);
+				} else {
+					labList = laboratoryManager.getLaboratory(null, dateF, dateT, patient);
+					laboratoryPageable.setData(labList);
+				}
+
+			}
 		}
-		if (laboratoryList == null || laboratoryList.isEmpty()) {
+		
+		if (laboratoryPageable == null || laboratoryPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			return ResponseEntity.ok(laboratoryList.stream().map(lab -> {
+			List<LabWithRowsDTO> labWithRowList = laboratoryPageable.getData().stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
 				List<String> labDescription = new ArrayList<>();
 				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
@@ -603,7 +646,6 @@ public class LaboratoryController {
 							labDescription.add(laboratoryRow.getDescription());
 						}
 					}
-
 				}
 				laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
@@ -611,7 +653,9 @@ public class LaboratoryController {
 				labDTO.setLaboratoryDTO(laboratoryDTO);
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
-			}).collect(Collectors.toList()));
+			}).collect(Collectors.toList());
+			result.setData(labWithRowList);
+			return ResponseEntity.ok(result);
 		}
 	}
 
