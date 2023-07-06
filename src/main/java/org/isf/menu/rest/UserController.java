@@ -62,10 +62,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/users")
+@OpenAPIDefinition(
+		info = @Info(title = "users API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class UserController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserController.class);

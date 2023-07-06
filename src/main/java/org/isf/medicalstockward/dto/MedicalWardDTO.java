@@ -21,17 +21,17 @@
  */
 package org.isf.medicalstockward.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalWardDTO {
 
-	@ApiModelProperty(notes="The medical ward's id", example="1", position = 1)
+	@Schema(description="The medical ward's id", example="1")
 	private MedicalWardIdDTO id;
 	
-	@ApiModelProperty(notes="The in-quantity", example="150", position = 2)
+	@Schema(description="The in-quantity", example="150")
 	private float in_quantity;
 	
-	@ApiModelProperty(notes="The out-quantity", example="89", position = 3)
+	@Schema(description="The out-quantity", example="89")
 	private float out_quantity;
 
 	public MedicalWardDTO() {

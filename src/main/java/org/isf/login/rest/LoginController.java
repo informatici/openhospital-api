@@ -46,10 +46,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/auth")
+@OpenAPIDefinition(
+		info = @Info(title = "auth API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class LoginController {
 
 	@Autowired

@@ -23,47 +23,47 @@ package org.isf.accounting.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a billItem")
+@Schema(description = "Class representing a billItem")
 public class BillItemsDTO {
 
 	private Integer id;
 	
-	@ApiModelProperty(notes = "Bill id", example="", position = 1)
+	@Schema(description = "Bill id", example="")
 	private Integer billId;
 
-	@ApiModelProperty(notes = "check if it is a price", example="true", position = 2)
+	@Schema(description = "check if it is a price", example="true")
 	private boolean isPrice;
 
 	@NotNull
-	@ApiModelProperty(notes = "The price Id", example="104", position = 3)
+	@Schema(description = "The price Id", example="104")
 	private String priceId;
 	
 	@NotNull
-	@ApiModelProperty(notes = "item description", example="Acetone 99 % 1ltr", position = 4)
+	@Schema(description = "item description", example="Acetone 99 % 1ltr")
 	private String itemDescription;
 
 	@NotNull
-	@ApiModelProperty(notes = "item amount", example="1000", position = 5)
+	@Schema(description = "item amount", example="1000")
 	private double itemAmount;
 	
 	@NotNull
-	@ApiModelProperty(notes = "item quantity", example="1", position = 6)
+	@Schema(description = "item quantity", example="1")
 	private int itemQuantity;
 	
 	@NotNull
-	@ApiModelProperty(notes = "item display code", example="Acetone", position = 7)
+	@Schema(description = "item display code", example="Acetone")
 	private String itemDisplayCode;
 	
 	@NotNull
-	@ApiModelProperty(notes = "item id", example="3", position = 8)
+	@Schema(description = "item id", example="3")
 	private String itemId;
 	
 	private volatile int hashCode;
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

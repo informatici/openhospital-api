@@ -28,36 +28,35 @@ import javax.validation.constraints.NotNull;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.model.Ward;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a vaccine type")
+@Schema(description = "Class representing a vaccine type")
 public class VisitDTO {
 
-	@ApiModelProperty(notes = "The visit's ID", position = 1)
+	@Schema(description = "The visit's ID")
 	private int visitID;
 
 	@NotNull
-	@ApiModelProperty(notes = "Patient related to visitor", position = 2)
+	@Schema(description = "Patient related to visitor")
 	PatientDTO patient;
 
 	@NotNull
-	@ApiModelProperty(notes = "Date of the visit", example = "2020-03-19T14:58:00", position = 3)
+	@Schema(description = "Date of the visit", example = "2020-03-19T14:58:00", format = "LocalDateTime")
 	private LocalDateTime date;
 
-	@ApiModelProperty(notes = "Note of the visit", position = 4)
+	@Schema(description = "Note of the visit")
 	private String note;
 
-	@ApiModelProperty(notes = "Sms of the visit", position = 5)
+	@Schema(description = "Sms of the visit")
 	private boolean sms;
 
-	@ApiModelProperty(notes = "ward of the visit", position = 6)
+	@Schema(description = "ward of the visit")
 	private Ward ward;
 
-	@ApiModelProperty(notes = "duration of the visit", position = 7)
+	@Schema(description = "duration of the visit")
 	private Integer duration;
 
-	@ApiModelProperty(notes = "service done during the visit", position = 8)
+	@Schema(description = "service done during the visit")
 	private String service;
 
 	// @ApiModelProperty(hidden=true)

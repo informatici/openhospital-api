@@ -23,18 +23,17 @@ package org.isf.distype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a disease type")
+@Schema(description = "Class representing a disease type")
 public class DiseaseTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease type code")
+	@Schema(description = "Disease type code")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease type description")
+	@Schema(description = "Disease type description")
     private String description;
 
 	public String getCode() {

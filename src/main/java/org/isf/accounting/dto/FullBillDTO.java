@@ -25,19 +25,19 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class FullBillDTO {
 	
 	@NotNull
-	@ApiModelProperty(notes = "bill element", position = 1)
+	@Schema(description = "bill element")
 	private BillDTO bill;
 	
 	@NotNull
-	@ApiModelProperty(notes = "list of bill items elements", position = 2)
+	@Schema(description = "list of bill items elements")
 	private List<BillItemsDTO> billItems;
 	
-	@ApiModelProperty(notes = "list of bill payments elements", position = 3)
+	@Schema(description = "list of bill payments elements")
 	private List<BillPaymentsDTO> billPayments;
 
 	public BillDTO getBill() {

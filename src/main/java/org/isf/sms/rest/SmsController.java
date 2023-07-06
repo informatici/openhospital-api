@@ -45,11 +45,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/sms")
+@OpenAPIDefinition(
+		info = @Info(title = "sms API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class SmsController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SmsController.class);

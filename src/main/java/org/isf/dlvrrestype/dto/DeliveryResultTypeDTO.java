@@ -23,16 +23,16 @@ package org.isf.dlvrrestype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class DeliveryResultTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "code of the delivery result type", example = "M", position = 1)
+	@Schema(description = "code of the delivery result type", example = "M")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "description of the delivery result type", example = "MORTALITÉ MATERNELLE", position = 2)
+	@Schema(description = "description of the delivery result type", example = "MORTALITÉ MATERNELLE")
 	private String description;
 
 	public String getCode() {

@@ -23,21 +23,21 @@ package org.isf.pregtreattype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a pregnant treatment type")
+@Schema(description = "Class representing a pregnant treatment type")
 public class PregnantTreatmentTypeDTO {
 
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "the description", position = 1)
+	@Schema(description = "the description")
 	private String description;
 	
 	private int hashCode;
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

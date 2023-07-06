@@ -39,11 +39,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/hospitals")
+@OpenAPIDefinition(
+		info = @Info(title = "hospitals API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class HospitalController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HospitalController.class);

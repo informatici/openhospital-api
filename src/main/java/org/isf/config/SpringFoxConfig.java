@@ -21,77 +21,34 @@
  */
 package org.isf.config;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 
-import io.swagger.models.auth.In;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
-@EnableSwagger2
 public class SpringFoxConfig {
 
-	@Autowired
-	private Environment env;
-
 	@Bean
-	public Docket apiDocket() {
-
-		ApiInfo apiInfo = new ApiInfo("OH 2.0 Api Documentation", "OH 2.0 Api Documentation", "1.0", "urn:tos", ApiInfo.DEFAULT_CONTACT, "Apache 2.0",
-						"https://www.apache.org/licenses/LICENSE-2.0", Collections.emptyList());
-
-		String host = env.getProperty("api.host");
-		String protocol = env.getProperty("api.protocol");
-
-		Set<String> protocols = new HashSet<>();
-		protocols.add(protocol);
-
-		return new Docket(DocumentationType.SWAGGER_2)
-						.apiInfo(apiInfo)
-						.host(host)
-						.protocols(protocols)
-						.select()
-						.apis(RequestHandlerSelectors.basePackage("org.isf"))
-						// .apis(RequestHandlerSelectors.any())
-						.paths(PathSelectors.any())
-						.build()
-						.forCodeGeneration(true)
-						.securityContexts(Arrays.asList(jwtSecurityContext()))
-						.securitySchemes(Arrays.asList(apiKey()));
+	public OpenAPI springShopOpenAPI() {
+		return new OpenAPI().addSecurityItem(
+			new SecurityRequirement().addList("Bearer Authentication"))
+								     .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
+								     .info(new Info().title("OH 2.0 Api Documentation")
+								     .description("OH 2.0 Api Documentation")
+								     .version("1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
+								     .license(new License().name("https://www.apache.org/licenses/LICENSE-2.0")));
 	}
-
-	private SecurityContext jwtSecurityContext() {
-		return SecurityContext
-						.builder()
-						.securityReferences(defaultAuth())
-						// .forPaths(PathSelectors.regex("^(?!(\\/auth\\/login)).*$"))
-						.build();
+	
+	private SecurityScheme createAPIKeyScheme() {
+	    return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+	    						   .bearerFormat("JWT")
+	    						   .scheme("bearer");
 	}
-
-	List<SecurityReference> defaultAuth() {
-		return Arrays.asList(new SecurityReference("JWT", new AuthorizationScope[0]));
-	}
-
-	private ApiKey apiKey() {
-		return new ApiKey("JWT", HttpHeaders.AUTHORIZATION, In.HEADER.name());
-	}
-
 }

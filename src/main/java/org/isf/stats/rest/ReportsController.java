@@ -43,11 +43,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/reports")
+@OpenAPIDefinition(
+		info = @Info(title = "reports API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class ReportsController {
 	@Autowired
 	private JasperReportsManager reportsManager;

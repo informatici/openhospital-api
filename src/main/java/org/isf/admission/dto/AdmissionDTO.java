@@ -35,93 +35,94 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
 import org.isf.ward.dto.WardDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 /**
  * @author gildas
  */
 public class AdmissionDTO {
 
-	@ApiModelProperty(notes = "admission key", example = "12", position = 1)
+	@Schema(description = "admission key", example = "12")
 	private int id;
 
 	@NotNull
-	@ApiModelProperty(notes = "if admitted or not", example = "0", position = 2)
+	@Schema(description = "if admitted or not", example = "0")
 	private int admitted;
 
 	@NotNull
-	@ApiModelProperty(notes = "type of admission", example = "N", position = 3)
+	@Schema(description = "type of admission", example = "N")
 	private String type;
 
-	@ApiModelProperty(notes = "ward", position = 4)
+	@Schema(description = "ward")
 	private WardDTO ward;
 
 	@NotNull
-	@ApiModelProperty(notes = "a progr. in year for each ward", example = "1", position = 5)
+	@Schema(description = "a progr. in year for each ward", example = "1")
 	private int yProg;
 
-	@ApiModelProperty(notes = "patient", position = 6)
+	@Schema(description = "patient")
 	private PatientDTO patient;
 
 	@NotNull
-	@ApiModelProperty(notes = "admission date", position = 7)
+	@Schema(description = "admission date", format = "LocalDateTime")
 	private LocalDateTime admDate;
 
-	@ApiModelProperty(notes = "admission type", position = 8)
+	@Schema(description = "admission type")
 	private AdmissionTypeDTO admType;
 
-	@ApiModelProperty(notes = "FromHealthUnit", position = 9)
+	@Schema(description = "FromHealthUnit")
 	private String FHU;
 
-	@ApiModelProperty(notes = "disease in ", position = 10)
+	@Schema(description = "disease in ")
 	private DiseaseDTO diseaseIn;
 
-	@ApiModelProperty(notes = "disease out ", position = 11)
+	@Schema(description = "disease out ")
 	private DiseaseDTO diseaseOut1;
 
-	@ApiModelProperty(notes = "disease out ", position = 12)
+	@Schema(description = "disease out ")
 	private DiseaseDTO diseaseOut2;
 
-	@ApiModelProperty(notes = "disease out ",  position = 13)
+	@Schema(description = "disease out ")
 	private DiseaseDTO diseaseOut3;
 
-	@ApiModelProperty(notes = "operation ", position = 14)
+	@Schema(description = "operation ")
 	private OperationDTO operation;
 
-	@ApiModelProperty(notes = "operation date", position = 15)
+	@Schema(description = "operation date", format = "LocalDateTime")
 	private LocalDateTime opDate;
 
-	@ApiModelProperty(notes = "operation result value is 'P' or 'N' ", example = "N", position = 16)
+	@Schema(description = "operation result value is 'P' or 'N' ", example = "N")
 	private String opResult;
 
-	@ApiModelProperty(notes = "discharge date", position = 17)
+	@Schema(description = "discharge date", format = "LocalDateTime")
 	private LocalDateTime disDate;
 
-	@ApiModelProperty(notes = "disChargeType", position = 18)
+	@Schema(description = "disChargeType")
 	private DischargeTypeDTO disType;
 
-	@ApiModelProperty(notes = "free note", position = 19)
+	@Schema(description = "free note")
 	private String note;
 
-	@ApiModelProperty(notes = "transfusional unit", position = 20)
+	@Schema(description = "transfusional unit")
 	private Float transUnit;
 
-	@ApiModelProperty(notes = "visit date", position = 21)
+	@Schema(description = "visit date", format = "LocalDateTime")
 	private LocalDateTime visitDate;
 
-	@ApiModelProperty(notes = "treatmentType ", position = 22)
+	@Schema(description = "treatmentType ")
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@ApiModelProperty(notes = "delivery date", position = 23)
+	@Schema(description = "delivery date", format = "LocalDateTime")
 	private LocalDateTime deliveryDate;
 
-	@ApiModelProperty(notes = "delivery type", position = 24)
+	@Schema(description = "delivery type")
 	private DeliveryTypeDTO deliveryType;
 
-	@ApiModelProperty(notes = "delivery type ", position = 25)
+	@Schema(description = "delivery type ")
 	private DeliveryResultTypeDTO deliveryResult;
 
-	@ApiModelProperty(notes = "weight", position = 26)
+	@Schema(description = "weight")
 	private Float weight;
 
 	private LocalDateTime ctrlDate1;
@@ -130,16 +131,16 @@ public class AdmissionDTO {
 
 	private LocalDateTime abortDate;
 
-	@ApiModelProperty(notes = "weight", position = 30)
+	@Schema(description = "weight")
 	private String userID;
 	
 	private int hashCode;
 	
-	@ApiModelProperty(notes = "lock", example = "0", position = 31)
+	@Schema(description = "lock", example = "0")
 	private int lock;
 
 	@NotNull
-	@ApiModelProperty(notes = "flag record deleted, values are 'Y' OR 'N' ", example = "N", position = 32)
+	@Schema(description = "flag record deleted, values are 'Y' OR 'N' ", example = "N")
 	private String deleted;
 
 	public int getId() {
@@ -266,7 +267,7 @@ public class AdmissionDTO {
 		return this.deleted;
 	}
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

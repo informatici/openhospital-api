@@ -27,93 +27,94 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.disease.dto.DiseaseDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 /**
  * @author gildas
  */
 public class OpdDTO {
     
-    @ApiModelProperty(notes = "the code of the opd", example="3", position = 1)
+    @Schema(description = "the code of the opd", example="3")
     private int code;
 
-    @ApiModelProperty(notes = "the date of the admission", position = 2)
+    @Schema(description = "the date of the admission", format = "LocalDateTime")
     private LocalDateTime date;
 
     @NotNull
-    @ApiModelProperty(notes = "the visit date", position = 3)
+    @Schema(description = "the visit date", format = "LocalDateTime")
     @Deprecated
     private LocalDateTime visitDate;
 
-    @ApiModelProperty(notes = "the next visit date", position = 4)
+    @Schema(description = "the next visit date", format = "LocalDateTime")
     private LocalDateTime nextVisitDate;
 
-    @ApiModelProperty(notes = "the admitted patient code", position = 5)
+    @Schema(description = "the admitted patient code")
     private Integer patientCode;
 
     @NotNull
-    @ApiModelProperty(notes = "the patient age", example = "18", position = 6)
+    @Schema(description = "the patient age", example = "18")
     private int age;
 
     @NotNull
-    @ApiModelProperty(notes = "the patient sex", example = "M", position = 7)
+    @Schema(description = "the patient sex", example = "M")
     private char sex;
     
     //@NotNull
-    @ApiModelProperty(notes = "the patient sex", example = "M", position = 8)
+    @Schema(description = "the patient sex", example = "M")
     private String patientName;
     
-    @ApiModelProperty(notes = "Age type", example="null", position = 9)
+    @Schema(description = "Age type", example="null")
     private String ageType; // ADDED: Arnaud
 
     @NotNull
-    @ApiModelProperty(notes = "the admission note", example = "this is out patient", position = 10)
+    @Schema(description = "the admission note", example = "this is out patient")
     private String note; // ADDED: Alex
 
     //@NotNull
-    @ApiModelProperty(notes = "a progr. in year for each ward", example = "18", position = 11)
+    @Schema(description = "a progr. in year for each ward", example = "18")
     private int prog_year;
 
-    @ApiModelProperty(notes = "disease", position = 12)
+    @Schema(description = "disease")
     private DiseaseDTO disease;
 
-    @ApiModelProperty(notes = "disease 2", position = 13)
+    @Schema(description = "disease 2")
     private DiseaseDTO disease2;
 
-    @ApiModelProperty(notes = "disease 3", position = 14)
+    @Schema(description = "disease 3")
     private DiseaseDTO disease3;
 
     @NotNull
-    @ApiModelProperty(notes = "new(N) or reattendance(R) patient", example = "N", position = 15)
+    @Schema(description = "new(N) or reattendance(R) patient", example = "N")
     private char newPatient; // n=NEW R=REATTENDANCE
 
-    @ApiModelProperty(notes = "referral from another unit", example = "R", position = 16)
+    @Schema(description = "referral from another unit", example = "R")
     private String referralFrom; // R=referral from another unit; null=no referral from
 
-    @ApiModelProperty(notes = "referral to another unit", example = "R", position = 17)
+    @Schema(description = "referral to another unit", example = "R")
     private String referralTo; // R=referral to another unit; null=no referral to
 
-    @ApiModelProperty(notes = "user id", position = 18)
+    @Schema(description = "user id")
     private String userID;
 
-    @ApiModelProperty(notes = "lock", example = "0")
+    @Schema(description = "lock", example = "0")
     private int lock;
     
     private int hashCode;
     
-    @ApiModelProperty(notes = "reasons for entry", position = 19)
+    @Schema(description = "reasons for entry")
     private String reason; // ADDED: Arnaud
     
-    @ApiModelProperty(notes = "history of a medical or psychiatric patient", position = 20)
+    @Schema(description = "history of a medical or psychiatric patient")
     private String anamnesis; // ADDED: Arnaud
     
-    @ApiModelProperty(notes = "allergies of patient", position = 21)
+    @Schema(description = "allergies of patient")
     private String allergies; // ADDED: Arnaud
     
-    @ApiModelProperty(notes = "Current therapies", position = 22)
+    @Schema(description = "Current therapies")
     private String therapies; // ADDED: Arnaud
     
-    @ApiModelProperty(notes = "prescription", position = 23)
+    @Schema(description = "prescription")
     private String prescription; // ADDED: Arnaud
     
     public String getReason() {
@@ -156,12 +157,12 @@ public class OpdDTO {
         this.prescription = prescription;
     }
 
-    @ApiModelProperty(hidden=true)
+    @Schema(accessMode = AccessMode.READ_ONLY)
     public int getLock() {
         return lock;
     }
 
-    @ApiModelProperty(hidden=true)
+    @Schema(accessMode = AccessMode.READ_ONLY)
     public int getHashCode() {
         return hashCode;
     }

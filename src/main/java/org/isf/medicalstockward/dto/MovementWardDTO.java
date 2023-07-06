@@ -29,53 +29,53 @@ import org.isf.medical.dto.MedicalDTO;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.dto.WardDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MovementWardDTO {
 	
-	@ApiModelProperty(notes="The movement ward's code", example="1", position = 1)
+	@Schema(description="The movement ward's code", example="1")
 	private int code;
 	
 	@NotNull
-	@ApiModelProperty(notes="The ward", position = 2)
+	@Schema(description="The ward")
 	private WardDTO ward;
 	
 	@NotNull
-	@ApiModelProperty(notes="The movement ward's date", example="2020-06-07", position = 3)
+	@Schema(description="The movement ward's date", example="2020-06-07", format = "LocalDate")
 	private LocalDate date;
 	
 	@NotNull
-	@ApiModelProperty(notes="Indicates if the movement is associated to a patient or no ", example="false", position = 4)
+	@Schema(description="Indicates if the movement is associated to a patient or no ", example="false")
 	private boolean isPatient;
 	
-	@ApiModelProperty(notes="The patient in case the movement is associated to a patient", position = 5)
+	@Schema(description="The patient in case the movement is associated to a patient")
 	private PatientDTO patient;
 	
-	@ApiModelProperty(notes="The patient's age in case the movement is associated to a patient", example="21", position = 6)
+	@Schema(description="The patient's age in case the movement is associated to a patient", example="21")
 	private int age;
 	
-	@ApiModelProperty(notes="The patient's weight in case the movement is associated to a patient", example="75", position = 7)
+	@Schema(description="The patient's weight in case the movement is associated to a patient", example="75")
 	private float weight;
 	
 	@NotNull
-	@ApiModelProperty(notes="The description of the movement", example="stock transfer from pharmacy to laboratory", position = 8)
+	@Schema(description="The description of the movement", example="stock transfer from pharmacy to laboratory")
 	private String description;
 	
-	@ApiModelProperty(notes="The medical concerned by the movement", position = 9)
+	@Schema(description="The medical concerned by the movement")
 	private MedicalDTO medical;
 	
 	@NotNull
-	@ApiModelProperty(notes="The quantity of the medical concerned by the movement", example="145", position = 10)
+	@Schema(description="The quantity of the medical concerned by the movement", example="145")
 	private Double quantity;
 	
 	@NotNull
-	@ApiModelProperty(notes="The measure's unit of the medical concerned by the movement", example="pct", position = 11)
+	@Schema(description="The measure's unit of the medical concerned by the movement", example="pct")
 	private String units;
 	
-	@ApiModelProperty(notes="The ward to which the movement is done", position = 12)
+	@Schema(description="The ward to which the movement is done")
 	private WardDTO wardTo;
 	
-	@ApiModelProperty(notes="The ward from which the movement is done", position = 13)
+	@Schema(description="The ward from which the movement is done")
 	private WardDTO wardFrom;
 	
 	public MovementWardDTO() {

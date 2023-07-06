@@ -23,16 +23,16 @@ package org.isf.login.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LoginRequest {
 
 	@NotNull
-	@ApiModelProperty(notes = "username", example = "admin", position = 1)
+	@Schema(description = "username", example = "admin")
 	private String username;
 
 	@NotNull
-	@ApiModelProperty(notes = "password of user", example = "admin", position = 2)
+	@Schema(description = "password of user", example = "admin")
 	private String password;
 
 	public String getUsername() {

@@ -21,14 +21,14 @@
  */
 package org.isf.exatype.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamTypeDTO {
 
-    @ApiModelProperty(notes = "Exam Type Code", example = "HB", position = 1)
+    @Schema(description = "Exam Type Code", example = "HB")
     private String code;
 
-    @ApiModelProperty(notes = "Exam Type Description", example = "1.Haematology", position = 2)
+    @Schema(description = "Exam Type Description", example = "1.Haematology")
     private String description;
 
     public ExamTypeDTO() {

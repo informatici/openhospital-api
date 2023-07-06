@@ -47,10 +47,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/medicals")
+@OpenAPIDefinition(
+		info = @Info(title = "medicals API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class MedicalController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalController.class);

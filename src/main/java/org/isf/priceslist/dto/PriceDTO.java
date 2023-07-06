@@ -25,40 +25,40 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.priceslist.model.PriceList;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a prices")
+@Schema(description = "Class representing a prices")
 public class PriceDTO
 {
 
 	private int id;
 
 	@NotNull
-	@ApiModelProperty(notes = "the price list", position = 1)
+	@Schema(description = "the price list")
     private PriceList list;
 
 	@NotNull
-	@ApiModelProperty(notes = "the group", position = 2)
+	@Schema(description = "the group")
     private String group;
 
 	@NotNull
-	@ApiModelProperty(notes = "the item name", position = 3)
+	@Schema(description = "the item name")
     private String item;
 
 	@NotNull
-	@ApiModelProperty(notes = "the description", position = 4)
+	@Schema(description = "the description")
     private String description;
 
 	@NotNull
-	@ApiModelProperty(notes = "price", example="1500", position = 4)
+	@Schema(description = "price", example="1500")
     private Double price; 
 	
     private boolean editable;
 	
 	private int hashCode;
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public boolean isEditable() {
 		return editable;
 	}
@@ -68,7 +68,7 @@ public class PriceDTO
 		return description;
 	}
 	
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

@@ -27,33 +27,33 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.admission.dto.AdmissionDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MalnutritionDTO {
 	
-	@ApiModelProperty(notes="The code malnutrition control", example = "1", position = 1)
+	@Schema(description="The code malnutrition control", example = "1")
 	private int code;
 
 	@NotNull(message="The date of control is required")
-	@ApiModelProperty(notes="The date of this malnutrition control", example = "1979-05-01T11:20:33", position = 2)
+	@Schema(description="The date of this malnutrition control", example = "1979-05-01T11:20:33", format = "LocalDateTime")
 	private LocalDateTime dateSupp;
 
-	@ApiModelProperty(notes="The date of the next malnutrition control", example = "1979-05-01T11:20:33", position = 3)
+	@Schema(description="The date of the next malnutrition control", example = "1979-05-01T11:20:33", format = "LocalDateTime")
 	private LocalDateTime dateConf;
 
 	@NotNull(message="The admission is required")
-	@ApiModelProperty(notes="The admission requesting the control", position = 4)
+	@Schema(description="The admission requesting the control")
 	private AdmissionDTO admission;
 
 	@NotNull(message="The height is required")
-	@ApiModelProperty(notes="The height of the patient", example="165", position = 5)
+	@Schema(description="The height of the patient", example="165")
 	private float height;
 
 	@NotNull(message="The weight is required")
-	@ApiModelProperty(notes="The weight of the patient", example="65", position = 6)
+	@Schema(description="The weight of the patient", example="65")
 	private float weight;
 	
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private int lock;
 	
 	public MalnutritionDTO() { }

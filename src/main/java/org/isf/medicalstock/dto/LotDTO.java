@@ -26,23 +26,23 @@ import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LotDTO {
 
 	@NotNull(message="The code is required")
-	@ApiModelProperty(notes="The lot's code", example = "LT001", position = 1)
+	@Schema(description="The lot's code", example = "LT001")
 	private String code;
 
 	@NotNull(message="The preparation date is required")
-	@ApiModelProperty(notes="The preparation date", example = "2020-06-24", position = 2)
+	@Schema(description="The preparation date", example = "2020-06-24", format = "LocalDate")
 	private LocalDate preparationDate;
 
 	@NotNull(message="The due date is required")
-	@ApiModelProperty(notes="The due date", example = "2021-06-24", position = 3)
+	@Schema(description="The due date", example = "2021-06-24", format = "LocalDate")
 	private LocalDate dueDate;
 
-	@ApiModelProperty(notes="The lot's code", example = "750", position = 4)
+	@Schema(description="The lot's code", example = "750")
 	private BigDecimal cost;
 	
 	public LotDTO() {

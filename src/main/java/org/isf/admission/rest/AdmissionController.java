@@ -75,10 +75,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/admissions", produces = "application/vnd.ohapi.app-v1+json")
+@RestController(value = "/admissions")
+@OpenAPIDefinition(
+		info = @Info(title = "admissions API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class AdmissionController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);

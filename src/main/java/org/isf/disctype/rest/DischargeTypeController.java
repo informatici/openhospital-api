@@ -44,10 +44,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-@RestController
-@Api(value = "/dischargetype", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/dischargetype")
+@OpenAPIDefinition(
+		info = @Info(title = "discharge type types API", version = "1.0.0"),
+	    security = {
+	        @SecurityRequirement(name = "apiKey")
+	    }
+)
 public class DischargeTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DischargeTypeController.class);
