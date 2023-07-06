@@ -61,9 +61,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController(value = "/medicalstockward")
 @OpenAPIDefinition(
 		info = @Info(title = "medical stock ward API", version = "1.0.0"),
-	    security = {
-	        @SecurityRequirement(name = "apiKey")
-	    }
+		security = { @SecurityRequirement(name = "apiKey") }
 )
 public class MedicalStockWardController {
 

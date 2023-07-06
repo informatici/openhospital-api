@@ -46,9 +46,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController(value = "/hospitals")
 @OpenAPIDefinition(
 		info = @Info(title = "hospitals API", version = "1.0.0"),
-	    security = {
-	        @SecurityRequirement(name = "apiKey")
-	    }
+		security = { @SecurityRequirement(name = "apiKey") }
 )
 public class HospitalController {
 

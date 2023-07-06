@@ -40,9 +40,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  */
 
 @RestController
-@OpenAPIDefinition(
-		info = @Info(title = "Login API", version = "1.0.0")
-)
+@OpenAPIDefinition(info = @Info(title = "Login API", version = "1.0.0"))
 public class LoginApi {
     /**
      * Implemented by Spring Security

@@ -57,9 +57,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 @RestController(value = "stockmovements")
 @OpenAPIDefinition(
 		info = @Info(title = "stock movements API", version = "1.0.0"),
-	    security = {
-	        @SecurityRequirement(name = "apiKey")
-	    }
+		security = { @SecurityRequirement(name = "apiKey") }
 )
 public class StockMovementController {
 	@Autowired
