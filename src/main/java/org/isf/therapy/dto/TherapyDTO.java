@@ -35,7 +35,7 @@ public class TherapyDTO {
 	@Schema(description="The patient's ID", example = "1")
 	private Integer patID;
 	
-	@Schema(description="The dates of the therapy", format ="LocalDateTime[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]")
+	@Schema(description="The dates of the therapy", type ="string[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]")
 	private LocalDateTime[] dates;
 	
 	@Schema(description="The medical associated to the therapy")

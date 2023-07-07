@@ -40,7 +40,7 @@ public class PatientVaccineDTO
 	private int progr;
 
 	@NotNull
-	@Schema(description = "the vaccine date", format = "LocalDateTime")
+	@Schema(description = "the vaccine date", type = "string")
 	private LocalDateTime vaccineDate;
 
 	@NotNull

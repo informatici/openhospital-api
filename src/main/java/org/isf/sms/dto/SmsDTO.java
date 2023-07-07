@@ -37,7 +37,7 @@ public class SmsDTO {
 	private LocalDateTime smsDate;
 	
 	@NotNull
-	@Schema(description = "SMS scheduled date", example="2020-07-28T00:00:00", format = "LocalDateTime")
+	@Schema(description = "SMS scheduled date", example="2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSched;
 	
 	@NotNull
@@ -48,7 +48,7 @@ public class SmsDTO {
 	@Schema(description = "SMS content text", example="Hi Mario.")
 	private String smsText;
 	
-	@Schema(description = "SMS sent date", example="2020-07-28T00:00:00", format = "LocalDateTime")
+	@Schema(description = "SMS sent date", example="2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSent;
 	
 	@NotNull

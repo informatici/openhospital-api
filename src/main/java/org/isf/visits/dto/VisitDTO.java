@@ -41,7 +41,7 @@ public class VisitDTO {
 	PatientDTO patient;
 
 	@NotNull
-	@Schema(description = "Date of the visit", example = "2020-03-19T14:58:00", format = "LocalDateTime")
+	@Schema(description = "Date of the visit", example = "2020-03-19T14:58:00", type = "string")
 	private LocalDateTime date;
 
 	@Schema(description = "Note of the visit")

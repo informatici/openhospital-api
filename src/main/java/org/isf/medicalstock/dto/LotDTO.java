@@ -35,11 +35,11 @@ public class LotDTO {
 	private String code;
 
 	@NotNull(message="The preparation date is required")
-	@Schema(description="The preparation date", example = "2020-06-24", format = "LocalDate")
+	@Schema(description="The preparation date", example = "2020-06-24", type = "string")
 	private LocalDate preparationDate;
 
 	@NotNull(message="The due date is required")
-	@Schema(description="The due date", example = "2021-06-24", format = "LocalDate")
+	@Schema(description="The due date", example = "2021-06-24", type = "string")
 	private LocalDate dueDate;
 
 	@Schema(description="The lot's code", example = "750")

@@ -58,12 +58,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController(value = "/bills")
 @OpenAPIDefinition(
-		info = @Info(title = "bills API", version = "1.0.0"),
 		security = { @SecurityRequirement(name = "apiKey") }
 )
 public class BillController {

@@ -39,11 +39,11 @@ public class BillDTO {
 	private Integer listId;
 
 	@NotNull
-	@Schema(description = "Date of bill creation", example="2020-03-19T14:58:00.000Z", format = "LocalDateTime")
+	@Schema(description = "Date of bill creation", example="2020-03-19T14:58:00.000Z", type ="string")
 	private LocalDateTime date;
 	
 	@NotNull
-	@Schema(description = "Date of bill updated", example="2020-03-19T14:58:00.000Z", format = "LocalDateTime")
+	@Schema(description = "Date of bill updated", example="2020-03-19T14:58:00.000Z", type ="string")
 	private LocalDateTime update;
 	
 	@NotNull

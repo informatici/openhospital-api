@@ -43,11 +43,11 @@ public class LaboratoryDTO {
 	@Schema(description = "Laboratory Exam")
 	private ExamDTO exam;
 
-	@Schema(description = "Laboratory Registration Date", format = "LocalDateTime")
+	@Schema(description = "Laboratory Registration Date", type = "string")
 	private LocalDateTime registrationDate;
 
 	@NotNull
-	@Schema(description = "Laboratory Exam Date", format = "LocalDateTime")
+	@Schema(description = "Laboratory Exam Date", type = "string")
 	private LocalDateTime labDate;
 
 	@Schema(description = "Laboratory Result")

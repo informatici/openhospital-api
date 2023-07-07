@@ -38,15 +38,15 @@ public class OpdDTO {
     @Schema(description = "the code of the opd", example="3")
     private int code;
 
-    @Schema(description = "the date of the admission", format = "LocalDateTime")
+    @Schema(description = "the date of the admission", type = "string")
     private LocalDateTime date;
 
     @NotNull
-    @Schema(description = "the visit date", format = "LocalDateTime")
+    @Schema(description = "the visit date", type = "string")
     @Deprecated
     private LocalDateTime visitDate;
 
-    @Schema(description = "the next visit date", format = "LocalDateTime")
+    @Schema(description = "the next visit date", type = "string")
     private LocalDateTime nextVisitDate;
 
     @Schema(description = "the admitted patient code")

@@ -65,7 +65,7 @@ public class AdmissionDTO {
 	private PatientDTO patient;
 
 	@NotNull
-	@Schema(description = "admission date", format = "LocalDateTime")
+	@Schema(description = "admission date", type = "string")
 	private LocalDateTime admDate;
 
 	@Schema(description = "admission type")
@@ -89,13 +89,13 @@ public class AdmissionDTO {
 	@Schema(description = "operation ")
 	private OperationDTO operation;
 
-	@Schema(description = "operation date", format = "LocalDateTime")
+	@Schema(description = "operation date", type = "string")
 	private LocalDateTime opDate;
 
 	@Schema(description = "operation result value is 'P' or 'N' ", example = "N")
 	private String opResult;
 
-	@Schema(description = "discharge date", format = "LocalDateTime")
+	@Schema(description = "discharge date", type = "string")
 	private LocalDateTime disDate;
 
 	@Schema(description = "disChargeType")
@@ -107,13 +107,13 @@ public class AdmissionDTO {
 	@Schema(description = "transfusional unit")
 	private Float transUnit;
 
-	@Schema(description = "visit date", format = "LocalDateTime")
+	@Schema(description = "visit date", type = "string")
 	private LocalDateTime visitDate;
 
 	@Schema(description = "treatmentType ")
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@Schema(description = "delivery date", format = "LocalDateTime")
+	@Schema(description = "delivery date", type = "string")
 	private LocalDateTime deliveryDate;
 
 	@Schema(description = "delivery type")

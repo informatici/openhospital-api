@@ -35,10 +35,10 @@ public class MalnutritionDTO {
 	private int code;
 
 	@NotNull(message="The date of control is required")
-	@Schema(description="The date of this malnutrition control", example = "1979-05-01T11:20:33", format = "LocalDateTime")
+	@Schema(description="The date of this malnutrition control", example = "1979-05-01T11:20:33", type = "string")
 	private LocalDateTime dateSupp;
 
-	@Schema(description="The date of the next malnutrition control", example = "1979-05-01T11:20:33", format = "LocalDateTime")
+	@Schema(description="The date of the next malnutrition control", example = "1979-05-01T11:20:33", type = "string")
 	private LocalDateTime dateConf;
 
 	@NotNull(message="The admission is required")

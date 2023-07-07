@@ -21,6 +21,8 @@
  */
 package org.isf.config;
 
+import java.util.Map;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,6 +33,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
 
 @Configuration
 public class SpringFoxConfig {
@@ -43,7 +47,10 @@ public class SpringFoxConfig {
 								     .info(new Info().title("OH 2.0 Api Documentation")
 								     .description("OH 2.0 Api Documentation")
 								     .version("1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
-								     .license(new License().name("https://www.apache.org/licenses/LICENSE-2.0")));
+								     .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0")))
+								     .components(new Components().schemas(Map.of(
+								    		 "LocalDate", new DateSchema().name("LocalDate").type("string").format("date"),
+								    		 "LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format("date-time"))));
 	}
 	
 	private SecurityScheme createAPIKeyScheme() {

@@ -52,7 +52,7 @@ public class MovementDTO {
 	private LotDTO lot;
 
 	@NotNull(message="the movement's date is required")
-	@Schema(description="The movement date", example = "2020-06-24", format = "LocalDate")
+	@Schema(description="The movement date", example = "2020-06-24", type = "string")
 	private LocalDate date;
 
 	@NotNull(message="the movement's medical quantity is required")

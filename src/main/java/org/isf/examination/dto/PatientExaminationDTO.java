@@ -35,7 +35,7 @@ public class PatientExaminationDTO {
     private int pex_ID;
 
     @NotNull
-    @Schema(description = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z")
+    @Schema(description = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", type ="string")
     private LocalDateTime pex_date;
 
     @NotNull

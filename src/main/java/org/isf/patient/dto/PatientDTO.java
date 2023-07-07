@@ -46,7 +46,7 @@ public class PatientDTO {
 
 	private String name;
 
-	@Schema(description = "Birth date", example = "1979-05-01", format ="LocalDate")
+	@Schema(description = "Birth date", example = "1979-05-01", type = "string")
 	private LocalDate birthDate;
 
 	@NotNull
