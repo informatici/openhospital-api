@@ -21,10 +21,18 @@
  */
 package org.isf.login.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Class representing a Login response")
 public class LoginResponse {
 
+	@Schema(description = "token")
 	private String token;
+	
+	@Schema(description = "type of Token", example = "Bearer")
 	private String type = "Bearer";
+	
+	@Schema(description = "user name", example = "admin")
 	private String username;
 
 	public LoginResponse(String token, String username) {
