@@ -123,7 +123,8 @@ public class PatientHelper {
 		pageInfo.setNbOfElements(10);
 		pageInfo.setPage(0);
 		pageInfo.setSize(1);
-		pageInfo.setTotalCount(10);
+		pageInfo.setTotalNbOfElements(10);
+		pageInfo.setTotalPage(1);
 		
 		return pageInfo;
 	}

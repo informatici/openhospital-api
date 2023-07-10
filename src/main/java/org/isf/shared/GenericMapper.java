@@ -89,7 +89,8 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		pageInfoDTO.setHasNextPage(pageInfo.isHasNextPage());
 		pageInfoDTO.setHasPreviousPage(pageInfo.isHasPreviousPage());
 		pageInfoDTO.setSize(pageInfo.getSize());
-		pageInfoDTO.setTotalCount(pageInfo.getTotalCount());
+		pageInfoDTO.setTotalNbOfElements(pageInfo.getTotalNbOfElements());
+		pageInfoDTO.setTotalPage(pageInfo.getTotalPage());
 		return pageInfoDTO;
 	}
 }
