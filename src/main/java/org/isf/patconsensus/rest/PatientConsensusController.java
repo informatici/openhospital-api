@@ -57,7 +57,7 @@ public class PatientConsensusController {
 	@Autowired
 	protected PatientConsensusMapper mapper;
 
-	@GetMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/patientConsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> getPatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
@@ -68,7 +68,7 @@ public class PatientConsensusController {
 		return ResponseEntity.ok(patientDTO);
 	}
 
-	@PutMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/patientConsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);

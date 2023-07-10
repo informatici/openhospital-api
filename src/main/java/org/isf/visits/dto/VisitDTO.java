@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
+import org.isf.ward.dto.WardDTO;
 import org.isf.ward.model.Ward;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -51,7 +52,7 @@ public class VisitDTO {
 	private boolean sms;
 
 	@Schema(description = "ward of the visit")
-	private Ward ward;
+	private WardDTO ward;
 
 	@Schema(description = "duration of the visit")
 	private Integer duration;
@@ -72,11 +73,11 @@ public class VisitDTO {
 		return this.date;
 	}
 
-	public Ward getWard() {
+	public WardDTO getWard() {
 		return ward;
 	}
 
-	public void setWard(Ward ward) {
+	public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
 

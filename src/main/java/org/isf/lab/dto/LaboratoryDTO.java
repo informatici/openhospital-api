@@ -37,7 +37,7 @@ public class LaboratoryDTO {
 	@Schema(description = "Laboratory Code")
 	private Integer code;
 
-	@Schema(description = "Laboratory Material", ref = "Blood")
+	@Schema(description = "Laboratory Material", example = "Blood")
 	private String material;
 
 	@Schema(description = "Laboratory Exam")
@@ -56,7 +56,7 @@ public class LaboratoryDTO {
 	@Schema(description = "lock", example = "0")
 	private int lock;
 
-	@Schema(description = "Laboratory Note", ref = "Note by laboratorist")
+	@Schema(description = "Laboratory Note", example = "Note by laboratorist")
 	private String note;
 
 	@Schema(description = "Laboratory Patient Code")
