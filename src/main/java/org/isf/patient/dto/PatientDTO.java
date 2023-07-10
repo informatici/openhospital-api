@@ -57,7 +57,7 @@ public class PatientDTO {
 	private String agetype;
 
 	@NotNull
-	@Schema(description = "Sex", allowableValues = "F,M", example = "M")
+	@Schema(description = "Sex", allowableValues = { "M", "F" }, example = "M")
 	private char sex;
 
 	@Schema(description = "Address", example = "Via Roma, 12")
@@ -79,24 +79,24 @@ public class PatientDTO {
 	@Schema(description = "Mother's name", example = "Roberta")
 	private String motherName;
 
-	@Schema(description = "Mother's status (D=dead, A=alive)", allowableValues = "D,A", example = "A")
+	@Schema(description = "Mother's status (D=dead, A=alive)", allowableValues = { "D", "A" }, example = "A")
 	private char mother;
 
 	@NotNull
 	@Schema(description = "Father's name", example = "Giuseppe")
 	private String fatherName;
 
-	@Schema(description = "Father's status (D=dead, A=alive)", allowableValues = "D,A", example = "D")
+	@Schema(description = "Father's status (D=dead, A=alive)", allowableValues = { "D", "A" }, example = "D")
 	private char father;
 
 	@NotNull
-	@Schema(description = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = "0-,0+,A-,A+,B-,B+,AB-,AB+", example = "A+")
+	@Schema(description = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = { "0-", "0+", "A-", "A+","B-", "B+", "AB-", "AB+" }, example = "A+")
 	private String bloodType;
 
-	@Schema(description = "hasInsurance (Y=Yes, N=no)", allowableValues = "Y,N", example = "N")
+	@Schema(description = "hasInsurance (Y=Yes, N=no)", allowableValues = { "Y", "N" }, example = "N")
 	private char hasInsurance;
 
-	@Schema(description = "Parent together (Y=Yes, N=no)", allowableValues = "Y,N", example = "N")
+	@Schema(description = "Parent together (Y=Yes, N=no)", allowableValues = { "Y", "N" }, example = "N")
 	private char parentTogether;
 
 	@Schema(description = "Tax code", example = "RSSMRA79E01L781N")
