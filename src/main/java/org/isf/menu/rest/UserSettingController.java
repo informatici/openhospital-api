@@ -41,15 +41,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/usersettings")
-@OpenAPIDefinition(
-		info = @Info(title = "user settings API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "User Settings")
+@SecurityRequirement(name = "bearerAuth")
 public class UserSettingController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserSettingController.class);

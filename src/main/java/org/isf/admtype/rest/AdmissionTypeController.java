@@ -44,15 +44,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/admissiontypes")
-@OpenAPIDefinition(
-		info = @Info(title = "admission types API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "AdmissionTypes")
+@SecurityRequirement(name = "bearerAuth")
 public class AdmissionTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionTypeController.class);

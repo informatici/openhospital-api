@@ -21,41 +21,44 @@
  */
 package org.isf.config;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
+@SecurityScheme(
+	    name = "bearerAuth",
+	    type = SecuritySchemeType.HTTP,
+	    bearerFormat = "JWT",
+	    scheme = "bearer"
+	)
 public class SpringFoxConfig {
 
 	@Bean
 	public OpenAPI springShopOpenAPI() {
 		return new OpenAPI().addSecurityItem(
 			new SecurityRequirement().addList("Bearer Authentication"))
-								     .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
 								     .info(new Info().title("OH 2.0 Api Documentation")
 								     .description("OH 2.0 Api Documentation")
 								     .version("1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
 								     .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0")))
+								     .servers(List.of(new Server().url("http://localhost:8080")))
 								     .components(new Components().schemas(Map.of(
-								    		 "LocalDate", new DateSchema().name("LocalDate").type("string").format("date"),
-								    		 "LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format("date-time"))));
-	}
-	
-	private SecurityScheme createAPIKeyScheme() {
-	    return new SecurityScheme().type(SecurityScheme.Type.HTTP)
-	    						   .bearerFormat("JWT")
-	    						   .scheme("bearer");
+								    		 "LocalDate", new DateSchema().name("LocalDate").type("string").format(null),
+								    		 "LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format(null))));
 	}
 }

@@ -50,15 +50,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/examinations")
-@OpenAPIDefinition(
-		info = @Info(title = "examinations API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Examinations")
+@SecurityRequirement(name = "bearerAuth")
 public class ExaminationController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExaminationController.class);

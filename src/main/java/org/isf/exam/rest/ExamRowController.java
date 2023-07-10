@@ -46,15 +46,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/examrows")
-@OpenAPIDefinition(
-		info = @Info(title = "exams API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Exam Rows")
+@SecurityRequirement(name = "bearerAuth")
 public class ExamRowController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExamRowController.class);

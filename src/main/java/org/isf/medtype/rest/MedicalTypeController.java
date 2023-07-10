@@ -46,15 +46,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/medicaltypes")
-@OpenAPIDefinition(
-		info = @Info(title = "medical types API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Medical Types")
+@SecurityRequirement(name = "bearerAuth")
 public class MedicalTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalTypeController.class);

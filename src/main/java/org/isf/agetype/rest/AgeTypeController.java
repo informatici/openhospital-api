@@ -47,15 +47,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/agetypes")
-@OpenAPIDefinition(
-		info = @Info(title = "age types API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "AgeTypes")
+@SecurityRequirement(name = "bearerAuth")
 public class AgeTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AgeTypeController.class);

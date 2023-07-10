@@ -27,11 +27,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Here only for swagger
@@ -40,7 +39,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  */
 
 @RestController
-@OpenAPIDefinition(info = @Info(title = "Login API", version = "1.0.0"))
+@Tag(name = "Login")
 public class LoginApi {
     /**
      * Implemented by Spring Security

@@ -51,15 +51,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/therapies")
-@OpenAPIDefinition(
-		info = @Info(title = "therapies API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Therapies")
+@SecurityRequirement(name = "bearerAuth")
 public class TherapyController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TherapyController.class);

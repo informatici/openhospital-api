@@ -44,15 +44,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/pregnanttreatmenttypes")
-@OpenAPIDefinition(
-		info = @Info(title = "pregnant treatment types API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Pregnant Treatment Types")
+@SecurityRequirement(name = "bearerAuth")
 public class PregnantTreatmentTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PregnantTreatmentTypeController.class);

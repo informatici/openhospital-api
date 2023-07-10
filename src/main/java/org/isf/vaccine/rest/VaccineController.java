@@ -44,15 +44,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/vaccines")
-@OpenAPIDefinition(
-		info = @Info(title = "vaccines API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Vaccines")
+@SecurityRequirement(name = "bearerAuth")
 public class VaccineController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineController.class);

@@ -76,15 +76,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/admissions")
-@OpenAPIDefinition(
-		info = @Info(title = "admissions API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Admissions")
+@SecurityRequirement(name = "bearerAuth")
 public class AdmissionController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);
@@ -208,8 +207,8 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 					@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
-					@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
-					@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
+					@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Parameter(schema = @Schema(type = "String[]")) LocalDateTime[] admissionRange,
+					@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Parameter(schema = @Schema(type = "String[]")) LocalDateTime[] dischargeRange)
 					throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 		if (admissionRange != null && admissionRange.length == 2) {

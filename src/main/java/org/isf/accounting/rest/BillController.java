@@ -57,13 +57,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/bills")
-@OpenAPIDefinition(
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Bills")
+@SecurityRequirement(name = "bearerAuth")
 public class BillController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BillController.class);

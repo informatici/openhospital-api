@@ -50,15 +50,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "stockmovements")
-@OpenAPIDefinition(
-		info = @Info(title = "stock movements API", version = "1.0.0"),
-		security = { @SecurityRequirement(name = "apiKey") }
-)
+@Tag(name = "Stock Movements")
+@SecurityRequirement(name = "bearerAuth")
 public class StockMovementController {
 	@Autowired
 	private MovementMapper movMapper;
