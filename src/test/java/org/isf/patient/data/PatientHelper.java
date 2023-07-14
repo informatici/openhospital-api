@@ -35,7 +35,6 @@ import org.isf.patient.test.TestPatient;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHException;
 import org.isf.utils.pagination.PageInfo;
-import org.isf.utils.pagination.PagedResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,7 +123,7 @@ public class PatientHelper {
 		pageInfo.setPage(0);
 		pageInfo.setSize(1);
 		pageInfo.setTotalNbOfElements(10);
-		pageInfo.setTotalPage(1);
+		pageInfo.setTotalPages(1);
 		
 		return pageInfo;
 	}

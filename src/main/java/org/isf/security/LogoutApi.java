@@ -21,10 +21,7 @@
  */
 package org.isf.security;
 
-import javax.validation.Valid;
-
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,17 +36,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 
 @RestController
-@Tag(name = "Login")
-public class LoginApi {
-    /**
-     * Implemented by Spring Security
-     */
-    @Operation(method = "Login", description = "Login with the given credentials.")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK")})
-    @PostMapping(value = "/auth/login")
-    void login(@Valid @RequestParam String username,  @RequestParam String password) {
-    	 throw new IllegalStateException("Add Spring Security to handle authentication");
-    }
+@Tag(name = "Logout")
+public class LogoutApi {
 
     /**
      * Implemented by Spring Security

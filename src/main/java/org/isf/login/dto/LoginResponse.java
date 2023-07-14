@@ -35,6 +35,10 @@ public class LoginResponse {
 	@Schema(description = "user name", example = "admin")
 	private String username;
 
+	public LoginResponse() {
+		super();
+	}
+
 	public LoginResponse(String token, String username) {
 		this.token = token;
 		this.username = username;

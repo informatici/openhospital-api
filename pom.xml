@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
 

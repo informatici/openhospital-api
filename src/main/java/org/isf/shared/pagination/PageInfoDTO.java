@@ -26,7 +26,7 @@ public class PageInfoDTO {
 	int size;
 	int page;
 	int nbOfElements;
-	long totalPage;
+	long totalPages;
 	long totalNbOfElements ;
 	boolean hasPreviousPage;
 	boolean hasNextPage;
@@ -59,12 +59,12 @@ public class PageInfoDTO {
 		this.nbOfElements = nbOfElements;
 	}
 	
-	public long getTotalPage() {
-		return totalPage;
+	public long getTotalPages() {
+		return totalPages;
 	}
 	
-	public void setTotalPage(long l) {
-		this.totalPage = l;
+	public void setTotalPages(long l) {
+		this.totalPages = l;
 	}
 	
 	public long getTotalNbOfElements() {
