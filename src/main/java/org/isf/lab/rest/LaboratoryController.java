@@ -587,7 +587,7 @@ public class LaboratoryController {
 		List<Laboratory> labList = new ArrayList<>();
 		if (paged) {
 			if (!status.equals("")) {
-				if(examName.equals("")) {
+				if (examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
