@@ -597,7 +597,7 @@ public class LaboratoryController {
 	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 				laboratoryPageable.setData(labList);
 			} else {
-				if(examName.equals("")) {
+				if (examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
