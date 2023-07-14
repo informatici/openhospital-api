@@ -612,7 +612,7 @@ public class LaboratoryController {
 	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 				laboratoryPageable.setData(labList);
 			} else {
-				if(examName.equals("")) {
+				if (examName.equals("")) {
 					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
 					laboratoryPageable.setData(labList);
 				} else {
