@@ -57,32 +57,30 @@ For the moment, to build this project you should
     - URL base: http://localhost:8080
     - URL login: http://localhost:8080/auth/login
     - URL patients: http://localhost:8080/patients
-    - URL swagger: http://localhost:8080/swagger-ui/
+    - URL swagger: http://localhost:8080/swagger-ui.html
 
 You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
-![image](https://user-images.githubusercontent.com/2938553/215335720-73d59075-f0df-44c4-93ed-eae79945bb71.png)
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/b30eec4c-7f2a-465b-adfd-52b4f7442791)
    
 ### Using Swagger-UI
 
  1. use endpoint /auth/login to login and get the token
  
-![image](https://user-images.githubusercontent.com/2938553/228294801-4d27dd2c-9053-4f62-9497-690706232c9f.png)
-![image](https://user-images.githubusercontent.com/2938553/228294867-79d6a326-9e7d-4ca0-93cd-ce34c7b7373f.png)
- 
- 2. use the Authorize button at the top of the Swagger-UI and paste the token form step #1 prefixed by the string "Bearer " and click Authorize
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/6c7ebd7e-aad7-4d9a-9bdc-62ad71c1cbdd)
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/d395317c-80f1-43d3-8c8b-3527f2a336cf)
 
-![image](https://user-images.githubusercontent.com/2938553/228296149-64905464-441f-4b20-80af-4dcfb40aef4c.png)
+ 2. use the Authorize button at the top of the Swagger-UI, paste the token from step #1 and click Authorize
+
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/ae1f371d-d14b-4329-8221-696358b9b79b)
  
  3. close the dialog
 
-![image](https://user-images.githubusercontent.com/2938553/228294994-56c1ae3b-f7cb-49b6-94d4-c899fa20374e.png)
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/4217fc43-fa19-4e22-8bd4-9be4aa162f73)
 
  4. now all the endpoints are automatically secured and the token will be added to the request
 
-![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
-![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
-
+![image](https://github.com/mwithi/openhospital-api/assets/2938553/69075a2f-eff6-4739-a37f-2a259cfe8743)
 
 ### Using Postman
 
