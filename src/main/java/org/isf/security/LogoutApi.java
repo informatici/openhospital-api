@@ -36,7 +36,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 
 @RestController
-@Tag(name = "Logout")
+@Tag(name = "Login")
 public class LogoutApi {
 
     /**
