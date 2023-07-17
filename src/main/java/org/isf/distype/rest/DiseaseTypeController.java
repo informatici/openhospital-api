@@ -48,11 +48,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/diseasetypes")
+@Tag(name = "Disease Types")
+@SecurityRequirement(name = "bearerAuth")
 public class DiseaseTypeController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseTypeController.class);
@@ -145,5 +146,7 @@ public class DiseaseTypeController {
 			throw new OHAPIException(new OHExceptionMessage("No disease type found with the given code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
 	
 }

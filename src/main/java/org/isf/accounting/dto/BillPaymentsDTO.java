@@ -25,28 +25,28 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a billPayment")
+@Schema(description = "Class representing a billPayment")
 public class BillPaymentsDTO {
 	
 	private Integer id;
 
 	@NotNull
-	@ApiModelProperty(notes = "Bill id", example="", position = 1)
+	@Schema(description = "Bill id", example="")
 	private Integer billId;
 
 	@NotNull
-	@ApiModelProperty(notes = "date of payment", example="2020-03-19T14:58:00.000Z", position = 2)
+	@Schema(description = "date of payment", example="2020-03-19T14:58:00.000Z")
 	private LocalDateTime date;
 
 	@NotNull
-	@ApiModelProperty(notes = "the payment amount", example="500", position = 3)
+	@Schema(description = "the payment amount", example="500")
 	private double amount;
 
 	@NotNull
-	@ApiModelProperty(notes = "the current user", example="admin", position = 4)
+	@Schema(description = "the current user", example="admin")
 	private String user;
 
 	private volatile int hashCode;
@@ -71,7 +71,7 @@ public class BillPaymentsDTO {
 		return this.user;
 	}
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

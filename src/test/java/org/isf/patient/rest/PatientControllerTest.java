@@ -59,7 +59,7 @@ import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.shared.mapper.mappings.PatientMapping;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.pagination.PagedResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -367,7 +367,7 @@ public class PatientControllerTest {
 		PagedResponse<Patient> patientPageable = new PagedResponse<Patient>();
 		patientPageable.setData(patientList);
 		patientPageable.setPageInfo(PatientHelper.setParameterPage());
-		PagedResponseDTO<PatientDTO> expectedPatientDTOList = new PagedResponseDTO<PatientDTO>();		
+		Page<PatientDTO> expectedPatientDTOList = new Page<PatientDTO>();		
 		expectedPatientDTOList.setData(patientMapper.map2DTOList(patientList));	
 		expectedPatientDTOList.setPageInfo(patientMapper.setParameterPageInfo(patientPageable.getPageInfo()));
 		when(patientBrowserManagerMock.getPatientsPageable(anyInt(), anyInt())) 

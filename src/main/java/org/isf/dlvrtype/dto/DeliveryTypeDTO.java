@@ -23,7 +23,7 @@ package org.isf.dlvrtype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author gildas
@@ -31,11 +31,11 @@ import io.swagger.annotations.ApiModelProperty;
 public class DeliveryTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "code of the delivery type", example = "N", position = 1)
+	@Schema(description = "code of the delivery type", example = "N")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "description of the delivery type", example = "ACCOUCHEMENT NORMAL", position = 2)
+	@Schema(description = "description of the delivery type", example = "ACCOUCHEMENT NORMAL")
 	private String description;
 
 	public String getCode() {

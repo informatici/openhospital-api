@@ -45,11 +45,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/suppliers")
+@Tag(name = "Suppliers")
+@SecurityRequirement(name = "bearerAuth")
 public class SupplierController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SupplierController.class);

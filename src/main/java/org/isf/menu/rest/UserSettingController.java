@@ -41,10 +41,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/usersettings")
+@Tag(name = "User Settings")
+@SecurityRequirement(name = "bearerAuth")
 public class UserSettingController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(UserSettingController.class);

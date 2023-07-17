@@ -16,6 +16,8 @@ spring.pid.file=OH_API_PID
 ### Swagger-UI (info)
 api.host=localhost:8080
 api.protocol=http
+springdoc.swagger-ui.tagsSorter=alpha
+springdoc.swagger-ui.doc-expansion=none
 
 
 ### Without the following overriding property the following error is generated:

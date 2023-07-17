@@ -23,23 +23,23 @@ package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="the username (must be unique)", example = "John Doe", position = 1)	
+	@Schema(description="the username (must be unique)", example = "John Doe")	
 	private String userName;
 
 	@NotNull
-	@ApiModelProperty(notes="the user's group", position = 2)
+	@Schema(description="the user's group")
 	private UserGroupDTO userGroupName;
 
 	@NotNull
-	@ApiModelProperty(notes="the user's password", example = "21@U2g423", position = 3)
+	@Schema(description="the user's password", example = "21@U2g423")
 	private String passwd;
 
-	@ApiModelProperty(notes="the user's description", example = "Lab chief technician", position = 4)
+	@Schema(description="the user's description", example = "Lab chief technician")
 	private String desc;
 	
 	public UserDTO() {

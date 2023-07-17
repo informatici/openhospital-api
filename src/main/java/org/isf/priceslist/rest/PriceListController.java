@@ -48,10 +48,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/pricelists")
+@Tag(name = "Price Lists")
+@SecurityRequirement(name = "bearerAuth")
 public class PriceListController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PriceListController.class);

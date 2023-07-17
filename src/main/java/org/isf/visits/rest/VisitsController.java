@@ -44,11 +44,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/visit")
+@Tag(name = "Visit")
+@SecurityRequirement(name = "bearerAuth")
 public class VisitsController {
 
     private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsController.class);
@@ -71,7 +72,7 @@ public class VisitsController {
      * @return NO_CONTENT if there aren't visitors, {@code List<VaccineDTO>} otherwise
      * @throws OHServiceException
      */
-    @GetMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/visit/patient/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
         LOGGER.info("Get visit related to patId: {}", patID);
         List<Visit> visit = visitManager.getVisits(patID);
@@ -127,7 +128,7 @@ public class VisitsController {
      * @return an error message if there are some problem, ok otherwise
      * @throws OHServiceException
      */
-    @DeleteMapping(value = "/visit/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/visit/delete/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
 	    LOGGER.info("Delete Visit related to patId: {}", patID);
         boolean areDeleted = visitManager.deleteAllVisits(patID);

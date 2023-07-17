@@ -45,12 +45,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/malnutritions")
+@Tag(name = "Malnutritions")
+@SecurityRequirement(name = "bearerAuth")
 public class MalnutritionController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MalnutritionController.class);
@@ -132,18 +135,19 @@ public class MalnutritionController {
 	
 	/**
 	 * Deletes a given {@link Malnutrition}.
-	 * @param malnutritionDTO - the malnutrition to delete.
+	 * @param code - the code of malnutrition to delete.
 	 * @return {@code true} if the malnutrition has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
-		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malnutritionDTO.getAdmission().getId()));
+	public ResponseEntity<Boolean> deleteMalnutrition(@RequestParam int code) throws OHServiceException{
+		Malnutrition  malNutri = manager.getMalnutrition(code);
+		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malNutri.getAdmission().getId()));
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions
 					.stream()
-					.filter(malnutrition -> malnutrition.getCode() == malnutritionDTO.getCode())
+					.filter(malnutrition -> malnutrition.getCode() == code)
 					.collect(Collectors.toList());
 		}
 		if (matchedMalnutritions.isEmpty()) {

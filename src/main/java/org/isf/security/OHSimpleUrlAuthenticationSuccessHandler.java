@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.isf.login.dto.LoginResponse;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
@@ -70,7 +71,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setToken(this.tokenProvider.generateJwtToken(authentication, true));
-		loginResponse.setDisplayName(authentication.getName());
+		loginResponse.setUsername(authentication.getName());
 		ObjectMapper mapper = new ObjectMapper();
 
 		response.getWriter().append(mapper.writeValueAsString(loginResponse));

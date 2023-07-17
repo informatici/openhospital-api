@@ -39,15 +39,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController()
-@RequestMapping("/patientConsensus")
-@Api(value = "/patientConsensus", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
+@RestController(value = "/patientConsensus")
+@Tag(name = "Patient Consensus")
+@SecurityRequirement(name = "bearerAuth")
 public class PatientConsensusController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientConsensusController.class);
@@ -58,7 +57,7 @@ public class PatientConsensusController {
 	@Autowired
 	protected PatientConsensusMapper mapper;
 
-	@GetMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/patientConsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> getPatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
@@ -69,7 +68,7 @@ public class PatientConsensusController {
 		return ResponseEntity.ok(patientDTO);
 	}
 
-	@PutMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/patientConsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);

@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.distype.manager.DiseaseTypeBrowserManager;
+import org.isf.distype.model.DiseaseType;
 import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.dto.OpdWithOperatioRowDTO;
@@ -39,8 +41,10 @@ import org.isf.operation.model.OperationRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.pagination.PagedResponse;
 import org.isf.ward.manager.WardBrowserManager;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,13 +61,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/opds")
+@Tag(name = "Opds")
+@SecurityRequirement(name = "bearerAuth")
 public class OpdController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OpdController.class);
+	
+	// TODO: to centralize
+	protected static final String DEFAULT_PAGE_SIZE = "80";
 
 	@Autowired
 	protected OpdBrowserManager opdManager;
@@ -82,15 +92,19 @@ public class OpdController {
 	
 	@Autowired
     protected WardBrowserManager wardManager;
+	
+	@Autowired
+    protected DiseaseTypeBrowserManager diseaseTypeManager;
 
 	public OpdController(OpdBrowserManager opdManager, OpdMapper opdmapper, PatientBrowserManager patientManager, OperationRowBrowserManager 
-			operationRowManager, OperationRowMapper opRowMapper, WardBrowserManager wardManager) {
+			operationRowManager, OperationRowMapper opRowMapper, WardBrowserManager wardManager, DiseaseTypeBrowserManager diseaseTypeManager) {
 		this.opdManager = opdManager;
 		this.mapper = opdmapper;
 		this.patientManager = patientManager;
 		this.operationRowManager = operationRowManager;
 		this.opRowMapper = opRowMapper;
 		this.wardManager = wardManager;
+		this.diseaseTypeManager = diseaseTypeManager;
 	}
 
 	/**
@@ -268,16 +282,19 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/opds/search", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OpdDTO>> getOpdByDates(
-			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateFrom, 
-			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate dateTo, 
+	public ResponseEntity<Page<OpdDTO>> getOpdByDates(
+			@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Schema(implementation = String.class) LocalDate dateFrom, 
+			@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Schema(implementation = String.class) LocalDate dateTo, 
 			@RequestParam(value = "diseaseTypeCode", required = false) String diseaseTypeCode,
 			@RequestParam(value = "diseaseCode", required = false) String diseaseCode,
 			@RequestParam(value = "ageFrom", required = false, defaultValue = "0") Integer ageFrom, 
 			@RequestParam(value = "ageTo", required = false, defaultValue = "200") Integer ageTo,
 			@RequestParam(value = "sex", required = false, defaultValue = "A") char sex,
 			@RequestParam(value = "newPatient", required = false, defaultValue = "A") char newPatient,
-			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode) throws OHServiceException {
+			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
+			@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
 		LOGGER.debug("dateFrom: {}", dateFrom);
 		LOGGER.debug("dateTo: {}", dateTo);
@@ -288,21 +305,45 @@ public class OpdController {
 		LOGGER.debug("sex: {}", sex);
 		LOGGER.debug("newPatient: {}", newPatient);
 		LOGGER.debug("patientCode: {}", patientCode);
-		List<Opd> opds;
-		if (patientCode != 0) {
-			opds = opdManager.getOpdList(patientCode);
-		} else {
-			opds = opdManager.getOpd(null, MessageBundle.getMessage(diseaseTypeCode), MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
-		}
+		LOGGER.debug("page: {}", page);
+		LOGGER.debug("size: {}", size);
+		LOGGER.debug("paged: {}", paged);
+		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
+		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
+		List<Opd> opds = new ArrayList<>();
+		List<OpdDTO> opdDTOs =  new ArrayList<>();
 
-		List<OpdDTO> opdDTOs = opds.stream().map(opd -> {
-			return mapper.map2DTO(opd);
-		}).collect(Collectors.toList());
-		
-		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+		if (paged) {
+			if (patientCode != 0) {
+				opdsPaged = opdManager.getOpdListPageable(patientCode, page, size);
+			} else {
+				if (diseaseTypeCode != null) {
+					DiseaseType diseaseType = diseaseTypeManager.getDiseaseType(diseaseCode);
+					opdsPaged = opdManager.getOpdPageable(null, diseaseType, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+				} else {
+					opdsPaged = opdManager.getOpdPageable(null, null, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+				}
+
+			}
+			opdDTOs = opdsPaged.getData().stream().map(opd -> {
+				return mapper.map2DTO(opd);
+			}).collect(Collectors.toList());
+			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
-			return ResponseEntity.ok(opdDTOs);
+			if (patientCode != 0) {
+				opds = opdManager.getOpdList(patientCode);
+			} else {
+				opds = opdManager.getOpd(null, diseaseCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
+			}
+			opdDTOs = opds.stream().map(opd -> {
+				return mapper.map2DTO(opd);
+			}).collect(Collectors.toList());
+		}
+		opdPageable.setData(opdDTOs);
+		if (opdDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdPageable);
+		} else {
+			return ResponseEntity.ok(opdPageable);
 		}
 	}
 	

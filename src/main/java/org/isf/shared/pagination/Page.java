@@ -19,26 +19,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.security;
 
-public class LoginResponse {
+package org.isf.shared.pagination;
 
-    private String token;
-    private String displayName;
+import java.util.List;
 
-    public String getToken() {
-        return token;
-    }
+public class Page<T> {
+	
+	List<T> data;
+	PageInfoDTO pageInfoDTO;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
+	public List<T> getData() {
+		return data;
+	}
+	public void setData(List<T> data) {
+		this.data = data;
+	}
+	public PageInfoDTO getPageInfo() {
+		return pageInfoDTO;
+	}
+	public void setPageInfo(PageInfoDTO pageInfoDTO) {
+		this.pageInfoDTO = pageInfoDTO;
+	}
 }

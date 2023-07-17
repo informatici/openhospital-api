@@ -34,7 +34,8 @@ import org.isf.accounting.dto.BillDTO;
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.opd.dto.OpdDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 public class OperationRowDTO {
 
@@ -64,7 +65,7 @@ public class OperationRowDTO {
     
     private int hashCode;
 
-    @ApiModelProperty(hidden=true)
+    @Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

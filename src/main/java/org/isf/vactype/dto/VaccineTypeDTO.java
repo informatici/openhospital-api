@@ -23,18 +23,17 @@ package org.isf.vactype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a vaccine type")
+@Schema(description = "Class representing a vaccine type")
 public class VaccineTypeDTO {
 
     @NotNull
-    @ApiModelProperty(notes = "Code of the vaccine type", example="C", position = 1)
+    @Schema(description = "Code of the vaccine type", example="C")
     private String code;
 
     @NotNull
-    @ApiModelProperty(notes = "Description of the vaccine type", example="Child", position = 2)
+    @Schema(description = "Description of the vaccine type", example="Child")
     private String description;
 
 	public String getCode() {

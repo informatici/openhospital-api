@@ -32,7 +32,7 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
@@ -50,11 +50,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/examinations")
+@Tag(name = "Examinations")
+@SecurityRequirement(name = "bearerAuth")
 public class ExaminationController {
 
 	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExaminationController.class);
@@ -238,7 +239,7 @@ public class ExaminationController {
 	}
 
 	@GetMapping(value = "/examinations/lastNByPatId", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
+	public ResponseEntity<Page<PatientExaminationDTO>> getLastNByPatID(@RequestParam Integer limit, @RequestParam Integer patId) throws OHServiceException {
 		LOGGER.info("Get examinations limit: {}", limit);
 		PagedResponse<PatientExamination> patientExaminationListPageable = examinationBrowserManager.getLastNByPatIDPageable(patId, limit);
 
@@ -246,7 +247,7 @@ public class ExaminationController {
 			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			PagedResponseDTO<PatientExaminationDTO> patientExaminationPageableDTO = new PagedResponseDTO<PatientExaminationDTO>();
+			Page<PatientExaminationDTO> patientExaminationPageableDTO = new Page<PatientExaminationDTO>();
 			List<PatientExaminationDTO> patientExaminationDTO = patientExaminationMapper.map2DTOList(patientExaminationListPageable.getData());
 			patientExaminationPageableDTO.setData(patientExaminationDTO);
 			patientExaminationPageableDTO.setPageInfo(patientExaminationMapper.setParameterPageInfo(patientExaminationListPageable.getPageInfo()));

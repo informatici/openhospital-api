@@ -21,35 +21,35 @@
  */
 package org.isf.hospital.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class HospitalDTO {
 
-    @ApiModelProperty(notes = "Hospital Code", example = "STLUKE", position = 1)
+    @Schema(description = "Hospital Code", example = "STLUKE")
     private String code;
 
-    @ApiModelProperty(notes = "Hospital Description", example = "St. Luke HOSPITAL - Angal", position = 2)
+    @Schema(description = "Hospital Description", example = "St. Luke HOSPITAL - Angal")
     private String description;
 
-    @ApiModelProperty(notes = "Hospital Address", example = "Hospital Address", position = 3)
+    @Schema(description = "Hospital Address", example = "Hospital Address")
     private String address;
 
-    @ApiModelProperty(notes = "Hospital City", example = "Hospital City", position = 4)
+    @Schema(description = "Hospital City", example = "Hospital City")
     private String city;
 
-    @ApiModelProperty(notes = "Hospital Telephone", example = "+123 0123456789", position = 5)
+    @Schema(description = "Hospital Telephone", example = "+123 0123456789")
     private String telephone;
 
-    @ApiModelProperty(notes = "Hospital Fax", example = "+123 0123456789", position = 6)
+    @Schema(description = "Hospital Fax", example = "+123 0123456789")
     private String fax;
 
-    @ApiModelProperty(notes = "Hospital Email", example = "hospital@isf.email.xx", position = 7)
+    @Schema(description = "Hospital Email", example = "hospital@isf.email.xx")
     private String email;
 
-    @ApiModelProperty(notes = "Hospital Currency Cod", example = "EUR", position = 8)
+    @Schema(description = "Hospital Currency Cod", example = "EUR")
     private String currencyCod;
     
-    @ApiModelProperty(notes = "lock", example = "0")
+    @Schema(description = "lock", example = "0")
     private int lock;
 
     public int getLock() {

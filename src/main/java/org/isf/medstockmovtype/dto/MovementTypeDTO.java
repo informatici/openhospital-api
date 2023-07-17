@@ -23,20 +23,20 @@ package org.isf.medstockmovtype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MovementTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="Code of the movement type", example = "D", position = 1)
+	@Schema(description="Code of the movement type", example = "D")
 	private String code;
 	
 	@NotNull
-	@ApiModelProperty(notes="Description of the movement type", example = "Damage", position = 2)
+	@Schema(description="Description of the movement type", example = "Damage")
 	private String description;
 	
 	@NotNull
-	@ApiModelProperty(notes="Type of the movement type", example = "-", position = 3)
+	@Schema(description="Type of the movement type", example = "-")
 	private String type;
 	
 	public MovementTypeDTO(){}

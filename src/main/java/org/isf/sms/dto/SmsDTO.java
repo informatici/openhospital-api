@@ -25,41 +25,41 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SmsDTO {
 
-	@ApiModelProperty(notes = "SMS Id", example="1", position = 1)
+	@Schema(description = "SMS Id", example="1")
 	private Integer smsId;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS Date", example="2020-07-16T00:00:00", position = 2)
+	@Schema(description = "SMS Date", example="2020-07-16T00:00:00", format ="LocalDateTime")
 	private LocalDateTime smsDate;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS scheduled date", example="2020-07-28T00:00:00", position = 3)
+	@Schema(description = "SMS scheduled date", example="2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSched;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS target phone number", example="+237671302313", position = 4)
+	@Schema(description = "SMS target phone number", example="+237671302313")
 	private String smsNumber;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS content text", example="Hi Mario.", position = 5)
+	@Schema(description = "SMS content text", example="Hi Mario.")
 	private String smsText;
 	
-	@ApiModelProperty(notes = "SMS sent date", example="2020-07-28T00:00:00", position = 6)
+	@Schema(description = "SMS sent date", example="2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSent;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS user", example="Rosi", position = 7)
+	@Schema(description = "SMS user", example="Rosi")
 	private String smsUser;
 	
 	@NotNull
-	@ApiModelProperty(notes = "SMS module name", example="OPD", position = 8)
+	@Schema(description = "SMS module name", example="OPD")
 	private String module;
 	
-	@ApiModelProperty(notes = "SMS module Id", position = 9)
+	@Schema(description = "SMS module Id")
 	private String moduleID;
 
 	public SmsDTO() {

@@ -28,29 +28,30 @@ import javax.validation.constraints.NotNull;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.vaccine.dto.VaccineDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 public class PatientVaccineDTO
 {
 	private int code;
 
 	@NotNull
-	@ApiModelProperty(notes = "a progr. in year", example="1", position = 1)
+	@Schema(description = "a progr. in year", example="1")
 	private int progr;
 
 	@NotNull
-	@ApiModelProperty(notes = "the vaccine date", position = 2)
+	@Schema(description = "the vaccine date", type = "string")
 	private LocalDateTime vaccineDate;
 
 	@NotNull
-	@ApiModelProperty(notes = "the patient to be vaccine", position = 3)
+	@Schema(description = "the patient to be vaccine")
 	private PatientDTO patient;
 
 	@NotNull
-	@ApiModelProperty(notes = "the vaccine", position = 4)
+	@Schema(description = "the vaccine")
 	private VaccineDTO vaccine;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private int lock;
 	
 	private int hashCode;
@@ -64,7 +65,7 @@ public class PatientVaccineDTO
 		this.lock = lock;
 	}
 	
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

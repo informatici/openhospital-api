@@ -23,16 +23,16 @@ package org.isf.medtype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="Code of the medical type", example = "M", position = 1)
+	@Schema(description="Code of the medical type", example = "M")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes="Description of the medical type", example = "Medical material", position = 2)
+	@Schema(description="Description of the medical type", example = "Medical material")
 	private String description;
 	
 	public MedicalTypeDTO() {

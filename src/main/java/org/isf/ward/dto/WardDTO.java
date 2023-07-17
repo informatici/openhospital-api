@@ -23,7 +23,7 @@ package org.isf.ward.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class WardDTO {
 
@@ -59,7 +59,7 @@ public class WardDTO {
 	@NotNull
 	private int visitDuration;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private Integer lock;
 	
 	public String getCode() {

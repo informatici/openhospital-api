@@ -21,40 +21,29 @@
  */
 package org.isf.security;
 
-import javax.validation.Valid;
-
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Here only for swagger
  *
  * @author antonio
  */
-@Api("Login")
+
 @RestController
-public class LoginApi {
-    /**
-     * Implemented by Spring Security
-     */
-    //@ApiOperation(value = "Login", notes = "Login with the given credentials.")
-    //@ApiResponses({@ApiResponse(code = 200, message = "", response = LoginResponse.class)})
-    //@PostMapping(value = "/auth/login")
-    void login(@Valid @RequestParam String username,  @RequestParam String password) {
-    	 throw new IllegalStateException("Add Spring Security to handle authentication");
-    }
+@Tag(name = "Login")
+public class LogoutApi {
 
     /**
      * Implemented by Spring Security
      */
-    @ApiOperation(value = "Logout", notes = "Logout the current user.")
-    @ApiResponses({@ApiResponse(code = 200, message = "")})
+    @Operation(method = "Logout", description = "Logout the current user.")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK")})
     @PostMapping(value = "/auth/logout")
     void logout() {
         throw new IllegalStateException("Add Spring Security to handle authentication");

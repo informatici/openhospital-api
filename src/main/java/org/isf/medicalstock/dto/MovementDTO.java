@@ -30,40 +30,40 @@ import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.supplier.dto.SupplierDTO;
 import org.isf.ward.dto.WardDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MovementDTO {
 
-	@ApiModelProperty(notes="The movement code", example = "1", position = 1)
+	@Schema(description="The movement code", example = "1")
 	private int code;
 
 	@NotNull(message="The medical is required")
-	@ApiModelProperty(notes="The related medical", position = 2)
+	@Schema(description="The related medical")
 	private MedicalDTO medical;
 
 	@NotNull(message="The movement type is required")
-	@ApiModelProperty(notes="The movement type", position = 3)
+	@Schema(description="The movement type")
 	private MovementTypeDTO type;
 
-	@ApiModelProperty(notes="The target ward", position = 4)
+	@Schema(description="The target ward")
 	private WardDTO ward;
 
-	@ApiModelProperty(notes="The lot", position = 5)
+	@Schema(description="The lot")
 	private LotDTO lot;
 
 	@NotNull(message="the movement's date is required")
-	@ApiModelProperty(notes="The movement date", example = "2020-06-24", position = 6)
+	@Schema(description="The movement date", example = "2020-06-24", type = "string")
 	private LocalDate date;
 
 	@NotNull(message="the movement's medical quantity is required")
-	@ApiModelProperty(notes="The movement's medical quantity", example = "50", position = 7)
+	@Schema(description="The movement's medical quantity", example = "50")
 	private int quantity;
 
-	@ApiModelProperty(notes="The movement's supplier", position = 8)
+	@Schema(description="The movement's supplier")
 	private SupplierDTO supplier;
 	
 	@NotNull(message="the movement reference is required")
-	@ApiModelProperty(notes="The movement reference", example = "MVN152445", position = 9)
+	@Schema(description="The movement reference", example = "MVN152445")
 	private String refNo;
 	
 	public MovementDTO() {

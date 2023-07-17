@@ -24,21 +24,21 @@ package org.isf.pricesothers.dto;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a price others")
+@Schema(description = "Class representing a price others")
 public class PricesOthersDTO
 {
 	@Id 
     private int id;
 
 	@NotNull 
-	@ApiModelProperty(notes = "the prices code", example="PRICES001", position = 1)
+	@Schema(description = "the prices code", example="PRICES001")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "the description", position = 1)
+	@Schema(description = "the description")
 	private String description;
 
 	@NotNull
@@ -56,7 +56,7 @@ public class PricesOthersDTO
     
 	private int hashCode;
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

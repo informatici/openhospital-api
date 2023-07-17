@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
 
@@ -90,9 +90,9 @@
             <version>3.1.1</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+        	<groupId>org.springdoc</groupId>
+        	<artifactId>springdoc-openapi-ui</artifactId>
+        	<version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>

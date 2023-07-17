@@ -21,29 +21,29 @@
  */
 package org.isf.priceslist.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a price list")
+@Schema(description = "Class representing a price list")
 public class PriceListDTO {
 	
 	private int id;
 
-	@ApiModelProperty(notes = "the price list code", example="LISTE1", position = 1)
+	@Schema(description = "the price list code", example="LISTE1")
 	private String code;
 	
-	@ApiModelProperty(notes = "the name of list", example="default price list", position = 2)
+	@Schema(description = "the name of list", example="default price list")
     private String name;
 	
-	@ApiModelProperty(notes = "the price list description", example="default price list", position = 3)
+	@Schema(description = "the price list description", example="default price list")
 	private String description;
 
-	@ApiModelProperty(notes = "the currency", example="FCFA", position = 4)
+	@Schema(description = "the currency", example="FCFA")
 	private String currency;
 	
 	private int hashCode;
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}

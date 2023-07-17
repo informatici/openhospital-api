@@ -25,25 +25,24 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.vactype.dto.VaccineTypeDTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a vaccine")
+@Schema(description = "Class representing a vaccine")
 public class VaccineDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "Code of the vaccine", example = "1", position = 1)
+	@Schema(description = "Code of the vaccine", example = "1")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "Description of the vaccine", example = "BCG", position = 2)
+	@Schema(description = "Description of the vaccine", example = "BCG")
 	private String description;
 
 	@NotNull
-	@ApiModelProperty(notes = "Type of the vaccine", position = 3)
+	@Schema(description = "Type of the vaccine")
 	private VaccineTypeDTO vaccineType;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private int lock;
 
 	@Override

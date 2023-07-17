@@ -23,34 +23,34 @@ package org.isf.supplier.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SupplierDTO {
 
 	@NotNull(message="supplier's ID is required")
-	@ApiModelProperty(notes="The supplier's ID", example = "111", position = 1)
+	@Schema(description="The supplier's ID", example = "111")
 	private Integer supId;
 	
 	@NotNull(message="supplier's name is required")
-	@ApiModelProperty(notes="The supplier's name", example = "Cogefar", position = 2)
+	@Schema(description="The supplier's name", example = "Cogefar")
 	private String supName;
 	
-	@ApiModelProperty(notes="The supplier's address", example = "25 Rue Ministre, Dschang", position = 3)
+	@Schema(description="The supplier's address", example = "25 Rue Ministre, Dschang")
 	private String supAddress;
 	
-	@ApiModelProperty(notes="The supplier's tax code", example = "5221", position = 4)
+	@Schema(description="The supplier's tax code", example = "5221")
 	private String supTaxcode;
 	
-	@ApiModelProperty(notes="The supplier's phone", example = "+237654120145", position = 5)
+	@Schema(description="The supplier's phone", example = "+237654120145")
 	private String supPhone;
 	
-	@ApiModelProperty(notes="The supplier's fax number", example = "+237654120145", position = 6)
+	@Schema(description="The supplier's fax number", example = "+237654120145")
 	private String supFax;
 	
-	@ApiModelProperty(notes="The supplier's e-mail address", example = "suplier@sample.com", position = 7)
+	@Schema(description="The supplier's e-mail address", example = "suplier@sample.com")
 	private String supEmail;
 	
-	@ApiModelProperty(notes="The supplier's notes", example = "", position = 8)
+	@Schema(description="The supplier's notes", example = "")
 	private String supNote;
 
 	public SupplierDTO() {

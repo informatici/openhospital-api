@@ -25,39 +25,39 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.distype.dto.DiseaseTypeDTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-@ApiModel(description = "Class representing a disease")
+@Schema(description = "Class representing a disease")
 public class DiseaseDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease code", example = "99")
+	@Schema(description = "Disease code", example = "99")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease description")
+	@Schema(description = "Disease description")
     private String description;
 
 	@NotNull
-	@ApiModelProperty(notes = "Disease type")
+	@Schema(description = "Disease type")
 	private DiseaseTypeDTO diseaseType; 
 
 	@NotNull
-	@ApiModelProperty(notes = "indicates whether the disease is an OPD disease", example="true")
+	@Schema(description = "indicates whether the disease is an OPD disease", example="true")
 	private boolean opdInclude;
 
 	@NotNull
-	@ApiModelProperty(notes = "indicates whether the disease is an IPD-IN disease", example="true")
+	@Schema(description = "indicates whether the disease is an IPD-IN disease", example="true")
 	private boolean ipdInInclude;
 
 	@NotNull
-	@ApiModelProperty(notes = "indicates whether the disease is an IPD-OUT disease", example="true")
+	@Schema(description = "indicates whether the disease is an IPD-OUT disease", example="true")
 	private boolean ipdOutInclude;
 	
 	private int hashCode;
 	
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private int lock;
 	
 	public int getLock() {
@@ -68,7 +68,7 @@ public class DiseaseDTO {
 		this.lock = lock;
 	}
 
-	@ApiModelProperty(hidden=true)
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}
