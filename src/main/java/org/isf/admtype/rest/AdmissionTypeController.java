@@ -95,7 +95,7 @@ public class AdmissionTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
+	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
