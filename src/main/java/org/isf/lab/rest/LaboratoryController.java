@@ -412,7 +412,7 @@ public class LaboratoryController {
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
 		}).collect(Collectors.toList());
-		Page<LabWithRowsDTO> labWithRowsDtoPageable = new Page<LabWithRowsDTO>();
+		Page<LabWithRowsDTO> labWithRowsDtoPageable = new Page<>();
 		labWithRowsDtoPageable.setPageInfo(laboratoryMapper.setParameterPageInfo(labListPageable.getPageInfo()));
 		labWithRowsDtoPageable.setData(labWithRowsDto);
 		return ResponseEntity.ok(labWithRowsDtoPageable);
@@ -574,7 +574,7 @@ public class LaboratoryController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-		Page<LabWithRowsDTO> result = new Page<LabWithRowsDTO>();
+		Page<LabWithRowsDTO> result = new Page<>();
 		
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
@@ -583,7 +583,7 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<Laboratory>();
+		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<>();
 		List<Laboratory> labList = new ArrayList<>();
 		if (paged) {
 			if (!status.equals("")) {

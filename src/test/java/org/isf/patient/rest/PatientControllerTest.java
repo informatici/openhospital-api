@@ -364,10 +364,10 @@ public class PatientControllerTest {
 
 		List<Patient> patientList = PatientHelper.setupPatientList(expectedPageSize);
 		
-		PagedResponse<Patient> patientPageable = new PagedResponse<Patient>();
+		PagedResponse<Patient> patientPageable = new PagedResponse<>();
 		patientPageable.setData(patientList);
 		patientPageable.setPageInfo(PatientHelper.setParameterPage());
-		Page<PatientDTO> expectedPatientDTOList = new Page<PatientDTO>();		
+		Page<PatientDTO> expectedPatientDTOList = new Page<>();
 		expectedPatientDTOList.setData(patientMapper.map2DTOList(patientList));	
 		expectedPatientDTOList.setPageInfo(patientMapper.setParameterPageInfo(patientPageable.getPageInfo()));
 		when(patientBrowserManagerMock.getPatientsPageable(anyInt(), anyInt())) 
