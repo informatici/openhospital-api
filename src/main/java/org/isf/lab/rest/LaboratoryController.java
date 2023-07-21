@@ -608,14 +608,8 @@ public class LaboratoryController {
 			
 		} else {
 			if (!status.equals("")) {
-				if (!examName.equals("")) {
-					Exam exam = examManager.getExams(examName).get(0); 
-					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
+				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
 		                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
-				} else {
-					labList = laboratoryManager.getLaboratory(null, dateF, dateT, patient)
-		                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
-				}
 				
 			} else {
 				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
