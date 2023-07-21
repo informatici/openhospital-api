@@ -587,7 +587,7 @@ public class LaboratoryController {
 		List<Laboratory> labList = new ArrayList<>();
 		if (paged) {
 			if (!status.equals("")) {
-				if (examName  != null && !examName.equals("")) {
+				if (!examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
@@ -596,7 +596,7 @@ public class LaboratoryController {
 				labList = laboratoryPageable.getData()
 	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 			} else {
-				if (examName  != null && !examName.equals("")) {
+				if (!examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
@@ -608,7 +608,7 @@ public class LaboratoryController {
 			
 		} else {
 			if (!status.equals("")) {
-				if (examName  != null && !examName.equals("")) {
+				if (!examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
 		                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
@@ -618,11 +618,7 @@ public class LaboratoryController {
 				}
 				
 			} else {
-				if (examName  != null && !examName.equals("")) {
-					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
-				} else {
-					labList = laboratoryManager.getLaboratory(null, dateF, dateT, patient);
-				}
+				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
 
 			}
 		}
