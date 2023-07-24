@@ -32,5 +32,5 @@ public interface Mapper<FromType, ToType> {
 	List<ToType> map2DTOList(List<FromType> list);
 	List<FromType> map2ModelList(List<ToType> list);
 
-	public ModelMapper getMapper();
+	ModelMapper getMapper();
 }
