@@ -88,7 +88,7 @@ public class PricesOthersController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PricesOthersDTO> updatePricesOtherst(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
+	ResponseEntity<PricesOthersDTO> updatePricesOthers(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
 			throws OHServiceException {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
@@ -109,7 +109,7 @@ public class PricesOthersController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PricesOthersDTO>> getPricesOtherss() throws OHServiceException {
+	public ResponseEntity<List<PricesOthersDTO>> getPricesOthers() throws OHServiceException {
 		LOGGER.info("Get all prices others ");
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthersDTO> pricesOthersDTOs = mapper.map2DTOList(pricesOthers);

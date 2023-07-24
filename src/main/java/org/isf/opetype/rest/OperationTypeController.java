@@ -89,7 +89,7 @@ public class OperationTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationTypeDTO> updateOperationTypet(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
+	ResponseEntity<OperationTypeDTO> updateOperationTypes(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
