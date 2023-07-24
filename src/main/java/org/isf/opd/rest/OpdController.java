@@ -308,8 +308,8 @@ public class OpdController {
 		LOGGER.debug("page: {}", page);
 		LOGGER.debug("size: {}", size);
 		LOGGER.debug("paged: {}", paged);
-		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
-		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
+		Page<OpdDTO> opdPageable = new Page<>();
+		PagedResponse<Opd> opdsPaged = new PagedResponse<>();
 		List<Opd> opds = new ArrayList<>();
 		List<OpdDTO> opdDTOs =  new ArrayList<>();
 

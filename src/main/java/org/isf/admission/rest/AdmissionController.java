@@ -242,7 +242,7 @@ public class AdmissionController {
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 		
-			Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
+			Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
 			List<AdmissionDTO> admissionsDTO = new ArrayList<>();
 
 			if (paged) {
@@ -279,7 +279,7 @@ public class AdmissionController {
 		if (admissionsPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		Page<AdmissionDTO> admissionsPageableDTO = new Page<AdmissionDTO>();
+		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
 		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissionsPageable.getPageInfo()));
