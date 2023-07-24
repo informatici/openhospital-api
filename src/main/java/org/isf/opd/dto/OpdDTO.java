@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.dto.DiseaseDTO;
+import org.isf.ward.dto.WardDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
@@ -117,7 +118,19 @@ public class OpdDTO {
     @Schema(description = "prescription")
     private String prescription; // ADDED: Arnaud
     
-    public String getReason() {
+    @NotNull
+    @Schema(description = "ward")
+    private WardDTO ward;// ADDED: Arnaud
+    
+    public WardDTO getWard() {
+		return ward;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
+	public String getReason() {
         return reason;
     }
 
