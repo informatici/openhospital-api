@@ -309,7 +309,7 @@ public class OpdController {
 		LOGGER.debug("patientCode: {}", patientCode);
 		LOGGER.debug("page: {}", page);
 		LOGGER.debug("size: {}", size);
-		LOGGER.debug("paged: {}", paged)
+		LOGGER.debug("paged: {}", paged);
 		LOGGER.debug("wardCode: {}", wardCode);
 		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
 		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
