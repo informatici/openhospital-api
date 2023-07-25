@@ -325,11 +325,11 @@ public class OpdDTO {
     }
     
     public WardDTO getWard() {
-		return ward;
-	}
+    	return ward;
+    }
     
     public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
+    	this.ward = ward;
+    }
     
 }
