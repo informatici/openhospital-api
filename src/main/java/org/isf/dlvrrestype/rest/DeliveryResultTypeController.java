@@ -97,7 +97,7 @@ public class DeliveryResultTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DeliveryResultTypeDTO> updateDeliveryResultTypet(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
+	ResponseEntity<DeliveryResultTypeDTO> updateDeliveryResultTypes(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update deliveryresulttypes code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);

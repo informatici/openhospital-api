@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.isf.operation.dto.OperationRowDTO;
 
-public class OpdWithOperatioRowDTO {
+public class OpdWithOperationRowDTO {
 	
 	private OpdDTO opdDTO;
 	private List<OperationRowDTO> operationRows;

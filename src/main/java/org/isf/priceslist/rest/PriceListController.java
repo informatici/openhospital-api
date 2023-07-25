@@ -95,7 +95,7 @@ public class PriceListController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PriceListDTO> updatePriceListt(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
+	ResponseEntity<PriceListDTO> updatePriceLists(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
 			throws OHServiceException {
 		LOGGER.info("Update pricelists code: {}", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);

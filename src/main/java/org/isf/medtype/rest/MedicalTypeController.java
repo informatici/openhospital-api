@@ -134,12 +134,12 @@ public class MedicalTypeController {
 	 */
 	@DeleteMapping(value = "/medicaltypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicalType(@PathVariable("code") String code) throws OHServiceException {
-		List<MedicalType> machedMedicalTypes = medicalTypeBrowserManager.getMedicalType()
+		List<MedicalType> matchedMedicalTypes = medicalTypeBrowserManager.getMedicalType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (!machedMedicalTypes.isEmpty()) {
-			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(machedMedicalTypes.get(0)));
+		if (!matchedMedicalTypes.isEmpty()) {
+			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(matchedMedicalTypes.get(0)));
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Medical type not found."));
 		}

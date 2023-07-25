@@ -94,7 +94,7 @@ public class ExaminationController {
         	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure."));
         }
         if (newPatientExamination.getPex_ap_max() > 120) {
-        	throw new OHAPIException(new OHExceptionMessage("The maimum blood pressure must be lower than 120."));
+        	throw new OHAPIException(new OHExceptionMessage("The maximum blood pressure must be lower than 120."));
         }
         if (newPatientExamination.getPex_hr() < 0 || newPatientExamination.getPex_hr() > 240 ) {
         	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
@@ -247,7 +247,7 @@ public class ExaminationController {
 			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			Page<PatientExaminationDTO> patientExaminationPageableDTO = new Page<PatientExaminationDTO>();
+			Page<PatientExaminationDTO> patientExaminationPageableDTO = new Page<>();
 			List<PatientExaminationDTO> patientExaminationDTO = patientExaminationMapper.map2DTOList(patientExaminationListPageable.getData());
 			patientExaminationPageableDTO.setData(patientExaminationDTO);
 			patientExaminationPageableDTO.setPageInfo(patientExaminationMapper.setParameterPageInfo(patientExaminationListPageable.getPageInfo()));

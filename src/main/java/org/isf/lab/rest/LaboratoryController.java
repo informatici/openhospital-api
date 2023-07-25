@@ -412,7 +412,7 @@ public class LaboratoryController {
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
 		}).collect(Collectors.toList());
-		Page<LabWithRowsDTO> labWithRowsDtoPageable = new Page<LabWithRowsDTO>();
+		Page<LabWithRowsDTO> labWithRowsDtoPageable = new Page<>();
 		labWithRowsDtoPageable.setPageInfo(laboratoryMapper.setParameterPageInfo(labListPageable.getPageInfo()));
 		labWithRowsDtoPageable.setData(labWithRowsDto);
 		return ResponseEntity.ok(labWithRowsDtoPageable);
@@ -574,7 +574,7 @@ public class LaboratoryController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		LocalDateTime dateT = LocalDateTime.parse(dateTo, formatter);
 		LocalDateTime dateF = LocalDateTime.parse(dateFrom, formatter);
-		Page<LabWithRowsDTO> result = new Page<LabWithRowsDTO>();
+		Page<LabWithRowsDTO> result = new Page<>();
 		
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
@@ -583,11 +583,11 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<Laboratory>();
+		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<>();
 		List<Laboratory> labList = new ArrayList<>();
 		if (paged) {
 			if (!status.equals("")) {
-				if (examName.equals("")) {
+				if (!examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
@@ -595,38 +595,32 @@ public class LaboratoryController {
 				}
 				labList = laboratoryPageable.getData()
 	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
-				laboratoryPageable.setData(labList);
 			} else {
-				if (examName.equals("")) {
+				if (!examName.equals("")) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(null, dateF, dateT, patient, page, size);
 				}
-
+				labList = laboratoryPageable.getData();
 			}
 			result.setPageInfo(laboratoryMapper.setParameterPageInfo(laboratoryPageable.getPageInfo()));
+			
 		} else {
 			if (!status.equals("")) {
 				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
-	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
-				laboratoryPageable.setData(labList);
+		                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
+				
 			} else {
-				if (examName.equals("")) {
-					labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
-					laboratoryPageable.setData(labList);
-				} else {
-					labList = laboratoryManager.getLaboratory(null, dateF, dateT, patient);
-					laboratoryPageable.setData(labList);
-				}
+				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient);
 
 			}
 		}
 		
-		if (laboratoryPageable == null || laboratoryPageable.getData().isEmpty()) {
+		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			List<LabWithRowsDTO> labWithRowList = laboratoryPageable.getData().stream().map(lab -> {
+			List<LabWithRowsDTO> labWithRowList = labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
 				List<String> labDescription = new ArrayList<>();
 				LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);

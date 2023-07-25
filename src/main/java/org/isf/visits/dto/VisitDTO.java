@@ -27,7 +27,6 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.dto.WardDTO;
-import org.isf.ward.model.Ward;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

@@ -148,7 +148,7 @@ public class PatientController {
 			LOGGER.info("The patient list is empty.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		Page<PatientDTO> patientPageableDTO = new Page<PatientDTO>();
+		Page<PatientDTO> patientPageableDTO = new Page<>();
 		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients.getData());
 		patientPageableDTO.setData(patientsDTO);
 		patientPageableDTO.setPageInfo(patientMapper.setParameterPageInfo(patients.getPageInfo()));
