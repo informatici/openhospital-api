@@ -175,6 +175,4 @@ public class WardDTO {
 	public void setOpd(boolean isOpd) {
 		this.isOpd = isOpd;
 	}
-	
-	
 }
