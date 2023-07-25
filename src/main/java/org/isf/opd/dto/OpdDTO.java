@@ -129,8 +129,8 @@ public class OpdDTO {
     public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
-
-	public String getReason() {
+    
+    public String getReason() {
         return reason;
     }
 
