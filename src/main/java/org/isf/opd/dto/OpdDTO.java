@@ -122,14 +122,6 @@ public class OpdDTO {
     @Schema(description = "ward")
     private WardDTO ward;// ADDED: Arnaud
     
-    public WardDTO getWard() {
-		return ward;
-	}
-    
-    public void setWard(WardDTO ward) {
-		this.ward = ward;
-	}
-    
     public String getReason() {
         return reason;
     }
@@ -332,6 +324,13 @@ public class OpdDTO {
     public void setAgeType(String ageType) {
         this.ageType = ageType;
     }
-    
+
+	public WardDTO getWard() {
+		return ward;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
     
 }
