@@ -125,8 +125,8 @@ public class OpdDTO {
     public WardDTO getWard() {
 		return ward;
 	}
-
-	public void setWard(WardDTO ward) {
+    
+    public void setWard(WardDTO ward) {
 		this.ward = ward;
 	}
 

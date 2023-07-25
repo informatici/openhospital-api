@@ -316,7 +316,7 @@ public class OpdController {
 		List<Opd> opds = new ArrayList<>();
 		List<OpdDTO> opdDTOs =  new ArrayList<>();
 		Ward ward = null;
-        if (wardCode != null) {
+		if (wardCode != null) {
         	ward = wardManager.findWard(wardCode);
         }
 		if (paged) {
