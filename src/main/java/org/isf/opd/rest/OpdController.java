@@ -318,7 +318,7 @@ public class OpdController {
 		Ward ward = null;
 		if (wardCode != null) {
         	ward = wardManager.findWard(wardCode);
-        }
+		}
 		if (paged) {
 			if (patientCode != 0) {
 				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
