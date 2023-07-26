@@ -160,7 +160,7 @@ public class LaboratoryController {
 	 * Create a new {@link LaboratoryDTO}.
 	 * 
 	 * @param laboratoryDTO
-	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @return {@code true} if the record has been created,  {@code false} otherwise.
 	 * @throws OHServiceException
 	 * @author Arnaud
 	 */
@@ -211,7 +211,7 @@ public class LaboratoryController {
 	 * Create a {@link List} of {@link LaboratoryRowDTO}.
 	 * 
 	 * @param labsWithRows
-	 * @return {@code true} if the record has been create,  {@code false} otherwise.
+	 * @return {@code true} if the record has been created,  {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -345,7 +345,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Set an {@link LaboratoryDTO} record to deleted.
+	 * Set an {@link LaboratoryDTO} record to be deleted.
 	 * 
 	 * @param code
 	 * @return {@code true} if the record has been set to delete, {@code false} otherwise.
@@ -713,7 +713,7 @@ public class LaboratoryController {
 	}
 	
 	/**
-	 * Set an {@link Laboratory} record to deleted.
+	 * Set an {@link Laboratory} record to be deleted.
 	 * 
 	 * @param code
 	 * @return {@code true} if the record has been set to invalid, {@code false} otherwise.
