@@ -65,6 +65,7 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		return (List<SourceType>) list.stream().map(it -> modelMapper.map(it, sourceClass)).collect(Collectors.toList());
 	}
 
+	@Override
 	public ModelMapper getMapper() {
 		return this.modelMapper;
 	}
