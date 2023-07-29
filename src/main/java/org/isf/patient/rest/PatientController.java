@@ -199,7 +199,7 @@ public class PatientController {
 			params.put("address", address);
 		}
 
-		if (params.entrySet().size() > 0) {
+		if (!params.entrySet().isEmpty()) {
 			patientList = patientManager.getPatients(params);
 		}
 
