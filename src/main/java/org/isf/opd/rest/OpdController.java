@@ -310,7 +310,6 @@ public class OpdController {
 		LOGGER.debug("paged: {}", paged);
 		Page<OpdDTO> opdPageable = new Page<>();
 		PagedResponse<Opd> opdsPaged = new PagedResponse<>();
-		List<Opd> opds = new ArrayList<>();
 		List<OpdDTO> opdDTOs =  new ArrayList<>();
 
 		if (paged) {
@@ -330,6 +329,7 @@ public class OpdController {
 			}).collect(Collectors.toList());
 			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
+			List<Opd> opds = new ArrayList<>();
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {

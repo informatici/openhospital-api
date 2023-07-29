@@ -21,7 +21,6 @@
  */
 package org.isf.examination.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -259,11 +258,10 @@ public class ExaminationController {
 	public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
 		List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
-		List<PatientExaminationDTO> listPatientExaminationDTO = new ArrayList<>();
 		if (patientExamination == null || patientExamination.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			listPatientExaminationDTO = patientExamination.stream().map(pat -> {
+			List<PatientExaminationDTO> listPatientExaminationDTO = patientExamination.stream().map(pat -> {
 				return patientExaminationMapper.map2DTO(pat);
 			}).collect(Collectors.toList());
 			return ResponseEntity.ok(listPatientExaminationDTO);

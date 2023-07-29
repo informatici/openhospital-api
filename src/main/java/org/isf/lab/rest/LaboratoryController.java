@@ -355,9 +355,8 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
-		Laboratory labToDelete;
 		if (lab.isPresent()) {
-			labToDelete = lab.get();
+			Laboratory labToDelete = lab.get();
 			if (labToDelete.getStatus().equalsIgnoreCase(deleted)) {
 				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus().toUpperCase()));
 			}
@@ -686,7 +685,6 @@ public class LaboratoryController {
 		LOGGER.info("Get labWithRows associated to specified CODE: {}", code);
 		LabWithRowsDTO lab = new LabWithRowsDTO();
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-		List<String> labDescription = new ArrayList<>();
 		Laboratory laboratory;
 		if (labo.isPresent()) {
 			laboratory = labo.get();
@@ -699,6 +697,7 @@ public class LaboratoryController {
 		labDTO.setStatus(LaboratoryStatus.valueOf(laboratory.getStatus().toUpperCase()));
 		lab.setLaboratoryDTO(labDTO);
 
+		List<String> labDescription = new ArrayList<>();
 		if (laboratory.getExam().getProcedure() == 2) {
 			List<LaboratoryRow> labDes = laboratoryManager.getLaboratoryRowList(laboratory.getCode());
 			if (!labDes.isEmpty()) {
