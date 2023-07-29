@@ -337,8 +337,8 @@ public class PatientDTO {
 		return status;
 	}
 
-	public PatientSTATUS setStatus(PatientSTATUS status) {
-		return this.status = status;
+	public void setStatus(PatientSTATUS status) {
+		this.status = status;
 	}
 
 	public String getMotherName() {
