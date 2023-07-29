@@ -41,11 +41,6 @@ public class OpdDTO {
     @Schema(description = "the date of the admission", type = "string")
     private LocalDateTime date;
 
-    @NotNull
-    @Schema(description = "the visit date", type = "string")
-    @Deprecated
-    private LocalDateTime visitDate;
-
     @Schema(description = "the next visit date", type = "string")
     private LocalDateTime nextVisitDate;
 
@@ -179,10 +174,6 @@ public class OpdDTO {
         return this.date;
     }
 
-    public LocalDateTime getVisitDate() {
-        return this.visitDate;
-    }
-
     public String getPatientName() {
         return patientName;
     }
@@ -249,10 +240,6 @@ public class OpdDTO {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
-    }
-
-    public void setVisitDate(LocalDateTime visitDate) {
-        this.visitDate = visitDate;
     }
 
     public void setNextVisitDate(LocalDateTime nextVisitDate) {
