@@ -120,7 +120,7 @@ public class OpdDTO {
     
     @NotNull
     @Schema(description = "ward")
-    private WardDTO ward;// ADDED: Arnaud
+    private WardDTO ward;
     
     public String getReason() {
         return reason;
