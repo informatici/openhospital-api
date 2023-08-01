@@ -373,9 +373,9 @@ public class LaboratoryController {
 	/**
 	 * Get the list of exams {@link LaboratoryRowDTO}s divided by pages.
 	 * 
-	 * @param onWeek
-	 * @param pageNo
-	 * @param pageSize
+	 * @param oneWeek
+	 * @param page
+	 * @param size
 	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
