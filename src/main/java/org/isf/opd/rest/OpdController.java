@@ -46,6 +46,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
 import org.isf.ward.manager.WardBrowserManager;
+import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -161,7 +162,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOp = new ArrayList<>();
-		if (opdWithOperationRowDTO.getOperationRows().size() > 0) {
+		if (!opdWithOperationRowDTO.getOperationRows().isEmpty()) {
 			for (OperationRowDTO operationRow : opdWithOperationRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow createOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
@@ -239,7 +240,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOpeRow = new ArrayList<>();
-		if (opdWithOperationRowDTO.getOperationRows().size() > 0 ) {
+		if (!opdWithOperationRowDTO.getOperationRows().isEmpty()) {
 			for (OperationRowDTO operationRow : opdWithOperationRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow updateOpeRow = new OperationRow();
@@ -294,7 +295,8 @@ public class OpdController {
 			@RequestParam(value = "patientCode", required = false, defaultValue = "0") Integer patientCode,
 			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 			@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
-			@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged) throws OHServiceException {
+			@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged,
+			@RequestParam(value = "wardCode", required = false) String wardCode) throws OHServiceException {
 		LOGGER.info("Get opd within specified dates");
 		LOGGER.debug("dateFrom: {}", dateFrom);
 		LOGGER.debug("dateTo: {}", dateTo);
@@ -308,19 +310,23 @@ public class OpdController {
 		LOGGER.debug("page: {}", page);
 		LOGGER.debug("size: {}", size);
 		LOGGER.debug("paged: {}", paged);
-		Page<OpdDTO> opdPageable = new Page<>();
-		PagedResponse<Opd> opdsPaged = new PagedResponse<>();
-		List<OpdDTO> opdDTOs =  new ArrayList<>();
-
+		LOGGER.debug("wardCode: {}", wardCode);
+		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
+		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
+		Ward ward = null;
+		if (wardCode != null) {
+			ward = wardManager.findWard(wardCode);
+		}
+		List<OpdDTO> opdDTOs =  new ArrayList<>();    
 		if (paged) {
 			if (patientCode != 0) {
-				opdsPaged = opdManager.getOpdListPageable(patientCode, page, size);
+				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
 			} else {
 				if (diseaseTypeCode != null) {
 					DiseaseType diseaseType = diseaseTypeManager.getDiseaseType(diseaseCode);
-					opdsPaged = opdManager.getOpdPageable(null, diseaseType, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+					opdsPaged = opdManager.getOpdPageable(ward, diseaseType, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
 				} else {
-					opdsPaged = opdManager.getOpdPageable(null, null, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+					opdsPaged = opdManager.getOpdPageable(ward, null, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
 				}
 
 			}
@@ -333,7 +339,7 @@ public class OpdController {
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
-				opds = opdManager.getOpd(null, diseaseCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
+				opds = opdManager.getOpd(ward, diseaseCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
 			}
 			opdDTOs = opds.stream().map(opd -> {
 				return mapper.map2DTO(opd);

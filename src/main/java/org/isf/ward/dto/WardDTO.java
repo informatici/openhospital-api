@@ -55,6 +55,8 @@ public class WardDTO {
 
 	@NotNull
 	private boolean isFemale;
+	
+	private boolean isOpd;
 
 	@NotNull
 	private int visitDuration;
@@ -164,5 +166,13 @@ public class WardDTO {
 
 	public void setLock(Integer lock) {
 		this.lock = lock;
+	}
+
+	public boolean isOpd() {
+		return isOpd;
+	}
+
+	public void setOpd(boolean isOpd) {
+		this.isOpd = isOpd;
 	}
 }

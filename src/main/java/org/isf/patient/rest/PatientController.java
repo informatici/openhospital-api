@@ -196,7 +196,7 @@ public class PatientController {
 		}
 
 		List<Patient> patientList = null;
-		if (params.entrySet().size() > 0) {
+		if (!params.entrySet().isEmpty()) {
 			patientList = patientManager.getPatients(params);
 		}
 

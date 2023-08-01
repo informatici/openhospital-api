@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 
 import org.isf.disease.dto.DiseaseDTO;
+import org.isf.ward.dto.WardDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
@@ -40,11 +41,6 @@ public class OpdDTO {
 
     @Schema(description = "the date of the admission", type = "string")
     private LocalDateTime date;
-
-    @NotNull
-    @Schema(description = "the visit date", type = "string")
-    @Deprecated
-    private LocalDateTime visitDate;
 
     @Schema(description = "the next visit date", type = "string")
     private LocalDateTime nextVisitDate;
@@ -117,6 +113,10 @@ public class OpdDTO {
     @Schema(description = "prescription")
     private String prescription; // ADDED: Arnaud
     
+    @NotNull
+    @Schema(description = "ward")
+    private WardDTO ward;
+    
     public String getReason() {
         return reason;
     }
@@ -177,10 +177,6 @@ public class OpdDTO {
 
     public LocalDateTime getDate() {
         return this.date;
-    }
-
-    public LocalDateTime getVisitDate() {
-        return this.visitDate;
     }
 
     public String getPatientName() {
@@ -251,10 +247,6 @@ public class OpdDTO {
         this.date = date;
     }
 
-    public void setVisitDate(LocalDateTime visitDate) {
-        this.visitDate = visitDate;
-    }
-
     public void setNextVisitDate(LocalDateTime nextVisitDate) {
         this.nextVisitDate = nextVisitDate;
     }
@@ -307,7 +299,6 @@ public class OpdDTO {
         this.userID = userID;
     }
 
-
     public void setHashCode(int hashCode) {
         this.hashCode = hashCode;
     }
@@ -320,5 +311,12 @@ public class OpdDTO {
         this.ageType = ageType;
     }
     
+    public WardDTO getWard() {
+    	return ward;
+    }
+    
+    public void setWard(WardDTO ward) {
+    	this.ward = ward;
+    }
     
 }
