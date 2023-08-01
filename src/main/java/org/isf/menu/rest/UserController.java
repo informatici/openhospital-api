@@ -327,8 +327,8 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves all permissions of the current logged in user. If user not found,
-	 * an empty list of permissions is returned
+	 * Retrieves all permissions of the current logged-in user. If user not found,
+	 * an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
 	 * @throws OHServiceException

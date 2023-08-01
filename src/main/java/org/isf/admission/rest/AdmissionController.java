@@ -323,7 +323,7 @@ public class AdmissionController {
 	}
 
 	/**
-	 * Set an {@link Admission} record to deleted.
+	 * Set an {@link Admission} record to be deleted.
 	 * 
 	 * @param id
 	 * @return {@code true} if the record has been set to delete.

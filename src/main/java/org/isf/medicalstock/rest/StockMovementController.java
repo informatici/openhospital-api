@@ -77,7 +77,7 @@ public class StockMovementController {
 	 * 
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
-	 * 		   if {@link null}, each movements must have a different referenceNumber 
+	 * 		   if {@link null}, each movement must have a different referenceNumber
 	 * @return 
 	 * @throws OHServiceException 
 	 */
@@ -95,7 +95,7 @@ public class StockMovementController {
 	 * 
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
-	 * 		   if {@link null}, each movements must have a different referenceNumber 
+	 * 		   if {@link null}, each movement must have a different referenceNumber
 	 * @return 
 	 * @throws OHServiceException 
 	 */
