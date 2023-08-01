@@ -162,7 +162,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOp = new ArrayList<>();
-		if (opdWithOperationRowDTO.getOperationRows().size() > 0) {
+		if (!opdWithOperationRowDTO.getOperationRows().isEmpty()) {
 			for (OperationRowDTO operationRow : opdWithOperationRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow createOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
@@ -240,7 +240,7 @@ public class OpdController {
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
 		List<OperationRowDTO> listOpeRow = new ArrayList<>();
-		if (opdWithOperationRowDTO.getOperationRows().size() > 0 ) {
+		if (!opdWithOperationRowDTO.getOperationRows().isEmpty()) {
 			for (OperationRowDTO operationRow : opdWithOperationRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
 				OperationRow updateOpeRow = new OperationRow();
