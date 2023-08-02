@@ -154,7 +154,6 @@ public class OpdController {
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
 		opdToInsert.setPatient(patient);
-		opdToInsert.setWard(wardManager.findWard("OPD"));
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
 			throw new OHAPIException(new OHExceptionMessage("Opd not created."));
@@ -231,7 +230,6 @@ public class OpdController {
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
-		opdToUpdate.setWard(wardManager.findWard("OPD"));
 		opdToUpdate.setLock(opdWithOperationRowDTO.getOpdDTO().getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
@@ -339,7 +337,7 @@ public class OpdController {
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
-				opds = opdManager.getOpd(ward, diseaseCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
+				opds = opdManager.getOpd(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
 			}
 			opdDTOs = opds.stream().map(opd -> {
 				return mapper.map2DTO(opd);
