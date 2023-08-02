@@ -170,11 +170,10 @@ public class PriceListController {
 		LOGGER.info("duplicate list for price list id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
-		boolean isCopied;
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		isCopied = priceListManager.copyList(priceListFounds.get(0));
+		boolean isCopied = priceListManager.copyList(priceListFounds.get(0));
 		if (!isCopied) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
 		}
@@ -191,11 +190,10 @@ public class PriceListController {
 		LOGGER.info("duplicate list for price list id : {}", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
-		boolean isCopied;
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
+		boolean isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
 		if (!isCopied) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
 		}

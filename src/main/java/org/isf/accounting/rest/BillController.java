@@ -207,8 +207,6 @@ public class BillController {
 
 		List<Bill> bills;
 
-		List<BillDTO> billDTOS;
-
 		if (code == null) {
 			LOGGER.info("Get payments datefrom: {}  dateTo: {}", dateFrom, dateTo);
 			bills = billManager.getBills(dateFrom, dateTo);
@@ -219,7 +217,7 @@ public class BillController {
 			bills = billManager.getBills(dateFrom, dateTo, pat);
 		}
 
-		billDTOS = billMapper.map2DTOList(bills);
+		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
@@ -242,12 +240,9 @@ public class BillController {
 			@RequestParam(value="patient_code", required=false, defaultValue="") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
 
-		List<BillPayments> payments;
-
-		List<BillPaymentsDTO> paymentsDTOS;
-
 		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", dateFrom, dateTo);
 
+		List<BillPayments> payments;
 		if (code == null) {
 			payments = billManager.getPayments(dateFrom, dateTo);
 		} else {
@@ -255,7 +250,7 @@ public class BillController {
 			payments = billManager.getPayments(dateFrom, dateTo, pat);
 		}
 
-		paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
+		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
 
 		if (paymentsDTOS.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

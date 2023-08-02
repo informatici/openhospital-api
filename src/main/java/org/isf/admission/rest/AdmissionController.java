@@ -356,7 +356,6 @@ public class AdmissionController {
 
 		LOGGER.info("discharge the patient");
 		Patient patient = patientManager.getPatientById(patientCode);
-		Admission admissionUpdated;
 
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
@@ -384,7 +383,7 @@ public class AdmissionController {
 			throw new OHAPIException(new OHExceptionMessage("the type of output is mandatory or does not exist."));
 		}
 		adm.setAdmitted(0);
-		admissionUpdated = admissionManager.updateAdmission(adm);
+		Admission admissionUpdated = admissionManager.updateAdmission(adm);
 
 		return ResponseEntity.status(HttpStatus.OK).body(admissionUpdated != null);
 	}

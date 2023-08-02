@@ -313,12 +313,11 @@ public class OpdController {
 		LOGGER.debug("wardCode: {}", wardCode);
 		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
 		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
-		List<Opd> opds = new ArrayList<>();
-		List<OpdDTO> opdDTOs =  new ArrayList<>();
 		Ward ward = null;
 		if (wardCode != null) {
 			ward = wardManager.findWard(wardCode);
 		}
+		List<OpdDTO> opdDTOs =  new ArrayList<>();    
 		if (paged) {
 			if (patientCode != 0) {
 				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
@@ -336,6 +335,7 @@ public class OpdController {
 			}).collect(Collectors.toList());
 			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
+			List<Opd> opds = new ArrayList<>();
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
