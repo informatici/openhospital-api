@@ -22,7 +22,6 @@
 package org.isf.patient.rest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,9 +177,6 @@ public class PatientController {
 					@RequestParam(value = "birthDate", defaultValue = "", required = false) LocalDateTime birthDate,
 					@RequestParam(value = "address", defaultValue = "", required = false) String address) throws OHServiceException {
 
-		List<PatientDTO> patientListDTO = new ArrayList<>();
-		List<Patient> patientList = null;
-
 		Map<String, Object> params = new HashMap<>();
 
 		if (firstName != null && !firstName.isEmpty()) {
@@ -199,6 +195,7 @@ public class PatientController {
 			params.put("address", address);
 		}
 
+		List<Patient> patientList = null;
 		if (!params.entrySet().isEmpty()) {
 			patientList = patientManager.getPatients(params);
 		}
@@ -207,7 +204,7 @@ public class PatientController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 
-		patientListDTO = patientList.stream().map(patient -> {
+		List<PatientDTO> patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null ? true : false;
 			return patientMapper.map2DTOWS(patient, status);

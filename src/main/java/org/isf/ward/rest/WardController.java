@@ -166,10 +166,9 @@ public class WardController {
     @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteWard(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete Ward with code: {}", code);
-        boolean isDeleted;
         Ward ward = wardManager.findWard(code);
         if (ward != null) {
-            isDeleted = wardManager.deleteWard(ward);
+            boolean isDeleted = wardManager.deleteWard(ward);
             if (!isDeleted) {
                 throw new OHAPIException(new OHExceptionMessage("Ward not deleted."));
             }
