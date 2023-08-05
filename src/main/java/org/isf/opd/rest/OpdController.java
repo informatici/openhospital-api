@@ -309,8 +309,8 @@ public class OpdController {
 		LOGGER.debug("size: {}", size);
 		LOGGER.debug("paged: {}", paged);
 		LOGGER.debug("wardCode: {}", wardCode);
-		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
-		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
+		Page<OpdDTO> opdPageable = new Page<>();
+		PagedResponse<Opd> opdsPaged = new PagedResponse<>();
 		Ward ward = null;
 		if (wardCode != null) {
 			ward = wardManager.findWard(wardCode);
