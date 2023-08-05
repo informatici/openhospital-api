@@ -340,7 +340,7 @@ public class AdmissionControllerTest {
 
 	@Test
 	public void testDeleteAdmission_200() throws Exception {
-		Integer id = 123;
+		int id = 123;
 		String request = "/admissions/{id}";
 
 		Admission admission = AdmissionHelper.setup();
