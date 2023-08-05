@@ -143,7 +143,7 @@ public class LaboratoryController {
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
-		ArrayList<String> labRows = new ArrayList<>();
+		List<String> labRows = new ArrayList<>();
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
