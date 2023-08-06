@@ -582,8 +582,8 @@ public class LaboratoryController {
 						HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<>();
-		List<Laboratory> labList = new ArrayList<>();
+		PagedResponse<Laboratory> laboratoryPageable;
+		List<Laboratory> labList;
 		if (paged) {
 			if (!status.equals("")) {
 				if (!examName.equals("")) {
@@ -723,9 +723,8 @@ public class LaboratoryController {
 	public ResponseEntity<Boolean> deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
-		Laboratory lab = new Laboratory();
 		if (labo.isPresent()) {
-			lab = labo.get();
+			Laboratory lab = labo.get();
 			if (!lab.getStatus().equalsIgnoreCase(draft) && !lab.getStatus().equalsIgnoreCase(open)) {
 				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus().toUpperCase()));
 			}

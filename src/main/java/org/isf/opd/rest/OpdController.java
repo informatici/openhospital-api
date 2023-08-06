@@ -241,9 +241,9 @@ public class OpdController {
 		if (!opdWithOperationRowDTO.getOperationRows().isEmpty()) {
 			for (OperationRowDTO operationRow : opdWithOperationRowDTO.getOperationRows()) {
 				operationRow.setOpd(opdDTO);
-				OperationRow updateOpeRow = new OperationRow();
+				OperationRow updateOpeRow;
 				if (operationRow.getId() == 0) {
-					 updateOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
+					updateOpeRow = operationRowManager.newOperationRow(opRowMapper.map2Model(operationRow));
 				} else {
 					updateOpeRow = operationRowManager.updateOperationRow(opRowMapper.map2Model(operationRow));
 				}
@@ -310,13 +310,13 @@ public class OpdController {
 		LOGGER.debug("paged: {}", paged);
 		LOGGER.debug("wardCode: {}", wardCode);
 		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
-		PagedResponse<Opd> opdsPaged = new PagedResponse<Opd>();
 		Ward ward = null;
 		if (wardCode != null) {
 			ward = wardManager.findWard(wardCode);
 		}
-		List<OpdDTO> opdDTOs =  new ArrayList<>();    
+		List<OpdDTO> opdDTOs;
 		if (paged) {
+			PagedResponse<Opd> opdsPaged;
 			if (patientCode != 0) {
 				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
 			} else {
@@ -326,14 +326,13 @@ public class OpdController {
 				} else {
 					opdsPaged = opdManager.getOpdPageable(ward, null, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
 				}
-
 			}
 			opdDTOs = opdsPaged.getData().stream().map(opd -> {
 				return mapper.map2DTO(opd);
 			}).collect(Collectors.toList());
 			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
-			List<Opd> opds = new ArrayList<>();
+			List<Opd> opds;
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
