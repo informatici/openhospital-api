@@ -36,7 +36,6 @@ public class LoginResponse {
 	private String username;
 
 	public LoginResponse() {
-		super();
 	}
 
 	public LoginResponse(String token, String username) {

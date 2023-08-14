@@ -122,7 +122,7 @@ public class OpdController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
-		if (opdDTO.getNote() == " ") {
+		if (" ".equals(opdDTO.getNote())) {
 			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
@@ -149,7 +149,7 @@ public class OpdController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
-		if (opdWithOperationRowDTO.getOpdDTO().getNote() == " ") {
+		if (" ".equals(opdWithOperationRowDTO.getOpdDTO().getNote())) {
 			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
@@ -309,7 +309,8 @@ public class OpdController {
 		LOGGER.debug("size: {}", size);
 		LOGGER.debug("paged: {}", paged);
 		LOGGER.debug("wardCode: {}", wardCode);
-		Page<OpdDTO> opdPageable = new Page<OpdDTO>();
+
+		Page<OpdDTO> opdPageable = new Page<>();
 		Ward ward = null;
 		if (wardCode != null) {
 			ward = wardManager.findWard(wardCode);

@@ -166,7 +166,7 @@ public class PatientController {
 		LOGGER.debug("admissionBrowserManager injected: {}", admissionManager);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		LOGGER.debug("admission retrieved: {}", admission);
-		Boolean status = admission != null ? true : false;
+		Boolean status = admission != null;
 		PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
 		return ResponseEntity.ok(patientDTO);
 	}
@@ -206,7 +206,7 @@ public class PatientController {
 
 		List<PatientDTO> patientListDTO = patientList.stream().map(patient -> {
 			Admission admission = admissionManager.getCurrentAdmission(patient);
-			Boolean status = admission != null ? true : false;
+			Boolean status = admission != null;
 			return patientMapper.map2DTOWS(patient, status);
 		}).collect(Collectors.toList());
 		return ResponseEntity.ok(patientListDTO);

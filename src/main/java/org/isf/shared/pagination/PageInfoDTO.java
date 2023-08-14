@@ -32,7 +32,6 @@ public class PageInfoDTO {
 	boolean hasNextPage;
 
 	public PageInfoDTO() {
-		super();
 	}
 
 	public int getSize() {
