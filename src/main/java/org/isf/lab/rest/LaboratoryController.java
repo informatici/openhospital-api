@@ -306,7 +306,7 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		if (!laboratoryDTO.getResult().equals("")) {
+		if (!laboratoryDTO.getResult().isEmpty()) {
 			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
 		}
 
@@ -585,8 +585,8 @@ public class LaboratoryController {
 		PagedResponse<Laboratory> laboratoryPageable = new PagedResponse<>();
 		List<Laboratory> labList = new ArrayList<>();
 		if (paged) {
-			if (!status.equals("")) {
-				if (!examName.equals("")) {
+			if (!status.isEmpty()) {
+				if (!examName.isEmpty()) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
@@ -595,7 +595,7 @@ public class LaboratoryController {
 				labList = laboratoryPageable.getData()
 	                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 			} else {
-				if (!examName.equals("")) {
+				if (!examName.isEmpty()) {
 					Exam exam = examManager.getExams(examName).get(0); 
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
 				} else {
@@ -606,7 +606,7 @@ public class LaboratoryController {
 			result.setPageInfo(laboratoryMapper.setParameterPageInfo(laboratoryPageable.getPageInfo()));
 			
 		} else {
-			if (!status.equals("")) {
+			if (!status.isEmpty()) {
 				labList = laboratoryManager.getLaboratory(examName, dateF, dateT, patient)
 		                    .stream().filter(lab -> lab.getStatus().equalsIgnoreCase(status)).collect(Collectors.toList());
 				
