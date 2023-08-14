@@ -348,7 +348,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_bill_with_existent_id_then_response_BillDTO_and_OK() throws Exception {
-		Integer id = 123;
+		int id = 123;
 		String request = "/bills/{id}";
 
 		Bill bill = BillHelper.setup();
@@ -369,7 +369,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_delete_bill_with_existent_id_then_response_true_and_OK() throws Exception {
-		Integer id = 123;
+		int id = 123;
 		String request = "/bills/{id}";
 
 		Bill bill = BillHelper.setup();
@@ -390,7 +390,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_bill_pending_affiliate_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/bills/pending/affiliate?patient_code={code}";
 
 		List<Bill> billList = BillHelper.genList(2);
@@ -439,7 +439,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_pendingBills_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/bills/pending?patient_code={code}";
 
 		List<Bill> billList = BillHelper.genList(2);
@@ -559,7 +559,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	public void when_get_getPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
 		String request = "/bills/payments/{bill_id}";
 
-		Integer billId = 123;
+		int billId = 123;
 
 		List<BillPaymentsDTO> billPaymentsDTOList = BillPaymentsDTOHelper.genList(3, billPaymentsMapper);
 
