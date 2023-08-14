@@ -58,6 +58,7 @@ import org.isf.utils.pagination.PagedResponse;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -86,7 +87,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class AdmissionController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionController.class);
 
 	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
@@ -539,7 +540,7 @@ public class AdmissionController {
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public void handle(HttpMessageNotReadableException e) {
-		e.printStackTrace();
+		LOGGER.error("", e);
 	}
 
 	/**
