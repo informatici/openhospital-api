@@ -76,7 +76,7 @@ public class UserSettingController {
 		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
-		UserSetting isCreated = new UserSetting();
+		UserSetting isCreated;
 		if (userSetting != null) {
 			LOGGER.info("update a UserSetting");
 			userSetting.setConfigValue(userSettingDTO.getConfigValue());
