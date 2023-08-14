@@ -73,7 +73,7 @@ public class LaboratoryHelper {
 
 	}
 
-	public static ArrayList<Laboratory> genArrayList(int n) {
+	public static List<Laboratory> genArrayList(int n) {
 		return new ArrayList<>(LaboratoryHelper.genList(n));
 	}
 
