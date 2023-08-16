@@ -9,6 +9,8 @@ bin
 /static
 !static/swagger-ui/
 
+#Project related
+.env
 
 ### STS ###
 .apt_generated
