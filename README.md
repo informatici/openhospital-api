@@ -90,7 +90,7 @@ You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
 
 Make sure you have docker with docker-compose installed, then run the following commands:
 
-- rename the `dotenv` file in `.env` and set variables as needed (the SHA-256 jwt token is needed)
+- copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
 - run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
 - (optional - demo data after set the database container) run `docker compose run --rm oh-database-init`
