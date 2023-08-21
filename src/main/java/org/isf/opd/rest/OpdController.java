@@ -325,7 +325,7 @@ public class OpdController {
 					opdsPaged = opdManager.getOpdPageable(ward, diseaseType, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
 				}
 				else{
-					throw new OHAPIException(new OHExceptionMessage("Unable to get the List of operation associate, in absence of Disease Type Code"));
+					throw new OHAPIException(new OHExceptionMessage("The Disease Type code provided does not exist."));
 				}
 			}
 			opdDTOs = opdsPaged.getData().stream().map(opd -> {
