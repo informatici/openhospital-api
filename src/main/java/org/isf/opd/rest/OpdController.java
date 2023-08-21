@@ -321,11 +321,12 @@ public class OpdController {
 			if (patientCode != 0) {
 				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
 			} else {
-				if (diseaseTypeCode != null) {
-					DiseaseType diseaseType = diseaseTypeManager.getDiseaseType(diseaseCode);
-					opdsPaged = opdManager.getOpdPageable(ward, diseaseType, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
-				} else {
-					opdsPaged = opdManager.getOpdPageable(ward, null, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+				if (diseaseTypeManager.isCodePresent(diseaseTypeCode)) { 
+					DiseaseType diseaseType = diseaseTypeManager.getDiseaseType(diseaseTypeCode);
+					opdsPaged = opdManager.getOpdPageable(ward, diseaseType, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
+				}
+				else{
+					throw new OHAPIException(new OHExceptionMessage("The Disease Type code provided does not exist."));
 				}
 			}
 			opdDTOs = opdsPaged.getData().stream().map(opd -> {
