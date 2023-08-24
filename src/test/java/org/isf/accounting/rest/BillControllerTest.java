@@ -316,8 +316,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		List<BillItems> itemsDTOSExpected = new ArrayList<>();
-		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		List<BillItems> itemsDTOSExpected = new ArrayList<>(
+				newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
 		when(billManagerMock.getItems(id)).thenReturn(itemsDTOSExpected);
 

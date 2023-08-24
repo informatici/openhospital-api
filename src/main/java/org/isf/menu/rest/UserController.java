@@ -258,8 +258,7 @@ public class UserController {
 			@PathVariable("group_code") String code, 
 			@Valid @RequestBody List<UserMenuItemDTO> menusDTO) throws OHServiceException {
 		UserGroup group = loadUserGroup(code);
-        List<UserMenuItem> menus = new ArrayList<>();
-		menus.addAll(userMenuItemMapper.map2ModelList(menusDTO));
+		List<UserMenuItem> menus = new ArrayList<>(userMenuItemMapper.map2ModelList(menusDTO));
         boolean done = userManager.setGroupMenu(group, menus);
         if (done) {
         	return ResponseEntity.ok(done);
