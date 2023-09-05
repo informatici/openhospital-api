@@ -48,7 +48,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/pricesothers")
-@Tag(name = "others price")
+@Tag(name = "Others Price")
 @SecurityRequirement(name = "bearerAuth")
 public class PricesOthersController {
 
@@ -56,7 +56,7 @@ public class PricesOthersController {
 
 	@Autowired
 	protected PricesOthersManager pricesOthersManager;
-	
+
 	@Autowired
 	protected PricesOthersMapper mapper;
 
@@ -89,10 +89,11 @@ public class PricesOthersController {
 	 */
 	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PricesOthersDTO> updatePricesOthers(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
-		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId()).collect(Collectors.toList());
+		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId())
+						.collect(Collectors.toList());
 		if (pricesOthersFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
@@ -119,8 +120,7 @@ public class PricesOthersController {
 			return ResponseEntity.ok(pricesOthersDTOs);
 		}
 	}
-	
-	
+
 	/**
 	 * Delete {@link PricesOthers} for specified code.
 	 * @param id

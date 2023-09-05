@@ -51,7 +51,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/permissions")
-@Tag(name = "permissions")
+@Tag(name = "Permissions")
 @SecurityRequirement(name = "bearerAuth")
 public class PermissionController {
 
@@ -70,7 +70,8 @@ public class PermissionController {
 	private UserGroupManager userGroupManager;
 
 	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode) throws OHServiceException {
+	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode)
+					throws OHServiceException {
 		LOGGER.info("retrieving permissions: retrievePermissionsByUserGroupcode({})", userGroupCode);
 		List<Permission> domains = this.permissionManager.retrivePermisionsByGroupCode(userGroupCode);
 		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(domains);
@@ -137,7 +138,8 @@ public class PermissionController {
 
 		Permission model = this.permissionMapper.map2Model(permissionDTO);
 
-		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(), permissionDTO.getUserGroupIds());
+		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
+						permissionDTO.getUserGroupIds());
 		model.setGroupPermission(groupPermissions);
 		Permission permission = this.permissionManager.updatePermission(model);
 		if (permission != null) {
@@ -148,36 +150,28 @@ public class PermissionController {
 	}
 
 	/*
-	@PutMapping(value = { "/permissions/{id}", "/permissions" }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable(value = "id") Optional<Integer> optionalPermissionId, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("updatePermission(id: {}, id: {})", optionalPermissionId.isPresent() ? optionalPermissionId.get() : "EMPTY", permissionDTO);
-
-		if (optionalPermissionId == null && (permissionDTO == null || permissionDTO.getId() == null)) {
-			throw new OHAPIException(new OHExceptionMessage("wrong input: no permission id", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
-		}
-
-		if (optionalPermissionId.isPresent() && optionalPermissionId.get().compareTo(permissionDTO.getId()) != 0) {
-			throw new OHAPIException(new OHExceptionMessage("wrong input: permissio ids does not match", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST);
-		}
-
-		final Integer permissionId = optionalPermissionId.isPresent() ? optionalPermissionId.get() : permissionDTO.getId();
-
-		if (!this.permissionManager.exists(permissionId.intValue())) {
-			throw new OHAPIException(new OHExceptionMessage("permission not found", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		Permission model = this.permissionMapper.map2Model(permissionDTO);
-
-		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(), permissionDTO.getUserGroupIds());
-		model.setGroupPermission(groupPermissions);
-		Permission permission = this.permissionManager.updatePermission(model);
-		if (permission != null) {
-			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
-			return ResponseEntity.status(HttpStatus.OK).body(dtos);
-		}
-		throw new OHAPIException(new OHExceptionMessage("Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	*/
+	 * @PutMapping(value = { "/permissions/{id}", "/permissions" }, produces = MediaType.APPLICATION_JSON_VALUE) public ResponseEntity<PermissionDTO>
+	 * updatePermission(@PathVariable(value = "id") Optional<Integer> optionalPermissionId, @RequestBody PermissionDTO permissionDTO) throws OHServiceException
+	 * { LOGGER.info("updatePermission(id: {}, id: {})", optionalPermissionId.isPresent() ? optionalPermissionId.get() : "EMPTY", permissionDTO);
+	 * 
+	 * if (optionalPermissionId == null && (permissionDTO == null || permissionDTO.getId() == null)) { throw new OHAPIException(new
+	 * OHExceptionMessage("wrong input: no permission id", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST); }
+	 * 
+	 * if (optionalPermissionId.isPresent() && optionalPermissionId.get().compareTo(permissionDTO.getId()) != 0) { throw new OHAPIException(new
+	 * OHExceptionMessage("wrong input: permissio ids does not match", OHSeverityLevel.ERROR), HttpStatus.BAD_REQUEST); }
+	 * 
+	 * final Integer permissionId = optionalPermissionId.isPresent() ? optionalPermissionId.get() : permissionDTO.getId();
+	 * 
+	 * if (!this.permissionManager.exists(permissionId.intValue())) { throw new OHAPIException(new OHExceptionMessage("permission not found",
+	 * OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR); }
+	 * 
+	 * Permission model = this.permissionMapper.map2Model(permissionDTO);
+	 * 
+	 * List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
+	 * permissionDTO.getUserGroupIds()); model.setGroupPermission(groupPermissions); Permission permission = this.permissionManager.updatePermission(model); if
+	 * (permission != null) { PermissionDTO dtos = this.permissionMapper.map2DTO(permission); return ResponseEntity.status(HttpStatus.OK).body(dtos); } throw
+	 * new OHAPIException(new OHExceptionMessage("Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR); }
+	 */
 
 	@DeleteMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
