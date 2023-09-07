@@ -101,7 +101,7 @@ public class AdmissionDTO {
 	@Schema(description = "disChargeType")
 	private DischargeTypeDTO disType;
 
-	@Schema(description = "free note")
+	@Schema(description = "free note", maxLength = 65535)
 	private String note;
 
 	@Schema(description = "transfusional unit")

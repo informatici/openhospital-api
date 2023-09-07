@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class LotDTO {
 
 	@NotNull(message="The code is required")
-	@Schema(description="The lot's code", example = "LT001")
+	@Schema(description="The lot's code", example = "LT001", maxLength = 50)
 	private String code;
 
 	@NotNull(message="The preparation date is required")

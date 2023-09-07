@@ -28,7 +28,7 @@ public class ExamTypeDTO {
     @Schema(description = "Exam Type Code", example = "HB")
     private String code;
 
-    @Schema(description = "Exam Type Description", example = "1.Haematology")
+    @Schema(description = "Exam Type Description", example = "1.Haematology", maxLength = 50)
     private String description;
 
     public ExamTypeDTO() {

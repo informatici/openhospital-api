@@ -35,7 +35,7 @@ public class DischargeTypeDTO {
 	private String code;
 
 	@NotNull
-	@Schema(description = "description of the discharge type", example = "SORTIE NORMALE")
+	@Schema(description = "description of the discharge type", example = "SORTIE NORMALE", maxLength = 50)
 	private String description;
 
 	public String getCode() {

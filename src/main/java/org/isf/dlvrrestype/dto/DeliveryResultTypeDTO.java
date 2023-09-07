@@ -32,7 +32,7 @@ public class DeliveryResultTypeDTO {
 	private String code;
 
 	@NotNull
-	@Schema(description = "description of the delivery result type", example = "MORTALITÉ MATERNELLE")
+	@Schema(description = "description of the delivery result type", example = "MORTALITÉ MATERNELLE", maxLength = 50)
 	private String description;
 
 	public String getCode() {

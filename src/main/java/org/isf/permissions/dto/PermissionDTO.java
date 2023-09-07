@@ -23,10 +23,22 @@ package org.isf.permissions.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class PermissionDTO extends LitePermissionDTO {
 
+	@NotNull
+	@Schema(description = "The permission id")
 	private Integer id;
+	
+	@NotNull
+	@Schema(description = "The permission description", maxLength = 255)
 	private String description;
+	
+	@NotNull
+	@Schema(description = "The user group id")
 	private List<String> userGroupIds;
 
 	public Integer getId() {

@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalDTO {
 
-	@Schema(description="The id of the medical", example = "1")
+	@Schema(description="The id of the medical", example = "1", maxLength = 5)
 	private Integer code;
 	
 	@Schema(description="The product code", example = "PARA")
@@ -36,7 +36,7 @@ public class MedicalDTO {
 	@Schema(description="The medical type")
 	private MedicalTypeDTO type;
 	
-	@Schema(description="The description of the medical", example = "Paracétamol")
+	@Schema(description="The description of the medical", example = "Paracétamol", maxLength = 100)
 	private String description;
 	
 	@Schema(description="The initial quantity of the medical", example = "21")

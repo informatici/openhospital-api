@@ -51,7 +51,7 @@ public class BillDTO {
 	private boolean isList;
 	
 	@NotNull
-	@Schema(description = "Price list name", example="Basic")
+	@Schema(description = "Price list name", example="Basic", maxLength = 50)
 	private String listName;
 	
 	@NotNull
@@ -59,7 +59,7 @@ public class BillDTO {
 	private boolean patientTrue;
 	
 	@NotNull
-	@Schema(description = "patient name", example="Mario Rossi")
+	@Schema(description = "patient name", example="Mario Rossi", maxLength = 100)
 	private String patName;
 	
 	@NotNull

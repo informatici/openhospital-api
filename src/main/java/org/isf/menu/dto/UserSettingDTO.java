@@ -32,11 +32,11 @@ public class UserSettingDTO {
 	private int id;
 	
 	@NotNull
-	@Schema(description="the the name of the setting", example = "dashboard")
+	@Schema(description="the the name of the setting", example = "dashboard", maxLength = 50)
 	private String configName;
 	
 	@NotNull
-	@Schema(description="the the value of the user")
+	@Schema(description="the the value of the user", maxLength = 65535)
 	private String configValue;
 
 	public int getId() {

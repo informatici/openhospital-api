@@ -28,29 +28,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserMenuItemDTO {
 
 	@NotNull
-	@Schema(description="code of the menu item (must be unique)", example = "admtype")
+	@Schema(description="code of the menu item (must be unique)", example = "admtype", maxLength = 50)
 	private String 	code;
 
 	@NotNull
-	@Schema(description="button label of the menu item", example = "Admission Type")
+	@Schema(description="button label of the menu item", example = "Admission Type", maxLength = 50)
 	private String 	buttonLabel;
 
 	@NotNull
-	@Schema(description="alt label of the menu item", example = "Admission Type")
+	@Schema(description="alt label of the menu item", example = "Admission Type", maxLength = 50)
 	private String 	altLabel;
 
-	@Schema(description="tooltip label of the menu item", example = "Admission Type")
+	@Schema(description="tooltip label of the menu item", example = "Admission Type", maxLength = 100)
 	private String 	tooltip;
 
 	@Schema(description="shortcut of the menu item", example = "A")
 	private char shortcut;
 
 	@NotNull
-	@Schema(description="parent submenu of the menu item", example = "types")
+	@Schema(description="parent submenu of the menu item", example = "types", maxLength = 50)
 	private String	mySubmenu;
 
 	@NotNull
-	@Schema(description="the main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser")
+	@Schema(description="the main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser", maxLength = 100)
 	private String myClass;
 
 	@NotNull

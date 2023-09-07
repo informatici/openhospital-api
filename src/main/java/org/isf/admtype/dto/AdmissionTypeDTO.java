@@ -35,7 +35,7 @@ public class AdmissionTypeDTO {
 	private String code;
 	
 	@NotNull
-	@Schema(description = "description of the admission type", example="AMBULANCE")
+	@Schema(description = "description of the admission type", example="AMBULANCE", maxLength = 50)
     private String description;
 
 	public String getCode() {

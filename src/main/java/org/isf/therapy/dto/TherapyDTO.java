@@ -50,7 +50,7 @@ public class TherapyDTO {
 	@Schema(description="The frequency in day", example = "2")
 	private Integer freqInDay;
 	
-	@Schema(description="A note for the therapy", example = "Sample note")
+	@Schema(description="A note for the therapy", example = "Sample note", maxLength = 65535)
 	private String note;
 	
 	@Schema(description="the notify flag: true if the notification need to be activated, false otherwise", example = "false")	

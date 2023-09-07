@@ -25,28 +25,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class HospitalDTO {
 
-    @Schema(description = "Hospital Code", example = "STLUKE")
+    @Schema(description = "Hospital Code", example = "STLUKE", maxLength = 10)
     private String code;
 
-    @Schema(description = "Hospital Description", example = "St. Luke HOSPITAL - Angal")
+    @Schema(description = "Hospital Description", example = "St. Luke HOSPITAL - Angal", maxLength = 255)
     private String description;
 
-    @Schema(description = "Hospital Address", example = "Hospital Address")
+    @Schema(description = "Hospital Address", example = "Hospital Address", maxLength = 255)
     private String address;
 
-    @Schema(description = "Hospital City", example = "Hospital City")
+    @Schema(description = "Hospital City", example = "Hospital City", maxLength = 255)
     private String city;
 
-    @Schema(description = "Hospital Telephone", example = "+123 0123456789")
+    @Schema(description = "Hospital Telephone", example = "+123 0123456789", maxLength = 50)
     private String telephone;
 
-    @Schema(description = "Hospital Fax", example = "+123 0123456789")
+    @Schema(description = "Hospital Fax", example = "+123 0123456789", maxLength = 50)
     private String fax;
 
-    @Schema(description = "Hospital Email", example = "hospital@isf.email.xx")
+    @Schema(description = "Hospital Email", example = "hospital@isf.email.xx", maxLength = 50)
     private String email;
 
-    @Schema(description = "Hospital Currency Cod", example = "EUR")
+    @Schema(description = "Hospital Currency Cod", example = "EUR", maxLength = 3)
     private String currencyCod;
     
     @Schema(description = "lock", example = "0")

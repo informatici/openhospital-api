@@ -35,7 +35,7 @@ public class DeliveryTypeDTO {
 	private String code;
 
 	@NotNull
-	@Schema(description = "description of the delivery type", example = "ACCOUCHEMENT NORMAL")
+	@Schema(description = "description of the delivery type", example = "ACCOUCHEMENT NORMAL", maxLength = 50)
 	private String description;
 
 	public String getCode() {

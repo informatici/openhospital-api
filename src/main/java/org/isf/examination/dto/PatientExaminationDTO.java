@@ -80,7 +80,7 @@ public class PatientExaminationDTO {
     @Schema(description = "Diuresis description", example="physiological")
     private Diurese pex_diuresis_desc;
     
-    @Schema(description = "Examination Note")
+    @Schema(description = "Examination Note", maxLength = 2000)
     private String pex_note;
     
     @Nullable

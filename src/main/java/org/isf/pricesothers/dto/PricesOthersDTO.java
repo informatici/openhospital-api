@@ -34,11 +34,11 @@ public class PricesOthersDTO
     private int id;
 
 	@NotNull 
-	@Schema(description = "the prices code", example="PRICES001")
+	@Schema(description = "The prices code", example="PRICES001", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "the description")
+	@Schema(description = "The description", maxLength = 100)
 	private String description;
 
 	@NotNull

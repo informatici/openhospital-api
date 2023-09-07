@@ -32,11 +32,11 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 public class DiseaseDTO {
 
 	@NotNull
-	@Schema(description = "Disease code", example = "99")
+	@Schema(description = "Disease code", example = "99", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "Disease description")
+	@Schema(description = "Disease description", maxLength = 50)
     private String description;
 
 	@NotNull

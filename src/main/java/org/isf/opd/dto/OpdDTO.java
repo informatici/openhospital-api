@@ -64,7 +64,7 @@ public class OpdDTO {
     private String ageType; // ADDED: Arnaud
 
     @NotNull
-    @Schema(description = "the admission note", example = "this is out patient")
+    @Schema(description = "the admission note", example = "this is out patient", maxLength = 65535)
     private String note; // ADDED: Alex
 
     //@NotNull
@@ -110,7 +110,7 @@ public class OpdDTO {
     @Schema(description = "Current therapies")
     private String therapies; // ADDED: Arnaud
     
-    @Schema(description = "prescription")
+    @Schema(description = "prescription", maxLength = 255)
     private String prescription; // ADDED: Arnaud
     
     @NotNull

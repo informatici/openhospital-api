@@ -56,7 +56,7 @@ public class LaboratoryDTO {
 	@Schema(description = "lock", example = "0")
 	private int lock;
 
-	@Schema(description = "Laboratory Note", example = "Note by laboratorist")
+	@Schema(description = "Laboratory Note", example = "Note by laboratorist", maxLength = 255)
 	private String note;
 
 	@Schema(description = "Laboratory Patient Code")

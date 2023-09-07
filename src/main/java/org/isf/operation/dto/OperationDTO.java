@@ -29,10 +29,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class OperationDTO {
 
+	@NotNull
+	@Schema(description = "the code of operation", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "the operation description")
+	@Schema(description = "the operation description", maxLength = 50)
 	private String description;
 
 	@NotNull

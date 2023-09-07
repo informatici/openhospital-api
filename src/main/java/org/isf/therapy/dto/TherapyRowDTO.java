@@ -66,7 +66,7 @@ public class TherapyRowDTO {
 	@Schema(description="The frequency in period", example = "1")
 	private int freqInPeriod;
 	
-	@Schema(description="A note for the therapy", example = "Sample note")		
+	@Schema(description="A note for the therapy", example = "Sample note", maxLength = 65535)		
 	private String note;
 
 	@NotNull(message="the notify flag is required")

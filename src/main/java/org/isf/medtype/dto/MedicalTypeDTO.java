@@ -28,11 +28,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MedicalTypeDTO {
 
 	@NotNull
-	@Schema(description="Code of the medical type", example = "M")
+	@Schema(description="Code of the medical type", example = "M", maxLength = 1)
 	private String code;
 
 	@NotNull
-	@Schema(description="Description of the medical type", example = "Medical material")
+	@Schema(description="Description of the medical type", example = "Medical material", maxLength = 30)
 	private String description;
 	
 	public MedicalTypeDTO() {

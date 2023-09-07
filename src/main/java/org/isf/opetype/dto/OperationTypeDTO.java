@@ -23,11 +23,16 @@ package org.isf.opetype.dto;
 
 import javax.validation.constraints.NotNull;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class OperationTypeDTO {
 
+	@NotNull
+	@Schema(description = "the operation code", maxLength = 2)
 	private String code;
 
 	@NotNull
+	@Schema(description = "the operation type", maxLength = 50)
 	private String description;
 
 	public String getCode() {

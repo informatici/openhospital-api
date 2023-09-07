@@ -28,11 +28,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MovementTypeDTO {
 
 	@NotNull
-	@Schema(description="Code of the movement type", example = "D")
+	@Schema(description="Code of the movement type", example = "D", maxLength = 10)
 	private String code;
 	
 	@NotNull
-	@Schema(description="Description of the movement type", example = "Damage")
+	@Schema(description="Description of the movement type", example = "Damage", maxLength = 50)
 	private String description;
 	
 	@NotNull

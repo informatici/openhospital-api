@@ -37,11 +37,11 @@ public class PatientDTO {
 	private Integer code;
 
 	@NotNull
-	@Schema(description = "First name of the patient", example = "Mario")
+	@Schema(description = "First name of the patient", example = "Mario", maxLength = 50)
 	private String firstName;
 
 	@NotNull
-	@Schema(description = "Last name of the patient", example = "Rossi")
+	@Schema(description = "Last name of the patient", example = "Rossi", maxLength = 50)
 	private String secondName;
 
 	private String name;
@@ -60,30 +60,31 @@ public class PatientDTO {
 	@Schema(description = "Sex", allowableValues = { "M", "F" }, example = "M")
 	private char sex;
 
-	@Schema(description = "Address", example = "Via Roma, 12")
+	@Schema(description = "Address", example = "Via Roma, 12", maxLength = 50)
 	private String address;
 
 	@NotNull
-	@Schema(description = "City", example = "Verona")
+	@Schema(description = "City", example = "Verona", maxLength = 50)
 	private String city;
-
+	
+	@Schema(description = "NextKin", example = "John Doe", maxLength = 50)
 	private String nextKin;
 
-	@Schema(description = "Telephone", example = "+393456789012")
+	@Schema(description = "Telephone", example = "+393456789012", maxLength = 50)
 	private String telephone;
 
-	@Schema(description = "Note", example = "Test insert new patient")
+	@Schema(description = "Note", example = "Test insert new patient", maxLength = 65535)
 	private String note;
 
 	@NotNull
-	@Schema(description = "Mother's name", example = "Roberta")
+	@Schema(description = "Mother's name", example = "Roberta", maxLength = 50)
 	private String motherName;
 
 	@Schema(description = "Mother's status (D=dead, A=alive)", allowableValues = { "D", "A" }, example = "A")
 	private char mother;
 
 	@NotNull
-	@Schema(description = "Father's name", example = "Giuseppe")
+	@Schema(description = "Father's name", example = "Giuseppe", maxLength = 50)
 	private String fatherName;
 
 	@Schema(description = "Father's status (D=dead, A=alive)", allowableValues = { "D", "A" }, example = "D")
@@ -99,7 +100,7 @@ public class PatientDTO {
 	@Schema(description = "Parent together (Y=Yes, N=no)", allowableValues = { "Y", "N" }, example = "N")
 	private char parentTogether;
 
-	@Schema(description = "Tax code", example = "RSSMRA79E01L781N")
+	@Schema(description = "Tax code", example = "RSSMRA79E01L781N", maxLength = 30)
 	private String taxCode;
 
 	@Schema(description = "lock", example = "0")
@@ -111,11 +112,11 @@ public class PatientDTO {
 	private int hashCode;
 
 	@Nullable
-	@Schema(description = "allergies of patient")
+	@Schema(description = "allergies of patient", maxLength = 255)
 	private String allergies; // ADDED: Arnaud
 
 	@Nullable
-	@Schema(description = "Current anamnesis")
+	@Schema(description = "Current anamnesis", maxLength = 255)
 	private String anamnesis; // ADDED: Arnaud
 
 	@Schema(description = "status", example = "I")

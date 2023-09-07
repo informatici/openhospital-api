@@ -32,7 +32,7 @@ public class AgeTypeDTO {
 	private String code;
 
 	@NotNull
-	@Schema(description = "Age type description")
+	@Schema(description = "Age type description", maxLength = 100)
     private String description;
 
 	@NotNull	

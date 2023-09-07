@@ -43,11 +43,11 @@ public class PriceDTO
     private String group;
 
 	@NotNull
-	@Schema(description = "the item name")
+	@Schema(description = "the item name", maxLength = 10)
     private String item;
 
 	@NotNull
-	@Schema(description = "the description")
+	@Schema(description = "the description", maxLength = 100)
     private String description;
 
 	@NotNull
