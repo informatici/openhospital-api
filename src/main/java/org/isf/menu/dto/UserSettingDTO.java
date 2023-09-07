@@ -28,15 +28,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserSettingDTO {
 	
 	@NotNull
-	@Schema(description="the id of the setting (must be unique)", example = "1")	
+	@Schema(description="The id of the setting (must be unique)", example = "1")	
 	private int id;
 	
 	@NotNull
-	@Schema(description="the the name of the setting", example = "dashboard", maxLength = 50)
+	@Schema(description="The the name of the setting", example = "dashboard", maxLength = 50)
 	private String configName;
 	
 	@NotNull
-	@Schema(description="the the value of the user", maxLength = 65535)
+	@Schema(description="The the value of the user", maxLength = 65535)
 	private String configValue;
 
 	public int getId() {

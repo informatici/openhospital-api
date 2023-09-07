@@ -29,16 +29,16 @@ public class PriceListDTO {
 	
 	private int id;
 
-	@Schema(description = "the price list code", example="LISTE1", maxLength = 7)
+	@Schema(description = "The price list code", example="LISTE1", maxLength = 7)
 	private String code;
 	
-	@Schema(description = "the name of list", example="default price list", maxLength = 50)
+	@Schema(description = "The name of the price list", example="default price list", maxLength = 50)
     private String name;
 	
-	@Schema(description = "the price list description", example="default price list", maxLength = 100)
+	@Schema(description = "The price list description", example="default price list", maxLength = 100)
 	private String description;
 
-	@Schema(description = "the currency", example="FCFA", maxLength = 10)
+	@Schema(description = "The currency", example="FCFA", maxLength = 10)
 	private String currency;
 	
 	private int hashCode;

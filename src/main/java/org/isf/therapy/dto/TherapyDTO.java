@@ -53,10 +53,10 @@ public class TherapyDTO {
 	@Schema(description="A note for the therapy", example = "Sample note", maxLength = 65535)
 	private String note;
 	
-	@Schema(description="the notify flag: true if the notification need to be activated, false otherwise", example = "false")	
+	@Schema(description="The notify flag: true if the notification need to be activated, false otherwise", example = "false")	
 	private boolean notify;
 	
-	@Schema(description="the sms flag: true if sms need to be sent to patient, false otherwise", example = "false")
+	@Schema(description="The sms flag: true if sms need to be sent to patient, false otherwise", example = "false")
 	private boolean sms;
 
 	public TherapyDTO() {

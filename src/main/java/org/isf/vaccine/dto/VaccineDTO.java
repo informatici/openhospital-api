@@ -42,7 +42,7 @@ public class VaccineDTO {
 	@Schema(description = "Type of the vaccine")
 	private VaccineTypeDTO vaccineType;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	@Override

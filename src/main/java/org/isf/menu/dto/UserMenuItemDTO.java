@@ -28,37 +28,37 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserMenuItemDTO {
 
 	@NotNull
-	@Schema(description="code of the menu item (must be unique)", example = "admtype", maxLength = 50)
+	@Schema(description="Code of the menu item (must be unique)", example = "admtype", maxLength = 50)
 	private String 	code;
 
 	@NotNull
-	@Schema(description="button label of the menu item", example = "Admission Type", maxLength = 50)
+	@Schema(description="Button label of the menu item", example = "Admission Type", maxLength = 50)
 	private String 	buttonLabel;
 
 	@NotNull
-	@Schema(description="alt label of the menu item", example = "Admission Type", maxLength = 50)
+	@Schema(description="Alt label of the menu item", example = "Admission Type", maxLength = 50)
 	private String 	altLabel;
 
-	@Schema(description="tooltip label of the menu item", example = "Admission Type", maxLength = 100)
+	@Schema(description="Tooltip label of the menu item", example = "Admission Type", maxLength = 100)
 	private String 	tooltip;
 
-	@Schema(description="shortcut of the menu item", example = "A")
+	@Schema(description="Shortcut of the menu item", example = "A")
 	private char shortcut;
 
 	@NotNull
-	@Schema(description="parent submenu of the menu item", example = "types", maxLength = 50)
+	@Schema(description="Parent submenu of the menu item", example = "types", maxLength = 50)
 	private String	mySubmenu;
 
 	@NotNull
-	@Schema(description="the main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser", maxLength = 100)
+	@Schema(description="The main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser", maxLength = 100)
 	private String myClass;
 
 	@NotNull
-	@Schema(description="indicates if the menu item is a submenu or not", example = "true")
+	@Schema(description="Indicates if the menu item is a submenu or not", example = "true")
 	private boolean	isASubMenu;
 
 	@NotNull
-	@Schema(description="position of the menu item", example = "5")
+	@Schema(description="Position of the menu item", example = "5")
 	private int position;
 	
 	public UserMenuItemDTO(){

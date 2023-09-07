@@ -30,11 +30,11 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 public class PregnantTreatmentTypeDTO {
 
 	@NotNull
-	@Schema(description = "the code", maxLength = 10)
+	@Schema(description = "The code", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "the description", maxLength = 50)
+	@Schema(description = "The description", maxLength = 50)
 	private String description;
 	
 	private int hashCode;

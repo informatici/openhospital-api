@@ -49,7 +49,7 @@ public class HospitalDTO {
     @Schema(description = "Hospital Currency Cod", example = "EUR", maxLength = 3)
     private String currencyCod;
     
-    @Schema(description = "lock", example = "0")
+    @Schema(description = "Lock", example = "0")
     private int lock;
 
     public int getLock() {

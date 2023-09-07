@@ -35,23 +35,23 @@ public class PriceDTO
 	private int id;
 
 	@NotNull
-	@Schema(description = "the price list")
+	@Schema(description = "The price list")
     private PriceList list;
 
 	@NotNull
-	@Schema(description = "the group")
+	@Schema(description = "The group")
     private String group;
 
 	@NotNull
-	@Schema(description = "the item name", maxLength = 10)
+	@Schema(description = "The item name", maxLength = 10)
     private String item;
 
 	@NotNull
-	@Schema(description = "the description", maxLength = 100)
+	@Schema(description = "The description", maxLength = 100)
     private String description;
 
 	@NotNull
-	@Schema(description = "price", example="1500")
+	@Schema(description = "Price", example="1500")
     private Double price; 
 	
     private boolean editable;

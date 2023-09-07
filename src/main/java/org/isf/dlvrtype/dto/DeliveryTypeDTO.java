@@ -31,11 +31,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class DeliveryTypeDTO {
 
 	@NotNull
-	@Schema(description = "code of the delivery type", example = "N")
+	@Schema(description = "Code of the delivery type", example = "N")
 	private String code;
 
 	@NotNull
-	@Schema(description = "description of the delivery type", example = "ACCOUCHEMENT NORMAL", maxLength = 50)
+	@Schema(description = "Description of the delivery type", example = "ACCOUCHEMENT NORMAL", maxLength = 50)
 	private String description;
 
 	public String getCode() {

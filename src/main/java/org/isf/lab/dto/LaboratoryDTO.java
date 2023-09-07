@@ -53,7 +53,7 @@ public class LaboratoryDTO {
 	@Schema(description = "Laboratory Result")
 	private String result;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	@Schema(description = "Laboratory Note", example = "Note by laboratorist", maxLength = 255)

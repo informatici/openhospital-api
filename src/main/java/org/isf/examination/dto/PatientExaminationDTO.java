@@ -67,7 +67,7 @@ public class PatientExaminationDTO {
     private Integer pex_hr;
     
     @Nullable
-    @Schema(description = "patient ausculation", example="normal")
+    @Schema(description = "Patient ausculation", example="normal")
     private Ausculation pex_auscultation;
     
     @Schema(description = "Hemo Glucose Test")

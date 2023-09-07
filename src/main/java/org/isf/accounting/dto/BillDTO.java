@@ -59,7 +59,7 @@ public class BillDTO {
 	private boolean patientTrue;
 	
 	@NotNull
-	@Schema(description = "patient name", example="Mario Rossi", maxLength = 100)
+	@Schema(description = "Patient name", example="Mario Rossi", maxLength = 100)
 	private String patName;
 	
 	@NotNull

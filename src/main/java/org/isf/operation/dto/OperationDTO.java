@@ -30,22 +30,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class OperationDTO {
 
 	@NotNull
-	@Schema(description = "the code of operation", maxLength = 10)
+	@Schema(description = "The code of operation", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "the operation description", maxLength = 50)
+	@Schema(description = "The operation description", maxLength = 50)
 	private String description;
 
 	@NotNull
-	@Schema(description = "the operation type")
+	@Schema(description = "The operation type")
 	private OperationTypeDTO type;
 
 	@NotNull
-	@Schema(description = "the operation major")
+	@Schema(description = "The operation major")
 	private Integer major;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 	
 	public int getLock() {

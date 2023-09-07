@@ -34,47 +34,47 @@ public class TherapyRowDTO {
 	@Schema(description="The therapy's ID", example = "1")
 	private int therapyID;
 
-	@NotNull(message="the patient is required")
+	@NotNull(message="The patient is required")
 	@Schema(description="The patient")
 	private PatientDTO patID;
 
-	@NotNull(message="the start date is required")
+	@NotNull(message="The start date is required")
 	@Schema(description="The start date of therapy", example = "2020-07-16T00:00:00", format = "LocalDateTime")
 	private LocalDateTime startDate;
 
-	@NotNull(message="the end date is required")
+	@NotNull(message="The end date is required")
 	@Schema(description="The end date of the therapy", example = "2020-07-30T00:00:00", format = "LocalDateTime")
 	private LocalDateTime endDate;
 
-	@NotNull(message="the medical's ID is required")
+	@NotNull(message="The medical's ID is required")
 	@Schema(description="The ID of the medical concerned by the therapy", example = "1")
 	private int medicalId;
 
-	@NotNull(message="the quantity is required")
+	@NotNull(message="The quantity is required")
 	@Schema(description="The quantity of medicals", example = "48")
 	private Double qty;
 
-	@NotNull(message="the unit's ID is required")
+	@NotNull(message="The unit's ID is required")
 	@Schema(description="The unit's ID", example = "1")
 	private int unitID;
 
-	@NotNull(message="the frequency in day is required")
+	@NotNull(message="The frequency in day is required")
 	@Schema(description="The frequency in day", example = "2")
 	private int freqInDay;
 
-	@NotNull(message="the frequency in period is required")
+	@NotNull(message="The frequency in period is required")
 	@Schema(description="The frequency in period", example = "1")
 	private int freqInPeriod;
 	
 	@Schema(description="A note for the therapy", example = "Sample note", maxLength = 65535)		
 	private String note;
 
-	@NotNull(message="the notify flag is required")
+	@NotNull(message="The notify flag is required")
 	@Schema(description="the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0")	
 	private int notifyInt;
 
-	@NotNull(message="the sms flag is required")
-	@Schema(description="the sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0")	
+	@NotNull(message="The sms flag is required")
+	@Schema(description="The sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0")	
 	private int smsInt;
 
 	public TherapyRowDTO() {

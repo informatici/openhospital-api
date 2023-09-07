@@ -42,7 +42,7 @@ public class ExamDTO {
 	@Schema(description = "Exam Type")
 	private ExamTypeDTO examtype;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	public String getCode() {

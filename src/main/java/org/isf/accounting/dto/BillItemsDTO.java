@@ -34,7 +34,7 @@ public class BillItemsDTO {
 	@Schema(description = "Bill id", example="")
 	private Integer billId;
 
-	@Schema(description = "check if it is a price", example="true")
+	@Schema(description = "Check if it is a price", example="true")
 	private boolean isPrice;
 
 	@NotNull
@@ -42,23 +42,23 @@ public class BillItemsDTO {
 	private String priceId;
 	
 	@NotNull
-	@Schema(description = "item description", example="Acetone 99 % 1ltr")
+	@Schema(description = "Item description", example="Acetone 99 % 1ltr")
 	private String itemDescription;
 
 	@NotNull
-	@Schema(description = "item amount", example="1000")
+	@Schema(description = "Item amount", example="1000")
 	private double itemAmount;
 	
 	@NotNull
-	@Schema(description = "item quantity", example="1")
+	@Schema(description = "Item quantity", example="1")
 	private int itemQuantity;
 	
 	@NotNull
-	@Schema(description = "item display code", example="Acetone")
+	@Schema(description = "Item display code", example="Acetone")
 	private String itemDisplayCode;
 	
 	@NotNull
-	@Schema(description = "item id", example="3")
+	@Schema(description = "Item id", example="3")
 	private String itemId;
 	
 	private volatile int hashCode;

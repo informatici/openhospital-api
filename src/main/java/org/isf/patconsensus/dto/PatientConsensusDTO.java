@@ -28,14 +28,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Class representing a patient consensus")
 public class PatientConsensusDTO {
 
-	@Schema(description = "consensus flag")
+	@Schema(description = "Consensus flag")
 	private boolean consensusFlag;
 
-	@Schema(description = "service flag")
+	@Schema(description = "Service flag")
 	private boolean serviceFlag;
 
 	@NotNull
-	@Schema(description = "patient id")
+	@Schema(description = "Patient id")
 	private Integer patientId;
 
 	public boolean isConsensusFlag() {

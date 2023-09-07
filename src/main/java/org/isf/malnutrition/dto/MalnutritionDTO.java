@@ -53,7 +53,7 @@ public class MalnutritionDTO {
 	@Schema(description="The weight of the patient", example="65")
 	private float weight;
 	
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 	
 	public MalnutritionDTO() { }

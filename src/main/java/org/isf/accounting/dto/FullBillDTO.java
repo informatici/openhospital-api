@@ -30,14 +30,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class FullBillDTO {
 	
 	@NotNull
-	@Schema(description = "bill element")
+	@Schema(description = "Bill element")
 	private BillDTO bill;
 	
 	@NotNull
-	@Schema(description = "list of bill items elements")
+	@Schema(description = "List of bill items elements")
 	private List<BillItemsDTO> billItems;
 	
-	@Schema(description = "list of bill payments elements")
+	@Schema(description = "List of bill payments elements")
 	private List<BillPaymentsDTO> billPayments;
 
 	public BillDTO getBill() {

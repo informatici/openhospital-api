@@ -28,10 +28,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserGroupDTO {
 
 	@NotNull
-	@Schema(description="name of the group (must be unique)", example = "labo", maxLength = 50)
+	@Schema(description="Name of the group (must be unique)", example = "labo", maxLength = 50)
 	private String code;
 	
-	@Schema(description="the description of the group", example = "Staff members working in the laboratory", maxLength = 128)
+	@Schema(description="The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
 	private String desc;
 	
 	public UserGroupDTO() {

@@ -38,15 +38,15 @@ public class BillPaymentsDTO {
 	private Integer billId;
 
 	@NotNull
-	@Schema(description = "date of payment", example="2020-03-19T14:58:00.000Z")
+	@Schema(description = "Date of payment", example="2020-03-19T14:58:00.000Z")
 	private LocalDateTime date;
 
 	@NotNull
-	@Schema(description = "the payment amount", example="500")
+	@Schema(description = "The payment amount", example="500")
 	private double amount;
 
 	@NotNull
-	@Schema(description = "the current user", example="admin")
+	@Schema(description = "The current user", example="admin")
 	private String user;
 
 	private volatile int hashCode;

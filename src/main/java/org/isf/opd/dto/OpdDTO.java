@@ -36,85 +36,85 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
  */
 public class OpdDTO {
     
-    @Schema(description = "the code of the opd", example="3")
+    @Schema(description = "The code of the opd", example="3")
     private int code;
 
-    @Schema(description = "the date of the admission", type = "string")
+    @Schema(description = "The date of the admission", type = "string")
     private LocalDateTime date;
 
-    @Schema(description = "the next visit date", type = "string")
+    @Schema(description = "The next visit date", type = "string")
     private LocalDateTime nextVisitDate;
 
-    @Schema(description = "the admitted patient code")
+    @Schema(description = "The admitted patient code")
     private Integer patientCode;
 
     @NotNull
-    @Schema(description = "the patient age", example = "18")
+    @Schema(description = "The patient age", example = "18")
     private int age;
 
     @NotNull
-    @Schema(description = "the patient sex", example = "M")
+    @Schema(description = "The patient sex", example = "M")
     private char sex;
     
     //@NotNull
-    @Schema(description = "the patient sex", example = "M")
+    @Schema(description = "The patient sex", example = "M")
     private String patientName;
     
     @Schema(description = "Age type", example="null")
     private String ageType; // ADDED: Arnaud
 
     @NotNull
-    @Schema(description = "the admission note", example = "this is out patient", maxLength = 65535)
+    @Schema(description = "The admission note", example = "this is out patient", maxLength = 65535)
     private String note; // ADDED: Alex
 
     //@NotNull
-    @Schema(description = "a progr. in year for each ward", example = "18")
+    @Schema(description = "A progr. in year for each ward", example = "18")
     private int prog_year;
 
-    @Schema(description = "disease")
+    @Schema(description = "Disease")
     private DiseaseDTO disease;
 
-    @Schema(description = "disease 2")
+    @Schema(description = "Disease 2")
     private DiseaseDTO disease2;
 
-    @Schema(description = "disease 3")
+    @Schema(description = "Disease 3")
     private DiseaseDTO disease3;
 
     @NotNull
-    @Schema(description = "new(N) or reattendance(R) patient", example = "N")
+    @Schema(description = "New(N) or Reattendance(R) patient", example = "N")
     private char newPatient; // n=NEW R=REATTENDANCE
 
-    @Schema(description = "referral from another unit", example = "R")
+    @Schema(description = "Referral from another unit", example = "R")
     private String referralFrom; // R=referral from another unit; null=no referral from
 
-    @Schema(description = "referral to another unit", example = "R")
+    @Schema(description = "Referral to another unit", example = "R")
     private String referralTo; // R=referral to another unit; null=no referral to
 
-    @Schema(description = "user id")
+    @Schema(description = "User id")
     private String userID;
 
-    @Schema(description = "lock", example = "0")
+    @Schema(description = "Lock", example = "0")
     private int lock;
     
     private int hashCode;
     
-    @Schema(description = "reasons for entry")
+    @Schema(description = "Reasons for entry")
     private String reason; // ADDED: Arnaud
     
-    @Schema(description = "history of a medical or psychiatric patient")
+    @Schema(description = "History of a medical or psychiatric patient")
     private String anamnesis; // ADDED: Arnaud
     
-    @Schema(description = "allergies of patient")
+    @Schema(description = "Allergies of patient")
     private String allergies; // ADDED: Arnaud
     
     @Schema(description = "Current therapies")
     private String therapies; // ADDED: Arnaud
     
-    @Schema(description = "prescription", maxLength = 255)
+    @Schema(description = "Prescription", maxLength = 255)
     private String prescription; // ADDED: Arnaud
     
     @NotNull
-    @Schema(description = "ward")
+    @Schema(description = "Ward")
     private WardDTO ward;
     
     public String getReason() {

@@ -54,7 +54,7 @@ public class MedicalDTO {
 	@Schema(description="The min quantity of the medical", example = "15")
 	private double minqty;
 	
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 	
 	public MedicalDTO() { }
