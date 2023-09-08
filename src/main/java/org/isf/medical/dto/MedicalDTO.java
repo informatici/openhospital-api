@@ -27,50 +27,51 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalDTO {
 
-	@Schema(description="The id of the medical", example = "1", maxLength = 5)
+	@Schema(description = "The id of the medical", example = "1", maxLength = 5)
 	private Integer code;
-	
-	@Schema(description="The product code", example = "PARA")
+
+	@Schema(description = "The product code", example = "PARA")
 	private String prod_code;
-	
-	@Schema(description="The medical type")
+
+	@Schema(description = "The medical type")
 	private MedicalTypeDTO type;
-	
-	@Schema(description="The description of the medical", example = "Paracétamol", maxLength = 100)
+
+	@Schema(description = "The description of the medical", example = "Paracétamol", maxLength = 100)
 	private String description;
-	
-	@Schema(description="The initial quantity of the medical", example = "21")
+
+	@Schema(description = "The initial quantity of the medical", example = "21")
 	private double initialqty;
-	
-	@Schema(description="The number of pieces per packet", example = "100")
+
+	@Schema(description = "The number of pieces per packet", example = "100")
 	private Integer pcsperpck;
-	
-	@Schema(description="The input quantity of the medical", example = "340")
+
+	@Schema(description = "The input quantity of the medical", example = "340")
 	private double inqty;
-	
-	@Schema(description="The out quantity of the medical", example = "8")
+
+	@Schema(description = "The out quantity of the medical", example = "8")
 	private double outqty;
-	
-	@Schema(description="The min quantity of the medical", example = "15")
+
+	@Schema(description = "The min quantity of the medical", example = "15")
 	private double minqty;
-	
+
 	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
-	public MedicalDTO() { }
-	
+
+	public MedicalDTO() {
+	}
+
 	/**
 	 * Constructor
 	 */
-	public MedicalDTO(Integer code, MedicalTypeDTO type, String prod_code, String description,
-			double initialqty, Integer pcsperpck, double minqty, double inqty, double outqty) {
+	public MedicalDTO(Integer code, MedicalTypeDTO type, String prod_code, String description, double initialqty,
+			Integer pcsperpck, double minqty, double inqty, double outqty) {
 		this.code = code;
 		this.type = type;
 		this.prod_code = prod_code;
 		this.description = description;
 		this.initialqty = initialqty;
 		this.pcsperpck = pcsperpck;
-		this.minqty=minqty;
+		this.minqty = minqty;
 		this.inqty = inqty;
 		this.outqty = outqty;
 	}

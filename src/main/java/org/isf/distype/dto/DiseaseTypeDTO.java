@@ -34,7 +34,7 @@ public class DiseaseTypeDTO {
 
 	@NotNull
 	@Schema(description = "Disease type description", maxLength = 110)
-    private String description;
+	private String description;
 
 	public String getCode() {
 		return this.code;

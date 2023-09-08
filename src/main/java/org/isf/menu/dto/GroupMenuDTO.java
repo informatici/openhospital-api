@@ -27,15 +27,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GroupMenuDTO {
 
-	@Schema(description="Code of the group menu", example = "1", maxLength = 50)
+	@Schema(description = "Code of the group menu", example = "1", maxLength = 50)
 	private Integer code;
-	
+
 	@NotNull
-	@Schema(description="The related user group's code", example = "labo", maxLength = 50)
+	@Schema(description = "The related user group's code", example = "labo", maxLength = 50)
 	private String userGroup;
-	
+
 	@NotNull
-	@Schema(description="The related menu item's code", example = "admtype")
+	@Schema(description = "The related menu item's code", example = "admtype")
 	private String menuItem;
 
 	public GroupMenuDTO() {

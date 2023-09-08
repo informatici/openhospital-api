@@ -60,7 +60,7 @@ public class WardDTO {
 
 	@NotNull
 	private boolean isFemale;
-	
+
 	private boolean isOpd;
 
 	@NotNull
@@ -68,7 +68,7 @@ public class WardDTO {
 
 	@Schema(description = "lock", example = "0")
 	private Integer lock;
-	
+
 	public String getCode() {
 		return this.code;
 	}

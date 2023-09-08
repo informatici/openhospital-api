@@ -28,13 +28,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Class representing a vaccine type")
 public class VaccineTypeDTO {
 
-    @NotNull
-    @Schema(description = "Code of the vaccine type", example="C", maxLength = 1)
-    private String code;
+	@NotNull
+	@Schema(description = "Code of the vaccine type", example = "C", maxLength = 1)
+	private String code;
 
-    @NotNull
-    @Schema(description = "Description of the vaccine type", example="Child", maxLength = 50)
-    private String description;
+	@NotNull
+	@Schema(description = "Description of the vaccine type", example = "Child", maxLength = 50)
+	private String description;
 
 	public String getCode() {
 		return this.code;

@@ -133,9 +133,9 @@ public class AdmissionDTO {
 
 	@Schema(description = "User id")
 	private String userID;
-	
+
 	private int hashCode;
-	
+
 	@Schema(description = "Lock", example = "0")
 	private int lock;
 
@@ -323,6 +323,7 @@ public class AdmissionDTO {
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
 	}
+
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}

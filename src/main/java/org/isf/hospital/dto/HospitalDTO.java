@@ -25,102 +25,102 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class HospitalDTO {
 
-    @Schema(description = "Hospital Code", example = "STLUKE", maxLength = 10)
-    private String code;
+	@Schema(description = "Hospital Code", example = "STLUKE", maxLength = 10)
+	private String code;
 
-    @Schema(description = "Hospital Description", example = "St. Luke HOSPITAL - Angal", maxLength = 255)
-    private String description;
+	@Schema(description = "Hospital Description", example = "St. Luke HOSPITAL - Angal", maxLength = 255)
+	private String description;
 
-    @Schema(description = "Hospital Address", example = "Hospital Address", maxLength = 255)
-    private String address;
+	@Schema(description = "Hospital Address", example = "Hospital Address", maxLength = 255)
+	private String address;
 
-    @Schema(description = "Hospital City", example = "Hospital City", maxLength = 255)
-    private String city;
+	@Schema(description = "Hospital City", example = "Hospital City", maxLength = 255)
+	private String city;
 
-    @Schema(description = "Hospital Telephone", example = "+123 0123456789", maxLength = 50)
-    private String telephone;
+	@Schema(description = "Hospital Telephone", example = "+123 0123456789", maxLength = 50)
+	private String telephone;
 
-    @Schema(description = "Hospital Fax", example = "+123 0123456789", maxLength = 50)
-    private String fax;
+	@Schema(description = "Hospital Fax", example = "+123 0123456789", maxLength = 50)
+	private String fax;
 
-    @Schema(description = "Hospital Email", example = "hospital@isf.email.xx", maxLength = 50)
-    private String email;
+	@Schema(description = "Hospital Email", example = "hospital@isf.email.xx", maxLength = 50)
+	private String email;
 
-    @Schema(description = "Hospital Currency Cod", example = "EUR", maxLength = 3)
-    private String currencyCod;
-    
-    @Schema(description = "Lock", example = "0")
-    private int lock;
+	@Schema(description = "Hospital Currency Cod", example = "EUR", maxLength = 3)
+	private String currencyCod;
 
-    public int getLock() {
-        return lock;
-    }
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	public int getLock() {
+		return lock;
+	}
 
-    public String getCode() {
-        return this.code;
-    }
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public String getDescription() {
-        return this.description;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public String getAddress() {
-        return this.address;
-    }
+	public String getDescription() {
+		return this.description;
+	}
 
-    public String getCity() {
-        return this.city;
-    }
+	public String getAddress() {
+		return this.address;
+	}
 
-    public String getTelephone() {
-        return this.telephone;
-    }
+	public String getCity() {
+		return this.city;
+	}
 
-    public String getFax() {
-        return this.fax;
-    }
+	public String getTelephone() {
+		return this.telephone;
+	}
 
-    public String getEmail() {
-        return this.email;
-    }
+	public String getFax() {
+		return this.fax;
+	}
 
-    public String getCurrencyCod() {
-        return this.currencyCod;
-    }
+	public String getEmail() {
+		return this.email;
+	}
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+	public String getCurrencyCod() {
+		return this.currencyCod;
+	}
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setCode(String code) {
+		this.code = code;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-    public void setFax(String fax) {
-        this.fax = fax;
-    }
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
 
-    public void setCurrencyCod(String currencyCod) {
-        this.currencyCod = currencyCod;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setCurrencyCod(String currencyCod) {
+		this.currencyCod = currencyCod;
+	}
 }

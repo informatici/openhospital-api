@@ -126,6 +126,7 @@ public class VisitDTO {
 
 	@Override
 	public String toString() {
-		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms + '}';
+		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms
+				+ '}';
 	}
 }

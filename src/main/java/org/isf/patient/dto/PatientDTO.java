@@ -66,7 +66,7 @@ public class PatientDTO {
 	@NotNull
 	@Schema(description = "City", example = "Verona", maxLength = 50)
 	private String city;
-	
+
 	@Schema(description = "NextKin", example = "John Doe", maxLength = 50)
 	private String nextKin;
 
@@ -91,7 +91,8 @@ public class PatientDTO {
 	private char father;
 
 	@NotNull
-	@Schema(description = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = { "0-", "0+", "A-", "A+","B-", "B+", "AB-", "AB+" }, example = "A+")
+	@Schema(description = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = { "0-", "0+", "A-", "A+", "B-",
+			"B+", "AB-", "AB+" }, example = "A+")
 	private String bloodType;
 
 	@Schema(description = "HasInsurance (Y=Yes, N=no)", allowableValues = { "Y", "N" }, example = "N")
@@ -248,7 +249,6 @@ public class PatientDTO {
 		return this.taxCode;
 	}
 
-
 	public void setCode(Integer code) {
 		this.code = code;
 	}
@@ -329,7 +329,6 @@ public class PatientDTO {
 		this.lock = lock;
 	}
 
-
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
 	}
@@ -358,16 +357,12 @@ public class PatientDTO {
 		this.fatherName = fatherName;
 	}
 
-
 	public byte[] getBlobPhoto() {
 		return blobPhoto;
 	}
 
-
 	public void setBlobPhoto(byte[] blobPhoto) {
 		this.blobPhoto = blobPhoto;
 	}
-
-
 
 }

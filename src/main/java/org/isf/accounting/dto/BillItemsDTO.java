@@ -30,37 +30,37 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 public class BillItemsDTO {
 
 	private Integer id;
-	
-	@Schema(description = "Bill id", example="")
+
+	@Schema(description = "Bill id", example = "")
 	private Integer billId;
 
-	@Schema(description = "Check if it is a price", example="true")
+	@Schema(description = "Check if it is a price", example = "true")
 	private boolean isPrice;
 
 	@NotNull
-	@Schema(description = "The price Id", example="104")
+	@Schema(description = "The price Id", example = "104")
 	private String priceId;
-	
+
 	@NotNull
-	@Schema(description = "Item description", example="Acetone 99 % 1ltr")
+	@Schema(description = "Item description", example = "Acetone 99 % 1ltr")
 	private String itemDescription;
 
 	@NotNull
-	@Schema(description = "Item amount", example="1000")
+	@Schema(description = "Item amount", example = "1000")
 	private double itemAmount;
-	
+
 	@NotNull
-	@Schema(description = "Item quantity", example="1")
+	@Schema(description = "Item quantity", example = "1")
 	private int itemQuantity;
-	
+
 	@NotNull
-	@Schema(description = "Item display code", example="Acetone")
+	@Schema(description = "Item display code", example = "Acetone")
 	private String itemDisplayCode;
-	
+
 	@NotNull
-	@Schema(description = "Item id", example="3")
+	@Schema(description = "Item id", example = "3")
 	private String itemId;
-	
+
 	private volatile int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)

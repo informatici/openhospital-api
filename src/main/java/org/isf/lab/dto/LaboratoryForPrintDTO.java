@@ -35,7 +35,7 @@ public class LaboratoryForPrintDTO {
 
 	@Schema(description = "Result of exam", type = "string")
 	private String result;
-	
+
 	@Schema(description = "Code")
 	private Integer code;
 

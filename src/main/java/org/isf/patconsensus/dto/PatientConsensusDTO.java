@@ -46,7 +46,6 @@ public class PatientConsensusDTO {
 		this.consensusFlag = consensusFlag;
 	}
 
-
 	public boolean isServiceFlag() {
 		return serviceFlag;
 	}

@@ -26,21 +26,21 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(description = "Class representing a price list")
 public class PriceListDTO {
-	
+
 	private int id;
 
-	@Schema(description = "The price list code", example="LISTE1", maxLength = 7)
+	@Schema(description = "The price list code", example = "LISTE1", maxLength = 7)
 	private String code;
-	
-	@Schema(description = "The name of the price list", example="default price list", maxLength = 50)
-    private String name;
-	
-	@Schema(description = "The price list description", example="default price list", maxLength = 100)
+
+	@Schema(description = "The name of the price list", example = "default price list", maxLength = 50)
+	private String name;
+
+	@Schema(description = "The price list description", example = "default price list", maxLength = 100)
 	private String description;
 
-	@Schema(description = "The currency", example="FCFA", maxLength = 10)
+	@Schema(description = "The currency", example = "FCFA", maxLength = 10)
 	private String currency;
-	
+
 	private int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)

@@ -30,23 +30,23 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(description = "Class representing a billPayment")
 public class BillPaymentsDTO {
-	
+
 	private Integer id;
 
 	@NotNull
-	@Schema(description = "Bill id", example="")
+	@Schema(description = "Bill id", example = "")
 	private Integer billId;
 
 	@NotNull
-	@Schema(description = "Date of payment", example="2020-03-19T14:58:00.000Z")
+	@Schema(description = "Date of payment", example = "2020-03-19T14:58:00.000Z")
 	private LocalDateTime date;
 
 	@NotNull
-	@Schema(description = "The payment amount", example="500")
+	@Schema(description = "The payment amount", example = "500")
 	private double amount;
 
 	@NotNull
-	@Schema(description = "The current user", example="admin")
+	@Schema(description = "The current user", example = "admin")
 	private String user;
 
 	private volatile int hashCode;
@@ -75,7 +75,7 @@ public class BillPaymentsDTO {
 	public int getHashCode() {
 		return hashCode;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}

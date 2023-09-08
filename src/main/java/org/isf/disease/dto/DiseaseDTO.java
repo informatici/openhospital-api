@@ -41,25 +41,25 @@ public class DiseaseDTO {
 
 	@NotNull
 	@Schema(description = "Disease type")
-	private DiseaseTypeDTO diseaseType; 
+	private DiseaseTypeDTO diseaseType;
 
 	@NotNull
-	@Schema(description = "Indicates whether the disease is an OPD disease", example="true")
+	@Schema(description = "Indicates whether the disease is an OPD disease", example = "true")
 	private boolean opdInclude;
 
 	@NotNull
-	@Schema(description = "Indicates whether the disease is an IPD-IN disease", example="true")
+	@Schema(description = "Indicates whether the disease is an IPD-IN disease", example = "true")
 	private boolean ipdInInclude;
 
 	@NotNull
-	@Schema(description = "Indicates whether the disease is an IPD-OUT disease", example="true")
+	@Schema(description = "Indicates whether the disease is an IPD-OUT disease", example = "true")
 	private boolean ipdOutInclude;
-	
+
 	private int hashCode;
-	
+
 	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
+
 	public int getLock() {
 		return lock;
 	}

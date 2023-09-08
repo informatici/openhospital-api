@@ -47,7 +47,7 @@ public class OperationDTO {
 
 	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
+
 	public int getLock() {
 		return lock;
 	}

@@ -32,11 +32,11 @@ public class PermissionDTO extends LitePermissionDTO {
 	@NotNull
 	@Schema(description = "The permission id")
 	private Integer id;
-	
+
 	@NotNull
 	@Schema(description = "The permission description", maxLength = 255)
 	private String description;
-	
+
 	@NotNull
 	@Schema(description = "The user group id")
 	private List<String> userGroupIds;

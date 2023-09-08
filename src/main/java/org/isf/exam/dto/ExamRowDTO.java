@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamRowDTO {
 
-    @Schema(description = "Exam Row Code", example = "999")
-    private int code;
+	@Schema(description = "Exam Row Code", example = "999")
+	private int code;
 
-    @Schema(description = "Exam Row Code", example = "NEGATIVE")
-    private String description;
+	@Schema(description = "Exam Row Code", example = "NEGATIVE")
+	private String description;
 
-    private ExamDTO exam;
+	private ExamDTO exam;
 
 	public int getCode() {
 		return this.code;

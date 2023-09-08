@@ -30,24 +30,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LotDTO {
 
-	@NotNull(message="The code is required")
-	@Schema(description="The lot's code", example = "LT001", maxLength = 50)
+	@NotNull(message = "The code is required")
+	@Schema(description = "The lot's code", example = "LT001", maxLength = 50)
 	private String code;
 
-	@NotNull(message="The preparation date is required")
-	@Schema(description="The preparation date", example = "2020-06-24", type = "string")
+	@NotNull(message = "The preparation date is required")
+	@Schema(description = "The preparation date", example = "2020-06-24", type = "string")
 	private LocalDate preparationDate;
 
-	@NotNull(message="The due date is required")
-	@Schema(description="The due date", example = "2021-06-24", type = "string")
+	@NotNull(message = "The due date is required")
+	@Schema(description = "The due date", example = "2021-06-24", type = "string")
 	private LocalDate dueDate;
 
-	@Schema(description="The lot's code", example = "750")
+	@Schema(description = "The lot's code", example = "750")
 	private BigDecimal cost;
-	
+
 	public LotDTO() {
 	}
-	
+
 	public LotDTO(String code, LocalDate preparationDate, LocalDate dueDate, BigDecimal cost) {
 		this.code = code;
 		this.preparationDate = preparationDate;

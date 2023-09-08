@@ -28,29 +28,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MovementTypeDTO {
 
 	@NotNull
-	@Schema(description="Code of the movement type", example = "D", maxLength = 10)
+	@Schema(description = "Code of the movement type", example = "D", maxLength = 10)
 	private String code;
-	
+
 	@NotNull
-	@Schema(description="Description of the movement type", example = "Damage", maxLength = 50)
+	@Schema(description = "Description of the movement type", example = "Damage", maxLength = 50)
 	private String description;
-	
+
 	@NotNull
-	@Schema(description="Type of the movement type", example = "-")
+	@Schema(description = "Type of the movement type", example = "-")
 	private String type;
-	
-	public MovementTypeDTO(){}
-    
-    /**
-     * @param code
-     * @param description
-     * @param type
-     */
-    public MovementTypeDTO(String code, String description, String type) {
-        this.code = code;
-        this.description = description;
-        this.type = type;
-    }
+
+	public MovementTypeDTO() {
+	}
+
+	/**
+	 * @param code
+	 * @param description
+	 * @param type
+	 */
+	public MovementTypeDTO(String code, String description, String type) {
+		this.code = code;
+		this.description = description;
+		this.type = type;
+	}
 
 	public String getCode() {
 		return this.code;

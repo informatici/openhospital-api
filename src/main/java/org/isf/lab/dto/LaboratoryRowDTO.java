@@ -23,19 +23,19 @@ package org.isf.lab.dto;
 
 public class LaboratoryRowDTO {
 
-    private Integer code;
+	private Integer code;
 
-    private LaboratoryDTO laboratory;
+	private LaboratoryDTO laboratory;
 
-    private String description;
+	private String description;
 
-    public LaboratoryRowDTO() {
-    }
+	public LaboratoryRowDTO() {
+	}
 
-    public LaboratoryRowDTO(String description, LaboratoryDTO labDTO) {
-        this.description = description;
-        this.laboratory = labDTO;
-    }
+	public LaboratoryRowDTO(String description, LaboratoryDTO labDTO) {
+		this.description = description;
+		this.laboratory = labDTO;
+	}
 
 	public Integer getCode() {
 		return this.code;

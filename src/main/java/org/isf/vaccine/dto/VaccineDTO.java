@@ -47,7 +47,8 @@ public class VaccineDTO {
 
 	@Override
 	public String toString() {
-		return "VaccineDTO{" + "code='" + code + '\'' + ", description='" + description + '\'' + ", vaccineType=" + vaccineType + '}';
+		return "VaccineDTO{" + "code='" + code + '\'' + ", description='" + description + '\'' + ", vaccineType="
+				+ vaccineType + '}';
 	}
 
 	public int getLock() {

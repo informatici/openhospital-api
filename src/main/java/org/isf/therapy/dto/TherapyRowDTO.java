@@ -31,58 +31,58 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TherapyRowDTO {
 
-	@Schema(description="The therapy's ID", example = "1")
+	@Schema(description = "The therapy's ID", example = "1")
 	private int therapyID;
 
-	@NotNull(message="The patient is required")
-	@Schema(description="The patient")
+	@NotNull(message = "The patient is required")
+	@Schema(description = "The patient")
 	private PatientDTO patID;
 
-	@NotNull(message="The start date is required")
-	@Schema(description="The start date of therapy", example = "2020-07-16T00:00:00", format = "LocalDateTime")
+	@NotNull(message = "The start date is required")
+	@Schema(description = "The start date of therapy", example = "2020-07-16T00:00:00", format = "LocalDateTime")
 	private LocalDateTime startDate;
 
-	@NotNull(message="The end date is required")
-	@Schema(description="The end date of the therapy", example = "2020-07-30T00:00:00", format = "LocalDateTime")
+	@NotNull(message = "The end date is required")
+	@Schema(description = "The end date of the therapy", example = "2020-07-30T00:00:00", format = "LocalDateTime")
 	private LocalDateTime endDate;
 
-	@NotNull(message="The medical's ID is required")
-	@Schema(description="The ID of the medical concerned by the therapy", example = "1")
+	@NotNull(message = "The medical's ID is required")
+	@Schema(description = "The ID of the medical concerned by the therapy", example = "1")
 	private int medicalId;
 
-	@NotNull(message="The quantity is required")
-	@Schema(description="The quantity of medicals", example = "48")
+	@NotNull(message = "The quantity is required")
+	@Schema(description = "The quantity of medicals", example = "48")
 	private Double qty;
 
-	@NotNull(message="The unit's ID is required")
-	@Schema(description="The unit's ID", example = "1")
+	@NotNull(message = "The unit's ID is required")
+	@Schema(description = "The unit's ID", example = "1")
 	private int unitID;
 
-	@NotNull(message="The frequency in day is required")
-	@Schema(description="The frequency in day", example = "2")
+	@NotNull(message = "The frequency in day is required")
+	@Schema(description = "The frequency in day", example = "2")
 	private int freqInDay;
 
-	@NotNull(message="The frequency in period is required")
-	@Schema(description="The frequency in period", example = "1")
+	@NotNull(message = "The frequency in period is required")
+	@Schema(description = "The frequency in period", example = "1")
 	private int freqInPeriod;
-	
-	@Schema(description="A note for the therapy", example = "Sample note", maxLength = 65535)		
+
+	@Schema(description = "A note for the therapy", example = "Sample note", maxLength = 65535)
 	private String note;
 
-	@NotNull(message="The notify flag is required")
-	@Schema(description="the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0")	
+	@NotNull(message = "The notify flag is required")
+	@Schema(description = "the notify flag: 1 if the notification need to be activated, 0 otherwise", example = "0")
 	private int notifyInt;
 
-	@NotNull(message="The sms flag is required")
-	@Schema(description="The sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0")	
+	@NotNull(message = "The sms flag is required")
+	@Schema(description = "The sms flag: 1 if sms need to be sent to patient, 0 otherwise", example = "0")
 	private int smsInt;
 
 	public TherapyRowDTO() {
 	}
 
-	public TherapyRowDTO(Integer therapyID, PatientDTO patID, LocalDateTime startDate, LocalDateTime endDate, Integer medicalId,
-			Double qty, Integer unitID, Integer freqInDay, Integer freqInPeriod, String note, Integer notifyInt,
-			Integer smsInt) {
+	public TherapyRowDTO(Integer therapyID, PatientDTO patID, LocalDateTime startDate, LocalDateTime endDate,
+			Integer medicalId, Double qty, Integer unitID, Integer freqInDay, Integer freqInPeriod, String note,
+			Integer notifyInt, Integer smsInt) {
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.startDate = startDate;

@@ -36,7 +36,7 @@ public class PregnantTreatmentTypeDTO {
 	@NotNull
 	@Schema(description = "The description", maxLength = 50)
 	private String description;
-	
+
 	private int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)
