@@ -37,7 +37,7 @@ public class DiseaseDTO {
 
 	@NotNull
 	@Schema(description = "Disease description", maxLength = 50)
-    private String description;
+	private String description;
 
 	@NotNull
 	@Schema(description = "Disease type")
