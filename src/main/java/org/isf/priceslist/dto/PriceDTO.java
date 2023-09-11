@@ -29,33 +29,32 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(description = "Class representing a prices")
-public class PriceDTO
-{
+public class PriceDTO {
 
 	private int id;
 
 	@NotNull
-	@Schema(description = "the price list")
-    private PriceList list;
+	@Schema(description = "The price list")
+	private PriceList list;
 
 	@NotNull
-	@Schema(description = "the group")
-    private String group;
+	@Schema(description = "The group")
+	private String group;
 
 	@NotNull
-	@Schema(description = "the item name")
-    private String item;
+	@Schema(description = "The item name", maxLength = 10)
+	private String item;
 
 	@NotNull
-	@Schema(description = "the description")
-    private String description;
+	@Schema(description = "The description", maxLength = 100)
+	private String description;
 
 	@NotNull
-	@Schema(description = "price", example="1500")
-    private Double price; 
-	
-    private boolean editable;
-	
+	@Schema(description = "Price", example = "1500")
+	private Double price;
+
+	private boolean editable;
+
 	private int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)
@@ -67,7 +66,7 @@ public class PriceDTO
 	public String toString() {
 		return description;
 	}
-	
+
 	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;

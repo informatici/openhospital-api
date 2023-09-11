@@ -31,61 +31,61 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PatientExaminationDTO {
 
-    @Schema(description = "Patient Examination Id", example = "1")
-    private int pex_ID;
+	@Schema(description = "Patient Examination Id", example = "1")
+	private int pex_ID;
 
-    @NotNull
-    @Schema(description = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", type ="string")
-    private LocalDateTime pex_date;
+	@NotNull
+	@Schema(description = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", type = "string")
+	private LocalDateTime pex_date;
 
-    @NotNull
-    @Schema(description = "Patient Examination Code")
-    private Integer patientCode;
+	@NotNull
+	@Schema(description = "Patient Examination Code")
+	private Integer patientCode;
 
-    @Schema(description = "Patient Height in cm")
-    private Integer pex_height;
+	@Schema(description = "Patient Height in cm")
+	private Integer pex_height;
 
-    @Schema(description = "Patient Weight in Kg")
-    private Double pex_weight;
+	@Schema(description = "Patient Weight in Kg")
+	private Double pex_weight;
 
-    @Schema(description = "Blood Pressure MIN in mmHg")
-    private Integer pex_ap_min;
+	@Schema(description = "Blood Pressure MIN in mmHg")
+	private Integer pex_ap_min;
 
-    @Schema(description = "Blood Pressure MAX in mmHg")
-    private Integer pex_ap_max;
+	@Schema(description = "Blood Pressure MAX in mmHg")
+	private Integer pex_ap_max;
 
-    @Schema(description = "Respiratory Rate in bpm")
-    private Integer pex_rr;
+	@Schema(description = "Respiratory Rate in bpm")
+	private Integer pex_rr;
 
-    @Schema(description = "Patient Temperature in °C")
-    private Double pex_temp;
+	@Schema(description = "Patient Temperature in °C")
+	private Double pex_temp;
 
-    @Schema(description = "Patient Saturation in %")
-    private Double pex_sat;
-    
-    @Schema(description = "Heart Rate in Apm")
-    private Integer pex_hr;
-    
-    @Nullable
-    @Schema(description = "patient ausculation", example="normal")
-    private Ausculation pex_auscultation;
-    
-    @Schema(description = "Hemo Glucose Test")
-    private Integer pex_hgt;
-    
-    @Schema(description = "Daily urine Volume in ml")
-    private Integer pex_diuresis;
-    
-    @Nullable
-    @Schema(description = "Diuresis description", example="physiological")
-    private Diurese pex_diuresis_desc;
-    
-    @Schema(description = "Examination Note")
-    private String pex_note;
-    
-    @Nullable
-    @Schema(description = "Bowel Function",example="regular")
-    private Bowel pex_bowel_desc;
+	@Schema(description = "Patient Saturation in %")
+	private Double pex_sat;
+
+	@Schema(description = "Heart Rate in Apm")
+	private Integer pex_hr;
+
+	@Nullable
+	@Schema(description = "Patient ausculation", example = "normal")
+	private Ausculation pex_auscultation;
+
+	@Schema(description = "Hemo Glucose Test")
+	private Integer pex_hgt;
+
+	@Schema(description = "Daily urine Volume in ml")
+	private Integer pex_diuresis;
+
+	@Nullable
+	@Schema(description = "Diuresis description", example = "physiological")
+	private Diurese pex_diuresis_desc;
+
+	@Schema(description = "Examination Note", maxLength = 2000)
+	private String pex_note;
+
+	@Nullable
+	@Schema(description = "Bowel Function", example = "regular")
+	private Bowel pex_bowel_desc;
 
 	public int getPex_ID() {
 		return this.pex_ID;

@@ -32,52 +32,52 @@ import org.isf.ward.dto.WardDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MovementWardDTO {
-	
-	@Schema(description="The movement ward's code", example="1")
+
+	@Schema(description = "The movement ward's code", example = "1")
 	private int code;
-	
+
 	@NotNull
-	@Schema(description="The ward")
+	@Schema(description = "The ward")
 	private WardDTO ward;
-	
+
 	@NotNull
-	@Schema(description="The movement ward's date", example="2020-06-07", format = "LocalDate")
+	@Schema(description = "The movement ward's date", example = "2020-06-07", format = "LocalDate")
 	private LocalDate date;
-	
+
 	@NotNull
-	@Schema(description="Indicates if the movement is associated to a patient or no ", example="false")
+	@Schema(description = "Indicates if the movement is associated to a patient or no ", example = "false")
 	private boolean isPatient;
-	
-	@Schema(description="The patient in case the movement is associated to a patient")
+
+	@Schema(description = "The patient in case the movement is associated to a patient")
 	private PatientDTO patient;
-	
-	@Schema(description="The patient's age in case the movement is associated to a patient", example="21")
+
+	@Schema(description = "The patient's age in case the movement is associated to a patient", example = "21")
 	private int age;
-	
-	@Schema(description="The patient's weight in case the movement is associated to a patient", example="75")
+
+	@Schema(description = "The patient's weight in case the movement is associated to a patient", example = "75")
 	private float weight;
-	
+
 	@NotNull
-	@Schema(description="The description of the movement", example="stock transfer from pharmacy to laboratory")
+	@Schema(description = "The description of the movement", example = "stock transfer from pharmacy to laboratory")
 	private String description;
-	
-	@Schema(description="The medical concerned by the movement")
+
+	@Schema(description = "The medical concerned by the movement")
 	private MedicalDTO medical;
-	
+
 	@NotNull
-	@Schema(description="The quantity of the medical concerned by the movement", example="145")
+	@Schema(description = "The quantity of the medical concerned by the movement", example = "145")
 	private Double quantity;
-	
+
 	@NotNull
-	@Schema(description="The measure's unit of the medical concerned by the movement", example="pct")
+	@Schema(description = "The measure's unit of the medical concerned by the movement", example = "pct")
 	private String units;
-	
-	@Schema(description="The ward to which the movement is done")
+
+	@Schema(description = "The ward to which the movement is done")
 	private WardDTO wardTo;
-	
-	@Schema(description="The ward from which the movement is done")
+
+	@Schema(description = "The ward from which the movement is done")
 	private WardDTO wardFrom;
-	
+
 	public MovementWardDTO() {
 	}
 

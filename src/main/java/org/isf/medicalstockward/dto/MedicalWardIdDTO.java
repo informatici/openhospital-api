@@ -31,13 +31,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class MedicalWardIdDTO {
 
 	@NotNull
-	@Schema(description="The ward")
+	@Schema(description = "The ward")
 	private WardDTO ward;
-	
+
 	@NotNull
-	@Schema(description="The medical")
+	@Schema(description = "The medical")
 	private MedicalDTO medical;
-	
+
 	public MedicalWardIdDTO() {
 	}
 

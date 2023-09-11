@@ -30,37 +30,37 @@ import org.isf.admission.dto.AdmissionDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MalnutritionDTO {
-	
-	@Schema(description="The code malnutrition control", example = "1")
+
+	@Schema(description = "The code malnutrition control", example = "1")
 	private int code;
 
-	@NotNull(message="The date of control is required")
-	@Schema(description="The date of this malnutrition control", example = "1979-05-01T11:20:33", type = "string")
+	@NotNull(message = "The date of control is required")
+	@Schema(description = "The date of this malnutrition control", example = "1979-05-01T11:20:33", type = "string")
 	private LocalDateTime dateSupp;
 
-	@Schema(description="The date of the next malnutrition control", example = "1979-05-01T11:20:33", type = "string")
+	@Schema(description = "The date of the next malnutrition control", example = "1979-05-01T11:20:33", type = "string")
 	private LocalDateTime dateConf;
 
-	@NotNull(message="The admission is required")
-	@Schema(description="The admission requesting the control")
+	@NotNull(message = "The admission is required")
+	@Schema(description = "The admission requesting the control")
 	private AdmissionDTO admission;
 
-	@NotNull(message="The height is required")
-	@Schema(description="The height of the patient", example="165")
+	@NotNull(message = "The height is required")
+	@Schema(description = "The height of the patient", example = "165")
 	private float height;
 
-	@NotNull(message="The weight is required")
-	@Schema(description="The weight of the patient", example="65")
+	@NotNull(message = "The weight is required")
+	@Schema(description = "The weight of the patient", example = "65")
 	private float weight;
-	
-	@Schema(description = "lock", example = "0")
+
+	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
-	public MalnutritionDTO() { }
-	
-	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp,
-			LocalDateTime aDateConf, AdmissionDTO anAdmission, float aHeight,
-			float aWeight) {
+
+	public MalnutritionDTO() {
+	}
+
+	public MalnutritionDTO(int aCode, LocalDateTime aDateSupp, LocalDateTime aDateConf, AdmissionDTO anAdmission,
+			float aHeight, float aWeight) {
 		code = aCode;
 		dateSupp = aDateSupp;
 		dateConf = aDateConf;

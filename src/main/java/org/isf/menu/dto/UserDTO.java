@@ -28,20 +28,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class UserDTO {
 
 	@NotNull
-	@Schema(description="the username (must be unique)", example = "John Doe")	
+	@Schema(description = "The username (must be unique)", example = "John Doe", maxLength = 50)
 	private String userName;
 
 	@NotNull
-	@Schema(description="the user's group")
+	@Schema(description = "The user's group")
 	private UserGroupDTO userGroupName;
 
 	@NotNull
-	@Schema(description="the user's password", example = "21@U2g423")
+	@Schema(description = "The user's password", example = "21@U2g423", maxLength = 50)
 	private String passwd;
 
-	@Schema(description="the user's description", example = "Lab chief technician")
+	@Schema(description = "The user's description", example = "Lab chief technician", maxLength = 128)
 	private String desc;
-	
+
 	public UserDTO() {
 	}
 

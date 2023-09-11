@@ -27,22 +27,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LaboratoryForPrintDTO {
 
-	@Schema(description = "exam name", type = "string")
+	@Schema(description = "Exam name", type = "string")
 	private String exam;
 
 	@Schema(description = "Laboratory Date", type = "string")
 	private LocalDateTime date;
 
-	@Schema(description = "result of exam", type = "string")
+	@Schema(description = "Result of exam", type = "string")
 	private String result;
-	
-	@Schema(description = "code")
+
+	@Schema(description = "Code")
 	private Integer code;
 
-	@Schema(description = "patient name", type = "string")
+	@Schema(description = "Patient name", type = "string")
 	private String patName;
 
-	@Schema(description = "patient code")
+	@Schema(description = "Patient code")
 	private Integer patientCode;
 
 	public String getExam() {

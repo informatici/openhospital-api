@@ -29,44 +29,44 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SmsDTO {
 
-	@Schema(description = "SMS Id", example="1")
+	@Schema(description = "SMS Id", example = "1")
 	private Integer smsId;
-	
+
 	@NotNull
-	@Schema(description = "SMS Date", example="2020-07-16T00:00:00", format ="LocalDateTime")
+	@Schema(description = "SMS Date", example = "2020-07-16T00:00:00", format = "LocalDateTime")
 	private LocalDateTime smsDate;
-	
+
 	@NotNull
-	@Schema(description = "SMS scheduled date", example="2020-07-28T00:00:00", type = "string")
+	@Schema(description = "SMS scheduled date", example = "2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSched;
-	
+
 	@NotNull
-	@Schema(description = "SMS target phone number", example="+237671302313")
+	@Schema(description = "SMS target phone number", example = "+237671302313", maxLength = 45)
 	private String smsNumber;
-	
+
 	@NotNull
-	@Schema(description = "SMS content text", example="Hi Mario.")
+	@Schema(description = "SMS content text", example = "Hi Mario.", maxLength = 160)
 	private String smsText;
-	
-	@Schema(description = "SMS sent date", example="2020-07-28T00:00:00", type = "string")
+
+	@Schema(description = "SMS sent date", example = "2020-07-28T00:00:00", type = "string")
 	private LocalDateTime smsDateSent;
-	
+
 	@NotNull
-	@Schema(description = "SMS user", example="Rosi")
+	@Schema(description = "SMS user", example = "Rosi", maxLength = 50)
 	private String smsUser;
-	
+
 	@NotNull
-	@Schema(description = "SMS module name", example="OPD")
+	@Schema(description = "SMS module name", example = "OPD", maxLength = 45)
 	private String module;
-	
-	@Schema(description = "SMS module Id")
+
+	@Schema(description = "SMS module Id", maxLength = 45)
 	private String moduleID;
 
 	public SmsDTO() {
 	}
 
-	public SmsDTO(Integer smsId, LocalDateTime smsDate, LocalDateTime smsDateSched, String smsNumber, String smsText, LocalDateTime smsDateSent,
-			String smsUser, String module, String moduleID) {
+	public SmsDTO(Integer smsId, LocalDateTime smsDate, LocalDateTime smsDateSched, String smsNumber, String smsText,
+			LocalDateTime smsDateSent, String smsUser, String module, String moduleID) {
 		this.smsId = smsId;
 		this.smsDate = smsDate;
 		this.smsDateSched = smsDateSched;

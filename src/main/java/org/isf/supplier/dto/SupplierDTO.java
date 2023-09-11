@@ -27,35 +27,35 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SupplierDTO {
 
-	@NotNull(message="supplier's ID is required")
-	@Schema(description="The supplier's ID", example = "111")
+	@NotNull(message = "supplier's ID is required")
+	@Schema(description = "The supplier's ID", example = "111")
 	private Integer supId;
-	
-	@NotNull(message="supplier's name is required")
-	@Schema(description="The supplier's name", example = "Cogefar")
+
+	@NotNull(message = "supplier's name is required")
+	@Schema(description = "The supplier's name", example = "Cogefar", maxLength = 100)
 	private String supName;
-	
-	@Schema(description="The supplier's address", example = "25 Rue Ministre, Dschang")
+
+	@Schema(description = "The supplier's address", example = "25 Rue Ministre, Dschang", maxLength = 150)
 	private String supAddress;
-	
-	@Schema(description="The supplier's tax code", example = "5221")
+
+	@Schema(description = "The supplier's tax code", example = "5221", maxLength = 50)
 	private String supTaxcode;
-	
-	@Schema(description="The supplier's phone", example = "+237654120145")
+
+	@Schema(description = "The supplier's phone", example = "+237654120145", maxLength = 20)
 	private String supPhone;
-	
-	@Schema(description="The supplier's fax number", example = "+237654120145")
+
+	@Schema(description = "The supplier's fax number", example = "+237654120145", maxLength = 20)
 	private String supFax;
-	
-	@Schema(description="The supplier's e-mail address", example = "suplier@sample.com")
+
+	@Schema(description = "The supplier's e-mail address", example = "suplier@sample.com", maxLength = 100)
 	private String supEmail;
-	
-	@Schema(description="The supplier's notes", example = "")
+
+	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
 	public SupplierDTO() {
 	}
-	
+
 	public SupplierDTO(Integer supId, String supName, String supAddress, String supTaxcode, String supPhone,
 			String supFax, String supEmail, String supNote) {
 		this.supId = supId;

@@ -31,51 +31,51 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Class representing a bill")
 public class BillDTO {
-	
+
 	private Integer id;
-	
-	private PatientDTO patient; 
-	
+
+	private PatientDTO patient;
+
 	private Integer listId;
 
 	@NotNull
-	@Schema(description = "Date of bill creation", example="2020-03-19T14:58:00.000Z", type ="string")
+	@Schema(description = "Date of bill creation", example = "2020-03-19T14:58:00.000Z", type = "string")
 	private LocalDateTime date;
-	
+
 	@NotNull
-	@Schema(description = "Date of bill updated", example="2020-03-19T14:58:00.000Z", type ="string")
+	@Schema(description = "Date of bill updated", example = "2020-03-19T14:58:00.000Z", type = "string")
 	private LocalDateTime update;
-	
+
 	@NotNull
-	@Schema(description = "boolean which tells if a price list is applied", example="true")
+	@Schema(description = "boolean which tells if a price list is applied", example = "true")
 	private boolean isList;
-	
+
 	@NotNull
-	@Schema(description = "Price list name", example="Basic")
+	@Schema(description = "Price list name", example = "Basic", maxLength = 50)
 	private String listName;
-	
+
 	@NotNull
-	@Schema(description = "Is bill belongs to a patient?", example="true")
+	@Schema(description = "Is bill belongs to a patient?", example = "true")
 	private boolean patientTrue;
-	
+
 	@NotNull
-	@Schema(description = "patient name", example="Mario Rossi")
+	@Schema(description = "Patient name", example = "Mario Rossi", maxLength = 100)
 	private String patName;
-	
+
 	@NotNull
-	@Schema(description = "Bill status", example="O")
+	@Schema(description = "Bill status", example = "O")
 	private String status;
 
 	@NotNull
-	@Schema(description = "Bill Amount", example="1000")
+	@Schema(description = "Bill Amount", example = "1000")
 	private Double amount;
-	
+
 	@NotNull
-	@Schema(description = "Bill balance", example="1500")
+	@Schema(description = "Bill balance", example = "1500")
 	private Double balance;
-	
+
 	@NotNull
-	@Schema(description = "user name who create the bill", example="admin")
+	@Schema(description = "user name who create the bill", example = "admin")
 	private String user;
 
 	public Integer getId() {

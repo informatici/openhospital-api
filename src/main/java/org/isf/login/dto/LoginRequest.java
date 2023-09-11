@@ -28,11 +28,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class LoginRequest {
 
 	@NotNull
-	@Schema(description = "username", example = "admin")
+	@Schema(description = "User Name", example = "admin")
 	private String username;
 
 	@NotNull
-	@Schema(description = "password of user", example = "admin")
+	@Schema(description = "Password of user", example = "admin")
 	private String password;
 
 	public String getUsername() {

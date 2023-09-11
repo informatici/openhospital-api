@@ -29,14 +29,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author antonio
  */
 public class AdmissionTypeDTO {
-	
+
 	@NotNull
-	@Schema(description = "code of the admission type", example="A")
+	@Schema(description = "Code of the admission type", example = "A")
 	private String code;
-	
+
 	@NotNull
-	@Schema(description = "description of the admission type", example="AMBULANCE")
-    private String description;
+	@Schema(description = "Description of the admission type", example = "AMBULANCE", maxLength = 50)
+	private String description;
 
 	public String getCode() {
 		return this.code;

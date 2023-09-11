@@ -29,41 +29,41 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TherapyDTO {
 
-	@Schema(description="The therapy's ID", example = "1")
+	@Schema(description = "The therapy's ID", example = "1")
 	private Integer therapyID;
-	
-	@Schema(description="The patient's ID", example = "1")
+
+	@Schema(description = "The patient's ID", example = "1")
 	private Integer patID;
-	
-	@Schema(description="The dates of the therapy", type ="string[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]")
+
+	@Schema(description = "The dates of the therapy", type = "string[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]")
 	private LocalDateTime[] dates;
-	
-	@Schema(description="The medical associated to the therapy")
+
+	@Schema(description = "The medical associated to the therapy")
 	private MedicalDTO medical;
-	
-	@Schema(description="The quantity of the medical", example = "48")
+
+	@Schema(description = "The quantity of the medical", example = "48")
 	private Double qty;
-	
-	@Schema(description="The units")
+
+	@Schema(description = "The units")
 	private String units;
-	
-	@Schema(description="The frequency in day", example = "2")
+
+	@Schema(description = "The frequency in day", example = "2")
 	private Integer freqInDay;
-	
-	@Schema(description="A note for the therapy", example = "Sample note")
+
+	@Schema(description = "A note for the therapy", example = "Sample note", maxLength = 65535)
 	private String note;
-	
-	@Schema(description="the notify flag: true if the notification need to be activated, false otherwise", example = "false")	
+
+	@Schema(description = "The notify flag: true if the notification need to be activated, false otherwise", example = "false")
 	private boolean notify;
-	
-	@Schema(description="the sms flag: true if sms need to be sent to patient, false otherwise", example = "false")
+
+	@Schema(description = "The sms flag: true if sms need to be sent to patient, false otherwise", example = "false")
 	private boolean sms;
 
 	public TherapyDTO() {
 	}
 
-	public TherapyDTO(Integer therapyID, Integer patID, LocalDateTime[] dates, MedicalDTO medical, Double qty, String units,
-			Integer freqInDay, String note, boolean notify, boolean sms) {
+	public TherapyDTO(Integer therapyID, Integer patID, LocalDateTime[] dates, MedicalDTO medical, Double qty,
+			String units, Integer freqInDay, String note, boolean notify, boolean sms) {
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.dates = dates;

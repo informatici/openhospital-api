@@ -44,19 +44,19 @@ public class VisitDTO {
 	@Schema(description = "Date of the visit", example = "2020-03-19T14:58:00", type = "string")
 	private LocalDateTime date;
 
-	@Schema(description = "Note of the visit")
+	@Schema(description = "Note of the visit", maxLength = 65535)
 	private String note;
 
 	@Schema(description = "Sms of the visit")
 	private boolean sms;
 
-	@Schema(description = "ward of the visit")
+	@Schema(description = "Ward of the visit")
 	private WardDTO ward;
 
-	@Schema(description = "duration of the visit")
+	@Schema(description = "Duration of the visit")
 	private Integer duration;
 
-	@Schema(description = "service done during the visit")
+	@Schema(description = "Service done during the visit", maxLength = 45)
 	private String service;
 
 	// @ApiModelProperty(hidden=true)
@@ -126,6 +126,7 @@ public class VisitDTO {
 
 	@Override
 	public String toString() {
-		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms + '}';
+		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms
+				+ '}';
 	}
 }

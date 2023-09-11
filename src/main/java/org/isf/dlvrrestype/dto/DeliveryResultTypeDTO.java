@@ -28,11 +28,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class DeliveryResultTypeDTO {
 
 	@NotNull
-	@Schema(description = "code of the delivery result type", example = "M")
+	@Schema(description = "Code of the delivery result type", example = "M")
 	private String code;
 
 	@NotNull
-	@Schema(description = "description of the delivery result type", example = "MORTALITÉ MATERNELLE")
+	@Schema(description = "Description of the delivery result type", example = "MORTALITÉ MATERNELLE", maxLength = 50)
 	private String description;
 
 	public String getCode() {

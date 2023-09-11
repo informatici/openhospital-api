@@ -32,16 +32,16 @@ public class AgeTypeDTO {
 	private String code;
 
 	@NotNull
-	@Schema(description = "Age type description")
-    private String description;
-
-	@NotNull	
-	@Schema(description = "The minimum value of the range", example="0")
-    private int from;
+	@Schema(description = "Age type description", maxLength = 100)
+	private String description;
 
 	@NotNull
-	@Schema(description = "The maximum value of the range", example="0")
-    private int to;
+	@Schema(description = "The minimum value of the range", example = "0")
+	private int from;
+
+	@NotNull
+	@Schema(description = "The maximum value of the range", example = "0")
+	private int to;
 
 	public String getCode() {
 		return this.code;

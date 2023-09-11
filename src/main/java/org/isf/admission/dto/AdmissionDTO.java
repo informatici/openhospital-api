@@ -43,86 +43,86 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
  */
 public class AdmissionDTO {
 
-	@Schema(description = "admission key", example = "12")
+	@Schema(description = "Admission key", example = "12")
 	private int id;
 
 	@NotNull
-	@Schema(description = "if admitted or not", example = "0")
+	@Schema(description = "If admitted or not", example = "0")
 	private int admitted;
 
 	@NotNull
-	@Schema(description = "type of admission", example = "N")
+	@Schema(description = "Type of admission", example = "N")
 	private String type;
 
-	@Schema(description = "ward")
+	@Schema(description = "Ward")
 	private WardDTO ward;
 
 	@NotNull
-	@Schema(description = "a progr. in year for each ward", example = "1")
+	@Schema(description = "A progr. in year for each ward", example = "1")
 	private int yProg;
 
-	@Schema(description = "patient")
+	@Schema(description = "Patient")
 	private PatientDTO patient;
 
 	@NotNull
-	@Schema(description = "admission date", type = "string")
+	@Schema(description = "Admission date", type = "string")
 	private LocalDateTime admDate;
 
-	@Schema(description = "admission type")
+	@Schema(description = "Admission type")
 	private AdmissionTypeDTO admType;
 
 	@Schema(description = "FromHealthUnit")
 	private String FHU;
 
-	@Schema(description = "disease in ")
+	@Schema(description = "Disease in ")
 	private DiseaseDTO diseaseIn;
 
-	@Schema(description = "disease out ")
+	@Schema(description = "Disease out ")
 	private DiseaseDTO diseaseOut1;
 
-	@Schema(description = "disease out ")
+	@Schema(description = "Disease out ")
 	private DiseaseDTO diseaseOut2;
 
-	@Schema(description = "disease out ")
+	@Schema(description = "Disease out ")
 	private DiseaseDTO diseaseOut3;
 
-	@Schema(description = "operation ")
+	@Schema(description = "Operation ")
 	private OperationDTO operation;
 
-	@Schema(description = "operation date", type = "string")
+	@Schema(description = "Operation date", type = "string")
 	private LocalDateTime opDate;
 
-	@Schema(description = "operation result value is 'P' or 'N' ", example = "N")
+	@Schema(description = "Operation result value is 'P' or 'N' ", example = "N")
 	private String opResult;
 
-	@Schema(description = "discharge date", type = "string")
+	@Schema(description = "Discharge date", type = "string")
 	private LocalDateTime disDate;
 
-	@Schema(description = "disChargeType")
+	@Schema(description = "DisChargeType")
 	private DischargeTypeDTO disType;
 
-	@Schema(description = "free note")
+	@Schema(description = "Free note", maxLength = 65535)
 	private String note;
 
-	@Schema(description = "transfusional unit")
+	@Schema(description = "Transfusional unit")
 	private Float transUnit;
 
-	@Schema(description = "visit date", type = "string")
+	@Schema(description = "Visit date", type = "string")
 	private LocalDateTime visitDate;
 
-	@Schema(description = "treatmentType ")
+	@Schema(description = "TreatmentType ")
 	private PregnantTreatmentTypeDTO pregTreatmentType;
 
-	@Schema(description = "delivery date", type = "string")
+	@Schema(description = "Delivery date", type = "string")
 	private LocalDateTime deliveryDate;
 
-	@Schema(description = "delivery type")
+	@Schema(description = "Delivery type")
 	private DeliveryTypeDTO deliveryType;
 
-	@Schema(description = "delivery type ")
+	@Schema(description = "Delivery result type")
 	private DeliveryResultTypeDTO deliveryResult;
 
-	@Schema(description = "weight")
+	@Schema(description = "Weight")
 	private Float weight;
 
 	private LocalDateTime ctrlDate1;
@@ -131,16 +131,16 @@ public class AdmissionDTO {
 
 	private LocalDateTime abortDate;
 
-	@Schema(description = "weight")
+	@Schema(description = "User id")
 	private String userID;
-	
+
 	private int hashCode;
-	
-	@Schema(description = "lock", example = "0")
+
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	@NotNull
-	@Schema(description = "flag record deleted, values are 'Y' OR 'N' ", example = "N")
+	@Schema(description = "Flag record deleted, values are 'Y' OR 'N' ", example = "N")
 	private String deleted;
 
 	public int getId() {
@@ -323,6 +323,7 @@ public class AdmissionDTO {
 	public void setDiseaseOut3(DiseaseDTO diseaseOut3) {
 		this.diseaseOut3 = diseaseOut3;
 	}
+
 	public void setOperation(OperationDTO operation) {
 		this.operation = operation;
 	}

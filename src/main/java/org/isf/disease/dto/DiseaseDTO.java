@@ -32,34 +32,34 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 public class DiseaseDTO {
 
 	@NotNull
-	@Schema(description = "Disease code", example = "99")
+	@Schema(description = "Disease code", example = "99", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "Disease description")
-    private String description;
+	@Schema(description = "Disease description", maxLength = 50)
+	private String description;
 
 	@NotNull
 	@Schema(description = "Disease type")
-	private DiseaseTypeDTO diseaseType; 
+	private DiseaseTypeDTO diseaseType;
 
 	@NotNull
-	@Schema(description = "indicates whether the disease is an OPD disease", example="true")
+	@Schema(description = "Indicates whether the disease is an OPD disease", example = "true")
 	private boolean opdInclude;
 
 	@NotNull
-	@Schema(description = "indicates whether the disease is an IPD-IN disease", example="true")
+	@Schema(description = "Indicates whether the disease is an IPD-IN disease", example = "true")
 	private boolean ipdInInclude;
 
 	@NotNull
-	@Schema(description = "indicates whether the disease is an IPD-OUT disease", example="true")
+	@Schema(description = "Indicates whether the disease is an IPD-OUT disease", example = "true")
 	private boolean ipdOutInclude;
-	
+
 	private int hashCode;
-	
-	@Schema(description = "lock", example = "0")
+
+	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
+
 	public int getLock() {
 		return lock;
 	}

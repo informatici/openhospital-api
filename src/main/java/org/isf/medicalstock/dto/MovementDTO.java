@@ -34,41 +34,41 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MovementDTO {
 
-	@Schema(description="The movement code", example = "1")
+	@Schema(description = "The movement code", example = "1")
 	private int code;
 
-	@NotNull(message="The medical is required")
-	@Schema(description="The related medical")
+	@NotNull(message = "The medical is required")
+	@Schema(description = "The related medical")
 	private MedicalDTO medical;
 
-	@NotNull(message="The movement type is required")
-	@Schema(description="The movement type")
+	@NotNull(message = "The movement type is required")
+	@Schema(description = "The movement type")
 	private MovementTypeDTO type;
 
-	@Schema(description="The target ward")
+	@Schema(description = "The target ward")
 	private WardDTO ward;
 
-	@Schema(description="The lot")
+	@Schema(description = "The lot")
 	private LotDTO lot;
 
-	@NotNull(message="the movement's date is required")
-	@Schema(description="The movement date", example = "2020-06-24", type = "string")
+	@NotNull(message = "the movement's date is required")
+	@Schema(description = "The movement date", example = "2020-06-24", type = "string")
 	private LocalDate date;
 
-	@NotNull(message="the movement's medical quantity is required")
-	@Schema(description="The movement's medical quantity", example = "50")
+	@NotNull(message = "the movement's medical quantity is required")
+	@Schema(description = "The movement's medical quantity", example = "50")
 	private int quantity;
 
-	@Schema(description="The movement's supplier")
+	@Schema(description = "The movement's supplier")
 	private SupplierDTO supplier;
-	
-	@NotNull(message="the movement reference is required")
-	@Schema(description="The movement reference", example = "MVN152445")
+
+	@NotNull(message = "the movement reference is required")
+	@Schema(description = "The movement reference", example = "MVN152445")
 	private String refNo;
-	
+
 	public MovementDTO() {
 	}
-	
+
 	public MovementDTO(int code, MedicalDTO medical, MovementTypeDTO type, WardDTO ward, LotDTO lot, LocalDate date,
 			int quantity, SupplierDTO supplier, String refNo) {
 		this.code = code;

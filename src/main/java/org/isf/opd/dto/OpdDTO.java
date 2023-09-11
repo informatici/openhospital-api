@@ -35,288 +35,288 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
  * @author gildas
  */
 public class OpdDTO {
-    
-    @Schema(description = "the code of the opd", example="3")
-    private int code;
 
-    @Schema(description = "the date of the admission", type = "string")
-    private LocalDateTime date;
+	@Schema(description = "The code of the opd", example = "3")
+	private int code;
 
-    @Schema(description = "the next visit date", type = "string")
-    private LocalDateTime nextVisitDate;
+	@Schema(description = "The date of the admission", type = "string")
+	private LocalDateTime date;
 
-    @Schema(description = "the admitted patient code")
-    private Integer patientCode;
+	@Schema(description = "The next visit date", type = "string")
+	private LocalDateTime nextVisitDate;
 
-    @NotNull
-    @Schema(description = "the patient age", example = "18")
-    private int age;
+	@Schema(description = "The admitted patient code")
+	private Integer patientCode;
 
-    @NotNull
-    @Schema(description = "the patient sex", example = "M")
-    private char sex;
-    
-    //@NotNull
-    @Schema(description = "the patient sex", example = "M")
-    private String patientName;
-    
-    @Schema(description = "Age type", example="null")
-    private String ageType; // ADDED: Arnaud
+	@NotNull
+	@Schema(description = "The patient age", example = "18")
+	private int age;
 
-    @NotNull
-    @Schema(description = "the admission note", example = "this is out patient")
-    private String note; // ADDED: Alex
+	@NotNull
+	@Schema(description = "The patient sex", example = "M")
+	private char sex;
 
-    //@NotNull
-    @Schema(description = "a progr. in year for each ward", example = "18")
-    private int prog_year;
+	// @NotNull
+	@Schema(description = "The patient sex", example = "M")
+	private String patientName;
 
-    @Schema(description = "disease")
-    private DiseaseDTO disease;
+	@Schema(description = "Age type", example = "null")
+	private String ageType; // ADDED: Arnaud
 
-    @Schema(description = "disease 2")
-    private DiseaseDTO disease2;
+	@NotNull
+	@Schema(description = "The admission note", example = "this is out patient", maxLength = 65535)
+	private String note; // ADDED: Alex
 
-    @Schema(description = "disease 3")
-    private DiseaseDTO disease3;
+	// @NotNull
+	@Schema(description = "A progr. in year for each ward", example = "18")
+	private int prog_year;
 
-    @NotNull
-    @Schema(description = "new(N) or reattendance(R) patient", example = "N")
-    private char newPatient; // n=NEW R=REATTENDANCE
+	@Schema(description = "Disease")
+	private DiseaseDTO disease;
 
-    @Schema(description = "referral from another unit", example = "R")
-    private String referralFrom; // R=referral from another unit; null=no referral from
+	@Schema(description = "Disease 2")
+	private DiseaseDTO disease2;
 
-    @Schema(description = "referral to another unit", example = "R")
-    private String referralTo; // R=referral to another unit; null=no referral to
+	@Schema(description = "Disease 3")
+	private DiseaseDTO disease3;
 
-    @Schema(description = "user id")
-    private String userID;
+	@NotNull
+	@Schema(description = "New(N) or Reattendance(R) patient", example = "N")
+	private char newPatient; // n=NEW R=REATTENDANCE
 
-    @Schema(description = "lock", example = "0")
-    private int lock;
-    
-    private int hashCode;
-    
-    @Schema(description = "reasons for entry")
-    private String reason; // ADDED: Arnaud
-    
-    @Schema(description = "history of a medical or psychiatric patient")
-    private String anamnesis; // ADDED: Arnaud
-    
-    @Schema(description = "allergies of patient")
-    private String allergies; // ADDED: Arnaud
-    
-    @Schema(description = "Current therapies")
-    private String therapies; // ADDED: Arnaud
-    
-    @Schema(description = "prescription")
-    private String prescription; // ADDED: Arnaud
-    
-    @NotNull
-    @Schema(description = "ward")
-    private WardDTO ward;
-    
-    public String getReason() {
-        return reason;
-    }
+	@Schema(description = "Referral from another unit", example = "R")
+	private String referralFrom; // R=referral from another unit; null=no referral from
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+	@Schema(description = "Referral to another unit", example = "R")
+	private String referralTo; // R=referral to another unit; null=no referral to
 
-    public String getAnamnesis() {
-        return anamnesis;
-    }
+	@Schema(description = "User id")
+	private String userID;
 
-    public void setAnamnesis(String anamnesis) {
-        this.anamnesis = anamnesis;
-    }
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
-    public String getAllergies() {
-        return allergies;
-    }
+	private int hashCode;
 
-    public void setAllergies(String allergies) {
-        this.allergies = allergies;
-    }
+	@Schema(description = "Reasons for entry")
+	private String reason; // ADDED: Arnaud
 
-    public String getTherapies() {
-        return therapies;
-    }
+	@Schema(description = "History of a medical or psychiatric patient")
+	private String anamnesis; // ADDED: Arnaud
 
-    public void setTherapies(String therapies) {
-        this.therapies = therapies;
-    }
+	@Schema(description = "Allergies of patient")
+	private String allergies; // ADDED: Arnaud
 
-    public String getPrescription() {
-        return prescription;
-    }
+	@Schema(description = "Current therapies")
+	private String therapies; // ADDED: Arnaud
 
-    public void setPrescription(String prescription) {
-        this.prescription = prescription;
-    }
+	@Schema(description = "Prescription", maxLength = 255)
+	private String prescription; // ADDED: Arnaud
 
-    @Schema(accessMode = AccessMode.READ_ONLY)
-    public int getLock() {
-        return lock;
-    }
+	@NotNull
+	@Schema(description = "Ward")
+	private WardDTO ward;
 
-    @Schema(accessMode = AccessMode.READ_ONLY)
-    public int getHashCode() {
-        return hashCode;
-    }
+	public String getReason() {
+		return reason;
+	}
 
-    public void setLock(int lock) {
-        this.lock = lock;
-    }
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
 
-    public int getCode() {
-        return this.code;
-    }
+	public String getAnamnesis() {
+		return anamnesis;
+	}
 
-    public LocalDateTime getDate() {
-        return this.date;
-    }
+	public void setAnamnesis(String anamnesis) {
+		this.anamnesis = anamnesis;
+	}
 
-    public String getPatientName() {
-        return patientName;
-    }
+	public String getAllergies() {
+		return allergies;
+	}
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
+	public void setAllergies(String allergies) {
+		this.allergies = allergies;
+	}
 
-    public LocalDateTime getNextVisitDate() {
-        return this.nextVisitDate;
-    }
+	public String getTherapies() {
+		return therapies;
+	}
 
-    public Integer getPatientCode() {
-        return this.patientCode;
-    }
+	public void setTherapies(String therapies) {
+		this.therapies = therapies;
+	}
 
-    public int getAge() {
-        return this.age;
-    }
+	public String getPrescription() {
+		return prescription;
+	}
 
-    public char getSex() {
-        return this.sex;
-    }
+	public void setPrescription(String prescription) {
+		this.prescription = prescription;
+	}
 
-    public String getNote() {
-        return this.note;
-    }
+	@Schema(accessMode = AccessMode.READ_ONLY)
+	public int getLock() {
+		return lock;
+	}
 
-    public int getProg_year() {
-        return this.prog_year;
-    }
+	@Schema(accessMode = AccessMode.READ_ONLY)
+	public int getHashCode() {
+		return hashCode;
+	}
 
-    public DiseaseDTO getDisease() {
-        return this.disease;
-    }
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 
-    public DiseaseDTO getDisease2() {
-        return this.disease2;
-    }
+	public int getCode() {
+		return this.code;
+	}
 
-    public DiseaseDTO getDisease3() {
-        return this.disease3;
-    }
+	public LocalDateTime getDate() {
+		return this.date;
+	}
 
-    public char getNewPatient() {
-        return this.newPatient;
-    }
+	public String getPatientName() {
+		return patientName;
+	}
 
-    public String getReferralFrom() {
-        return this.referralFrom;
-    }
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
 
-    public String getReferralTo() {
-        return this.referralTo;
-    }
+	public LocalDateTime getNextVisitDate() {
+		return this.nextVisitDate;
+	}
 
-    public String getUserID() {
-        return this.userID;
-    }
+	public Integer getPatientCode() {
+		return this.patientCode;
+	}
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+	public int getAge() {
+		return this.age;
+	}
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
+	public char getSex() {
+		return this.sex;
+	}
 
-    public void setNextVisitDate(LocalDateTime nextVisitDate) {
-        this.nextVisitDate = nextVisitDate;
-    }
+	public String getNote() {
+		return this.note;
+	}
 
-    public void setPatientCode(Integer patientCode) {
-        this.patientCode = patientCode;
-    }
+	public int getProg_year() {
+		return this.prog_year;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+	public DiseaseDTO getDisease() {
+		return this.disease;
+	}
 
-    public void setSex(char sex) {
-        this.sex = sex;
-    }
+	public DiseaseDTO getDisease2() {
+		return this.disease2;
+	}
 
-    public void setNote(String note) {
-        this.note = note;
-    }
+	public DiseaseDTO getDisease3() {
+		return this.disease3;
+	}
 
-    public void setProg_year(int prog_year) {
-        this.prog_year = prog_year;
-    }
+	public char getNewPatient() {
+		return this.newPatient;
+	}
 
-    public void setDisease(DiseaseDTO disease) {
-        this.disease = disease;
-    }
+	public String getReferralFrom() {
+		return this.referralFrom;
+	}
 
-    public void setDisease2(DiseaseDTO disease2) {
-        this.disease2 = disease2;
-    }
+	public String getReferralTo() {
+		return this.referralTo;
+	}
 
-    public void setDisease3(DiseaseDTO disease3) {
-        this.disease3 = disease3;
-    }
+	public String getUserID() {
+		return this.userID;
+	}
 
-    public void setNewPatient(char newPatient) {
-        this.newPatient = newPatient;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 
-    public void setReferralFrom(String referralFrom) {
-        this.referralFrom = referralFrom;
-    }
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
 
-    public void setReferralTo(String referralTo) {
-        this.referralTo = referralTo;
-    }
+	public void setNextVisitDate(LocalDateTime nextVisitDate) {
+		this.nextVisitDate = nextVisitDate;
+	}
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
+	public void setPatientCode(Integer patientCode) {
+		this.patientCode = patientCode;
+	}
 
-    public void setHashCode(int hashCode) {
-        this.hashCode = hashCode;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    public String getAgeType() {
-        return ageType;
-    }
+	public void setSex(char sex) {
+		this.sex = sex;
+	}
 
-    public void setAgeType(String ageType) {
-        this.ageType = ageType;
-    }
-    
-    public WardDTO getWard() {
-    	return ward;
-    }
-    
-    public void setWard(WardDTO ward) {
-    	this.ward = ward;
-    }
-    
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public void setProg_year(int prog_year) {
+		this.prog_year = prog_year;
+	}
+
+	public void setDisease(DiseaseDTO disease) {
+		this.disease = disease;
+	}
+
+	public void setDisease2(DiseaseDTO disease2) {
+		this.disease2 = disease2;
+	}
+
+	public void setDisease3(DiseaseDTO disease3) {
+		this.disease3 = disease3;
+	}
+
+	public void setNewPatient(char newPatient) {
+		this.newPatient = newPatient;
+	}
+
+	public void setReferralFrom(String referralFrom) {
+		this.referralFrom = referralFrom;
+	}
+
+	public void setReferralTo(String referralTo) {
+		this.referralTo = referralTo;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
+	public void setHashCode(int hashCode) {
+		this.hashCode = hashCode;
+	}
+
+	public String getAgeType() {
+		return ageType;
+	}
+
+	public void setAgeType(String ageType) {
+		this.ageType = ageType;
+	}
+
+	public WardDTO getWard() {
+		return ward;
+	}
+
+	public void setWard(WardDTO ward) {
+		this.ward = ward;
+	}
+
 }

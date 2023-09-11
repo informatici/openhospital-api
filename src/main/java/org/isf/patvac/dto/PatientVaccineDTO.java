@@ -31,31 +31,29 @@ import org.isf.vaccine.dto.VaccineDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
-public class PatientVaccineDTO
-{
+public class PatientVaccineDTO {
 	private int code;
 
 	@NotNull
-	@Schema(description = "a progr. in year", example="1")
+	@Schema(description = "A progr. in year", example = "1")
 	private int progr;
 
 	@NotNull
-	@Schema(description = "the vaccine date", type = "string")
+	@Schema(description = "The vaccine date", type = "string")
 	private LocalDateTime vaccineDate;
 
 	@NotNull
-	@Schema(description = "the patient to be vaccine")
+	@Schema(description = "The patient to be vaccine")
 	private PatientDTO patient;
 
 	@NotNull
-	@Schema(description = "the vaccine")
+	@Schema(description = "The vaccine")
 	private VaccineDTO vaccine;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
-	private int hashCode;
 
+	private int hashCode;
 
 	public int getLock() {
 		return lock;
@@ -64,7 +62,7 @@ public class PatientVaccineDTO
 	public void setLock(int lock) {
 		this.lock = lock;
 	}
-	
+
 	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;

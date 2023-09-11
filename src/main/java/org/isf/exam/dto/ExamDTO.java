@@ -27,22 +27,22 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamDTO {
 
-	@Schema(description = "Exam Code", example = "01.01")
+	@Schema(description = "Exam Code", example = "01.01", maxLength = 10)
 	private String code;
 
-	@Schema(description = "Exam Description", example = "1.1 HB")
+	@Schema(description = "Exam Description", example = "1.1 HB", maxLength = 100)
 	private String description;
 
 	@Schema(description = "Exam Procedure", example = "1")
 	private Integer procedure;
 
-	@Schema(description = "Exam Default Result", example = ">=12 (NORMAL)")
+	@Schema(description = "Exam Default Result", example = ">=12 (NORMAL)", maxLength = 50)
 	private String defaultResult;
 
 	@Schema(description = "Exam Type")
 	private ExamTypeDTO examtype;
 
-	@Schema(description = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	public String getCode() {

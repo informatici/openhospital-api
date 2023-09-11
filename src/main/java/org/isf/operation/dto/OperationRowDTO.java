@@ -39,41 +39,50 @@ import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 public class OperationRowDTO {
 
-    private int id;
+	private int id;
 
-    @NotNull
-    private OperationDTO operation;
+	@NotNull
+	@Schema(description = "The operation")
+	private OperationDTO operation;
 
-    @NotNull
-    private String prescriber;
+	@NotNull
+	@Schema(description = "The presciber of the operation", maxLength = 150)
+	private String prescriber;
 
-    @NotNull
-    private String opResult;
+	@NotNull
+	@Schema(description = "The result of the operation", maxLength = 250)
+	private String opResult;
 
-    @NotNull
-    private LocalDateTime opDate;
+	@NotNull
+	@Schema(description = "Operation registration date", type = "string")
+	private LocalDateTime opDate;
 
-    private String remarks;
+	@Schema(description = "The remark of the operation", maxLength = 250)
+	private String remarks;
 
-    private AdmissionDTO admission;
+	@Schema(description = "The admission")
+	private AdmissionDTO admission;
 
-    private OpdDTO opd;
+	@Schema(description = "The opd")
+	private OpdDTO opd;
 
-    private BillDTO bill;
+	@Schema(description = "The bill")
+	private BillDTO bill;
 
-    private Float transUnit;
-    
-    private int hashCode;
+	@Schema(description = "The transunit")
+	private Float transUnit;
 
-    @Schema(accessMode = AccessMode.READ_ONLY)
+	private int hashCode;
+
+	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
 	}
 
 	@Override
 	public String toString() {
-        return this.operation.getDescription() + ' ' + this.admission.getUserID();
-    }
+		return this.operation.getDescription() + ' ' + this.admission.getUserID();
+	}
 
 	public int getId() {
 		return this.id;

@@ -26,13 +26,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Class representing a Login response")
 public class LoginResponse {
 
-	@Schema(description = "token")
+	@Schema(description = "Token")
 	private String token;
 	
-	@Schema(description = "type of Token", example = "Bearer")
+	@Schema(description = "Type of Token", example = "Bearer")
 	private String type = "Bearer";
 	
-	@Schema(description = "user name", example = "admin")
+	@Schema(description = "User name", example = "admin")
 	private String username;
 
 	public LoginResponse() {

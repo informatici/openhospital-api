@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalWardDTO {
 
-	@Schema(description="The medical ward's id", example="1")
+	@Schema(description = "The medical ward's id", example = "1")
 	private MedicalWardIdDTO id;
-	
-	@Schema(description="The in-quantity", example="150")
+
+	@Schema(description = "The in-quantity", example = "150")
 	private float in_quantity;
-	
-	@Schema(description="The out-quantity", example="89")
+
+	@Schema(description = "The out-quantity", example = "89")
 	private float out_quantity;
 
 	public MedicalWardDTO() {

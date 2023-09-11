@@ -28,17 +28,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
 @Schema(description = "Class representing a price others")
-public class PricesOthersDTO
-{
-	@Id 
-    private int id;
+public class PricesOthersDTO {
+	@Id
+	private int id;
 
-	@NotNull 
-	@Schema(description = "the prices code", example="PRICES001")
+	@NotNull
+	@Schema(description = "The prices code", example = "PRICES001", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@Schema(description = "the description")
+	@Schema(description = "The description", maxLength = 100)
 	private String description;
 
 	@NotNull
@@ -49,11 +48,11 @@ public class PricesOthersDTO
 
 	@NotNull
 	private boolean daily;
-	
+
 	private boolean discharge;
-	
+
 	private boolean undefined;
-    
+
 	private int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)
