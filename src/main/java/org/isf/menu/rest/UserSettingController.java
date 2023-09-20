@@ -45,7 +45,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/usersettings")
-@Tag(name = "User Settings")
+@Tag(name = "Users")
 @SecurityRequirement(name = "bearerAuth")
 public class UserSettingController {
 
@@ -72,7 +72,7 @@ public class UserSettingController {
 	 */
 	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
