@@ -103,6 +103,9 @@ public class PatientController {
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
+		if (newPatient.getBlobPhoto().length == 0) {
+			throw new OHAPIException(new OHExceptionMessage("Malformed picture."));
+		}
 		Patient patientModel = patientMapper.map2Model(newPatient);
 		Patient patient = patientManager.savePatient(patientModel);
 
