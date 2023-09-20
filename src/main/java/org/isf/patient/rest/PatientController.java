@@ -103,6 +103,9 @@ public class PatientController {
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
+		if (newPatient.getBlobPhoto() != null && newPatient.getBlobPhoto().length == 0) {
+			throw new OHAPIException(new OHExceptionMessage("Malformed picture."));
+		}
 		Patient patientModel = patientMapper.map2Model(newPatient);
 		Patient patient = patientManager.savePatient(patientModel);
 
@@ -125,6 +128,9 @@ public class PatientController {
 		Optional<PatientConsensus> patientConsensus = patientConsensusManager.getPatientConsensusByUserId(patientRead.getCode());
 		if (patientConsensus.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
+		}
+		if (updatePatient.getBlobPhoto() != null && updatePatient.getBlobPhoto().length == 0) {
+			throw new OHAPIException(new OHExceptionMessage("Malformed picture."));
 		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
 		updatePatientModel.getPatientConsensus().setPatient(updatePatientModel);
