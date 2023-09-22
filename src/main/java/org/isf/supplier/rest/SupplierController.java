@@ -33,6 +33,7 @@ import org.isf.supplier.model.Supplier;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -53,7 +54,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class SupplierController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SupplierController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SupplierController.class);
 
 	@Autowired
 	private SupplierBrowserManager manager;

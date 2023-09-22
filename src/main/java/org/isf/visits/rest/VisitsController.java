@@ -32,6 +32,7 @@ import org.isf.visits.manager.VisitManager;
 import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,7 +53,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class VisitsController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitsController.class);
 
     @Autowired
     protected VisitManager visitManager;

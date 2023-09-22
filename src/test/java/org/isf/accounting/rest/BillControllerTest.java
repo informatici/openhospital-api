@@ -86,6 +86,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.module.jsr310.Jsr310Module;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -99,7 +100,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
  */
 public class BillControllerTest extends ControllerBaseTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BillControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BillControllerTest.class);
 
 	@Mock
 	private BillBrowserManager billManagerMock;

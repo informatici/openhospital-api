@@ -32,6 +32,7 @@ import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -47,7 +48,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(CustomLogoutHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CustomLogoutHandler.class);
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

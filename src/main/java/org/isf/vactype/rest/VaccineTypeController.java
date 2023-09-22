@@ -32,6 +32,7 @@ import org.isf.vactype.manager.VaccineTypeBrowserManager;
 import org.isf.vactype.mapper.VaccineTypeMapper;
 import org.isf.vactype.model.VaccineType;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -52,7 +53,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class VaccineTypeController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VaccineTypeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VaccineTypeController.class);
 
     @Autowired
     protected VaccineTypeBrowserManager vaccineTypeManager;

@@ -68,6 +68,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -81,7 +82,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
  */
 public class PatientControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PatientControllerTest.class);
 
 	@Mock
 	private PatientBrowserManager patientBrowserManagerMock;
@@ -447,7 +448,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
@@ -469,7 +470,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
@@ -487,7 +488,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(java.lang.String, java.lang.String, java.time.LocalDateTime, java.lang.String)}.
+	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
