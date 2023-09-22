@@ -28,6 +28,7 @@ import javax.sql.rowset.serial.SerialBlob;
 
 import org.modelmapper.AbstractConverter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -36,7 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ByteArrayToBlobConverter extends AbstractConverter<byte[], Blob> {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ByteArrayToBlobConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ByteArrayToBlobConverter.class);
 
 	@Override
 	protected Blob convert(byte[] data) {

@@ -22,10 +22,11 @@
 package org.isf.testing.rest;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControllerBaseTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ControllerBaseTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ControllerBaseTest.class);
 
 	public ControllerBaseTest() {
 	}

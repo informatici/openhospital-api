@@ -36,6 +36,7 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,7 +58,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class ExaminationController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExaminationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExaminationController.class);
 
 	@Autowired
     protected ExaminationBrowserManager examinationBrowserManager;

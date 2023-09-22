@@ -26,6 +26,7 @@ import java.sql.SQLException;
 
 import org.modelmapper.AbstractConverter;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlobToByteArrayConverter extends AbstractConverter<Blob, byte[]> {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BlobToByteArrayConverter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BlobToByteArrayConverter.class);
 
 	@Override
 	protected byte[] convert(Blob data){

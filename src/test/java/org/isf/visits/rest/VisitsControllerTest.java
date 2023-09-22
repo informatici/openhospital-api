@@ -48,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +57,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class VisitsControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(VisitsControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VisitsControllerTest.class);
 
 	@Mock
 	protected VisitManager visitManagerMock;

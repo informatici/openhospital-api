@@ -35,6 +35,7 @@ import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -57,7 +58,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
 
 	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
