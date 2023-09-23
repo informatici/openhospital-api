@@ -188,7 +188,6 @@ public class WardControllerTest {
 		Ward ward = WardHelper.setup(code);
 		WardDTO body = wardMapper.map2DTO(ward);
 
-		boolean isUpdated = true;
 		when(wardBrowserManagerMock.updateWard(wardMapper.map2Model(body)))
 				.thenReturn(ward);
 

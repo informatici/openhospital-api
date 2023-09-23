@@ -28,8 +28,6 @@ import org.isf.hospital.model.Hospital;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,8 +45,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Hospitals")
 @SecurityRequirement(name = "bearerAuth")
 public class HospitalController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HospitalController.class);
 
     @Autowired
     private HospitalBrowsingManager hospitalBrowsingManager;

@@ -65,8 +65,6 @@ public class LaboratoryControllerTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LaboratoryControllerTest.class);
 
 	@Mock
-	protected LabManager labBrowserManagerMock;
-	@Mock
     protected LabManager laboratoryManager;
 
 	@Mock
@@ -83,8 +81,6 @@ public class LaboratoryControllerTest {
 
 	@Mock
     private LaboratoryForPrintMapper laboratoryForPrintMapper;
-	
-	protected LaboratoryMapper labMapper = new LaboratoryMapper();
 
 	private MockMvc mockMvc;
 
