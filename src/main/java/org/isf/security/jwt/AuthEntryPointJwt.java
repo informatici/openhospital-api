@@ -23,7 +23,6 @@ package org.isf.security.jwt;
 
 import java.io.IOException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +37,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException, ServletException {
+			AuthenticationException authException) throws IOException {
 		LOGGER.error("Unauthorized error: {}", authException.getMessage());
 		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
 	}
