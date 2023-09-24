@@ -90,7 +90,6 @@ public class VaccineControllerTest {
 	public void testGetVaccines_200() throws Exception {
 		String request = "/vaccines";
 
-		String code = "AA";
 		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
 
 		when(vaccineBrowserManagerMock.getVaccine())
