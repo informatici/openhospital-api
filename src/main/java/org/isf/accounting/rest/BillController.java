@@ -136,9 +136,9 @@ public class BillController {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(newBillDto.getBillPayments());
 
-		boolean isCreated = billManager.newBill(bill, billItems, billPayments);
-
-		if (!isCreated) {
+		try {
+			billManager.newBill(bill, billItems, billPayments);
+		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
@@ -185,9 +185,9 @@ public class BillController {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(odBillDto.getBillPayments());
 
-		boolean isUpdated = billManager.updateBill(bill, billItems, billPayments);
-
-		if (!isUpdated) {
+		try {
+			billManager.updateBill(bill, billItems, billPayments);
+		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
@@ -412,16 +412,15 @@ public class BillController {
 	public ResponseEntity<Boolean> deleteBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
-		boolean isDeleted;
-		if (bill != null) {
-			isDeleted = billManager.deleteBill(bill);
-		} else {
+		if (bill == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		if (!isDeleted) {
+		try {
+			billManager.deleteBill(bill);
+		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage("Bill is not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 
 	/**
