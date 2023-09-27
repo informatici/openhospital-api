@@ -235,7 +235,6 @@ public class BillControllerTest extends ControllerBaseTest {
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientById(bill.getBillPatient().getCode())).thenReturn(null);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
-		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -295,7 +294,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO  check eq(bill) case
 		//when(billManagerMock.updateBill(bill, billItemsArrayList, billPaymentsList))
 		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsList), eq(billPaymentsList)))
-				.thenReturn(true);
+				.thenReturn(bill);
 
 		this.mockMvc
 				.perform(
@@ -376,8 +375,6 @@ public class BillControllerTest extends ControllerBaseTest {
 		Bill bill = BillHelper.setup();
 
 		when(billManagerMock.getBill(id)).thenReturn(bill);
-
-		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		this.mockMvc
 				.perform(
