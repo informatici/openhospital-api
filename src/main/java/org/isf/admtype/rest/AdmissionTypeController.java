@@ -76,17 +76,11 @@ public class AdmissionTypeController {
 	ResponseEntity<AdmissionTypeDTO> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		LOGGER.info("Create Admission Type {}", code);
-		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
-		AdmissionType admtCreated = null;
-		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
-		if (!admtFounds.isEmpty()) {
-			admtCreated = admtFounds.get(0);
-		}
-		if (!isCreated || admtCreated == null) {
+		AdmissionType newAdmissionType = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
+		if (!admtManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newAdmissionType));
 	}
 
 	/**
@@ -103,11 +97,8 @@ public class AdmissionTypeController {
 		if (!admtManager.isCodePresent(admt.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
 		}
-		boolean isUpdated = admtManager.updateAdmissionType(admt);
-		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Admission Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return ResponseEntity.ok(mapper.map2DTO(admt));
+		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
+		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
 	}
 
 	/**
@@ -136,19 +127,17 @@ public class AdmissionTypeController {
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Admission Type code: {}", code);
-		boolean isDeleted = false;
 		if (admtManager.isCodePresent(code)) {
-			List<AdmissionType> admts = admtManager.getAdmissionType();
-			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
+			List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
+			List<AdmissionType> admtFounds = admissionTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!admtFounds.isEmpty()) {
-				isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+				admtManager.deleteAdmissionType(admtFounds.get(0));
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 
 }
