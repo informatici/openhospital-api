@@ -40,6 +40,7 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.tuple.JPAImmutableTriple;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,9 +91,8 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
-		boolean isCreated = true;
 		when(admtManagerMock.newAdmissionType(admissionTypemapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(new JPAImmutableTriple(true, null, null));
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
 		List<AdmissionType> admtFounds = new ArrayList<>();
@@ -121,9 +121,8 @@ public class AdmissionTypeControllerTest {
 		when(admtManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(admtManagerMock.updateAdmissionType(admissionTypemapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(new JPAImmutableTriple(true, null, null));
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)

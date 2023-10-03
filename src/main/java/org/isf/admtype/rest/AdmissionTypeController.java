@@ -31,6 +31,7 @@ import org.isf.admtype.model.AdmissionType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
+import org.isf.utils.tuple.JPAImmutableTriple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,14 +77,14 @@ public class AdmissionTypeController {
 	ResponseEntity<AdmissionTypeDTO> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		LOGGER.info("Create Admission Type {}", code);
-		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
+		JPAImmutableTriple results = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
 		AdmissionType admtCreated = null;
 		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
 				.collect(Collectors.toList());
 		if (!admtFounds.isEmpty()) {
 			admtCreated = admtFounds.get(0);
 		}
-		if (!isCreated || admtCreated == null) {
+		if (!results.getResult() || admtCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
@@ -103,8 +104,8 @@ public class AdmissionTypeController {
 		if (!admtManager.isCodePresent(admt.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
 		}
-		boolean isUpdated = admtManager.updateAdmissionType(admt);
-		if (!isUpdated) {
+		JPAImmutableTriple results = admtManager.updateAdmissionType(admt);
+		if (!results.getResult()) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return ResponseEntity.ok(mapper.map2DTO(admt));
