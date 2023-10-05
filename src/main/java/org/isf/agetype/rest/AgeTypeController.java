@@ -102,9 +102,10 @@ public class AgeTypeController {
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
-		if (ageTypeManager.updateAgeType(ageTypes)) {
+		try {
+			ageTypeManager.updateAgeType(ageTypes);
 			return ResponseEntity.ok(ageTypeDTO);
-		} else {
+		} catch (OHServiceException ex) {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

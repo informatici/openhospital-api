@@ -115,7 +115,7 @@ public class AgeTypeControllerTest {
 		ageTypes.add(AgeTypeHelper.setup());
 
 		when(ageTypeManagerMock.updateAgeType(ageTypes))
-				.thenReturn(true);
+				.thenReturn(ageTypes);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
