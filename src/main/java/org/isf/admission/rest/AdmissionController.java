@@ -332,15 +332,12 @@ public class AdmissionController {
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
-		boolean isDeleted;
 		Admission admission = admissionManager.getAdmission(id);
-		if (admission != null) {
-			isDeleted = admissionManager.setDeleted(id);
-		} else {
+		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		admissionManager.setDeleted(id);
+		return ResponseEntity.ok(true);
 	}
 
 	/**

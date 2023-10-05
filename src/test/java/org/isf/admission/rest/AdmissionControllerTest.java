@@ -348,8 +348,6 @@ public class AdmissionControllerTest {
 		when(admissionManagerMock.getAdmission(id))
 						.thenReturn(admission);
 
-		when(admissionManagerMock.setDeleted(id)).thenReturn(true);
-
 		this.mockMvc
 						.perform(
 										delete(request, id)
