@@ -110,16 +110,16 @@ public class DiseaseTypeController {
 	 */
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
-        DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        try {
-	        diseaseTypeManager.updateDiseaseType(diseaseType);
-	        return ResponseEntity.ok(diseaseTypeDTO);
-        } catch (OHServiceException serviceException) {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+		DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
+		if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
+			throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		try {
+			diseaseTypeManager.updateDiseaseType(diseaseType);
+			return ResponseEntity.ok(diseaseTypeDTO);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	/**
