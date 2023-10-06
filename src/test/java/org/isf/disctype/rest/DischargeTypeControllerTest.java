@@ -91,17 +91,14 @@ public class DischargeTypeControllerTest {
 	public void testNewDischargeType_201() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
-		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
+		DischargeType dischargeType = DischargeTypeHelper.setup(code);
+		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(dischargeType);
 
-		boolean isCreated = true;
 		when(discTypeManagerMock.newDischargeType(dischargeTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(dischargeType);
 
-		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		List<DischargeType> dischTypeFounds = new ArrayList<>();
-		dischTypeFounds.add(dischargeType);
-		when(discTypeManagerMock.getDischargeType())
-				.thenReturn(dischTypeFounds);
+		when(discTypeManagerMock.isCodePresent(dischargeType.getCode()))
+				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -120,14 +117,14 @@ public class DischargeTypeControllerTest {
 	public void testUpdateDischargeTypet_200() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
-		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
+		DischargeType dischargeType = DischargeTypeHelper.setup(code);
+		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(dischargeType);
 
 		when(discTypeManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(dischargeType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -179,9 +176,6 @@ public class DischargeTypeControllerTest {
 		dischTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
 				.thenReturn(dischTypeFounds);
-
-		when(discTypeManagerMock.deleteDischargeType(dischTypeFounds.get(0)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
