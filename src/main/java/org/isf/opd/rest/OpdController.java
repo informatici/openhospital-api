@@ -312,34 +312,23 @@ public class OpdController {
 		LOGGER.debug("wardCode: {}", wardCode);
 
 		Page<OpdDTO> opdPageable = new Page<>();
+		List<OpdDTO> opdDTOs;
+		List<Opd> opds;
 		Ward ward = null;
 		if (wardCode != null) {
 			ward = wardManager.findWard(wardCode);
 		}
-		List<OpdDTO> opdDTOs;
 		if (paged) {
-			PagedResponse<Opd> opdsPaged;
-			if (patientCode != 0) {
-				opdsPaged = opdManager.getOpdListPageable(ward, patientCode, page, size);
-			} else {
-				if (diseaseTypeManager.isCodePresent(diseaseTypeCode)) { 
-					DiseaseType diseaseType = diseaseTypeManager.getDiseaseType(diseaseTypeCode);
-					opdsPaged = opdManager.getOpdPageable(ward, diseaseType, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null, page, size);
-				}
-				else{
-					throw new OHAPIException(new OHExceptionMessage("The Disease Type code provided does not exist."));
-				}
-			}
+			PagedResponse<Opd> opdsPaged = opdManager.getOpdPageable(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, page,size);
 			opdDTOs = opdsPaged.getData().stream().map(opd -> {
 				return mapper.map2DTO(opd);
 			}).collect(Collectors.toList());
 			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
-			List<Opd> opds;
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
-				opds = opdManager.getOpd(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom,  ageTo, sex, newPatient, null);
+				opds = opdManager.getOpd(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
 			}
 			opdDTOs = opds.stream().map(opd -> {
 				return mapper.map2DTO(opd);
