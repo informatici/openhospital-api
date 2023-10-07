@@ -100,9 +100,8 @@ public class DeliveryResultTypeControllerTest {
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())
 				.thenReturn(results);
 
-		boolean isCreated = true;
 		when(deliveryResultTypeBrowserManagerMock.newDeliveryResultType(deliveryResultTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(deliveryResultType);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -128,9 +127,8 @@ public class DeliveryResultTypeControllerTest {
 		when(deliveryResultTypeBrowserManagerMock.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(deliveryResultTypeBrowserManagerMock.updateDeliveryResultType(deliveryResultTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(deliveryResultType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -179,9 +177,6 @@ public class DeliveryResultTypeControllerTest {
 
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())
 				.thenReturn(DeliveryResultTypeHelper.setupDeliveryResultTypeList(1));
-
-		when(deliveryResultTypeBrowserManagerMock.deleteDeliveryResultType(deliveryResultTypeMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
