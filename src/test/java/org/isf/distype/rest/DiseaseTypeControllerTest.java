@@ -112,14 +112,14 @@ public class DiseaseTypeControllerTest {
 	public void testNewDiseaseType_201() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
-		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
 
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(false);
 
-		boolean isCreated = true;
 		when(diseaseTypeBrowserManager.newDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(diseaseType);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -145,9 +145,8 @@ public class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(diseaseTypeBrowserManager.updateDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(diseaseType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -171,9 +170,6 @@ public class DiseaseTypeControllerTest {
 
 		when(diseaseTypeBrowserManager.getDiseaseType())
 				.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1));
-
-		when(diseaseTypeBrowserManager.deleteDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
