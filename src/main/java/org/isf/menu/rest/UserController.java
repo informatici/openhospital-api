@@ -32,6 +32,7 @@ import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserMenuItemDTO;
 import org.isf.menu.dto.UserProfileDTO;
 import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.manager.UserGroupManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
 import org.isf.menu.mapper.UserMenuItemMapper;
@@ -366,6 +367,8 @@ public class UserController {
 			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
 			UserProfileDTO userProfileDTO = new UserProfileDTO();
+			User user = userManager.getUserByName(currentUserName);
+			userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
 			userProfileDTO.setUserName(currentUserName);
 			userProfileDTO.setPermissions(permissionsCode);
 			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
