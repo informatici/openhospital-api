@@ -71,10 +71,6 @@ public class ExamTypeController {
 
 		ExamType examType = examTypeMapper.map2Model(newExamType);
 		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
-		if (!examTypeBrowserManager.isCodePresent(examType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Exam Type not created."));
-		}
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
 	}
 
@@ -106,7 +102,7 @@ public class ExamTypeController {
 
     @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
-	    LOGGER.info("Delete exam type code: {}", code);
+	    LOGGER.info("Delete Exam Type code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (examType.isEmpty()) {
             throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
