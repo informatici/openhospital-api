@@ -32,7 +32,6 @@ import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserMenuItemDTO;
 import org.isf.menu.dto.UserProfileDTO;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.manager.UserGroupManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
 import org.isf.menu.mapper.UserMenuItemMapper;
