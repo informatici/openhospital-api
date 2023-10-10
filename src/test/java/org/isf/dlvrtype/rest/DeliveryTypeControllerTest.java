@@ -102,7 +102,7 @@ public class DeliveryTypeControllerTest {
 
 		boolean isCreated = true;
 		when(deliveryTypeBrowserManagerMock.newDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -130,7 +130,7 @@ public class DeliveryTypeControllerTest {
 
 		boolean isUpdated = true;
 		when(deliveryTypeBrowserManagerMock.updateDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request, "ZZ" + code)
@@ -179,9 +179,6 @@ public class DeliveryTypeControllerTest {
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
 				.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
-
-		when(deliveryTypeBrowserManagerMock.deleteDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
