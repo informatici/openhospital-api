@@ -276,8 +276,8 @@ public class DiseaseController {
 			diseaseManager.updateDisease(disease);
 			return ResponseEntity.ok(diseaseDTO);
 		} catch (OHServiceException serviceException) {
-        	throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        		throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	}
 	}
 	
 	/**
