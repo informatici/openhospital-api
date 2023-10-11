@@ -251,11 +251,12 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage("Duplicated disease description for the same disease type."),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		if (diseaseManager.newDisease(disease) != null) {
+		try {
+			diseaseManager.newDisease(disease);
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -271,9 +272,10 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage("Disease not found."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		disease.setLock(diseaseDTO.getLock());
-		if (diseaseManager.updateDisease(disease) != null) {
-        	return ResponseEntity.ok(diseaseDTO);
-        } else {
+		try {
+			diseaseManager.updateDisease(disease);
+			return ResponseEntity.ok(diseaseDTO);
+		} catch (OHServiceException serviceException) {
         	throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 	}
@@ -289,7 +291,14 @@ public class DiseaseController {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();
-			result.put("deleted", diseaseManager.deleteDisease(disease));
+			boolean isDeleted;
+			try {
+				diseaseManager.deleteDisease(disease);
+				isDeleted = true;
+			} catch (OHServiceException serviceException) {
+				isDeleted = false;
+			}
+			result.put("deleted", isDeleted);
 			return ResponseEntity.ok(result);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
