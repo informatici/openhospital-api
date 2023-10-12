@@ -307,11 +307,11 @@ public class DiseaseController {
 	
 	private ResponseEntity<List<DiseaseDTO>> computeResponse(List<Disease> diseases) {
 		List<DiseaseDTO> diseasesDTO = mapper.map2DTOList(diseases);
-        if (diseasesDTO.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
-        } else {
-            return ResponseEntity.ok(diseasesDTO);
-        }
+        	if (diseasesDTO.isEmpty()) {
+            		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
+        	} else {
+            		return ResponseEntity.ok(diseasesDTO);
+        	}
 	}
 
 }
