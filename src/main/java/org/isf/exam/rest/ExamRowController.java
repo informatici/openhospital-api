@@ -132,7 +132,9 @@ public class ExamRowController {
         if (examRows.size() > 1) {
             throw new OHAPIException(new OHExceptionMessage("Found multiple ExamRows."));
         }
-        if (!examRowBrowsingManager.deleteExamRow(examRows.get(0))) {
+        try {
+            examRowBrowsingManager.deleteExamRow(examRows.get(0));
+        } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("ExamRow not deleted."));
         }
         return ResponseEntity.ok(true);

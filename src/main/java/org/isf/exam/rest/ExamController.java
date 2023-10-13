@@ -77,9 +77,9 @@ public class ExamController {
 
         Exam exam = examMapper.map2Model(newExam);
         exam.setExamtype(examType);
-
-        boolean isCreated = examManager.newExam(exam);
-        if (!isCreated) {
+        try {
+            examManager.newExam(exam);
+        } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Exam not created."));
         }
         return ResponseEntity.ok(examMapper.map2DTO(exam));
@@ -140,7 +140,9 @@ public class ExamController {
         if (!exam.isPresent()) {
             throw new OHAPIException(new OHExceptionMessage("Exam not found."));
         }
-        if (!examManager.deleteExam(exam.get())) {
+        try {
+            examManager.deleteExam(exam.get());
+        } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Exam not deleted."));
         }
         return ResponseEntity.ok(true);

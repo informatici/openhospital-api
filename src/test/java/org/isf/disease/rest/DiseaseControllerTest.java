@@ -354,9 +354,6 @@ public class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
 				.thenReturn(disease);
 
-		when(diseaseBrowserManagerMock.deleteDisease(disease))
-				.thenReturn(true);
-
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code)
 						.contentType(MediaType.APPLICATION_JSON)
