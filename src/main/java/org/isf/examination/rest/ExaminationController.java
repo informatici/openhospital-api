@@ -84,7 +84,7 @@ public class ExaminationController {
         if (newPatientExamination.getPex_height() < 0 || newPatientExamination.getPex_height() > 250) {
         	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
         }
-        if (newPatientExamination.getPex_weight() < 0 || newPatientExamination.getPex_weight() > 200) {
+        if (newPatientExamination.getPex_weight() < 0.0 || newPatientExamination.getPex_weight() > 200.0) {
         	throw new OHAPIException(new OHExceptionMessage("The weight should be between 0 and 200."));
         }
         if (newPatientExamination.getPex_ap_min() < 80) {
@@ -99,13 +99,13 @@ public class ExaminationController {
         if (newPatientExamination.getPex_hr() < 0 || newPatientExamination.getPex_hr() > 240 ) {
         	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
         }
-        if (newPatientExamination.getPex_temp() < 30 || newPatientExamination.getPex_temp() > 50) {
+        if (newPatientExamination.getPex_temp() < 30.0 || newPatientExamination.getPex_temp() > 50.0) {
         	throw new OHAPIException(new OHExceptionMessage("The temperature should be between 30 and 50."));
         }
-        if (newPatientExamination.getPex_sat() < 50 || newPatientExamination.getPex_temp() > 100) {
+        if (newPatientExamination.getPex_sat() < 50.0 || newPatientExamination.getPex_temp() > 100.0) {
         	throw new OHAPIException(new OHExceptionMessage("The saturation should be between 50 and 100."));
         }
-        if (newPatientExamination.getPex_hgt() < 30 || newPatientExamination.getPex_temp() > 600) {
+        if (newPatientExamination.getPex_hgt() < 30 || newPatientExamination.getPex_temp() > 600.0) {
         	throw new OHAPIException(new OHExceptionMessage("HGT should be between 30 and 600."));
         }
         if (newPatientExamination.getPex_rr() < 0 || newPatientExamination.getPex_rr() > 100) {
@@ -142,7 +142,7 @@ public class ExaminationController {
         if (dto.getPex_height() < 0 || dto.getPex_height() > 250) {
         	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
         }
-        if (dto.getPex_weight() < 0 || dto.getPex_weight() > 200) {
+        if (dto.getPex_weight() < 0.0 || dto.getPex_weight() > 200.0) {
         	throw new OHAPIException(new OHExceptionMessage("The weight should be between 0 and 200."));
         }
         if (dto.getPex_ap_min() < 80) {
@@ -157,13 +157,13 @@ public class ExaminationController {
         if (dto.getPex_hr() < 0 || dto.getPex_hr() > 240 ) {
         	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
         }
-        if (dto.getPex_temp() < 30 || dto.getPex_temp() > 50) {
+        if (dto.getPex_temp() < 30.0 || dto.getPex_temp() > 50.0) {
         	throw new OHAPIException(new OHExceptionMessage("The temperature should be between 30 and 50."));
         }
-        if (dto.getPex_sat() < 50 || dto.getPex_temp() > 100) {
+        if (dto.getPex_sat() < 50.0 || dto.getPex_temp() > 100.0) {
         	throw new OHAPIException(new OHExceptionMessage("The saturation should be between 50 and 100."));
         }
-        if (dto.getPex_hgt() < 30 || dto.getPex_temp() > 600) {
+        if (dto.getPex_hgt() < 30 || dto.getPex_temp() > 600.0) {
         	throw new OHAPIException(new OHExceptionMessage("HGT should be between 30 and 600."));
         }
         if (dto.getPex_rr() < 0 || dto.getPex_rr() > 100) {
