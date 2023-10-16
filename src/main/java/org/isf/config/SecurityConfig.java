@@ -245,7 +245,7 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.PUT, "/operations/**").hasAuthority("operations.update")
 						.antMatchers(HttpMethod.DELETE, "/operations/**").hasAuthority("operations.delete")
 						.antMatchers(HttpMethod.PATCH, "/operations/**").hasAuthority("operations.update")
-						.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("operations.create")
+						.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("operations.read")
 						// patientvaccines
 						.antMatchers(HttpMethod.POST, "/patientvaccines/**").hasAuthority("patientvaccines.create")
 						.antMatchers(HttpMethod.PUT, "/patientvaccines/**").hasAuthority("patientvaccines.update")
