@@ -64,7 +64,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         List<Permission> permissions = permissionManager.retrievePermissionsByUsername(username);
         for (Permission p : permissions) {
-        	authorities.add(new SimpleGrantedAuthority(p.getName()));	
+        	authorities.add(new SimpleGrantedAuthority(p.getName()));
         }
         org.springframework.security.core.userdetails.User userDetails =
                 new org.springframework.security.core.userdetails.User(
