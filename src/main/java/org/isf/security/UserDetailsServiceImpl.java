@@ -61,11 +61,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username + " was not found");
         }
+
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         List<Permission> permissions = permissionManager.retrievePermissionsByUsername(username);
         for (Permission p : permissions) {
-        	authorities.add(new SimpleGrantedAuthority(p.getName()));
+	     authorities.add(new SimpleGrantedAuthority(p.getName()));
         }
+
         org.springframework.security.core.userdetails.User userDetails =
                 new org.springframework.security.core.userdetails.User(
                         user.getUserName(), user.getPasswd(), true, true, true, true, authorities
