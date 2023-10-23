@@ -146,12 +146,11 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newLaboratory(labToInsert, labRows);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 	
@@ -196,12 +195,11 @@ public class LaboratoryController {
 			}
 		}
 
-		boolean inserted = laboratoryManager.newExamRequest(labToInsert);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newExamRequest(labToInsert);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
@@ -250,9 +248,9 @@ public class LaboratoryController {
 			}
 		}
 
-		boolean inserted = laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
