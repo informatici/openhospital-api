@@ -228,9 +228,9 @@ public class ExaminationController {
 	}
 	
     public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
-		ExaminationParameters.initialize();
+	ExaminationParameters.initialize();
 		
-		if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
+	if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
         	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
         }
         if (newPatientExamination.getPex_weight() < ExaminationParameters.WEIGHT_MIN || newPatientExamination.getPex_weight() > ExaminationParameters.WEIGHT_MAX) {
@@ -263,5 +263,5 @@ public class ExaminationController {
         if (newPatientExamination.getPex_diuresis() < ExaminationParameters.DIURESIS_MIN || newPatientExamination.getPex_diuresis() > ExaminationParameters.DIURESIS_MAX) {
         	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between 0 and 2500."));
         }
-	}
+    }
 }
