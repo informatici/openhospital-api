@@ -213,42 +213,6 @@ public class UserController {
 	}
 	
 	/**
-	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link User}.
-	 * @param username - the name of the {@link User}
-	 * @return the list of {@link UserMenuItem}s 
-	 */
-	@GetMapping(value = "/users/menus/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<UserMenuItemDTO>> getMenu(@PathVariable String username) throws OHServiceException {
-		User user = userManager.getUserByName(username);
-		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
-		}
-        List<UserMenuItem> menuItems = userManager.getMenu(user);
-        List<UserMenuItemDTO> mappedMenuItems = userMenuItemMapper.map2DTOList(menuItems);
-        if (mappedMenuItems.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMenuItems);
-		} else {
-			return ResponseEntity.ok(mappedMenuItems);
-		}
-	}
-	
-	/**
-	 * Returns the list of {@link UserMenuItem}s that compose the menu for specified {@link UserGroup}.
-	 * @param code - the {@link UserGroup}
-	 * @return the list of {@link UserMenuItem}s 
-	 */
-	@GetMapping(value = "/users/group-menus/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<UserMenuItemDTO>> getGroupMenu(@PathVariable("group_code") String code) throws OHServiceException {
-        UserGroup group = loadUserGroup(code);
-        List<UserMenuItemDTO> menus = userMenuItemMapper.map2DTOList(userManager.getGroupMenu(group));
-        if (menus.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(menus);
-		} else {
-			return ResponseEntity.ok(menus);
-		}
-	}
-	
-	/**
 	 * Replaces the {@link UserGroup} rights.
 	 * @param code - the {@link UserGroup}'s code
 	 * @param menusDTO - the list of {@link UserMenuItem}s
@@ -366,6 +330,8 @@ public class UserController {
 			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
 			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
 			UserProfileDTO userProfileDTO = new UserProfileDTO();
+			User user = userManager.getUserByName(currentUserName);
+			userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
 			userProfileDTO.setUserName(currentUserName);
 			userProfileDTO.setPermissions(permissionsCode);
 			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);

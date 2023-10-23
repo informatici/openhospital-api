@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
+import org.isf.permissions.manager.PermissionManager;
+import org.isf.permissions.model.Permission;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     protected UserBrowsingManager manager;
 
+    @Autowired
+	protected PermissionManager permissionManager;
+    
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user;
@@ -56,8 +61,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(username + " was not found");
         }
+
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getUserGroupName().getCode()));
+        List<Permission> permissions = permissionManager.retrievePermissionsByUsername(username);
+        for (Permission p : permissions) {
+	     authorities.add(new SimpleGrantedAuthority(p.getName()));
+        }
+
         org.springframework.security.core.userdetails.User userDetails =
                 new org.springframework.security.core.userdetails.User(
                         user.getUserName(), user.getPasswd(), true, true, true, true, authorities
