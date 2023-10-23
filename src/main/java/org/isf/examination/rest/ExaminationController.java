@@ -31,6 +31,7 @@ import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -40,7 +41,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.isf.generaldata.ExaminationParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -214,7 +214,7 @@ public class ExaminationController {
 	}
 
 	@GetMapping(value = "/examinations/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
+    public ResponseEntity<List<PatientExaminationDTO>> getByPatientId(@PathVariable Integer patId) throws OHServiceException {
 
 		List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
 		if (patientExamination == null || patientExamination.isEmpty()) {
@@ -227,7 +227,7 @@ public class ExaminationController {
 		}
 	}
 	
-	public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
+    public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
 		ExaminationParameters.initialize();
 		
 		if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
