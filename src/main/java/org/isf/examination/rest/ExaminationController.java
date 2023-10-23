@@ -112,15 +112,6 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
         }
         validateExamination(dto);
-        if (dto.getPex_diuresis_desc() == null) {
-        	dto.setPex_diuresis_desc(Diurese.physiological);
-        }
-        if (dto.getPex_auscultation() == null) {
-        	dto.setPex_auscultation(Ausculation.normal);
-        }
-        if (dto.getPex_bowel_desc() == null) {
-        	dto.setPex_bowel_desc(Bowel.regular);
-        }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(dto.getPex_date());
