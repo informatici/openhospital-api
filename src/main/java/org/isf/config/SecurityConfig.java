@@ -22,10 +22,8 @@
 package org.isf.config;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.isf.permissions.manager.PermissionManager;
-import org.isf.permissions.model.Permission;
 import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
@@ -43,7 +41,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
