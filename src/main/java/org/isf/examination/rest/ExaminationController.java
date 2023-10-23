@@ -86,15 +86,6 @@ public class ExaminationController {
             throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
         }
         validateExamination(newPatientExamination);
-        if (newPatientExamination.getPex_diuresis_desc() == null) {
-        	newPatientExamination.setPex_diuresis_desc(Diurese.physiological);
-        }
-        if (newPatientExamination.getPex_auscultation() == null) {
-        	newPatientExamination.setPex_auscultation(Ausculation.normal);
-        }
-        if (newPatientExamination.getPex_bowel_desc() == null) {
-        	newPatientExamination.setPex_bowel_desc(Bowel.regular);
-        }
         PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
         patientExamination.setPatient(patient);
         patientExamination.setPex_date(newPatientExamination.getPex_date());
@@ -231,37 +222,37 @@ public class ExaminationController {
 	ExaminationParameters.initialize();
 		
 	if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The size should be between 0 and 250."));
+        	throw new OHAPIException(new OHExceptionMessage("The size should be between "+ExaminationParameters.HEIGHT_MIN+" and "+ExaminationParameters.HEIGHT_MAX));
         }
         if (newPatientExamination.getPex_weight() < ExaminationParameters.WEIGHT_MIN || newPatientExamination.getPex_weight() > ExaminationParameters.WEIGHT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The weight should be between 0 and 200."));
+        	throw new OHAPIException(new OHExceptionMessage("The weight should be between"+ExaminationParameters.WEIGHT_MIN+" and "+ExaminationParameters.WEIGHT_MAX));
         }
         if (newPatientExamination.getPex_ap_min() < ExaminationParameters.AP_MIN_INIT) {
-        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least 80."));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least "+ExaminationParameters.AP_MIN_INIT));
         }
         if (newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
-        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure."));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than "+ExaminationParameters.AP_MAX_INIT));
         }
         if (newPatientExamination.getPex_ap_max() > ExaminationParameters.AP_MAX_INIT) {
-        	throw new OHAPIException(new OHExceptionMessage("The maximum blood pressure must be lower than 120."));
+        	throw new OHAPIException(new OHExceptionMessage("The maximum blood pressure must be lower than "+ExaminationParameters.AP_MAX_INIT));
         }
         if (newPatientExamination.getPex_hr() < ExaminationParameters.HR_MIN || newPatientExamination.getPex_hr() > ExaminationParameters.HR_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between 0 and 240."));
+        	throw new OHAPIException(new OHExceptionMessage("Heart rate should be between "+ExaminationParameters.HR_MIN +" and "+ExaminationParameters.HR_MAX));
         }
         if (newPatientExamination.getPex_temp() < ExaminationParameters.TEMP_MIN || newPatientExamination.getPex_temp() > ExaminationParameters.TEMP_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The temperature should be between 30 and 50."));
+        	throw new OHAPIException(new OHExceptionMessage("The temperature should be between "+ExaminationParameters.TEMP_MIN +" and "+ExaminationParameters.TEMP_MAX));
         }
         if (newPatientExamination.getPex_sat() < ExaminationParameters.SAT_MIN || newPatientExamination.getPex_temp() > ExaminationParameters.SAT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The saturation should be between 50 and 100."));
+        	throw new OHAPIException(new OHExceptionMessage("The saturation should be between "+ExaminationParameters.SAT_MIN+" and "+ExaminationParameters.SAT_MAX));
         }
         if (newPatientExamination.getPex_hgt() < ExaminationParameters.HGT_MIN || newPatientExamination.getPex_temp() > ExaminationParameters.HGT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("HGT should be between 30 and 600."));
+        	throw new OHAPIException(new OHExceptionMessage("HGT should be between "+ExaminationParameters.HGT_MIN+" and "+ExaminationParameters.HGT_MAX));
         }
         if (newPatientExamination.getPex_rr() < ExaminationParameters.RR_MIN || newPatientExamination.getPex_rr() > ExaminationParameters.RR_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("Respiratory rate should be between 0 and 100."));
+        	throw new OHAPIException(new OHExceptionMessage("Respiratory rate should be between "+ExaminationParameters.RR_MIN+" and "+ExaminationParameters.RR_MAX));
         }
         if (newPatientExamination.getPex_diuresis() < ExaminationParameters.DIURESIS_MIN || newPatientExamination.getPex_diuresis() > ExaminationParameters.DIURESIS_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between 0 and 2500."));
+        	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between "+ExaminationParameters.DIURESIS_MIN+" and "+ExaminationParameters.DIURESIS_MAX));
         }
     }
 }
