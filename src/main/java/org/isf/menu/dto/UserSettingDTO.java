@@ -69,7 +69,6 @@ public class UserSettingDTO {
 	public String getUser() {
 		return user;
 	}
-
 	
 	public void setUser(String user) {
 		this.user = user;
