@@ -79,9 +79,7 @@ public class LaboratoryController {
 	private static String draft = LaboratoryStatus.DRAFT.toString();
 	
 	private static String open = LaboratoryStatus.OPEN.toString();
-	
-	private static String done = LaboratoryStatus.DONE.toString();
-	
+
 	private static String deleted = LaboratoryStatus.DELETED.toString();
 	
 	private static String invalid = LaboratoryStatus.INVALID.toString();
@@ -148,12 +146,11 @@ public class LaboratoryController {
 		if (labRow != null) {
 			labRows = new ArrayList<>(labRow);
 		}
-		boolean inserted = laboratoryManager.newLaboratory(labToInsert, labRows);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newLaboratory(labToInsert, labRows);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 	
@@ -192,19 +189,17 @@ public class LaboratoryController {
 
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab : labList) {
-				if (lab.getExam() == exam) {
-					throw new OHAPIException(
-							new OHExceptionMessage("Exam Request already exists."));
+				if (lab.getExam().equals(exam)) {
+					throw new OHAPIException(new OHExceptionMessage("Exam Request already exists."));
 				}
 			}
 		}
 
-		boolean inserted = laboratoryManager.newExamRequest(labToInsert);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newExamRequest(labToInsert);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
-
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
@@ -253,9 +248,9 @@ public class LaboratoryController {
 			}
 		}
 
-		boolean inserted = laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
-
-		if (!inserted) {
+		try {
+			laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
@@ -311,9 +306,9 @@ public class LaboratoryController {
 			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
 		}
 
-		boolean updated = laboratoryManager.updateLaboratory(labToInsert, labRows);
-
-		if (!updated) {
+		try {
+			laboratoryManager.updateLaboratory(labToInsert, labRows);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
 		}
 		return ResponseEntity.ok(true);
@@ -333,9 +328,10 @@ public class LaboratoryController {
 			throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
 		LaboratoryStatus stat = LaboratoryStatus.valueOf(status);
-		if (stat!= null) {
-			boolean updated = laboratoryManager.updateExamRequest(code, status);
-			if (!updated) {
+		if (stat != null) {
+			try {
+				laboratoryManager.updateExamRequest(code, status);
+			} catch (OHServiceException serviceException) {
 				throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
 			}
 			return ResponseEntity.ok(true);
@@ -364,7 +360,9 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.updateExamRequest(code, deleted)) {
+		try {
+			laboratoryManager.updateExamRequest(code, deleted);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
 		return ResponseEntity.ok(true);
@@ -732,7 +730,9 @@ public class LaboratoryController {
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (!laboratoryManager.updateExamRequest(code, invalid)) {
+		try {
+			laboratoryManager.updateExamRequest(code, invalid);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
 		}
 		return ResponseEntity.ok(true);
