@@ -154,7 +154,11 @@ public class MalnutritionController {
 		if (matchedMalnutritions.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Malnutrition control not found."));
 		}
-		boolean isDeleted = manager.deleteMalnutrition(matchedMalnutritions.get(0));
-		return ResponseEntity.ok(isDeleted);
+		try {
+			manager.deleteMalnutrition(matchedMalnutritions.get(0));
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Malnutrition not deleted."));
+		}
+		return ResponseEntity.ok(true);
 	}
 }
