@@ -24,6 +24,7 @@ package org.isf.menu.rest;
 import javax.validation.Valid;
 
 import org.isf.menu.dto.UserSettingDTO;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
 import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.UserSetting;
@@ -57,10 +58,14 @@ public class UserSettingController {
 
 	@Autowired
 	private UserSettingManager userSettingManager;
+	
+	@Autowired
+	private UserBrowsingManager userManager;
 
-	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager) {
+	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager, UserBrowsingManager userManager) {
 		this.userSettingMapper = userSettingMapper;
 		this.userSettingManager = userSettingManager;
+		this.userManager = userManager;
 	}
 
 	/**
@@ -75,7 +80,16 @@ public class UserSettingController {
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO)
 					throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		String userName;
+		if (userSettingDTO.getUser() == null || userSettingDTO.getUser().equals("")) {
+			userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		} else {
+			userName = userSettingDTO.getUser();
+			if (userManager.getUserByName(userName) == null) {
+				throw new OHAPIException(new OHExceptionMessage("User not found."));
+			}
+		}
+		LOGGER.info("userName {}",userName);
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated;
 		if (userSetting != null) {
