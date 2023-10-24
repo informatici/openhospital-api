@@ -80,11 +80,10 @@ public class UserSettingController {
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO)
 					throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
-		String userName;
-		if (userSettingDTO.getUser() == null || userSettingDTO.getUser().equals("")) {
+		String userName = userSettingDTO.getUser();
+		if (userName == null || userName.equals("")) {
 			userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		} else {
-			userName = userSettingDTO.getUser();
 			if (userManager.getUserByName(userName) == null) {
 				throw new OHAPIException(new OHExceptionMessage("User not found."));
 			}
