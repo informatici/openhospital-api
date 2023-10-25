@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
-import org.isf.distype.model.DiseaseType;
-import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.dto.OpdWithOperationRowDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -319,7 +317,7 @@ public class OpdController {
 			ward = wardManager.findWard(wardCode);
 		}
 		if (paged) {
-			PagedResponse<Opd> opdsPaged = opdManager.getOpdPageable(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, page,size);
+			PagedResponse<Opd> opdsPaged = opdManager.getOpdPageable(ward, diseaseTypeCode, diseaseTypeCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, page,size);
 			opdDTOs = opdsPaged.getData().stream().map(opd -> {
 				return mapper.map2DTO(opd);
 			}).collect(Collectors.toList());
@@ -328,7 +326,7 @@ public class OpdController {
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
-				opds = opdManager.getOpd(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
+				opds = opdManager.getOpd(ward, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
 			}
 			opdDTOs = opds.stream().map(opd -> {
 				return mapper.map2DTO(opd);
