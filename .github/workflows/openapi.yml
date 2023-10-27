@@ -48,7 +48,7 @@ jobs:
       - name: Convert to json to yaml
         uses: mikefarah/yq@master
         with:
-          cmd: yq -p openapi/oh.json -o yaml openapi/oh.yaml
+          cmd: yq -p json -o yaml openapi/oh.json
           
       - name: Update PR
         uses: gr2m/create-or-update-pull-request-action@v1
