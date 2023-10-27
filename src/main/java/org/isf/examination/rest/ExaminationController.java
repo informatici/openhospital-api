@@ -24,6 +24,7 @@ package org.isf.examination.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.examination.dto.Diurese;
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
@@ -243,6 +244,21 @@ public class ExaminationController {
             if (newPatientExamination.getPex_diuresis() < ExaminationParameters.DIURESIS_MIN || newPatientExamination.getPex_diuresis() > ExaminationParameters.DIURESIS_MAX) {
             	throw new OHAPIException(new OHExceptionMessage("Diuresis should be between "+ExaminationParameters.DIURESIS_MIN+" and "+ExaminationParameters.DIURESIS_MAX));
             }
+        }
+        if (newPatientExamination.getPex_diuresis_desc() != null) {
+        	if (Diurese.valueOf(newPatientExamination.getPex_diuresis_desc().toString()) == null) {
+        		throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
+        	}
+        }
+        if (newPatientExamination.getPex_bowel_desc() != null) {
+        	if (Diurese.valueOf(newPatientExamination.getPex_bowel_desc().toString()) == null) {
+        		throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
+        	}
+        }
+        if (newPatientExamination.getPex_auscultation() != null) {
+        	if (Diurese.valueOf(newPatientExamination.getPex_auscultation().toString()) == null) {
+        		throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
+        	}
         }
     }
 }
