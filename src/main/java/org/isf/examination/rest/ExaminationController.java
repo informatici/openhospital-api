@@ -24,12 +24,13 @@ package org.isf.examination.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.examination.dto.Ausculation;
-import org.isf.examination.dto.Bowel;
-import org.isf.examination.dto.Diurese;
+
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
+import org.isf.examination.model.Ausculation;
+import org.isf.examination.model.Bowel;
+import org.isf.examination.model.Diurese;
 import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.manager.PatientBrowserManager;
