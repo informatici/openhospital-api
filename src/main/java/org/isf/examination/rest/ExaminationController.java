@@ -246,19 +246,19 @@ public class ExaminationController {
             }
         }
         if (newPatientExamination.getPex_diuresis_desc() != null) {
-        	if (Diurese.valueOf(newPatientExamination.getPex_diuresis_desc().toString()) == null) {
-        		throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
-        	}
+           if (Diurese.valueOf(newPatientExamination.getPex_diuresis_desc().toString()) == null) {
+               throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
+           }
         }
         if (newPatientExamination.getPex_bowel_desc() != null) {
-        	if (Diurese.valueOf(newPatientExamination.getPex_bowel_desc().toString()) == null) {
-        		throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
-        	}
+            if (Diurese.valueOf(newPatientExamination.getPex_bowel_desc().toString()) == null) {
+        	throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
+            }
         }
         if (newPatientExamination.getPex_auscultation() != null) {
-        	if (Diurese.valueOf(newPatientExamination.getPex_auscultation().toString()) == null) {
-        		throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
-        	}
+            if (Diurese.valueOf(newPatientExamination.getPex_auscultation().toString()) == null) {
+        	throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
+            }
         }
     }
 }
