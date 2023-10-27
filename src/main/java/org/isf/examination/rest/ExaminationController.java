@@ -200,7 +200,7 @@ public class ExaminationController {
 		}
 	}
 	
-    public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
+        public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
     	ExaminationParameters.initialize();
 		
 		if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
