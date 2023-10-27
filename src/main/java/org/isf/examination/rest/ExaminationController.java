@@ -213,10 +213,10 @@ public class ExaminationController {
 	ExaminationParameters.initialize();
 		
 	if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The size should be between "+ExaminationParameters.HEIGHT_MIN+" and "+ExaminationParameters.HEIGHT_MAX));
+        	throw new OHAPIException(new OHExceptionMessage("The size should be between "+ExaminationParameters.HEIGHT_MIN+" and " + ExaminationParameters.HEIGHT_MAX));
         }
         if (newPatientExamination.getPex_weight() < ExaminationParameters.WEIGHT_MIN || newPatientExamination.getPex_weight() > ExaminationParameters.WEIGHT_MAX) {
-        	throw new OHAPIException(new OHExceptionMessage("The weight should be between"+ExaminationParameters.WEIGHT_MIN+" and "+ExaminationParameters.WEIGHT_MAX));
+        	throw new OHAPIException(new OHExceptionMessage("The weight should be between"+ExaminationParameters.WEIGHT_MIN+" and " + ExaminationParameters.WEIGHT_MAX));
         }
         if (newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
         	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
