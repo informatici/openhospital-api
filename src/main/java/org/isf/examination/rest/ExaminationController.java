@@ -203,7 +203,7 @@ public class ExaminationController {
         public void validateExamination(PatientExaminationDTO newPatientExamination) throws OHServiceException {
     	ExaminationParameters.initialize();
 		
-		if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
+	if (newPatientExamination.getPex_height() < ExaminationParameters.HEIGHT_MIN || newPatientExamination.getPex_height() > ExaminationParameters.HEIGHT_MAX) {
         	throw new OHAPIException(new OHExceptionMessage("The size should be between "+ExaminationParameters.HEIGHT_MIN+" and " + ExaminationParameters.HEIGHT_MAX));
         }
         if (newPatientExamination.getPex_weight() < ExaminationParameters.WEIGHT_MIN || newPatientExamination.getPex_weight() > ExaminationParameters.WEIGHT_MAX) {
