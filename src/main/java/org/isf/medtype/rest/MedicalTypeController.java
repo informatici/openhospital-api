@@ -140,7 +140,12 @@ public class MedicalTypeController {
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
 		if (!matchedMedicalTypes.isEmpty()) {
-			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(matchedMedicalTypes.get(0)));
+			try {
+				medicalTypeBrowserManager.deleteMedicalType(matchedMedicalTypes.get(0));
+			} catch (OHServiceException serviceException) {
+				throw new OHAPIException(new OHExceptionMessage("Medical type not deleted."));
+			}
+			return ResponseEntity.ok(true);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Medical type not found."));
 		}
