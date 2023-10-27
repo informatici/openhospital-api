@@ -218,9 +218,6 @@ public class ExaminationController {
         if (newPatientExamination.getPex_weight() < ExaminationParameters.WEIGHT_MIN || newPatientExamination.getPex_weight() > ExaminationParameters.WEIGHT_MAX) {
         	throw new OHAPIException(new OHExceptionMessage("The weight should be between"+ExaminationParameters.WEIGHT_MIN+" and "+ExaminationParameters.WEIGHT_MAX));
         }
-        if (newPatientExamination.getPex_ap_min() < ExaminationParameters.AP_MIN_INIT) {
-        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least "+ExaminationParameters.AP_MIN_INIT));
-        }
         if (newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
         	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
         }
