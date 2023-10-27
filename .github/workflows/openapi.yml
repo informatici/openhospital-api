@@ -11,6 +11,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        run: cp rsc/application.properties.dist rsc/application.properties
       
       - name: Checkout core
         run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
