@@ -24,6 +24,8 @@ package org.isf.examination.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.isf.examination.dto.Ausculation;
+import org.isf.examination.dto.Bowel;
 import org.isf.examination.dto.Diurese;
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
@@ -251,12 +253,12 @@ public class ExaminationController {
            }
         }
         if (newPatientExamination.getPex_bowel_desc() != null) {
-            if (Diurese.valueOf(newPatientExamination.getPex_bowel_desc().toString()) == null) {
+            if (Bowel.valueOf(newPatientExamination.getPex_bowel_desc().toString()) == null) {
         	throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
             }
         }
         if (newPatientExamination.getPex_auscultation() != null) {
-            if (Diurese.valueOf(newPatientExamination.getPex_auscultation().toString()) == null) {
+            if (Ausculation.valueOf(newPatientExamination.getPex_auscultation().toString()) == null) {
         	throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
             }
         }
