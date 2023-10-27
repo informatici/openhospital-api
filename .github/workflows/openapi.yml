@@ -40,7 +40,7 @@ jobs:
         run: |
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
-          sleep 20
+          sleep 60
         
       - name: Get json
         run: curl -o openapi/oh.json http://localhost:8080/v3/api-docs
