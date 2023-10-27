@@ -222,7 +222,7 @@ public class ExaminationController {
         	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be at least "+ExaminationParameters.AP_MIN_INIT));
         }
         if (newPatientExamination.getPex_ap_min() > newPatientExamination.getPex_ap_max() ) {
-        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than "+ExaminationParameters.AP_MAX_INIT));
+        	throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
         }
         if (newPatientExamination.getPex_ap_max() > ExaminationParameters.AP_MAX_INIT) {
         	throw new OHAPIException(new OHExceptionMessage("The maximum blood pressure must be lower than "+ExaminationParameters.AP_MAX_INIT));
