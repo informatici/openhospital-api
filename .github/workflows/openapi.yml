@@ -11,6 +11,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
       
       - name: Checkout core
         run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
@@ -54,4 +56,6 @@ jobs:
         uses: gr2m/create-or-update-pull-request-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commit-message: "GitHub Action: update openapi"
       
