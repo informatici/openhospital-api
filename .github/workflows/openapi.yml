@@ -24,7 +24,12 @@ jobs:
           java-version: 11
           
       - name: Build with Maven
-        run: cp rsc/application.properties.dist rsc/application.properties && mvn install -DskipTests=true
+        run: |
+          - cp rsc/application.properties.dist rsc/application.properties
+          - cp rsc/database.properties.dist rsc/database.properties
+          - cp rsc/log4j.properties.dist rsc/log4j.properties
+          - cp rsc/settings.properties.dist rsc/settings.properties
+          - mvn install -DskipTests=true
         
       - name: Run API
         run: cd target && java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
