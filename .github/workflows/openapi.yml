@@ -28,6 +28,18 @@ jobs:
       - name: Generate JWT Token
         id: jwt
         run: echo "::set-output name=token::7DlyD1SHR5pCa4HGgTLWSYm8YQ7oRL1wpPbxyjWyHU44vUrqrooRu3lHVFSXWChesc"
+        
+      # extract branch name
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      # extract branch name on pull request
+      - name: Print branch name
+        if: github.event_name == 'pull_request'
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
           
       - name: Build with Maven
         run: |
@@ -58,4 +70,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           commit-message: "GitHub Action: update openapi"
+          path: "openapi"
+          branch: $BRANCH_NAME
+          
       
