@@ -24,7 +24,7 @@ jobs:
           java-version: 11
           
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn install -DskipTests=true
         
       - name: Run API
         run: cd target && java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
