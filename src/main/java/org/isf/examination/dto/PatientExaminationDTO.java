@@ -25,6 +25,10 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import org.isf.examination.model.Ausculation;
+import org.isf.examination.model.Bowel;
+import org.isf.examination.model.Diurese;
+
 import com.drew.lang.annotations.Nullable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
