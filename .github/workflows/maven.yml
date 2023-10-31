@@ -48,7 +48,6 @@ jobs:
           cp rsc/settings.properties.dist rsc/settings.properties
           sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
           mvn install -DskipTests=true
-          echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Run API
         run: |
