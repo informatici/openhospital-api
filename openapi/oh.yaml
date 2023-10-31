@@ -7955,6 +7955,15 @@ components:
                     height:
                       type: number
                       format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -7990,15 +7999,6 @@ components:
                           format: double
                         empty:
                           type: boolean
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                     location:
                       type: object
                       properties:
@@ -8067,41 +8067,6 @@ components:
                 clip:
                   type: object
                   properties:
-                    bounds2D:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        empty:
-                          type: boolean
                     bounds:
                       type: object
                       properties:
@@ -8117,6 +8082,15 @@ components:
                         height:
                           type: number
                           format: double
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
                         bounds2D:
                           type: object
                           properties:
@@ -8152,15 +8126,6 @@ components:
                               format: double
                             empty:
                               type: boolean
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
                         location:
                           type: object
                           properties:
@@ -8226,21 +8191,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                clipRect:
-                  type: object
-                  properties:
-                    x:
-                      type: number
-                      format: double
-                    "y":
-                      type: number
-                      format: double
-                    width:
-                      type: number
-                      format: double
-                    height:
-                      type: number
-                      format: double
                     bounds2D:
                       type: object
                       properties:
@@ -8276,6 +8226,21 @@ components:
                           format: double
                         empty:
                           type: boolean
+                clipRect:
+                  type: object
+                  properties:
+                    x:
+                      type: number
+                      format: double
+                    "y":
+                      type: number
+                      format: double
+                    width:
+                      type: number
+                      format: double
+                    height:
+                      type: number
+                      format: double
                     size:
                       type: object
                       properties:
@@ -8285,6 +8250,41 @@ components:
                         height:
                           type: number
                           format: double
+                    bounds2D:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        maxX:
+                          type: number
+                          format: double
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8414,11 +8414,11 @@ components:
         smsInt:
           type: integer
           format: int32
-        notify:
-          type: boolean
         medical:
           type: integer
           format: int32
+        notify:
+          type: boolean
         sms:
           type: boolean
     TherapyDTO:
