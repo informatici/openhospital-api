@@ -56,6 +56,9 @@ jobs:
           sleep 60
         
       - name: Get json
+        run: curl -o openapi/oh.json http://localhost:8080/v3/api-docs
+        
+      - name: Get yaml
         run: curl -o openapi/oh.yaml http://localhost:8080/v3/api-docs.yaml
         
 #      - name: Convert to json to yaml
