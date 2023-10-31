@@ -1753,7 +1753,7 @@ paths:
   /bills/{id}:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getBill
       parameters:
       - name: id
@@ -1773,7 +1773,7 @@ paths:
       - bearerAuth: []
     put:
       tags:
-      - Bills Test
+      - Bills
       operationId: updateBill
       parameters:
       - name: id
@@ -1799,7 +1799,7 @@ paths:
       - bearerAuth: []
     delete:
       tags:
-      - Bills Test
+      - Bills
       operationId: deleteBill
       parameters:
       - name: id
@@ -2938,7 +2938,7 @@ paths:
   /bills:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: searchBills_1
       parameters:
       - name: datefrom
@@ -2970,7 +2970,7 @@ paths:
       - bearerAuth: []
     post:
       tags:
-      - Bills Test
+      - Bills
       operationId: newBill
       requestBody:
         content:
@@ -2990,7 +2990,7 @@ paths:
   /bills/search/by/payments:
     post:
       tags:
-      - Bills Test
+      - Bills
       operationId: searchBillsByPayments
       requestBody:
         content:
@@ -3014,7 +3014,7 @@ paths:
   /bills/search/by/item:
     post:
       tags:
-      - Bills Test
+      - Bills
       operationId: searchBills
       parameters:
       - name: datefrom
@@ -5243,7 +5243,7 @@ paths:
   /bills/pending:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getPendingBills
       parameters:
       - name: patient_code
@@ -5266,7 +5266,7 @@ paths:
   /bills/pending/affiliate:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getPendingBillsAffiliate
       parameters:
       - name: patient_code
@@ -5289,7 +5289,7 @@ paths:
   /bills/payments:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: searchBillsPayments
       parameters:
       - name: datefrom
@@ -5322,7 +5322,7 @@ paths:
   /bills/payments/{bill_id}:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getPaymentsByBillId
       parameters:
       - name: bill_id
@@ -5345,7 +5345,7 @@ paths:
   /bills/items:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getDistinctItems
       responses:
         "200":
@@ -5361,7 +5361,7 @@ paths:
   /bills/items/{bill_id}:
     get:
       tags:
-      - Bills Test
+      - Bills
       operationId: getItems
       parameters:
       - name: bill_id
@@ -6492,11 +6492,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7958,15 +7958,6 @@ components:
                     bounds2D:
                       type: object
                       properties:
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8085,15 +8076,6 @@ components:
                         bounds2D:
                           type: object
                           properties:
-                            width:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8244,15 +8226,6 @@ components:
                     bounds2D:
                       type: object
                       properties:
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
