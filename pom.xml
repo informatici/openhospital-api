@@ -260,7 +260,7 @@
 			    </executions>
 			    <configuration>
 			    	<apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
-			        <outputFileName>openapi.yaml</outputFileName> 
+			        <outputFileName>oh.yaml</outputFileName> 
 			        <outputDir>openapi/</outputDir> 
 			    </configuration>
 			</plugin>
