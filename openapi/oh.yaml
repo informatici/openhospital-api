@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
     PatientDTO:
       required:
@@ -6492,11 +6492,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7579,9 +7579,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7703,8 +7703,6 @@ components:
                     size:
                       type: integer
                       format: int32
-                    family:
-                      type: string
                     transform:
                       type: object
                       properties:
@@ -7770,6 +7768,8 @@ components:
                     italicAngle:
                       type: number
                       format: float
+                    family:
+                      type: string
                     attributes:
                       type: object
                       additionalProperties:
@@ -7788,8 +7788,6 @@ components:
                         size:
                           type: integer
                           format: int32
-                        family:
-                          type: string
                         transform:
                           type: object
                           properties:
@@ -7855,6 +7853,8 @@ components:
                         italicAngle:
                           type: number
                           format: float
+                        family:
+                          type: string
                         attributes:
                           type: object
                           additionalProperties:
@@ -8414,11 +8414,11 @@ components:
         smsInt:
           type: integer
           format: int32
-        notify:
-          type: boolean
         medical:
           type: integer
           format: int32
+        notify:
+          type: boolean
         sms:
           type: boolean
     TherapyDTO:
