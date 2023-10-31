@@ -39,6 +39,7 @@ jobs:
           else
             echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
+          echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Build with Maven
         run: |
