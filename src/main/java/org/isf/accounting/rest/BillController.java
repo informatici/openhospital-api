@@ -63,7 +63,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/bills")
-@Tag(name = "Bills")
+@Tag(name = "Bills Test")
 @SecurityRequirement(name = "bearerAuth")
 public class BillController {
 

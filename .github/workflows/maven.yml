@@ -26,7 +26,7 @@ jobs:
           java-version: 11
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn verify -B package --file pom.xml
 
       - name: Store branch name
         id: extract_branch
@@ -39,8 +39,8 @@ jobs:
             echo "{branch}=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
           
-      - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate
+#      - name: Generate OpenAPI yaml
+#        run: mvn springdoc-openapi:generate
         
        # Uncomment to have also json 
 #      - name: Convert yaml to json
