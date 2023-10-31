@@ -56,12 +56,12 @@ jobs:
           sleep 60
         
       - name: Get json
-        run: curl -o openapi/oh.json http://localhost:8080/v3/api-docs
+        run: curl -o openapi/oh.yaml http://localhost:8080/v3/api-docs.yaml
         
-      - name: Convert to json to yaml
-        uses: mikefarah/yq@master
-        with:
-          cmd: yq -p json -o yaml openapi/oh.json > openapi/oh.yaml
+#      - name: Convert to json to yaml
+#        uses: mikefarah/yq@master
+#        with:
+#          cmd: yq -p json -o yaml openapi/oh.json > openapi/oh.yaml
           
       - name: Update PR
         uses: gr2m/create-or-update-pull-request-action@v1
