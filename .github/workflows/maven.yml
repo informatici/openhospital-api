@@ -27,7 +27,7 @@ jobs:
           
       - name: Generate JWT Token
         id: jwt
-        run: echo "::set-output name=token::7DlyD1SHR5pCa4HGgTLWSYm8YQ7oRL1wpPbxyjWyHU44vUrqrooRu3lHVFSXWChesc"
+        run: echo "token=7DlyD1SHR5pCa4HGgTLWSYm8YQ7oRL1wpPbxyjWyHU44vUrqrooRu3lHVFSXWChesc" >> $GITHUB_OUTPUT
 
       - name: Store branch name
         id: extract_branch
