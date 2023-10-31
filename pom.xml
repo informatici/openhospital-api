@@ -259,7 +259,8 @@
                        </execution>
                    </executions>
                    <configuration>
-                       <outputFileName>oh.json</outputFileName> 
+                       <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+                       <outputFileName>oh.yaml</outputFileName> 
                        <outputDir>openapi/</outputDir> 
                    </configuration>
                </plugin>
