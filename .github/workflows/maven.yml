@@ -25,7 +25,7 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build with Maven
+      - name: Build with Maven and generate OpenApi specs
         run: mvn verify -B package --file pom.xml
 
       - name: Store branch name
@@ -43,10 +43,10 @@ jobs:
 #        run: mvn springdoc-openapi:generate
         
        # Uncomment to have also json 
-#      - name: Convert yaml to json
-#        uses: mikefarah/yq@master
-#        with:
-#          cmd: yq -p yaml -o json openapi/oh.yaml > openapi/oh.json
+      - name: Convert json to yaml
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -p json -o yaml openapi/oh.json > openapi/oh.yaml
 
       - name: Update PR with OpenAPI specs changes (if any)
         uses: gr2m/create-or-update-pull-request-action@v1
