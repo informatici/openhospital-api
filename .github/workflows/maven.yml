@@ -28,15 +28,15 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - name: Branch used
+      - name: Store branch name
         id: extract_branch
         run: |
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             echo "::set-output name=branch::$(echo ${GITHUB_REF##*/})"
           elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            echo "::set-output name=branch::$(echo $GITHUB_BASE_REF)"
+            echo "{branch}=$(echo $GITHUB_BASE_REF)" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=branch::INVALID_EVENT_BRANCH_UNKNOWN"
+            echo "{branch}=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
           
       - name: Generate OpenAPI yaml
