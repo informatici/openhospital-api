@@ -35,7 +35,7 @@ jobs:
           if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
             echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
           elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            echo "branch=$(echo $GITHUB_BASE_REF)" >> $GITHUB_OUTPUT
+            echo "branch=$(echo $GITHUB_HEAD_REF)" >> $GITHUB_OUTPUT
           else
             echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
