@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
         male:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -6492,11 +6492,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7703,8 +7703,6 @@ components:
                     size:
                       type: integer
                       format: int32
-                    family:
-                      type: string
                     transform:
                       type: object
                       properties:
@@ -7770,6 +7768,8 @@ components:
                     italicAngle:
                       type: number
                       format: float
+                    family:
+                      type: string
                     attributes:
                       type: object
                       additionalProperties:
@@ -7788,8 +7788,6 @@ components:
                         size:
                           type: integer
                           format: int32
-                        family:
-                          type: string
                         transform:
                           type: object
                           properties:
@@ -7855,6 +7853,8 @@ components:
                         italicAngle:
                           type: number
                           format: float
+                        family:
+                          type: string
                         attributes:
                           type: object
                           additionalProperties:
@@ -7871,15 +7871,6 @@ components:
                     fontRenderContext:
                       type: object
                       properties:
-                        antiAliasingHint:
-                          type: object
-                        fractionalMetricsHint:
-                          type: object
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
                         transform:
                           type: object
                           properties:
@@ -7919,6 +7910,15 @@ components:
                               type: boolean
                         transformed:
                           type: boolean
+                        antiAliasingHint:
+                          type: object
+                        fractionalMetricsHint:
+                          type: object
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
                     maxAscent:
                       type: integer
                       format: int32
@@ -7988,8 +7988,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -7999,8 +7997,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8010,15 +8008,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
+                    empty:
+                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8043,8 +8034,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8054,6 +8043,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                       writeOnly: true
                     minX:
                       type: number
@@ -8124,8 +8115,6 @@ components:
                             centerY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             height:
                               type: number
                               format: double
@@ -8135,8 +8124,8 @@ components:
                             "y":
                               type: number
                               format: double
-                        empty:
-                          type: boolean
+                            empty:
+                              type: boolean
                         location:
                           type: object
                           properties:
@@ -8146,15 +8135,8 @@ components:
                             "y":
                               type: number
                               format: double
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
+                        empty:
+                          type: boolean
                         rect:
                           type: object
                           properties:
@@ -8179,8 +8161,6 @@ components:
                             centerY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             height:
                               type: number
                               format: double
@@ -8190,6 +8170,8 @@ components:
                             "y":
                               type: number
                               format: double
+                            empty:
+                              type: boolean
                           writeOnly: true
                         minX:
                           type: number
@@ -8233,8 +8215,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8244,6 +8224,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                 clipRect:
                   type: object
                   properties:
@@ -8292,8 +8274,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8303,8 +8283,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8314,15 +8294,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
+                    empty:
+                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8347,8 +8320,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8358,6 +8329,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                       writeOnly: true
                     minX:
                       type: number
@@ -8444,8 +8417,6 @@ components:
         medical:
           type: integer
           format: int32
-        notify:
-          type: boolean
         sms:
           type: boolean
         notify:
