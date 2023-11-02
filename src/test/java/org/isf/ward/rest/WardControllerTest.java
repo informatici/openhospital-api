@@ -216,9 +216,6 @@ public class WardControllerTest {
 		when(wardBrowserManagerMock.findWard(code))
 				.thenReturn(ward);
 
-		when(wardBrowserManagerMock.deleteWard(wardMapper.map2Model(body)))
-				.thenReturn(true);
-
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code))
