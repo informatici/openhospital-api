@@ -211,85 +211,71 @@ public class ExaminationController {
 		Integer pex_height = newPatientExamination.getPex_height();
 		Double pex_weight = newPatientExamination.getPex_weight();
 		if (pex_height == null || pex_weight == null) {
-			throw new OHAPIException(new OHExceptionMessage(
-							"The height and weight are compulsory"));
+			throw new OHAPIException(new OHExceptionMessage("The height and weight are compulsory"));
 		}
 		if (pex_height < ExaminationParameters.HEIGHT_MIN
 						|| pex_height > ExaminationParameters.HEIGHT_MAX) {
 			throw new OHAPIException(new OHExceptionMessage(
 							"The height should be between " + ExaminationParameters.HEIGHT_MIN + " and " + ExaminationParameters.HEIGHT_MAX));
 		}
-		if (pex_weight < ExaminationParameters.WEIGHT_MIN
-						|| pex_weight > ExaminationParameters.WEIGHT_MAX) {
+		if (pex_weight < ExaminationParameters.WEIGHT_MIN || pex_weight > ExaminationParameters.WEIGHT_MAX) {
 			throw new OHAPIException(new OHExceptionMessage(
 							"The weight should be between" + ExaminationParameters.WEIGHT_MIN + " and " + ExaminationParameters.WEIGHT_MAX));
 		}
 		Integer pex_ap_min = newPatientExamination.getPex_ap_min();
-		if (pex_ap_min != null && newPatientExamination.getPex_ap_max() != null) {
-			if (pex_ap_min > newPatientExamination.getPex_ap_max()) {
+		Integer pex_ap_max = newPatientExamination.getPex_ap_max();
+		if (pex_ap_min == null && pex_ap_max != null) {
+			throw new OHAPIException(new OHExceptionMessage("Malformed minimum/maximum blood pressure: minimum missing"));
+		}
+		if (pex_ap_min != null && pex_ap_max == null) {
+			throw new OHAPIException(new OHExceptionMessage("Malformed minimum/maximum blood pressure: maximum missing"));
+		}
+		if (pex_ap_min != null && pex_ap_max != null) {
+			if (pex_ap_min > pex_ap_max) {
 				throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
 			}
 		}
 		Integer pex_hr = newPatientExamination.getPex_hr();
-		if (pex_hr != null) {
-			if (pex_hr < ExaminationParameters.HR_MIN || pex_hr > ExaminationParameters.HR_MAX) {
-				throw new OHAPIException(new OHExceptionMessage(
-								"Heart rate should be between " + ExaminationParameters.HR_MIN + " and " + ExaminationParameters.HR_MAX));
-			}
+		if (pex_hr != null && (pex_hr < ExaminationParameters.HR_MIN || pex_hr > ExaminationParameters.HR_MAX)) {
+			throw new OHAPIException(
+							new OHExceptionMessage("Heart rate should be between " + ExaminationParameters.HR_MIN + " and " + ExaminationParameters.HR_MAX));
 		}
 		Double pex_temp = newPatientExamination.getPex_temp();
-		if (pex_temp != null) {
-			if (pex_temp < ExaminationParameters.TEMP_MIN || pex_temp > ExaminationParameters.TEMP_MAX) {
-				throw new OHAPIException(new OHExceptionMessage(
-								"The temperature should be between " + ExaminationParameters.TEMP_MIN + " and " + ExaminationParameters.TEMP_MAX));
-			}
+		if (pex_temp != null && (pex_temp < ExaminationParameters.TEMP_MIN || pex_temp > ExaminationParameters.TEMP_MAX)) {
+			throw new OHAPIException(new OHExceptionMessage(
+							"The temperature should be between " + ExaminationParameters.TEMP_MIN + " and " + ExaminationParameters.TEMP_MAX));
 		}
 		Double pex_sat = newPatientExamination.getPex_sat();
-		if (pex_sat != null) {
-			if (pex_sat < ExaminationParameters.SAT_MIN || pex_sat > ExaminationParameters.SAT_MAX) {
-				throw new OHAPIException(new OHExceptionMessage(
-								"The saturation should be between " + ExaminationParameters.SAT_MIN + " and " + ExaminationParameters.SAT_MAX));
-			}
+		if (pex_sat != null && (pex_sat < ExaminationParameters.SAT_MIN || pex_sat > ExaminationParameters.SAT_MAX)) {
+			throw new OHAPIException(new OHExceptionMessage(
+							"The saturation should be between " + ExaminationParameters.SAT_MIN + " and " + ExaminationParameters.SAT_MAX));
 		}
 		Integer pex_hgt = newPatientExamination.getPex_hgt();
-		if (pex_hgt != null) {
-			if (pex_hgt < ExaminationParameters.HGT_MIN || pex_hgt > ExaminationParameters.HGT_MAX) {
-				throw new OHAPIException(
-								new OHExceptionMessage("HGT should be between " + ExaminationParameters.HGT_MIN + " and " + ExaminationParameters.HGT_MAX));
-			}
+		if (pex_hgt != null && (pex_hgt < ExaminationParameters.HGT_MIN || pex_hgt > ExaminationParameters.HGT_MAX)) {
+			throw new OHAPIException(
+							new OHExceptionMessage("HGT should be between " + ExaminationParameters.HGT_MIN + " and " + ExaminationParameters.HGT_MAX));
 		}
 		Integer pex_rr = newPatientExamination.getPex_rr();
-		if (pex_rr != null) {
-			if (pex_rr < ExaminationParameters.RR_MIN || pex_rr > ExaminationParameters.RR_MAX) {
-				throw new OHAPIException(new OHExceptionMessage(
-								"Respiratory rate should be between " + ExaminationParameters.RR_MIN + " and " + ExaminationParameters.RR_MAX));
-			}
+		if (pex_rr != null && (pex_rr < ExaminationParameters.RR_MIN || pex_rr > ExaminationParameters.RR_MAX)) {
+			throw new OHAPIException(new OHExceptionMessage(
+							"Respiratory rate should be between " + ExaminationParameters.RR_MIN + " and " + ExaminationParameters.RR_MAX));
 		}
 		Integer pex_diuresis = newPatientExamination.getPex_diuresis();
-		if (pex_diuresis != null) {
-			if (pex_diuresis < ExaminationParameters.DIURESIS_MIN
-							|| pex_diuresis > ExaminationParameters.DIURESIS_MAX) {
-				throw new OHAPIException(new OHExceptionMessage(
-								"Diuresis should be between " + ExaminationParameters.DIURESIS_MIN + " and " + ExaminationParameters.DIURESIS_MAX));
-			}
+		if (pex_diuresis != null && (pex_diuresis < ExaminationParameters.DIURESIS_MIN || pex_diuresis > ExaminationParameters.DIURESIS_MAX)) {
+			throw new OHAPIException(new OHExceptionMessage(
+							"Diuresis should be between " + ExaminationParameters.DIURESIS_MIN + " and " + ExaminationParameters.DIURESIS_MAX));
 		}
 		Diurese pex_diuresis_desc = newPatientExamination.getPex_diuresis_desc();
-		if (pex_diuresis_desc != null) {
-			if (Diurese.valueOf(pex_diuresis_desc.toString()) == null) {
-				throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
-			}
+		if (pex_diuresis_desc != null && Diurese.valueOf(pex_diuresis_desc.toString()) == null) {
+			throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
 		}
 		Bowel pex_bowel_desc = newPatientExamination.getPex_bowel_desc();
-		if (pex_bowel_desc != null) {
-			if (Bowel.valueOf(pex_bowel_desc.toString()) == null) {
-				throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
-			}
+		if (pex_bowel_desc != null && Bowel.valueOf(pex_bowel_desc.toString()) == null) {
+			throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
 		}
 		Ausculation pex_auscultation = newPatientExamination.getPex_auscultation();
-		if (pex_auscultation != null) {
-			if (Ausculation.valueOf(pex_auscultation.toString()) == null) {
-				throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
-			}
+		if (pex_auscultation != null && Ausculation.valueOf(pex_auscultation.toString()) == null) {
+			throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
 		}
 	}
 }
