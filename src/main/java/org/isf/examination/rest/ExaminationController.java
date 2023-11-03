@@ -230,10 +230,8 @@ public class ExaminationController {
 		if (pex_ap_min != null && pex_ap_max == null) {
 			throw new OHAPIException(new OHExceptionMessage("Malformed minimum/maximum blood pressure: maximum missing"));
 		}
-		if (pex_ap_min != null && pex_ap_max != null) {
-			if (pex_ap_min > pex_ap_max) {
-				throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
-			}
+		if (pex_ap_min != null && pex_ap_max != null && pex_ap_min > pex_ap_max) {
+			throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
 		}
 		Integer pex_hr = newPatientExamination.getPex_hr();
 		if (pex_hr != null && (pex_hr < ExaminationParameters.HR_MIN || pex_hr > ExaminationParameters.HR_MAX)) {
