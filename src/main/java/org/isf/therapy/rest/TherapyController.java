@@ -111,17 +111,17 @@ public class TherapyController {
 	/**
 	 * Deletes all therapies for specified Patient Code.
 	 * @param code - the Patient Code
-	 * @return {@code true} if the therapies have been deleted, {@code false} otherwise
+	 * @return {@code true} if the therapies have been deleted, throws an exception otherwise
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/therapies/{code_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAllTherapies(@PathVariable("code_patient") Integer code) throws OHServiceException {
-		boolean done = manager.deleteAllTherapies(code);
-		if (done) {
-			return ResponseEntity.ok(done);
-		} else {
+		try {
+			manager.deleteAllTherapies(code);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Therapies not deleted."));
 		}
+		return ResponseEntity.ok(true);
 	}
 	
 	/**
