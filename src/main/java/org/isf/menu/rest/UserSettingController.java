@@ -88,7 +88,7 @@ public class UserSettingController {
 			        throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 			}
 		}
-		LOGGER.info("userName {}",userName);
+		LOGGER.info("userName {}", userName);
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated;
 		if (userSetting != null) {
