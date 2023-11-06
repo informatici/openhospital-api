@@ -84,8 +84,8 @@ public class UserSettingController {
 		if (userName == null || userName.equals("")) {
 			userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		} else {
-			if (userManager.getUserByName(userName) == null) {
-				throw new OHAPIException(new OHExceptionMessage("User not found."));
+			if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) {
+			        throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 			}
 		}
 		LOGGER.info("userName {}",userName);
