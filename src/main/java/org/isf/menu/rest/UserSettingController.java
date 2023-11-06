@@ -24,6 +24,7 @@ package org.isf.menu.rest;
 import javax.validation.Valid;
 
 import org.isf.menu.dto.UserSettingDTO;
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
 import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.UserSetting;
@@ -57,10 +58,14 @@ public class UserSettingController {
 
 	@Autowired
 	private UserSettingManager userSettingManager;
+	
+	@Autowired
+	private UserBrowsingManager userManager;
 
-	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager) {
+	public UserSettingController(UserSettingMapper userSettingMapper, UserSettingManager userSettingManager, UserBrowsingManager userManager) {
 		this.userSettingMapper = userSettingMapper;
 		this.userSettingManager = userSettingManager;
+		this.userManager = userManager;
 	}
 
 	/**
@@ -75,7 +80,12 @@ public class UserSettingController {
 	public ResponseEntity<UserSettingDTO> newUserSetting(@Valid @RequestBody UserSettingDTO userSettingDTO)
 					throws OHServiceException {
 		LOGGER.info("Attempting to create or update a UserSetting");
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		String userName = userSettingDTO.getUser();
+		final String ADMIN = "admin";
+		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) && !userName.equals(ADMIN)) {
+		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		}
+		LOGGER.info("userName {}", userName);
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated;
 		if (userSetting != null) {

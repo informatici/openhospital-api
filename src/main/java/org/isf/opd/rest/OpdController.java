@@ -325,7 +325,7 @@ public class OpdController {
 			if (patientCode != 0) {
 				opds = opdManager.getOpdList(patientCode);
 			} else {
-				opds = opdManager.getOpd(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
+				opds = opdManager.getOpd(ward, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
 			}
 			opdDTOs = opds.stream().map(opd -> mapper.map2DTO(opd)).collect(Collectors.toList());
 		}
