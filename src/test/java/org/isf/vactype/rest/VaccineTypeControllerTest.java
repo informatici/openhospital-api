@@ -166,9 +166,6 @@ public class VaccineTypeControllerTest {
 		when(vaccineTypeBrowserManagerMock.findVaccineType(code))
 				.thenReturn(vaccineType);
 
-		when(vaccineTypeBrowserManagerMock.deleteVaccineType(vaccineTypeMapper.map2Model(body)))
-				.thenReturn(true);
-
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code))

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
+import org.isf.generaldata.MessageBundle;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.dto.OpdWithOperationRowDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -181,7 +182,7 @@ public class OpdController {
 	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
-		if (opdManager.getOpdById(code) == null) {	
+		if (opdManager.getOpdById(code).isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 
@@ -215,7 +216,7 @@ public class OpdController {
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", code);
 		OpdWithOperationRowDTO opdWithOperatioRow = new OpdWithOperationRowDTO();
-		if (opdManager.getOpdById(code) == null) {	
+		if (opdManager.getOpdById(code).isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
 		}
 
@@ -317,10 +318,8 @@ public class OpdController {
 			ward = wardManager.findWard(wardCode);
 		}
 		if (paged) {
-			PagedResponse<Opd> opdsPaged = opdManager.getOpdPageable(ward, diseaseTypeCode, diseaseTypeCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, page,size);
-			opdDTOs = opdsPaged.getData().stream().map(opd -> {
-				return mapper.map2DTO(opd);
-			}).collect(Collectors.toList());
+			PagedResponse<Opd> opdsPaged = opdManager.getOpdPageable(ward, diseaseTypeCode, MessageBundle.getMessage(diseaseTypeCode), dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, page,size);
+			opdDTOs = opdsPaged.getData().stream().map(opd -> mapper.map2DTO(opd)).collect(Collectors.toList());
 			opdPageable.setPageInfo(mapper.setParameterPageInfo(opdsPaged.getPageInfo()));
 		} else {
 			if (patientCode != 0) {
@@ -328,9 +327,7 @@ public class OpdController {
 			} else {
 				opds = opdManager.getOpd(ward, diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient, null);
 			}
-			opdDTOs = opds.stream().map(opd -> {
-				return mapper.map2DTO(opd);
-			}).collect(Collectors.toList());
+			opdDTOs = opds.stream().map(opd -> mapper.map2DTO(opd)).collect(Collectors.toList());
 		}
 		opdPageable.setData(opdDTOs);
 		if (opdDTOs.isEmpty()) {
@@ -390,11 +387,12 @@ public class OpdController {
 		LOGGER.info("Delete Opd code: {}", code);
 		Opd toDelete = new Opd();
 		toDelete.setCode(code);
-		boolean isDeleted = opdManager.deleteOpd(toDelete);
-		if (!isDeleted) {
+		try {
+			opdManager.deleteOpd(toDelete);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Opd not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 	
 	/**

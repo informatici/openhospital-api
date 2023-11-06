@@ -67,14 +67,14 @@ public class VaccineTypeController {
     }
 
     /**
-     * Get all the vaccines types.
+     * Get all the vaccine types.
      *
      * @return
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<VaccineTypeDTO>> getVaccineType() throws OHServiceException {
-        LOGGER.info("Get vaccines type");
+        LOGGER.info("Get vaccine types.");
         List<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
         List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
         if (listVaccines.isEmpty()) {
@@ -94,16 +94,16 @@ public class VaccineTypeController {
     @PostMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VaccineTypeDTO> newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
         LOGGER.info("Create vaccine type: {}", newVaccineType);
-        VaccineType isCreatedVaccineType;
+        VaccineType newVaccineTYpe;
         try {
-            isCreatedVaccineType = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
-        }catch(OHDataIntegrityViolationException e){
+            newVaccineTYpe = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
+        } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine Type already present."));
         }
-        if (isCreatedVaccineType == null) {
+        if (newVaccineTYpe == null) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine Type not created."));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccineType));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newVaccineTYpe));
     }
 
     /**
@@ -116,11 +116,13 @@ public class VaccineTypeController {
     @PutMapping(value = "/vaccinetype", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<VaccineTypeDTO> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
         LOGGER.info("Update vaccine type: {}", updateVaccineType);
-        VaccineType isUpdatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
-        if (isUpdatedVaccineType == null) {
+        VaccineType updatedVaccineType;
+        try {
+            updatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
+        } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine Type not updated."));
         }
-        return ResponseEntity.ok(mapper.map2DTO(isUpdatedVaccineType));
+        return ResponseEntity.ok(mapper.map2DTO(updatedVaccineType));
 
     }
 
@@ -134,14 +136,14 @@ public class VaccineTypeController {
     @DeleteMapping(value = "/vaccinetype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteVaccineType(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete vaccine type code: {}", code);
-        boolean isDeleted;
         VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
-        if (vaccineType!=null){
-            isDeleted = vaccineTypeManager.deleteVaccineType(vaccineType);
-            if (!isDeleted) {
+        if (vaccineType != null) {
+            try {
+                vaccineTypeManager.deleteVaccineType(vaccineType);
+            } catch (OHServiceException serviceException) {
                 throw new OHAPIException(new OHExceptionMessage("Vaccine Type not deleted."));
             }
-            return ResponseEntity.ok(isDeleted);
+            return ResponseEntity.ok(true);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
@@ -150,7 +152,7 @@ public class VaccineTypeController {
      * Check if the code is already used by other vaccine type.
      *
      * @param code
-     * @return {@code true} if it is already used, false otherwise
+     * @return {@code true} if it is already used, {@code false} otherwise
      * @throws OHServiceException
      */
     @GetMapping(value = "/vaccinetype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
