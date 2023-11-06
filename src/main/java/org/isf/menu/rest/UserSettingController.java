@@ -84,7 +84,7 @@ public class UserSettingController {
 		if (userName == null || userName.equals("")) {
 			userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		} else {
-			if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) {
+			if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
 			        throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 			}
 		}
