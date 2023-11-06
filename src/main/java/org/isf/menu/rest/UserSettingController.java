@@ -82,10 +82,8 @@ public class UserSettingController {
 		LOGGER.info("Attempting to create or update a UserSetting");
 		String userName = userSettingDTO.getUser();
 		final String ADMIN = "admin";
-		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
-		    if (!userName.equals(ADMIN)) {
-		    	throw new OHAPIException(new OHExceptionMessage("Not allowed."));
-		    }
+		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) && !userName.equals(ADMIN)) {
+		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		LOGGER.info("userName {}", userName);
 		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
