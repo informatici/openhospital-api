@@ -35,6 +35,7 @@ public class UserSettingDTO {
 	@Schema(description = "The name of the setting", example = "dashboard", maxLength = 50)
 	private String configName;
 	
+	@NotNull
 	@Schema(description = "The name of the user", example = "admin")
 	private String user;
 
