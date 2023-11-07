@@ -77,8 +77,8 @@ public class SupplierController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newSupplier));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not created.");
-            throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
-        }
+			throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
+		}
 	}
 	
 	/**
@@ -99,8 +99,8 @@ public class SupplierController {
 			return ResponseEntity.ok(mapper.map2DTO(updatedSupplier));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not updated.");
-            throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
-        }
+			throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
+		}
 	}
 	
 	/**
