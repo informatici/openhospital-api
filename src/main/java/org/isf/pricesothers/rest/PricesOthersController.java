@@ -75,11 +75,13 @@ public class PricesOthersController {
 	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PricesOthersDTO> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
-		PricesOthers isCreatedPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
-		if (isCreatedPricesOthers == null) {
+		PricesOthers newPricesOthers;
+		try {
+			newPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPricesOthers));
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Prices Others not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPricesOthers));
 	}
 
 	/**
@@ -98,11 +100,13 @@ public class PricesOthersController {
 		if (pricesOthersFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		PricesOthers isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
-		if (isUpdatedPricesOthers == null) {
+		PricesOthers isUpdatedPricesOthers;
+		try {
+			isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
+			return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Prices Others not updated."));
 		}
-		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
 	}
 
 	/**
@@ -131,15 +135,17 @@ public class PricesOthersController {
 	@DeleteMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete prices others id: {}", id);
-		boolean isDeleted;
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
-		if (!pricesOthersFounds.isEmpty()) {
-			isDeleted = pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
-		} else {
+		if (pricesOthersFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		return ResponseEntity.ok(isDeleted);
+		try {
+			pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Prices Others not deleted."));
+		}
 	}
 
 }
