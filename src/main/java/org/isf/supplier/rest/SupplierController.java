@@ -71,13 +71,14 @@ public class SupplierController {
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SupplierDTO> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
-		Supplier isCreatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
-		if (isCreatedSupplier == null) {
-			LOGGER.error("Supplier is not created!");
-            throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
-        }
-		LOGGER.info("Supplier saved successfully");
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedSupplier));
+		try {
+			Supplier newSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+			LOGGER.info("Supplier saved successfully.");
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newSupplier));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Supplier is not created.");
+			throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
+		}
 	}
 	
 	/**
@@ -92,13 +93,14 @@ public class SupplierController {
 			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
 		}
 		LOGGER.info("Updating supplier...");
-		Supplier isUpdatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
-		if (isUpdatedSupplier == null) {
-			LOGGER.error("Supplier is not updated!");
-            throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
-        }
-		LOGGER.info("Supplier updated successfully");
-        return ResponseEntity.ok(mapper.map2DTO(isUpdatedSupplier));
+		try {
+			Supplier updatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
+			LOGGER.info("Supplier updated successfully.");
+			return ResponseEntity.ok(mapper.map2DTO(updatedSupplier));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Supplier is not updated.");
+			throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
+		}
 	}
 	
 	/**
@@ -114,10 +116,10 @@ public class SupplierController {
 		List<Supplier> suppliers = excludeDeleted? manager.getList() : manager.getAll();
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
 		if (mappedSuppliers.isEmpty()) {
-			LOGGER.info("No supplier found");
+			LOGGER.info("No supplier found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
 		} else {
-			LOGGER.info("Found {} suppliers", mappedSuppliers.size());
+			LOGGER.info("Found {} suppliers.", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
 		}
 	}
@@ -133,10 +135,10 @@ public class SupplierController {
 		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if (supplier == null) {
-			LOGGER.info("Supplier not found");
+			LOGGER.info("Supplier not found.");
 			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
 		} else {
-			LOGGER.info("Found supplier!");
+			LOGGER.info("Found supplier.");
 			return ResponseEntity.ok(mapper.map2DTO(supplier));
 		}
 	}
