@@ -80,14 +80,15 @@ public class PatientConsensusController {
 		if (patConsensusOpt.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
 		}
-		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
-		updatedPatienConsensustModel.setId(this.manager.getPatientConsensusByUserId(patientId).get().getId());
-		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
-		if (patientConsensusUpdated == null) {
+		PatientConsensus updatedPatienConsensusModel = mapper.map2Model(patientConsensus);
+		updatedPatienConsensusModel.setId(patConsensusOpt.get().getId());
+		try {
+			PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensusModel);
+			PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
+			return ResponseEntity.ok(patientConsensusDTO);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("PatientConsensus is not updated."));
 		}
-		PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
-		return ResponseEntity.ok(patientConsensusDTO);
 	}
 
 }
