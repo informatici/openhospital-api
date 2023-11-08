@@ -77,11 +77,14 @@ public class PatVacController {
 	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		LOGGER.info("Create patient vaccine {}", code);
-		PatientVaccine isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
-		if (isCreatedPatientVaccine == null) {
+		PatientVaccine newPatientVaccine;
+		try {
+			newPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPatientVaccine));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Patient vaccine not created.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPatientVaccine));
 	}
 
 	/**
@@ -96,11 +99,14 @@ public class PatVacController {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
 		patvac.setLock(patientVaccineDTO.getLock());
-		PatientVaccine isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
-		if (isUpdatedPatientVaccine == null) {
+		PatientVaccine updatedPatientVaccine;
+		try {
+			updatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
+			return ResponseEntity.ok(mapper.map2DTO(updatedPatientVaccine));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Patient vaccine not updated.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not updated."));
 		}
-		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPatientVaccine));
 	}
 
 	/**
@@ -165,11 +171,12 @@ public class PatVacController {
 		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
-		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
-		if (!isDeleted) {
+		try {
+			patVacManager.deletePatientVaccine(patVac);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
 	}
 
 }
