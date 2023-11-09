@@ -238,7 +238,7 @@ public class PatientController {
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {
-		LOGGER.info("Delete patient code: `{}`.", code);
+		LOGGER.info("Delete patient code: '{}'.", code);
 		Patient patient = patientManager.getPatientById(code);
 
 		if (patient == null) {
