@@ -90,9 +90,9 @@
             <version>3.1.1</version>
         </dependency>
         <dependency>
-        	<groupId>org.springdoc</groupId>
-        	<artifactId>springdoc-openapi-ui</artifactId>
-        	<version>1.7.0</version>
+             <groupId>org.springdoc</groupId>
+             <artifactId>springdoc-openapi-ui</artifactId>
+             <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -149,12 +149,12 @@
                 </configuration>
             </plugin>
             <plugin>
-			  <artifactId>maven-surefire-plugin</artifactId>
-			  <configuration>
-			    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-			    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
-			  </configuration>
-			</plugin>
+                 <artifactId>maven-surefire-plugin</artifactId>
+                 <configuration>
+                   <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                   <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                 </configuration>
+               </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -246,6 +246,24 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                   <version>1.4</version>
+                   <executions>
+                       <execution>
+                           <phase>integration-test</phase>
+                           <goals>
+                               <goal>generate</goal>
+                           </goals>
+                       </execution>
+                   </executions>
+                   <configuration>
+                       <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+                       <outputFileName>oh.yaml</outputFileName> 
+                       <outputDir>openapi/</outputDir> 
+                   </configuration>
+               </plugin>
         </plugins>
     </build>
 
