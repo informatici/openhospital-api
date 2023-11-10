@@ -30,6 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -60,6 +61,8 @@ import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.shared.pagination.Page;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -120,7 +123,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#newPatient(PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -143,7 +146,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#newPatient(PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -170,7 +173,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#newPatient(PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -200,7 +203,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#newPatient(PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -230,7 +233,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#newPatient(org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#newPatient(PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -257,7 +260,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#updatePatient(int, org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#updatePatient(int, PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -297,7 +300,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#updatePatient(int, org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#updatePatient(int, PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -323,7 +326,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#updatePatient(int, org.isf.patient.dto.PatientDTO)}.
+	 * Test method for {@link PatientController#updatePatient(int, PatientDTO)}.
 	 *
 	 * @throws Exception
 	 */
@@ -353,7 +356,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatients(int, int)}.
+	 * Test method for {@link PatientController#getPatients(int, int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -385,7 +388,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
+	 * Test method for {@link PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -415,7 +418,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#getPatient(int)}.
+	 * Test method for {@link PatientController#getPatient(int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -448,7 +451,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
+	 * {@link PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
@@ -470,7 +473,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
+	 * {@link PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
@@ -488,7 +491,7 @@ public class PatientControllerTest {
 
 	/**
 	 * Test method for
-	 * {@link org.isf.patient.rest.PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
+	 * {@link PatientController#searchPatient(String, String, java.time.LocalDateTime, String)}.
 	 *
 	 * @throws Exception
 	 */
@@ -509,7 +512,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * Test method for {@link PatientController#deletePatient(int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -522,8 +525,6 @@ public class PatientControllerTest {
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
-		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(true);
-
 		this.mockMvc
 						.perform(
 										delete(request, code)
@@ -534,7 +535,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * Test method for {@link PatientController#deletePatient(int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -554,7 +555,7 @@ public class PatientControllerTest {
 	}
 
 	/**
-	 * Test method for {@link org.isf.patient.rest.PatientController#deletePatient(int)}.
+	 * Test method for {@link PatientController#deletePatient(int)}.
 	 *
 	 * @throws Exception
 	 */
@@ -567,7 +568,7 @@ public class PatientControllerTest {
 
 		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
 
-		when(patientBrowserManagerMock.deletePatient(patient)).thenReturn(false);
+		doThrow(new OHServiceException(new OHExceptionMessage("Failure"))).when(patientBrowserManagerMock).deletePatient(patient);
 
 		MvcResult result = this.mockMvc
 						.perform(

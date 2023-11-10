@@ -100,7 +100,7 @@ public class PatientController {
 	@PostMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
 		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + ' ' + newPatient.getSecondName() : newPatient.getName();
-		LOGGER.info("Create patient {}", name);
+		LOGGER.info("Create patient '{}'.", name);
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
@@ -118,7 +118,7 @@ public class PatientController {
 
 	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientDTO> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
-		LOGGER.info("Update patient code: {}", code);
+		LOGGER.info("Update patient code: '{}'.", code);
 		if (!updatePatient.getCode().equals(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
 		}
@@ -148,7 +148,7 @@ public class PatientController {
 	@GetMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<PatientDTO>> getPatients(@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size) throws OHServiceException {
-		LOGGER.info("Get patients page: {}  size: {}", page, size);
+		LOGGER.info("Get patients page: {}  size: {}.", page, size);
 		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
 		if (patients.getData().isEmpty()) {
 			LOGGER.info("The patient list is empty.");
@@ -163,16 +163,15 @@ public class PatientController {
 
 	@GetMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PatientDTO> getPatient(@PathVariable("code") int code) throws OHServiceException {
-		LOGGER.info("Get patient code: {}", code);
+		LOGGER.info("Get patient code: '{}'.", code);
 		Patient patient = patientManager.getPatientById(code);
-		LOGGER.info("Patient retrieved: {}", patient);
+		LOGGER.info("Patient retrieved: {}.", patient);
 		if (patient == null) {
-
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		LOGGER.debug("admissionBrowserManager injected: {}", admissionManager);
+		LOGGER.debug("AdmissionBrowserManager injected: {}.", admissionManager);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
-		LOGGER.debug("admission retrieved: {}", admission);
+		LOGGER.debug("Admission retrieved: {}.", admission);
 		Boolean status = admission != null;
 		PatientDTO patientDTO = patientMapper.map2DTOWS(patient, status);
 		return ResponseEntity.ok(patientDTO);
@@ -221,7 +220,7 @@ public class PatientController {
 
 	@GetMapping(value = "/patients/all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PatientDTO> getPatientAll(@RequestParam int code) throws OHServiceException {
-		LOGGER.info("get patient for provided code even if logically deleted: {}", code);
+		LOGGER.info("Get patient for provided code even if logically deleted: '{}'.", code);
 		Patient patient = patientManager.getPatientAll(code);
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -232,45 +231,46 @@ public class PatientController {
 
 	@GetMapping(value = "/patients/nextcode", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> getPatientNextCode() throws OHServiceException {
-		LOGGER.info("get patient next code");
+		LOGGER.info("Get patient next code.");
 		int nextCode = patientManager.getNextPatientCode();
 		return ResponseEntity.ok(nextCode);
 	}
 
 	@DeleteMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePatient(@PathVariable int code) throws OHServiceException {
-		LOGGER.info("Delete patient code: {}", code);
+		LOGGER.info("Delete patient code: '{}'.", code);
 		Patient patient = patientManager.getPatientById(code);
-		boolean isDeleted;
-		if (patient != null) {
-			isDeleted = patientManager.deletePatient(patient);
-		} else {
+
+		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		if (!isDeleted) {
+		try {
+			patientManager.deletePatient(patient);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 
 	@GetMapping(value = "/patients/merge", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> mergePatients(@RequestParam int mergedcode, @RequestParam int code2) throws OHServiceException {
-		LOGGER.info("merge patient for code {} in patient for code {}", code2, mergedcode);
+		LOGGER.info("Merge patient for code '{}' in patient for code '{}'.", code2, mergedcode);
 		Patient mergedPatient = patientManager.getPatientById(mergedcode);
 		Patient patient2 = patientManager.getPatientById(code2);
 		if (mergedPatient == null || patient2 == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		boolean merged = patientManager.mergePatient(mergedPatient, patient2);
-		if (!merged) {
+		try {
+			patientManager.mergePatient(mergedPatient, patient2);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patients not merged."));
 		}
-		return ResponseEntity.ok(merged);
+		return ResponseEntity.ok(true);
 	}
 
 	@GetMapping(value = "/patients/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<String>> getPatientCities() throws OHServiceException {
-		LOGGER.info("get all cities of patient");
+		LOGGER.info("Get all cities of the patients.");
 		return ResponseEntity.ok(patientManager.getCities());
 	}
 }
