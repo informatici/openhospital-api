@@ -439,8 +439,7 @@ public class UserController {
 	 * @throws OHServiceException.
 	 */
 	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, 
-					@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
+	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Update a UserSetting");
 		String userName = userSettingDTO.getUser();
 		final String ADMIN = "admin";
@@ -495,8 +494,7 @@ public class UserController {
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> getUserSettingByUser(@PathVariable(name = "userName") String userName, 
-					@PathVariable(name = "configName") String configName) throws OHServiceException {
+	public ResponseEntity<UserSettingDTO> getUserSettingByUser(@PathVariable(name = "userName") String userName, @PathVariable(name = "configName") String configName) throws OHServiceException {
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}:", userName, configName);
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
