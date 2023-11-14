@@ -86,7 +86,7 @@ public class UserSettingController {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		LOGGER.info("userName {}", userName);
-		UserSetting userSetting = userSettingManager.getUserSetting(userName, userSettingDTO.getConfigName());
+		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, userSettingDTO.getConfigName());
 		UserSetting isCreated;
 		if (userSetting != null) {
 			LOGGER.info("update a UserSetting");
@@ -118,7 +118,7 @@ public class UserSettingController {
 		LOGGER.info("Attempting to fetch the UserSetting of dashboard of the current user");
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		String dashboard = "dashboard";
-		UserSetting userSetting = userSettingManager.getUserSetting(userName, dashboard);
+		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, dashboard);
 		if (userSetting == null) {
 			LOGGER.info("No dashboard settings for the current user {}", userName);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);

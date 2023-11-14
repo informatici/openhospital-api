@@ -31,13 +31,17 @@ import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserMenuItemDTO;
 import org.isf.menu.dto.UserProfileDTO;
+import org.isf.menu.dto.UserSettingDTO;
 import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.manager.UserSettingManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
 import org.isf.menu.mapper.UserMenuItemMapper;
+import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserMenuItem;
+import org.isf.menu.model.UserSetting;
 import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
@@ -90,6 +94,25 @@ public class UserController {
 
 	@Autowired
 	protected LitePermissionMapper litePermissionMapper;
+	
+	@Autowired
+	private UserSettingManager userSettingManager;
+	
+	@Autowired
+	private UserSettingMapper userSettingMapper;
+	
+	public UserController(UserGroupMapper userGroupMapper, UserMenuItemMapper userMenuItemMapper, UserBrowsingManager userManager,
+					PermissionManager permissionManager, LitePermissionMapper litePermissionMapper, UserSettingManager userSettingManager,
+					UserSettingMapper userSettingMapper) {
+		this.userGroupMapper = userGroupMapper;
+		this.userMenuItemMapper = userMenuItemMapper;
+		this.userManager = userManager;
+		this.permissionManager = permissionManager;
+		this.litePermissionMapper = litePermissionMapper;
+		this.userSettingManager = userSettingManager;
+		this.userSettingMapper = userSettingMapper;
+		
+	}
 
 	/**
 	 * Returns the list of {@link User}s.
@@ -129,7 +152,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Creates a new {@link User}.
+	 * Create a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
 	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
 	 * @throws OHServiceException 
@@ -148,7 +171,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Updates an existing {@link User}.
+	 * Update an existing {@link User}.
 	 * @param userDTO - the {@link User} to update
 	 * @param updatePassword - indicates if it is the password that need to be updated
 	 * @return {@code true} if the user has been updated, {@code false} otherwise.
@@ -176,7 +199,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Deletes an existing {@link User}.
+	 * Delete an existing {@link User}.
 	 * @param username - the name of the {@link User} to delete
 	 * @return {@code true} if the user has been deleted, {@code false} otherwise.
 	 */
@@ -213,7 +236,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Replaces the {@link UserGroup} rights.
+	 * Replace the {@link UserGroup} rights.
 	 * @param code - the {@link UserGroup}'s code
 	 * @param menusDTO - the list of {@link UserMenuItem}s
 	 * @return {@code true} if the menu has been replaced, {@code false} otherwise.
@@ -233,7 +256,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Deletes a {@link UserGroup}.
+	 * Delete a {@link UserGroup}.
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
@@ -264,7 +287,7 @@ public class UserController {
 	}
 	
 	/**
-	 * Updates an existing {@link UserGroup}.
+	 * Update an existing {@link UserGroup}.
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return {@code true} if the group has been updated, {@code false} otherwise.
 	 */
@@ -291,7 +314,7 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves all permissions of the current logged-in user. If user not found,
+	 * Retrieve all permissions of the current logged-in user. If user not found,
 	 * an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
@@ -315,7 +338,7 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves profile of the current logged in user. If user not found,
+	 * Retrieve profile of the current logged in user. If user not found,
 	 * an empty list of permissions is returned
 	 *
 	 * @return list of permissions {@link Permission}
@@ -341,7 +364,7 @@ public class UserController {
 
 
 	/**
-	 * Retrieves all permissions of the username passed as path variable. If user not
+	 * Retrieve all permissions of the username passed as path variable. If user not
 	 * found, an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
@@ -358,5 +381,149 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 		}
 	}
+	
+	/**
+	 * Retrieve all userSetting of the current user.
+	 * 
+	 * @return list of userSetting {@link UserSettingDTO}.
+	 * @throws OHServiceException
+	 */
+	@GetMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<UserSettingDTO>> getUserSettings() throws OHServiceException {
+		LOGGER.info("Retrieve all userSettings of the current user");
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
+		if (userSettings == null || userSettings.isEmpty()) {
+			LOGGER.info("No settings for the current user {}", userName);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		List<UserSettingDTO> userSettingsDTO = userSettingMapper.map2DTOList(userSettings);
+		LOGGER.info("Found {} user settings", userSettingsDTO);
+		return ResponseEntity.ok(userSettingsDTO);
+	}
+	
+	/**
+	 * Returns a {@link UserSettingDTO} of userSetting created.
+	 * 
+	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
+	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
+	 * @throws OHServiceException.
+	 */
+	@PostMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
+		LOGGER.info("Create a UserSetting");
+		String userName = userSettingDTO.getUser();
+		userSettingDTO.setId(0);
+		final String ADMIN = "admin";
+		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) 
+						&& !SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
+		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		}
+		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
+		userSetting.setUser(userName);
+		UserSetting created = userSettingManager.newUserSetting(userSetting);
+		if (created == null) {
+			LOGGER.info("UserSetting is not created!");
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
+		}
+		LOGGER.info("UserSetting successfully created!");
+		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(created));
+	}
+	
+	/**
+	 * Update an existing {@link UserSettingDTO}.
+	 * 
+	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
+	 * @param id - id of {@link UserSetting} .
+	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
+	 * @throws OHServiceException.
+	 */
+	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, 
+					@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
+		LOGGER.info("Update a UserSetting");
+		String userName = userSettingDTO.getUser();
+		final String ADMIN = "admin";
+		if (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id) {	
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
+		}
+		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) 
+						&& !SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
+		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		}
+		UserSetting userSetting = userSettingManager.getUserSettingById(id);
+		UserSetting updated;
+		if (userSetting == null) {
+			LOGGER.info("No user settings with id {}", id);
+			throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
+		}
+		
+		UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
+		updated  = userSettingManager.updateUserSetting(uSetting);
+		if (updated == null) {
+			LOGGER.info("UserSetting is not updated!");
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
+		}
+		LOGGER.info("UserSetting successfully updated!");
+		return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
+	}
+	
+	/**
+	 * Retrieve an existing {@link UserSettingDTO} by id.
+	 * 
+	 * @param id - id of userSetting {@link UserSetting} .
+	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @throws OHServiceException.
+	 */
+	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> getUserSettingById(@PathVariable(name = "id")int id) throws OHServiceException {
+		LOGGER.info("Retrieve the userSetting By id {}:", id);
+		UserSetting userSetting = userSettingManager.getUserSettingById(id);
+		if (userSetting == null) {
+			LOGGER.info("No user settings with id {}", id);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
+	}
+	
+	/**
+	 * Retrieve an existing {@link UserSettingDTO} by user.
+	 * 
+	 * @param userName - the name of user.
+	 * @param configName - the name of the userSetting {@link UserSetting} . 
+	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @throws OHServiceException.
+	 */
+	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> getUserSettingByUser(@PathVariable(name = "userName") String userName, 
+					@PathVariable(name = "configName") String configName) throws OHServiceException {
+		LOGGER.info("Retrieve the userSetting By user {} and configName {}:", userName, configName);
+		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
+		if (userSettings == null || userSettings.isEmpty()) {
+			LOGGER.info("UserSetting not found!");
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
+		}
+		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
+		if (userSetting == null) {
+			LOGGER.info("No user settings for the user {}", userName);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
+	}
 
+	/**
+	 * Delete a {@link UserSetting}.
+	 * 
+	 * @param id - the id of the userSetting {@link UserSetting} to delete.
+	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
+	 */
+	@DeleteMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
+		UserSetting userSetting = userSettingManager.getUserSettingById(id);
+		if (userSetting == null) {
+			LOGGER.info("No user settings with id {}", id);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(userSettingManager.deleteUserSetting(userSetting));
+	}
 }
