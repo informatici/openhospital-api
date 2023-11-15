@@ -23,6 +23,7 @@ package org.isf.menu.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -100,19 +101,6 @@ public class UserController {
 	
 	@Autowired
 	private UserSettingMapper userSettingMapper;
-	
-	public UserController(UserGroupMapper userGroupMapper, UserMenuItemMapper userMenuItemMapper, UserBrowsingManager userManager,
-					PermissionManager permissionManager, LitePermissionMapper litePermissionMapper, UserSettingManager userSettingManager,
-					UserSettingMapper userSettingMapper) {
-		this.userGroupMapper = userGroupMapper;
-		this.userMenuItemMapper = userMenuItemMapper;
-		this.userManager = userManager;
-		this.permissionManager = permissionManager;
-		this.litePermissionMapper = litePermissionMapper;
-		this.userSettingManager = userSettingManager;
-		this.userSettingMapper = userSettingMapper;
-		
-	}
 
 	/**
 	 * Returns the list of {@link User}s.
@@ -450,9 +438,9 @@ public class UserController {
 						&& !SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
-		UserSetting userSetting = userSettingManager.getUserSettingById(id);
+		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		UserSetting updated;
-		if (userSetting == null) {
+		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 	            throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
@@ -477,12 +465,12 @@ public class UserController {
 	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingById(@PathVariable(name = "id")int id) throws OHServiceException {
 		LOGGER.info("Retrieve the userSetting By id {}:", id);
-		UserSetting userSetting = userSettingManager.getUserSettingById(id);
-		if (userSetting == null) {
+		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
+		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 	            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
+		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting.get()));
 	}
 	
 	/**
@@ -514,14 +502,20 @@ public class UserController {
 	 * 
 	 * @param id - the id of the userSetting {@link UserSetting} to delete.
 	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
+	 * @throws OHServiceException.
 	 */
 	@DeleteMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
-		UserSetting userSetting = userSettingManager.getUserSettingById(id);
-		if (userSetting == null) {
+		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
+		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		return ResponseEntity.ok(userSettingManager.deleteUserSetting(userSetting));
+		try {
+			 userSettingManager.deleteUserSetting(userSetting.get());
+	    } catch (OHServiceException serviceException) {
+	            throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
+	    }
+		return ResponseEntity.ok(true);
 	}
 }
