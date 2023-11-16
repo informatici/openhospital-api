@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
         male:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -7584,9 +7584,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7708,6 +7708,8 @@ components:
                     size:
                       type: integer
                       format: int32
+                    family:
+                      type: string
                     transform:
                       type: object
                       properties:
@@ -7773,8 +7775,6 @@ components:
                     italicAngle:
                       type: number
                       format: float
-                    family:
-                      type: string
                     attributes:
                       type: object
                       additionalProperties:
@@ -7793,6 +7793,8 @@ components:
                         size:
                           type: integer
                           format: int32
+                        family:
+                          type: string
                         transform:
                           type: object
                           properties:
@@ -7858,8 +7860,6 @@ components:
                         italicAngle:
                           type: number
                           format: float
-                        family:
-                          type: string
                         attributes:
                           type: object
                           additionalProperties:
@@ -8419,13 +8419,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        medical:
-          type: integer
-          format: int32
         notify:
           type: boolean
         sms:
           type: boolean
+        medical:
+          type: integer
+          format: int32
     TherapyDTO:
       type: object
       properties:
