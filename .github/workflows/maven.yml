@@ -40,6 +40,11 @@ jobs:
             echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
           
+      - name: Store origin name
+        id: extract_origin
+        run: |
+          echo ${{ github.event.pull_request.head.repo.full_name }}
+          
       - name: Build with Maven
         run: |
           cp rsc/application.properties.dist rsc/application.properties
