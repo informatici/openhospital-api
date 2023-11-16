@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
         male:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -6492,11 +6492,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7584,9 +7584,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7708,6 +7708,8 @@ components:
                     size:
                       type: integer
                       format: int32
+                    family:
+                      type: string
                     transform:
                       type: object
                       properties:
@@ -7773,8 +7775,6 @@ components:
                     italicAngle:
                       type: number
                       format: float
-                    family:
-                      type: string
                     attributes:
                       type: object
                       additionalProperties:
@@ -7793,6 +7793,8 @@ components:
                         size:
                           type: integer
                           format: int32
+                        family:
+                          type: string
                         transform:
                           type: object
                           properties:
@@ -7858,8 +7860,6 @@ components:
                         italicAngle:
                           type: number
                           format: float
-                        family:
-                          type: string
                         attributes:
                           type: object
                           additionalProperties:
@@ -7876,6 +7876,15 @@ components:
                     fontRenderContext:
                       type: object
                       properties:
+                        antiAliasingHint:
+                          type: object
+                        fractionalMetricsHint:
+                          type: object
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
                         transform:
                           type: object
                           properties:
@@ -7915,15 +7924,6 @@ components:
                               type: boolean
                         transformed:
                           type: boolean
-                        antiAliasingHint:
-                          type: object
-                        fractionalMetricsHint:
-                          type: object
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
                     maxAscent:
                       type: integer
                       format: int32
@@ -7960,6 +7960,15 @@ components:
                     height:
                       type: number
                       format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -7984,26 +7993,17 @@ components:
                         centerY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8039,13 +8039,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         empty:
@@ -8096,13 +8096,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         empty:
@@ -8122,6 +8122,15 @@ components:
                         height:
                           type: number
                           format: double
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
                         bounds2D:
                           type: object
                           properties:
@@ -8146,26 +8155,17 @@ components:
                             centerY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
                             x:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
-                            empty:
-                              type: boolean
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
                             height:
                               type: number
                               format: double
+                            empty:
+                              type: boolean
                         location:
                           type: object
                           properties:
@@ -8201,13 +8201,13 @@ components:
                             centerY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
                             x:
                               type: number
                               format: double
                             "y":
+                              type: number
+                              format: double
+                            height:
                               type: number
                               format: double
                             empty:
@@ -8246,6 +8246,15 @@ components:
                     height:
                       type: number
                       format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -8270,26 +8279,17 @@ components:
                         centerY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8325,13 +8325,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         empty:
