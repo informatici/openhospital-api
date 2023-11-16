@@ -40,11 +40,6 @@ jobs:
             echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
           fi
           
-      - name: Store origin name
-        id: extract_origin
-        run: |
-          echo refs/pull/${{ github.event.pull_request.number }}/merge
-          
       - name: Build with Maven
         run: |
           cp rsc/application.properties.dist rsc/application.properties
@@ -63,12 +58,16 @@ jobs:
           
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate
-        
+
       - name: Update PR with OpenAPI specs changes (if any)
-        uses: gr2m/create-or-update-pull-request-action@v1
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git clone --depth=1 --branch="${{ steps.extract_branch.outputs.branch }}" ${{ github.repositoryUrl }} origin-branch
+          cp -r openapi origin-branch/
+          cd origin-branch
+          git add .
+          git commit -m "Update OpenAPI specs"
+          git push origin "${{ steps.extract_branch.outputs.branch }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          commit-message: "GitHub Action: update openapi"
-          path: "openapi"
-          branch: ${{ steps.extract_branch.outputs.branch }}
