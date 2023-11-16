@@ -5853,13 +5853,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
-        pharmacy:
+        female:
           type: boolean
         male:
           type: boolean
-        female:
+        pharmacy:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -7584,9 +7584,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7984,17 +7984,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                     size:
                       type: object
                       properties:
@@ -8004,6 +8004,8 @@ components:
                         height:
                           type: number
                           format: double
+                    empty:
+                      type: boolean
                     location:
                       type: object
                       properties:
@@ -8013,8 +8015,6 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8039,17 +8039,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                       writeOnly: true
                     maxX:
                       type: number
@@ -8096,17 +8096,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                     bounds:
                       type: object
                       properties:
@@ -8146,17 +8146,17 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
+                            empty:
+                              type: boolean
                             x:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
-                            empty:
-                              type: boolean
+                            height:
+                              type: number
+                              format: double
                         size:
                           type: object
                           properties:
@@ -8166,6 +8166,8 @@ components:
                             height:
                               type: number
                               format: double
+                        empty:
+                          type: boolean
                         location:
                           type: object
                           properties:
@@ -8175,8 +8177,6 @@ components:
                             "y":
                               type: number
                               format: double
-                        empty:
-                          type: boolean
                         rect:
                           type: object
                           properties:
@@ -8201,17 +8201,17 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
+                            empty:
+                              type: boolean
                             x:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
-                            empty:
-                              type: boolean
+                            height:
+                              type: number
+                              format: double
                           writeOnly: true
                         maxX:
                           type: number
@@ -8270,17 +8270,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                     size:
                       type: object
                       properties:
@@ -8290,6 +8290,8 @@ components:
                         height:
                           type: number
                           format: double
+                    empty:
+                      type: boolean
                     location:
                       type: object
                       properties:
@@ -8299,8 +8301,6 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8325,17 +8325,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                       writeOnly: true
                     maxX:
                       type: number
