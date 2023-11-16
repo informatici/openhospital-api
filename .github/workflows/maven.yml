@@ -63,7 +63,7 @@ jobs:
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
-          git clone --depth=1 --branch="${{ steps.extract_branch.outputs.branch }}" https://${{ github.repository_owner }}:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/openhospital-api.git
+          git clone --depth=1 --branch="${{ steps.extract_branch.outputs.branch }}" https://${{ github.repository_owner }}:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository_owner }}/openhospital-api.git origin-branch
           cp -r openapi origin-branch/
           cd origin-branch
           git add .
