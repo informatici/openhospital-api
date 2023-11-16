@@ -5853,13 +5853,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
+        pharmacy:
           type: boolean
         female:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -8419,13 +8419,13 @@ components:
         smsInt:
           type: integer
           format: int32
+        medical:
+          type: integer
+          format: int32
         notify:
           type: boolean
         sms:
           type: boolean
-        medical:
-          type: integer
-          format: int32
     TherapyDTO:
       type: object
       properties:
