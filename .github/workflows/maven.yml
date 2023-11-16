@@ -55,12 +55,14 @@ jobs:
           echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Run API
+        if: ${{ github.actor != 'github-actions[bot]' }}      
         run: |
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
           sleep 60
           
       - name: Generate OpenAPI yaml
+        if: ${{ github.actor != 'github-actions[bot]' }}
         run: mvn springdoc-openapi:generate
 
       - name: Update PR with OpenAPI specs changes (if any)
