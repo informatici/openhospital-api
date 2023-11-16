@@ -7,7 +7,7 @@ on:
   pull_request:
   push:
     paths-ignore:
-      - 'openapi/*.yml'
+      - 'openapi/**'
 
 jobs:
   build:
