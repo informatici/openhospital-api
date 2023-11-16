@@ -43,7 +43,7 @@ jobs:
       - name: Store origin name
         id: extract_origin
         run: |
-          echo ${{ github.event.pull_request.head.repo.full_name }}
+          echo refs/pull/${{ github.event.pull_request.number }}/merge
           
       - name: Build with Maven
         run: |
@@ -63,7 +63,7 @@ jobs:
           
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate
-
+        
       - name: Update PR with OpenAPI specs changes (if any)
         uses: gr2m/create-or-update-pull-request-action@v1
         env:
