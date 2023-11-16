@@ -5853,13 +5853,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
+        male:
           type: boolean
         female:
           type: boolean
-        male:
-          type: boolean
         pharmacy:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -7629,8 +7629,6 @@ components:
             accelerationPriority:
               type: number
               format: float
-            source:
-              type: object
             graphics:
               type: object
               properties:
@@ -7878,15 +7876,6 @@ components:
                     fontRenderContext:
                       type: object
                       properties:
-                        antiAliasingHint:
-                          type: object
-                        fractionalMetricsHint:
-                          type: object
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
                         transform:
                           type: object
                           properties:
@@ -7926,6 +7915,15 @@ components:
                               type: boolean
                         transformed:
                           type: boolean
+                        antiAliasingHint:
+                          type: object
+                        fractionalMetricsHint:
+                          type: object
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
                     maxAscent:
                       type: integer
                       format: int32
@@ -8358,6 +8356,8 @@ components:
                       type: number
                       format: double
                   deprecated: true
+            source:
+              type: object
     TherapyRow:
       required:
       - endDate
@@ -8419,13 +8419,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        medical:
-          type: integer
-          format: int32
         notify:
           type: boolean
         sms:
           type: boolean
+        medical:
+          type: integer
+          format: int32
     TherapyDTO:
       type: object
       properties:
