@@ -43,8 +43,7 @@ jobs:
       - name: Get Fork URL
         id: fork_url
         run: |
-          fork_url=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}" \
+          fork_url=$(curl "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}" \
             | jq -r '.head.repo.clone_url')
           echo $fork_url
           echo "fork_url=$(echo $fork_url)" >> $GITHUB_OUTPUT
