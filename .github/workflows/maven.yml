@@ -7,7 +7,8 @@ on:
   pull_request:
   push:
     paths-ignore:
-      - 'openapi/**'
+      - '**/*'
+      - '!openapi/**'
 
 jobs:
   build:
@@ -55,18 +56,18 @@ jobs:
           echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Run API
-        if: ${{ github.actor != 'github-actions[bot]' }}      
+        if: ${{ steps.check_changes.outputs.changes != '.github/workflows/*' }}      
         run: |
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
           sleep 60
           
       - name: Generate OpenAPI yaml
-        if: ${{ github.actor != 'github-actions[bot]' }}
+        if: ${{ steps.check_changes.outputs.changes != '.github/workflows/*' }}
         run: mvn springdoc-openapi:generate
 
       - name: Update PR with OpenAPI specs changes (if any)
-        if: ${{ github.actor != 'github-actions[bot]' }}
+        if: ${{ steps.check_changes.outputs.changes != '.github/workflows/*' }}
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
