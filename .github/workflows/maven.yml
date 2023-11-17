@@ -76,5 +76,3 @@ jobs:
           git add .
           git commit -m "Update OpenAPI specs"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
