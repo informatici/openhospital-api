@@ -62,7 +62,7 @@ jobs:
       - name: Update PR with OpenAPI specs changes (if any)
         uses: gr2m/create-or-update-pull-request-action@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         with:
           commit-message: "GitHub Action: update openapi"
           path: "openapi"
