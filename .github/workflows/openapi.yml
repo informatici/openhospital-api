@@ -56,7 +56,9 @@ jobs:
           sleep 60
           
       - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
+        run: |
+          mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
+          cat openapi/oh_rev.yaml
 
       - name: Running OpenAPI Spec diff action
         uses: mwithi/oasdiff-action/breaking@main
