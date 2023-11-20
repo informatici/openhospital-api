@@ -1,0 +1,20 @@
+# This workflow will check if API have been updated and fail if not committed
+# For more information see: https://github.com/oasdiff/oasdiff-action/tree/main
+name: OpenAPI check
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/breaking@main
+        with:
+          base: openapi/oh.yaml
+          revision: openapi/oh_new.yaml
+          fail-on-diff: true
