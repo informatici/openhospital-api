@@ -7629,6 +7629,8 @@ components:
             accelerationPriority:
               type: number
               format: float
+            source:
+              type: object
             graphics:
               type: object
               properties:
@@ -7975,6 +7977,8 @@ components:
                         centerY:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                         width:
                           type: number
                           format: double
@@ -7995,15 +7999,6 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                     empty:
                       type: boolean
                     location:
@@ -8013,6 +8008,15 @@ components:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                     rect:
@@ -8030,6 +8034,8 @@ components:
                         centerY:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8087,6 +8093,8 @@ components:
                         centerY:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8137,6 +8145,8 @@ components:
                             centerY:
                               type: number
                               format: double
+                            empty:
+                              type: boolean
                             width:
                               type: number
                               format: double
@@ -8157,15 +8167,6 @@ components:
                             "y":
                               type: number
                               format: double
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
                         empty:
                           type: boolean
                         location:
@@ -8175,6 +8176,15 @@ components:
                               type: number
                               format: double
                             "y":
+                              type: number
+                              format: double
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
                               type: number
                               format: double
                         rect:
@@ -8192,6 +8202,8 @@ components:
                             centerY:
                               type: number
                               format: double
+                            empty:
+                              type: boolean
                             width:
                               type: number
                               format: double
@@ -8261,6 +8273,8 @@ components:
                         centerY:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8281,15 +8295,6 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                     empty:
                       type: boolean
                     location:
@@ -8299,6 +8304,15 @@ components:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                     rect:
@@ -8316,6 +8330,8 @@ components:
                         centerY:
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8356,8 +8372,6 @@ components:
                       type: number
                       format: double
                   deprecated: true
-            source:
-              type: object
     TherapyRow:
       required:
       - endDate
