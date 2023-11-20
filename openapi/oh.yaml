@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
         male:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -7352,6 +7352,7 @@ components:
       - configName
       - configValue
       - id
+      - user
       type: object
       properties:
         id:
@@ -7362,12 +7363,16 @@ components:
         configName:
           maxLength: 50
           type: string
-          description: The the name of the setting
+          description: The name of the setting
           example: dashboard
+        user:
+          type: string
+          description: The name of the user
+          example: admin
         configValue:
           maxLength: 65535
           type: string
-          description: The the value of the user
+          description: The value of the user
     UserMenuItemDTO:
       required:
       - altLabel
@@ -7579,9 +7584,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        informations:
-          type: string
         searchString:
+          type: string
+        informations:
           type: string
     PatientConsensus:
       type: object
@@ -7627,71 +7632,6 @@ components:
             graphics:
               type: object
               properties:
-                color:
-                  type: object
-                  properties:
-                    red:
-                      type: integer
-                      format: int32
-                    green:
-                      type: integer
-                      format: int32
-                    blue:
-                      type: integer
-                      format: int32
-                    alpha:
-                      type: integer
-                      format: int32
-                    rgb:
-                      type: integer
-                      format: int32
-                    transparency:
-                      type: integer
-                      format: int32
-                    colorSpace:
-                      type: object
-                      properties:
-                        type:
-                          type: integer
-                          format: int32
-                        numComponents:
-                          type: integer
-                          format: int32
-                        cs_sRGB:
-                          type: boolean
-                xormode:
-                  type: object
-                  properties:
-                    red:
-                      type: integer
-                      format: int32
-                    green:
-                      type: integer
-                      format: int32
-                    blue:
-                      type: integer
-                      format: int32
-                    alpha:
-                      type: integer
-                      format: int32
-                    rgb:
-                      type: integer
-                      format: int32
-                    transparency:
-                      type: integer
-                      format: int32
-                    colorSpace:
-                      type: object
-                      properties:
-                        type:
-                          type: integer
-                          format: int32
-                        numComponents:
-                          type: integer
-                          format: int32
-                        cs_sRGB:
-                          type: boolean
-                  writeOnly: true
                 font:
                   type: object
                   properties:
@@ -7703,7 +7643,7 @@ components:
                     size:
                       type: integer
                       format: int32
-                    family:
+                    fontName:
                       type: string
                     transform:
                       type: object
@@ -7729,9 +7669,6 @@ components:
                         type:
                           type: integer
                           format: int32
-                        determinant:
-                          type: number
-                          format: double
                         toRotation:
                           type: number
                           format: double
@@ -7740,22 +7677,14 @@ components:
                           type: integer
                           format: int32
                           writeOnly: true
+                        determinant:
+                          type: number
+                          format: double
                         identity:
                           type: boolean
-                    psname:
-                      type: string
-                    fontName:
-                      type: string
-                    size2D:
-                      type: number
-                      format: float
-                    plain:
-                      type: boolean
                     bold:
                       type: boolean
                     italic:
-                      type: boolean
-                    transformed:
                       type: boolean
                     numGlyphs:
                       type: integer
@@ -7763,17 +7692,28 @@ components:
                     missingGlyphCode:
                       type: integer
                       format: int32
+                    italicAngle:
+                      type: number
+                      format: float
+                    transformed:
+                      type: boolean
+                    psname:
+                      type: string
+                    size2D:
+                      type: number
+                      format: float
+                    plain:
+                      type: boolean
                     availableAttributes:
                       type: array
                       items:
                         type: object
-                    italicAngle:
-                      type: number
-                      format: float
                     attributes:
                       type: object
                       additionalProperties:
                         type: object
+                    family:
+                      type: string
                 fontMetrics:
                   type: object
                   properties:
@@ -7788,7 +7728,7 @@ components:
                         size:
                           type: integer
                           format: int32
-                        family:
+                        fontName:
                           type: string
                         transform:
                           type: object
@@ -7814,9 +7754,6 @@ components:
                             type:
                               type: integer
                               format: int32
-                            determinant:
-                              type: number
-                              format: double
                             toRotation:
                               type: number
                               format: double
@@ -7825,22 +7762,14 @@ components:
                               type: integer
                               format: int32
                               writeOnly: true
+                            determinant:
+                              type: number
+                              format: double
                             identity:
                               type: boolean
-                        psname:
-                          type: string
-                        fontName:
-                          type: string
-                        size2D:
-                          type: number
-                          format: float
-                        plain:
-                          type: boolean
                         bold:
                           type: boolean
                         italic:
-                          type: boolean
-                        transformed:
                           type: boolean
                         numGlyphs:
                           type: integer
@@ -7848,33 +7777,39 @@ components:
                         missingGlyphCode:
                           type: integer
                           format: int32
+                        italicAngle:
+                          type: number
+                          format: float
+                        transformed:
+                          type: boolean
+                        psname:
+                          type: string
+                        size2D:
+                          type: number
+                          format: float
+                        plain:
+                          type: boolean
                         availableAttributes:
                           type: array
                           items:
                             type: object
-                        italicAngle:
-                          type: number
-                          format: float
                         attributes:
                           type: object
                           additionalProperties:
                             type: object
-                    ascent:
+                        family:
+                          type: string
+                    maxDescent:
                       type: integer
                       format: int32
-                    descent:
-                      type: integer
-                      format: int32
-                    leading:
-                      type: integer
-                      format: int32
+                    widths:
+                      type: array
+                      items:
+                        type: integer
+                        format: int32
                     fontRenderContext:
                       type: object
                       properties:
-                        antiAliasingHint:
-                          type: object
-                        fractionalMetricsHint:
-                          type: object
                         antiAliased:
                           type: boolean
                         transformType:
@@ -7904,9 +7839,6 @@ components:
                             type:
                               type: integer
                               format: int32
-                            determinant:
-                              type: number
-                              format: double
                             toRotation:
                               type: number
                               format: double
@@ -7915,14 +7847,18 @@ components:
                               type: integer
                               format: int32
                               writeOnly: true
+                            determinant:
+                              type: number
+                              format: double
                             identity:
                               type: boolean
+                        antiAliasingHint:
+                          type: object
+                        fractionalMetricsHint:
+                          type: object
                         transformed:
                           type: boolean
                     maxAscent:
-                      type: integer
-                      format: int32
-                    maxDescent:
                       type: integer
                       format: int32
                     maxDecent:
@@ -7932,12 +7868,48 @@ components:
                     maxAdvance:
                       type: integer
                       format: int32
-                    widths:
-                      type: array
-                      items:
-                        type: integer
-                        format: int32
+                    ascent:
+                      type: integer
+                      format: int32
+                    descent:
+                      type: integer
+                      format: int32
+                    leading:
+                      type: integer
+                      format: int32
                     height:
+                      type: integer
+                      format: int32
+                color:
+                  type: object
+                  properties:
+                    red:
+                      type: integer
+                      format: int32
+                    green:
+                      type: integer
+                      format: int32
+                    blue:
+                      type: integer
+                      format: int32
+                    alpha:
+                      type: integer
+                      format: int32
+                    colorSpace:
+                      type: object
+                      properties:
+                        type:
+                          type: integer
+                          format: int32
+                        numComponents:
+                          type: integer
+                          format: int32
+                        cs_sRGB:
+                          type: boolean
+                    rgb:
+                      type: integer
+                      format: int32
+                    transparency:
                       type: integer
                       format: int32
                 clipBounds:
@@ -7955,15 +7927,6 @@ components:
                     height:
                       type: number
                       format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -7988,17 +7951,19 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
+                    empty:
+                      type: boolean
                     location:
                       type: object
                       properties:
@@ -8008,8 +7973,15 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     rect:
                       type: object
                       properties:
@@ -8034,17 +8006,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                       writeOnly: true
                     maxX:
                       type: number
@@ -8064,6 +8036,39 @@ components:
                     minY:
                       type: number
                       format: double
+                xormode:
+                  type: object
+                  properties:
+                    red:
+                      type: integer
+                      format: int32
+                    green:
+                      type: integer
+                      format: int32
+                    blue:
+                      type: integer
+                      format: int32
+                    alpha:
+                      type: integer
+                      format: int32
+                    colorSpace:
+                      type: object
+                      properties:
+                        type:
+                          type: integer
+                          format: int32
+                        numComponents:
+                          type: integer
+                          format: int32
+                        cs_sRGB:
+                          type: boolean
+                    rgb:
+                      type: integer
+                      format: int32
+                    transparency:
+                      type: integer
+                      format: int32
+                  writeOnly: true
                 clip:
                   type: object
                   properties:
@@ -8091,17 +8096,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                     bounds:
                       type: object
                       properties:
@@ -8117,15 +8122,6 @@ components:
                         height:
                           type: number
                           format: double
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
                         bounds2D:
                           type: object
                           properties:
@@ -8150,17 +8146,19 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
+                            empty:
+                              type: boolean
                             x:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
-                            empty:
-                              type: boolean
+                            height:
+                              type: number
+                              format: double
+                        empty:
+                          type: boolean
                         location:
                           type: object
                           properties:
@@ -8170,8 +8168,15 @@ components:
                             "y":
                               type: number
                               format: double
-                        empty:
-                          type: boolean
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
                         rect:
                           type: object
                           properties:
@@ -8196,17 +8201,17 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
-                              type: number
-                              format: double
+                            empty:
+                              type: boolean
                             x:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
-                            empty:
-                              type: boolean
+                            height:
+                              type: number
+                              format: double
                           writeOnly: true
                         maxX:
                           type: number
@@ -8241,15 +8246,6 @@ components:
                     height:
                       type: number
                       format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -8274,17 +8270,19 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
+                    empty:
+                      type: boolean
                     location:
                       type: object
                       properties:
@@ -8294,8 +8292,15 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     rect:
                       type: object
                       properties:
@@ -8320,17 +8325,17 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
-                          type: number
-                          format: double
+                        empty:
+                          type: boolean
                         x:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
-                        empty:
-                          type: boolean
+                        height:
+                          type: number
+                          format: double
                       writeOnly: true
                     maxX:
                       type: number
