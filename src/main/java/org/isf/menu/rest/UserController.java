@@ -518,4 +518,27 @@ public class UserController {
 	    	}
 		return ResponseEntity.ok(true);
 	}
+	
+	/**
+	 * Returns a {@link UserSettingDTO} of userSetting.
+	 * 
+	 * @return {@link UserSettingDTO} if the userSetting with configName dashboard
+	 *         exist, null otherwise.
+	 */
+	@GetMapping(value = "/user/settings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
+		LOGGER.info("Attempting to fetch the UserSetting of dashboard of the current user");
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		String dashboard = "dashboard";
+		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, dashboard);
+		if (userSetting == null) {
+			LOGGER.info("No dashboard settings for the current user {}", userName);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		} else {
+			UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
+			LOGGER.info("Found {} user settings", userSettingDashboard);
+			return ResponseEntity.ok(userSettingDashboard);
+		}
+
+	}
 }

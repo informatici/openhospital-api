@@ -278,6 +278,12 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("diseases.update")
 						.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("diseases.delete")
 						.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("diseases.read")
+						// user setting
+						.antMatchers(HttpMethod.POST, "/users/settings/**").hasAuthority("usersetting.create")
+						.antMatchers(HttpMethod.PUT, "/users/settings/**").hasAuthority("usersetting.update")
+						.antMatchers(HttpMethod.DELETE, "/user/settings/**").hasAuthority("usersetting.delete")
+						.antMatchers(HttpMethod.GET, "/user/settings/**").hasAuthority("usersetting.read")
+						.antMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersetting.read")
 //			.and()
 //			.formLogin()
 //				 .loginPage("/auth/login")
