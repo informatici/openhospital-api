@@ -55,15 +55,14 @@ jobs:
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
           sleep 60
-          
-      - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate
 
-      - name: Update PR with OpenAPI specs changes (if any)
-        uses: gr2m/create-or-update-pull-request-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate OpenAPI yaml
+        run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_new.yaml
+
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/check-breaking@main
         with:
-          commit-message: "GitHub Action: update openapi"
-          path: "openapi"
-          branch: ${{ steps.extract_branch.outputs.branch }}
+          base: openapi/oh.yaml
+          revision: openapi/oh_new.yaml
+          fail-on-diff: true
