@@ -522,8 +522,7 @@ public class UserController {
 	/**
 	 * Returns a {@link UserSettingDTO} of userSetting.
 	 * 
-	 * @return {@link UserSettingDTO} if the userSetting with configName dashboard
-	 *         exist, null otherwise.
+	 * @return {@link UserSettingDTO} if the userSetting with configName dashboard exist, null otherwise.
 	 */
 	@GetMapping(value = "/user/settings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
@@ -532,12 +531,12 @@ public class UserController {
 		String dashboard = "dashboard";
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, dashboard);
 		if (userSetting == null) {
-			LOGGER.info("No dashboard settings for the current user {}", userName);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		    LOGGER.info("No dashboard settings for the current user {}", userName);
+		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		} else {
-			UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
-			LOGGER.info("Found {} user settings", userSettingDashboard);
-			return ResponseEntity.ok(userSettingDashboard);
+		    UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
+		    LOGGER.info("Found {} user settings", userSettingDashboard);
+		    return ResponseEntity.ok(userSettingDashboard);
 		}
 
 	}
