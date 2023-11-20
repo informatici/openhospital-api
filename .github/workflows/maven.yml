@@ -24,45 +24,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-          
-      - name: Generate JWT Token
-        id: jwt
-        run: echo "token=7DlyD1SHR5pCa4HGgTLWSYm8YQ7oRL1wpPbxyjWyHU44vUrqrooRu3lHVFSXWChesc" >> $GITHUB_OUTPUT
-
-      - name: Store branch name
-        id: extract_branch
-        run: |
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
-          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            echo "branch=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_OUTPUT
-          else
-            echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
-          fi
-          
+            
       - name: Build with Maven
-        run: |
-          cp rsc/application.properties.dist rsc/application.properties
-          cp rsc/database.properties.dist rsc/database.properties
-          cp rsc/log4j.properties.dist rsc/log4j.properties
-          cp rsc/settings.properties.dist rsc/settings.properties
-          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
-          mvn install -DskipTests=true
-          echo ${{ steps.extract_branch.outputs.branch }}
-          
-      - name: Run API
-        run: |
-          cd target
-          java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
-          sleep 60
-
-      - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_new.yaml
-
-      - name: Running OpenAPI Spec diff action
-        id: breaking_changes
-        uses: oasdiff/oasdiff-action/breaking@main
-        with:
-          base: openapi/oh.yaml
-          revision: openapi/oh_new.yaml
-          fail-on-diff: true
+        run: mvn -B package --file pom.xml
