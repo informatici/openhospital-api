@@ -61,7 +61,7 @@ jobs:
 
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
-        uses: oasdiff/oasdiff-action/check-breaking@main
+        uses: oasdiff/oasdiff-action/diff@main
         with:
           base: openapi/oh.yaml
           revision: openapi/oh_new.yaml
