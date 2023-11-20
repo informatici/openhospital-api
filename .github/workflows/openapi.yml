@@ -59,7 +59,7 @@ jobs:
         run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
 
       - name: Running OpenAPI Spec diff action
-        uses: oasdiff/oasdiff-action/breaking@main
+        uses: mwithi/oasdiff-action/breaking@main
         with:
           base: openapi/oh.yaml
           revision: openapi/oh_rev.yaml
