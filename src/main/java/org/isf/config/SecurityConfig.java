@@ -284,6 +284,22 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.DELETE, "/users/settings/**").hasAuthority("usersetting.delete")
 						.antMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersetting.read")
 						.antMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersetting.read")
+						// user
+						.antMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
+						.antMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
+						.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
+						.antMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
+						// permission
+						.antMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permission.read")
+						.antMatchers(HttpMethod.POST, "/permissions/**").hasAuthority("permission.create")
+						.antMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permission.update")
+						.antMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permission.delete")
+						// grouppermission
+						.antMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("grouppermission.read")
+						.antMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
+						.antMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
+						.antMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
+						
 //			.and()
 //			.formLogin()
 //				 .loginPage("/auth/login")
