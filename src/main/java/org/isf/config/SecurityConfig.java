@@ -285,10 +285,10 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersetting.read")
 						.antMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersetting.read")
 						// user
-						.antMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
-						.antMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
-						.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
-						.antMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
+						.antMatchers(HttpMethod.POST, "/users").hasAuthority("user.create")
+						.antMatchers(HttpMethod.PUT, "/users").hasAuthority("user.update")
+						.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("user.delete")
+						.antMatchers(HttpMethod.GET, "/users/**").hasAuthority("user.read")
 						// permission
 						.antMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permission.read")
 						.antMatchers(HttpMethod.POST, "/permissions/**").hasAuthority("permission.create")
