@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # - uses: actions/checkout@v2
-      #   with:
-      #     persist-credentials: false
+      - uses: actions/checkout@v2
+        # with:
+        #   persist-credentials: false
 
       # - name: Checkout core
       #   run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
