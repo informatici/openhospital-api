@@ -61,7 +61,7 @@ jobs:
           cat openapi/oh_rev.yaml
 
       - name: Running OpenAPI Spec diff action
-        uses: mwithi/oasdiff-action/breaking@main
+        uses: oasdiff/oasdiff-action/breaking@main
         with:
           base: openapi/oh.yaml
           revision: openapi/oh_rev.yaml
