@@ -5855,11 +5855,11 @@ components:
           example: 0
         opd:
           type: boolean
-        female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
     PatientDTO:
       required:
@@ -6492,11 +6492,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7352,7 +7352,6 @@ components:
       - configName
       - configValue
       - id
-      - user
       type: object
       properties:
         id:
@@ -7363,16 +7362,12 @@ components:
         configName:
           maxLength: 50
           type: string
-          description: The name of the setting
+          description: The the name of the setting
           example: dashboard
-        user:
-          type: string
-          description: The name of the user
-          example: admin
         configValue:
           maxLength: 65535
           type: string
-          description: The value of the user
+          description: The the value of the user
     UserMenuItemDTO:
       required:
       - altLabel
@@ -7584,9 +7579,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7629,8 +7624,6 @@ components:
             accelerationPriority:
               type: number
               format: float
-            source:
-              type: object
             graphics:
               type: object
               properties:
@@ -7710,6 +7703,8 @@ components:
                     size:
                       type: integer
                       format: int32
+                    family:
+                      type: string
                     transform:
                       type: object
                       properties:
@@ -7779,8 +7774,6 @@ components:
                       type: object
                       additionalProperties:
                         type: object
-                    family:
-                      type: string
                 fontMetrics:
                   type: object
                   properties:
@@ -7795,6 +7788,8 @@ components:
                         size:
                           type: integer
                           format: int32
+                        family:
+                          type: string
                         transform:
                           type: object
                           properties:
@@ -7864,8 +7859,6 @@ components:
                           type: object
                           additionalProperties:
                             type: object
-                        family:
-                          type: string
                     ascent:
                       type: integer
                       format: int32
@@ -7962,6 +7955,15 @@ components:
                     height:
                       type: number
                       format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -7977,8 +7979,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         width:
                           type: number
                           format: double
@@ -7988,8 +7988,6 @@ components:
                         minY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -7999,8 +7997,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8010,15 +8008,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
+                    empty:
+                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8034,8 +8025,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8045,8 +8034,6 @@ components:
                         minY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8056,6 +8043,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                       writeOnly: true
                     maxX:
                       type: number
@@ -8093,8 +8082,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8104,8 +8091,6 @@ components:
                         minY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8115,6 +8100,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                     bounds:
                       type: object
                       properties:
@@ -8130,6 +8117,15 @@ components:
                         height:
                           type: number
                           format: double
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
                         bounds2D:
                           type: object
                           properties:
@@ -8145,8 +8141,6 @@ components:
                             centerY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             width:
                               type: number
                               format: double
@@ -8156,8 +8150,6 @@ components:
                             minY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             height:
                               type: number
                               format: double
@@ -8167,8 +8159,8 @@ components:
                             "y":
                               type: number
                               format: double
-                        empty:
-                          type: boolean
+                            empty:
+                              type: boolean
                         location:
                           type: object
                           properties:
@@ -8178,15 +8170,8 @@ components:
                             "y":
                               type: number
                               format: double
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
+                        empty:
+                          type: boolean
                         rect:
                           type: object
                           properties:
@@ -8202,8 +8187,6 @@ components:
                             centerY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             width:
                               type: number
                               format: double
@@ -8213,8 +8196,6 @@ components:
                             minY:
                               type: number
                               format: double
-                            empty:
-                              type: boolean
                             height:
                               type: number
                               format: double
@@ -8224,6 +8205,8 @@ components:
                             "y":
                               type: number
                               format: double
+                            empty:
+                              type: boolean
                           writeOnly: true
                         maxX:
                           type: number
@@ -8258,6 +8241,15 @@ components:
                     height:
                       type: number
                       format: double
+                    size:
+                      type: object
+                      properties:
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
@@ -8273,8 +8265,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8284,8 +8274,6 @@ components:
                         minY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8295,8 +8283,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    empty:
-                      type: boolean
+                        empty:
+                          type: boolean
                     location:
                       type: object
                       properties:
@@ -8306,15 +8294,8 @@ components:
                         "y":
                           type: number
                           format: double
-                    size:
-                      type: object
-                      properties:
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
+                    empty:
+                      type: boolean
                     rect:
                       type: object
                       properties:
@@ -8330,8 +8311,6 @@ components:
                         centerY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         width:
                           type: number
                           format: double
@@ -8341,8 +8320,6 @@ components:
                         minY:
                           type: number
                           format: double
-                        empty:
-                          type: boolean
                         height:
                           type: number
                           format: double
@@ -8352,6 +8329,8 @@ components:
                         "y":
                           type: number
                           format: double
+                        empty:
+                          type: boolean
                       writeOnly: true
                     maxX:
                       type: number
@@ -8372,6 +8351,8 @@ components:
                       type: number
                       format: double
                   deprecated: true
+            source:
+              type: object
     TherapyRow:
       required:
       - endDate
