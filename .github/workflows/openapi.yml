@@ -61,11 +61,11 @@ jobs:
       #     # remove after test is ok
       #     cat openapi/oh_rev.yaml
 
-      - name: Running OpenAPI Spec diff action
+      - name: Running OpenAPI Spec breaking action
         run: |
            tenant_id=$(curl -d '{"tenant": "oh", "email": "community@open-hospital.org"}' https://register.oasdiff.com/tenants | jq -r .id)
-           output=$(curl -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/{${tenant_id}}/breaking-changes)
-           echo $output
+           curl -o output -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/{${tenant_id}}/breaking-changes
+           cat output
 
         # uses: mwithi/oasdiff-action/breaking@main
         # with:
