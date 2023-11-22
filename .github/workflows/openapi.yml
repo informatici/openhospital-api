@@ -41,13 +41,13 @@ jobs:
           
       - name: Build with Maven
         run: |
-          # cp rsc/application.properties.dist rsc/application.properties
-          # cp rsc/database.properties.dist rsc/database.properties
-          # cp rsc/log4j.properties.dist rsc/log4j.properties
-          # cp rsc/settings.properties.dist rsc/settings.properties
-          # sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
+          cp rsc/application.properties.dist rsc/application.properties
+          cp rsc/database.properties.dist rsc/database.properties
+          cp rsc/log4j.properties.dist rsc/log4j.properties
+          cp rsc/settings.properties.dist rsc/settings.properties
+          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
           mvn install -DskipTests=true
-          # echo ${{ steps.extract_branch.outputs.branch }}
+          echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Run API
         run: |
