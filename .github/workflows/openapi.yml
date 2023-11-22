@@ -62,13 +62,13 @@ jobs:
       #     cat openapi/oh_rev.yaml
 
       - name: Running OpenAPI Spec breaking action
-        run: |
-           tenant_id=`curl -d '{"tenant": "oh", "email": "community@open-hospital.org"}' https://register.oasdiff.com/tenants | jq -r .id`
-           curl -o output -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/${tenant_id}/breaking-changes
-           cat output
+        # run: |
+        #    tenant_id=`curl -d '{"tenant": "oh", "email": "community@open-hospital.org"}' https://register.oasdiff.com/tenants | jq -r .id`
+        #    curl -o output -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/${tenant_id}/breaking-changes
+        #    cat output
 
-        # uses: mwithi/oasdiff-action/breaking@main
-        # with:
-        #   base: openapi/oh.yaml
-        #   revision: openapi/oh_rev.yaml
-        #   fail-on-diff: false
+        uses: mwithi/oasdiff-action/breaking@main
+        with:
+          base: openapi/oh.yaml
+          revision: openapi/oh_rev.yaml
+          fail-on-diff: false
