@@ -57,14 +57,15 @@ jobs:
           sleep 60
           
       - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate
+        run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
 
-#TODO: FIX OH2-246
-#      - name: Update PR with OpenAPI specs changes (if any)
-#        uses: gr2m/create-or-update-pull-request-action@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          commit-message: "GitHub Action: update openapi"
-#          path: "openapi"
-#          branch: ${{ steps.extract_branch.outputs.branch }}
+      - name: Running OpenAPI Spec breaking action
+        # run: |
+        #    tenant_id=`curl -d '{"tenant": "oh", "email": "community@open-hospital.org"}' https://register.oasdiff.com/tenants | jq -r .id`
+        #    curl -o output -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/${tenant_id}/breaking-changes
+        #    cat output
+        uses: oasdiff/oasdiff-action/breaking@main
+        with:
+          base: openapi/oh.yaml
+          revision: openapi/oh_rev.yaml
+          fail-on-diff: true
