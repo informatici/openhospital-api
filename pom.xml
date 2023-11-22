@@ -154,7 +154,11 @@
                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
                  </configuration>
-               </plugin>
+	 </plugin>
+	<plugin>
+		<artifactId>maven-war-plugin</artifactId>
+		<version>3.4.0</version>
+	</plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
