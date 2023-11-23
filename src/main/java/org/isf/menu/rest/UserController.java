@@ -431,28 +431,27 @@ public class UserController {
 		LOGGER.info("Update a UserSetting");
 		String userName = userSettingDTO.getUser();
 		final String ADMIN = "admin";
-		if (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id) {	
+		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {	
 		    throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
-		}
-		if (!userName.equals(SecurityContextHolder.getContext().getAuthentication().getName()) 
-						&& !SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
-		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		UserSetting updated;
 		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
-	            throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
+	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
-		
-		UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
-		updated  = userSettingManager.updateUserSetting(uSetting);
-		if (updated == null) {
-		    LOGGER.info("UserSetting is not updated!");
-		    throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
+		if (userSetting.get().getUser().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+						SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
+			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
+			updated  = userSettingManager.updateUserSetting(uSetting);
+			if (updated == null) {
+			    LOGGER.info("UserSetting is not updated!");
+			    throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
+			}
+			LOGGER.info("UserSetting successfully updated!");
+			return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
 		}
-		LOGGER.info("UserSetting successfully updated!");
-		return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
+		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 	}
 	
 	/**
@@ -507,16 +506,21 @@ public class UserController {
 	@DeleteMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
+		final String ADMIN = "admin";
 		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		try {
-			 userSettingManager.deleteUserSetting(userSetting.get());
-	    	} catch (OHServiceException serviceException) {
-	            throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
-	    	}
-		return ResponseEntity.ok(true);
+		if (userSetting.get().getUser().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
+						SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
+			try {
+				 userSettingManager.deleteUserSetting(userSetting.get());
+		    	} catch (OHServiceException serviceException) {
+		            throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
+		    	}
+			return ResponseEntity.ok(true);
+		}
+		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 	}
 	
 	/**
