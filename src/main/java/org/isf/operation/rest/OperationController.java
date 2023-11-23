@@ -102,7 +102,7 @@ public class OperationController {
 	@PostMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OperationDTO> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
 		String code = operationDTO.getCode();
-		LOGGER.info("Create operation {}", code);
+		LOGGER.info("Create operation {}.", code);
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Another operation already created with provided description and types."));
 		}
@@ -122,7 +122,7 @@ public class OperationController {
 	@PutMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OperationDTO> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
 			throws OHServiceException {
-		LOGGER.info("Update operations code: {}", operationDTO.getCode());
+		LOGGER.info("Update operations code: {}.", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Operation not found."));
@@ -142,7 +142,7 @@ public class OperationController {
 	 */
 	@GetMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationDTO>> getOperations() throws OHServiceException {
-		LOGGER.info("Get all operations ");
+		LOGGER.info("Get all operations.");
 		List<Operation> operations = operationManager.getOperation();
 		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
 		if (operationDTOs.isEmpty()) {
@@ -159,7 +159,7 @@ public class OperationController {
 	 */
 	@GetMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<OperationDTO> getOperationByCode(@PathVariable String code) throws OHServiceException {
-		LOGGER.info("Get operation for provided code");
+		LOGGER.info("Get operation for provided code: {}.", code);
 		Operation operation = operationManager.getOperationByCode(code);
 		if (operation != null) {
 			return ResponseEntity.ok(mapper.map2DTO(operation));
@@ -175,7 +175,7 @@ public class OperationController {
 	 */
 	@GetMapping(value = "/operations/search/type", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationDTO>> getOperationByTypeDescription(@RequestParam String typeDescription) throws OHServiceException {
-		LOGGER.info("Get operations for provided type description");
+		LOGGER.info("Get operations for provided type description: {}.", typeDescription);
 		List<Operation> operations = operationManager.getOperationByTypeDescription(typeDescription);
 		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
 		if (operationDTOs.isEmpty()) {
@@ -193,7 +193,7 @@ public class OperationController {
 	 */
 	@DeleteMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
-		LOGGER.info("Delete operation code: {}", code);
+		LOGGER.info("Delete operation code: {}.", code);
 		boolean isDeleted;
 		Operation operation = operationManager.getOperationByCode(code);
 		if (operation != null) {
@@ -214,7 +214,7 @@ public class OperationController {
 	@PostMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		int code = operationRowDTO.getAdmission().getId();
-		LOGGER.info("Create operation {}", code);
+		LOGGER.info("Create operation: {}.", code);
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			   throw new OHAPIException(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
@@ -243,7 +243,7 @@ public class OperationController {
 	 */
 	@PutMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
-		LOGGER.info("Update operations row code: {}", operationRowDTO.getId());
+		LOGGER.info("Update operations row code: {}.", operationRowDTO.getId());
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			throw new OHAPIException(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
@@ -268,12 +268,11 @@ public class OperationController {
 	 */
 	@GetMapping(value = "/operations/rows/search/admission", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByAdmt(@RequestParam("admissionId") int id) throws OHServiceException {
-		LOGGER.info("Get operations row for provided admission");
+		LOGGER.info("Get operations row for provided admission.");
 		Admission adm = admissionManager.getAdmission(id);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByAdmission(adm);
 		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
-			OperationRowDTO opR = opRowMapper.map2DTO(operation);
-			return opR;
+			return opRowMapper.map2DTO(operation);
 		}).collect(Collectors.toList());
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
@@ -289,12 +288,10 @@ public class OperationController {
 	 */
 	@GetMapping(value = "/operations/rows/search/patient", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByPatient(@RequestParam int patientCode) throws OHServiceException {
-		LOGGER.info("Get operations row for provided patient");
+		LOGGER.info("Get operations row for provided patient.");
 		Patient patient = patientBrowserManager.getPatientById(patientCode);
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByPatientCode(patient);
-		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
-			return opRowMapper.map2DTO(operation);
-		}).collect(Collectors.toList());
+		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> opRowMapper.map2DTO(operation)).collect(Collectors.toList());
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
 		} else {
@@ -309,11 +306,9 @@ public class OperationController {
 	 */
 	@PostMapping(value = "/operations/rows/search/opd", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
-		LOGGER.info("Get operations row for provided opd");
+		LOGGER.info("Get operations row for provided opd.");
 		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
-		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
-			return opRowMapper.map2DTO(operation);
-		}).collect(Collectors.toList());
+		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> opRowMapper.map2DTO(operation)).collect(Collectors.toList());
 		
 		if (operationRowDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
@@ -330,13 +325,14 @@ public class OperationController {
 	 */
 	@DeleteMapping(value = "/operations/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOperationRow(@PathVariable int code) throws OHServiceException {
-		LOGGER.info("Delete operation row code: {}", code);
+		LOGGER.info("Delete operation row code: {}.", code);
 		OperationRow opRow = new OperationRow();
 		opRow.setId(code);
-		boolean isDeleted = operationRowManager.deleteOperationRow(opRow);
-		if (!isDeleted) {
+		try {
+			operationRowManager.deleteOperationRow(opRow);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Operation row not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
 	}
 }
