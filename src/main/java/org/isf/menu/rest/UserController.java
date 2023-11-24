@@ -382,6 +382,9 @@ public class UserController {
 						&& !user.equals(ADMIN)) {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
+		if (userSettingManager.getUserSettingByUserName(userName) != null) {
+			throw new OHAPIException(new OHExceptionMessage("The setting with that name already exist."));
+		}
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
 		if (created == null) {
