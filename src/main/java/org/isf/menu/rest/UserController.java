@@ -171,9 +171,6 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exists."));
 		}
 		User user = userMapper.map2Model(userDTO);
-		if (userManager.getUserByName(user.getUserName()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
-		}
 		boolean isUpdated;
 		if (updatePassword) {
 			isUpdated = userManager.updatePassword(user);
