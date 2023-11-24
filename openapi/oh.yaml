@@ -2137,53 +2137,6 @@ paths:
                 "$ref": "#/components/schemas/UserSettingDTO"
       security:
       - bearerAuth: []
-  "/users/groups/{group_code}":
-    post:
-      tags:
-      - Users
-      operationId: setGroupMenu
-      parameters:
-      - name: group_code
-        in: path
-        required: true
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                "$ref": "#/components/schemas/UserMenuItemDTO"
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-      - bearerAuth: []
-    delete:
-      tags:
-      - Users
-      operationId: deleteGroup
-      parameters:
-      - name: group_code
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-      - bearerAuth: []
   "/therapies":
     post:
       tags:
@@ -5747,6 +5700,26 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  "/users/groups/{group_code}":
+    delete:
+      tags:
+      - Users
+      operationId: deleteGroup
+      parameters:
+      - name: group_code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - bearerAuth: []
   "/operations/rows/{code}":
     delete:
       tags:
@@ -5961,13 +5934,13 @@ components:
           description: lock
           format: int32
           example: 0
-        pharmacy:
-          type: boolean
-        male:
+        opd:
           type: boolean
         female:
           type: boolean
-        opd:
+        male:
+          type: boolean
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -6624,11 +6597,11 @@ components:
           type: string
           description: 'Flag record deleted, values are ''Y'' OR ''N'' '
           example: N
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7479,57 +7452,6 @@ components:
           format: int32
           example: 0
       description: Class representing an age type which is typically a range
-    UserMenuItemDTO:
-      required:
-      - altLabel
-      - buttonLabel
-      - code
-      - myClass
-      - mySubmenu
-      - position
-      type: object
-      properties:
-        code:
-          maxLength: 50
-          type: string
-          description: Code of the menu item (must be unique)
-          example: admtype
-        buttonLabel:
-          maxLength: 50
-          type: string
-          description: Button label of the menu item
-          example: Admission Type
-        altLabel:
-          maxLength: 50
-          type: string
-          description: Alt label of the menu item
-          example: Admission Type
-        tooltip:
-          maxLength: 100
-          type: string
-          description: Tooltip label of the menu item
-          example: Admission Type
-        shortcut:
-          type: string
-          description: Shortcut of the menu item
-          example: A
-        mySubmenu:
-          maxLength: 50
-          type: string
-          description: Parent submenu of the menu item
-          example: types
-        myClass:
-          maxLength: 100
-          type: string
-          description: The main window class associated
-          example: org.isf.admtype.gui.AdmissionTypeBrowser
-        position:
-          type: integer
-          description: Position of the menu item
-          format: int32
-          example: 5
-        asubMenu:
-          type: boolean
     TherapyRowDTO:
       required:
       - endDate
@@ -7987,11 +7909,6 @@ components:
                     fontRenderContext:
                       type: object
                       properties:
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
                         transform:
                           type: object
                           properties:
@@ -8035,6 +7952,11 @@ components:
                           type: object
                         fractionalMetricsHint:
                           type: object
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
                     maxAscent:
                       type: integer
                       format: int32
@@ -8096,6 +8018,21 @@ components:
                         height:
                           type: number
                           format: double
+                        width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        y:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8106,21 +8043,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        y:
                           type: number
                           format: double
                     rect:
@@ -8131,6 +8053,21 @@ components:
                         height:
                           type: number
                           format: double
+                        width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        y:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8143,22 +8080,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        y:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8169,12 +8097,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                 clip:
@@ -8223,6 +8145,21 @@ components:
                             height:
                               type: number
                               format: double
+                            width:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            y:
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8233,21 +8170,6 @@ components:
                               type: number
                               format: double
                             centerY:
-                              type: number
-                              format: double
-                            width:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            y:
                               type: number
                               format: double
                         rect:
@@ -8258,6 +8180,21 @@ components:
                             height:
                               type: number
                               format: double
+                            width:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            y:
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8270,22 +8207,13 @@ components:
                             centerY:
                               type: number
                               format: double
-                            width:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            y:
-                              type: number
-                              format: double
                           writeOnly: true
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8296,12 +8224,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     bounds2D:
@@ -8310,18 +8232,6 @@ components:
                         empty:
                           type: boolean
                         height:
-                          type: number
-                          format: double
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
                           type: number
                           format: double
                         width:
@@ -8333,10 +8243,22 @@ components:
                         minY:
                           type: number
                           format: double
+                        y:
+                          type: number
+                          format: double
                         x:
                           type: number
                           format: double
-                        y:
+                        maxX:
+                          type: number
+                          format: double
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
                           type: number
                           format: double
                 clipRect:
@@ -8382,6 +8304,21 @@ components:
                         height:
                           type: number
                           format: double
+                        width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        y:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8392,21 +8329,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        y:
                           type: number
                           format: double
                     rect:
@@ -8417,6 +8339,21 @@ components:
                         height:
                           type: number
                           format: double
+                        width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        y:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8429,22 +8366,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        y:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8455,12 +8383,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                   deprecated: true
@@ -8525,13 +8447,13 @@ components:
         smsInt:
           type: integer
           format: int32
+        medical:
+          type: integer
+          format: int32
         notify:
           type: boolean
         sms:
           type: boolean
-        medical:
-          type: integer
-          format: int32
     TherapyDTO:
       type: object
       properties:
