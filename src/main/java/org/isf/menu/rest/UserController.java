@@ -382,8 +382,11 @@ public class UserController {
 						&& !currentUser.equals(ADMIN)) {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
-		if (userSettingManager.getUserSettingByUserName(userName) != null) {
-			throw new OHAPIException(new OHExceptionMessage("The setting with that name already exist."));
+		if (userSettingManager.getUserSettingByUserNameConfigName(userName, userSettingDTO.getConfigName()) != null) {
+			throw new OHAPIException(new OHExceptionMessage("The setting with that name already exist for curent user."));
+		}
+		if (userManager.getUserByName(userName) != null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
@@ -424,6 +427,12 @@ public class UserController {
 		}
 		if (userSetting.get().getUser().equals(currentUser) ||
 						currentUser.equals(ADMIN)) {
+			if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
+				throw new OHAPIException(new OHExceptionMessage("The setting with that name already exist for curent user."));
+			}
+			if (userManager.getUserByName(requestUserName) != null) {
+				throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
+			}
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated  = userSettingManager.updateUserSetting(uSetting);
 			if (updated == null) {
