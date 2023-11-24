@@ -439,7 +439,7 @@ public class UserController {
 			    LOGGER.info("UserSetting is not updated!");
 			    throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
 			}
-			LOGGER.info("UserSetting successfully updated!");
+			LOGGER.info("UserSetting successfully updated.");
 			return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
