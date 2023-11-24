@@ -468,7 +468,7 @@ public class UserController {
 	 * 
 	 * @param userName - the name of user.
 	 * @param configName - the name of the userSetting {@link UserSetting} . 
-	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
