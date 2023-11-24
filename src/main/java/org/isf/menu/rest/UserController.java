@@ -449,7 +449,7 @@ public class UserController {
 	 * Retrieves an existing {@link UserSettingDTO} by id.
 	 * 
 	 * @param id - id of userSetting {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
