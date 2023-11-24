@@ -436,7 +436,7 @@ public class UserController {
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated  = userSettingManager.updateUserSetting(uSetting);
 			if (updated == null) {
-			    LOGGER.info("UserSetting is not updated!");
+			    LOGGER.info("UserSetting is not updated.");
 			    throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
 			}
 			LOGGER.info("UserSetting successfully updated.");
