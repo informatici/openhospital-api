@@ -375,11 +375,11 @@ public class UserController {
 	public ResponseEntity<UserSettingDTO> newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Create a UserSetting");
 		String userName = userSettingDTO.getUser();
-		String user = SecurityContextHolder.getContext().getAuthentication().getName();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		userSettingDTO.setId(0);
 		final String ADMIN = "admin";
-		if (!userName.equals(user) 
-						&& !user.equals(ADMIN)) {
+		if (!userName.equals(currentUser) 
+						&& !currentUser.equals(ADMIN)) {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		if (userSettingManager.getUserSettingByUserName(userName) != null) {
@@ -419,11 +419,11 @@ public class UserController {
 	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
 		if (!userSetting.get().getUser().equals(requestUserName) &&
-						!user.equals(ADMIN)) {
+						!currentUser.equals(ADMIN)) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
-		if (userSetting.get().getUser().equals(user) ||
-						user.equals(ADMIN)) {
+		if (userSetting.get().getUser().equals(currentUser) ||
+						currentUser.equals(ADMIN)) {
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated  = userSettingManager.updateUserSetting(uSetting);
 			if (updated == null) {
@@ -489,13 +489,13 @@ public class UserController {
 	public ResponseEntity<Boolean> deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		final String ADMIN = "admin";
-		String user = SecurityContextHolder.getContext().getAuthentication().getName();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (userSetting.get().getUser().equals(user) ||
-						user.equals(ADMIN)) {
+		if (userSetting.get().getUser().equals(currentUser) ||
+						currentUser.equals(ADMIN)) {
 			try {
 				 userSettingManager.deleteUserSetting(userSetting.get());
 		    	} catch (OHServiceException serviceException) {
