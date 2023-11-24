@@ -382,7 +382,6 @@ public class UserController {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
-		userSetting.setUser(userName);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
 		if (created == null) {
 		    LOGGER.info("UserSetting is not created!");
@@ -440,7 +439,7 @@ public class UserController {
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> getUserSettingById(@PathVariable(name = "id")int id) throws OHServiceException {
+	public ResponseEntity<UserSettingDTO> getUserSettingById(@PathVariable(name = "id") int id) throws OHServiceException {
 		LOGGER.info("Retrieve the userSetting By id {}:", id);
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		if (!userSetting.isPresent()) {
@@ -499,27 +498,5 @@ public class UserController {
 			return ResponseEntity.ok(true);
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
-	}
-	
-	/**
-	 * Returns a {@link UserSettingDTO} of userSetting.
-	 * 
-	 * @return {@link UserSettingDTO} if the userSetting with configName dashboard exist, null otherwise.
-	 */
-	@GetMapping(value = "/user/settings/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserSettingDTO> getUserSettingDashboard() throws OHServiceException {
-		LOGGER.info("Attempting to fetch the UserSetting of dashboard of the current user");
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		String dashboard = "dashboard";
-		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, dashboard);
-		if (userSetting == null) {
-		    LOGGER.info("No dashboard settings for the current user {}", userName);
-		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		} else {
-		    UserSettingDTO userSettingDashboard = userSettingMapper.map2DTO(userSetting);
-		    LOGGER.info("Found {} user settings", userSettingDashboard);
-		    return ResponseEntity.ok(userSettingDashboard);
-		}
-
 	}
 }
