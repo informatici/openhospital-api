@@ -383,7 +383,7 @@ public class UserController {
 		    throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		if (userSettingManager.getUserSettingByUserNameConfigName(userName, userSettingDTO.getConfigName()) != null) {
-			throw new OHAPIException(new OHExceptionMessage("The setting with that name already exist for curent user."));
+			throw new OHAPIException(new OHExceptionMessage("The setting with that name already exists for curent user."));
 		}
 		if (userManager.getUserByName(userName) != null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
