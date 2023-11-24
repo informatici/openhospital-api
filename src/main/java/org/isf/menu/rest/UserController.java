@@ -159,11 +159,18 @@ public class UserController {
 	public ResponseEntity<Boolean> updateUser(
 					@Valid @RequestBody UserDTO userDTO,
 					@RequestParam(name = "password", defaultValue = "false") boolean updatePassword) throws OHServiceException {
-		User user = userMapper.map2Model(userDTO);
-		User foundUser = userManager.getUserByName(user.getUserName());
-		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+		String requestUserName = userDTO.getUserName();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		final String ADMIN = "admin";
+		boolean isAdminOrSameUser = requestUserName.equals(currentUser) || currentUser.equals(ADMIN);
+		boolean isSameUserUpdatingPassword = requestUserName.equals(currentUser) && updatePassword;
+		if (!isAdminOrSameUser || !isSameUserUpdatingPassword) {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
+		if (userManager.getUserByName(requestUserName) == null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
+		}
+		User user = userMapper.map2Model(userDTO);
 		boolean isUpdated;
 		if (updatePassword) {
 			isUpdated = userManager.updatePassword(user);
@@ -372,8 +379,8 @@ public class UserController {
 		if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
 			throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
 		}
-		if (userManager.getUserByName(requestUserName) != null) {
-			throw new OHAPIException(new OHExceptionMessage("The specified user does not exists."));
+		if (userManager.getUserByName(requestUserName) == null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
 		userSettingDTO.setId(0);
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
@@ -417,8 +424,8 @@ public class UserController {
 			if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
 				throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
 			}
-			if (userManager.getUserByName(requestUserName) != null) {
-				throw new OHAPIException(new OHExceptionMessage("The specified user does not exists."));
+			if (userManager.getUserByName(requestUserName) == null) {
+				throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 			}
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated = userSettingManager.updateUserSetting(uSetting);
