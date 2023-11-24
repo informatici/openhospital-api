@@ -162,9 +162,9 @@ public class UserController {
 		String requestUserName = userDTO.getUserName();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
-		boolean isAdminOrSameUser = !requestUserName.equals(currentUser) && !currentUser.equals(ADMIN);
-		boolean isSameUserUpdatingPassword = requestUserName.equals(currentUser) && !updatePassword;
-		if (isAdminOrSameUser || isSameUserUpdatingPassword) {
+		boolean isAdminOrSameUser = requestUserName.equals(currentUser) || currentUser.equals(ADMIN);
+		boolean isSameUserUpdatingPassword = requestUserName.equals(currentUser) && updatePassword;
+		if (!isAdminOrSameUser || !isSameUserUpdatingPassword) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		if (userManager.getUserByName(requestUserName) == null) {
