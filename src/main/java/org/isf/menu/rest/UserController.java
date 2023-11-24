@@ -352,10 +352,10 @@ public class UserController {
 	@GetMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserSettingDTO>> getUserSettings() throws OHServiceException {
 		LOGGER.info("Retrieve all userSettings of the current user");
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(currentUser);
 		if (userSettings == null || userSettings.isEmpty()) {
-			LOGGER.info("No settings for the current user {}", userName);
+			LOGGER.info("No settings for the current user {}", currentUser);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<UserSettingDTO> userSettingsDTO = userSettingMapper.map2DTOList(userSettings);
@@ -373,18 +373,18 @@ public class UserController {
 	@PostMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Create a UserSetting");
-		String userName = userSettingDTO.getUser();
+		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		userSettingDTO.setId(0);
 		final String ADMIN = "admin";
-		if (!userName.equals(currentUser)
+		if (!requestUserName.equals(currentUser)
 						&& !currentUser.equals(ADMIN)) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
-		if (userSettingManager.getUserSettingByUserNameConfigName(userName, userSettingDTO.getConfigName()) != null) {
+		if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
 			throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
 		}
-		if (userManager.getUserByName(userName) != null) {
+		if (userManager.getUserByName(requestUserName) != null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exists."));
 		}
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
