@@ -403,7 +403,7 @@ public class UserController {
 	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Update a UserSetting");
-		String userName = userSettingDTO.getUser();
+		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
 		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {	
