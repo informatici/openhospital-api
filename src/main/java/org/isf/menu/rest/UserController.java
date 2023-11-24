@@ -415,7 +415,7 @@ public class UserController {
 		    LOGGER.info("No user settings with id {}", id);
 	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
-		if (!userSetting.get().getUser().equals(userSettingDTO.getUser()) &&
+		if (!userSetting.get().getUser().equals(requestUserName) &&
 						!user.equals(ADMIN)) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
