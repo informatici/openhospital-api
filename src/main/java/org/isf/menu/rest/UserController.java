@@ -506,7 +506,7 @@ public class UserController {
 				 userSettingManager.deleteUserSetting(userSetting.get());
 		    	} catch (OHServiceException serviceException) {
 		            throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
-		    }
+		    	}
 			return ResponseEntity.ok(true);
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
