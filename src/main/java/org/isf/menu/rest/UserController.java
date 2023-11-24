@@ -391,10 +391,10 @@ public class UserController {
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
 		if (created == null) {
-		    LOGGER.info("UserSetting is not created!");
+		    LOGGER.info("UserSetting is not created.");
 		    throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
 		}
-		LOGGER.info("UserSetting successfully created!");
+		LOGGER.info("UserSetting successfully created.");
 		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(created));
 	}
 	
@@ -421,12 +421,10 @@ public class UserController {
 		    LOGGER.info("No user settings with id {}", id);
 	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
-		if (!userSetting.get().getUser().equals(requestUserName) &&
-						!currentUser.equals(ADMIN)) {
+		if (!userSetting.get().getUser().equals(requestUserName) && !currentUser.equals(ADMIN)) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
-		if (userSetting.get().getUser().equals(currentUser) ||
-						currentUser.equals(ADMIN)) {
+		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
 				throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
 			}
@@ -436,10 +434,10 @@ public class UserController {
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated  = userSettingManager.updateUserSetting(uSetting);
 			if (updated == null) {
-			    LOGGER.info("UserSetting is not updated!");
+			    LOGGER.info("UserSetting is not updated.");
 			    throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
 			}
-			LOGGER.info("UserSetting successfully updated!");
+			LOGGER.info("UserSetting successfully updated.");
 			return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
@@ -449,7 +447,7 @@ public class UserController {
 	 * Retrieves an existing {@link UserSettingDTO} by id.
 	 * 
 	 * @param id - id of userSetting {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -468,7 +466,7 @@ public class UserController {
 	 * 
 	 * @param userName - the name of user.
 	 * @param configName - the name of the userSetting {@link UserSetting} . 
-	 * @return {@link UserSettingDTO} if the UserSetting exist , null otherwise.
+	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException.
 	 */
 	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -476,7 +474,7 @@ public class UserController {
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}:", userName, configName);
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
-		    LOGGER.info("UserSetting not found!");
+		    LOGGER.info("UserSetting not found.");
 		    throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
 		}
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
@@ -503,13 +501,12 @@ public class UserController {
 		    LOGGER.info("No user settings with id {}", id);
 		    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		if (userSetting.get().getUser().equals(currentUser) ||
-						currentUser.equals(ADMIN)) {
+		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			try {
 				 userSettingManager.deleteUserSetting(userSetting.get());
 		    	} catch (OHServiceException serviceException) {
 		            throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
-		    	}
+		    }
 			return ResponseEntity.ok(true);
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
