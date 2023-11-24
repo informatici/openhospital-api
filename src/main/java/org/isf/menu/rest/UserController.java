@@ -21,7 +21,6 @@
  */
 package org.isf.menu.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,8 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -284,19 +281,15 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-			String currentUserName = authentication.getName();
-			LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUserName);
-			List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUserName);
-			List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
-			if (dtos.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
-			} else {
-				return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
-			}
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUser);
+		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUser);
+		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
+		if (dtos.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
+		} else {
+			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 		}
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ArrayList<>());
 	}
 
 	/**
@@ -308,20 +301,16 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserProfileDTO> retrieveProfileByCurrentLoggedInUser() throws OHServiceException {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (!(authentication instanceof AnonymousAuthenticationToken)) {
-			String currentUserName = authentication.getName();
-			LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUserName);
-			List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUserName);
-			List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
-			UserProfileDTO userProfileDTO = new UserProfileDTO();
-			User user = userManager.getUserByName(currentUserName);
-			userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
-			userProfileDTO.setUserName(currentUserName);
-			userProfileDTO.setPermissions(permissionsCode);
-			return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
-		}
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserProfileDTO());
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUser);
+		List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUser);
+		List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
+		UserProfileDTO userProfileDTO = new UserProfileDTO();
+		User user = userManager.getUserByName(currentUser);
+		userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
+		userProfileDTO.setUserName(currentUser);
+		userProfileDTO.setPermissions(permissionsCode);
+		return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
 	}
 
 	/**
@@ -375,7 +364,6 @@ public class UserController {
 		LOGGER.info("Create a UserSetting");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		userSettingDTO.setId(0);
 		final String ADMIN = "admin";
 		if (!requestUserName.equals(currentUser)
 						&& !currentUser.equals(ADMIN)) {
@@ -387,6 +375,7 @@ public class UserController {
 		if (userManager.getUserByName(requestUserName) != null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exists."));
 		}
+		userSettingDTO.setId(0);
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
 		if (created == null) {
