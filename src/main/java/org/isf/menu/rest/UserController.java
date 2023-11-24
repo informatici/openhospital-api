@@ -416,7 +416,7 @@ public class UserController {
 		}
 		if (!userSetting.get().getUser().equals(userSettingDTO.getUser()) &&
 						!SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+			throw new OHAPIException(new OHExceptionMessage("Not have the right to fix Setting of another user. please contact the Admin."));
 		}
 		if (userSetting.get().getUser().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
 						SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
