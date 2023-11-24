@@ -391,7 +391,7 @@ public class UserController {
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
 		UserSetting created = userSettingManager.newUserSetting(userSetting);
 		if (created == null) {
-		    LOGGER.info("UserSetting is not created!");
+		    LOGGER.info("UserSetting is not created.");
 		    throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
 		}
 		LOGGER.info("UserSetting successfully created!");
