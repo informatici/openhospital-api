@@ -406,8 +406,8 @@ public class UserController {
 	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Update a UserSetting");
-		String userName = userSettingDTO.getUser();
-		String user = SecurityContextHolder.getContext().getAuthentication().getName();
+		String requestUserName = userSettingDTO.getUser();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
 		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {	
 		    throw new OHAPIException(new OHExceptionMessage("Malformed request."));
@@ -418,7 +418,7 @@ public class UserController {
 		    LOGGER.info("No user settings with id {}", id);
 	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
 		}
-		if (!userSetting.get().getUser().equals(userSettingDTO.getUser()) &&
+		if (!userSetting.get().getUser().equals(requestUserName) &&
 						!user.equals(ADMIN)) {
 			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
