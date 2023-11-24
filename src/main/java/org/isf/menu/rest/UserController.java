@@ -404,7 +404,7 @@ public class UserController {
 	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Update a UserSetting");
 		String userName = userSettingDTO.getUser();
-		String user = SecurityContextHolder.getContext().getAuthentication().getName();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
 		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {	
 		    throw new OHAPIException(new OHExceptionMessage("Malformed request."));
