@@ -30,18 +30,15 @@ import javax.validation.Valid;
 
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
-import org.isf.menu.dto.UserMenuItemDTO;
 import org.isf.menu.dto.UserProfileDTO;
 import org.isf.menu.dto.UserSettingDTO;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
-import org.isf.menu.mapper.UserMenuItemMapper;
 import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
-import org.isf.menu.model.UserMenuItem;
 import org.isf.menu.model.UserSetting;
 import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
@@ -83,9 +80,6 @@ public class UserController {
 	
 	@Autowired
 	private UserGroupMapper userGroupMapper;
-	
-	@Autowired
-	private UserMenuItemMapper userMenuItemMapper;
 	
 	@Autowired
 	private UserBrowsingManager userManager;
@@ -221,26 +215,6 @@ public class UserController {
 	        LOGGER.info("Found {} groups", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
-	}
-	
-	/**
-	 * Replaces the {@link UserGroup} rights.
-	 * @param code - the {@link UserGroup}'s code
-	 * @param menusDTO - the list of {@link UserMenuItem}s
-	 * @return {@code true} if the menu has been replaced, {@code false} otherwise.
-	 */
-	@PostMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> setGroupMenu(
-			@PathVariable("group_code") String code, 
-			@Valid @RequestBody List<UserMenuItemDTO> menusDTO) throws OHServiceException {
-		UserGroup group = loadUserGroup(code);
-		List<UserMenuItem> menus = new ArrayList<>(userMenuItemMapper.map2ModelList(menusDTO));
-        boolean done = userManager.setGroupMenu(group, menus);
-        if (done) {
-        	return ResponseEntity.ok(done);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage("Group rights not updated."));
-        }
 	}
 	
 	/**
@@ -432,13 +406,17 @@ public class UserController {
 		String userName = userSettingDTO.getUser();
 		final String ADMIN = "admin";
 		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {	
-		    throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
+		    throw new OHAPIException(new OHExceptionMessage("Malformed request."));
 		}
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		UserSetting updated;
 		if (!userSetting.isPresent()) {
 		    LOGGER.info("No user settings with id {}", id);
 	        throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exist."));
+		}
+		if (!userSetting.get().getUser().equals(userSettingDTO.getUser()) &&
+						!SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 		}
 		if (userSetting.get().getUser().equals(SecurityContextHolder.getContext().getAuthentication().getName()) ||
 						SecurityContextHolder.getContext().getAuthentication().getName().equals(ADMIN)) {
