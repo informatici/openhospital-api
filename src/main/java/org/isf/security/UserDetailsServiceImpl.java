@@ -71,7 +71,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
         }
         for (Permission p : permissions) {
-	        authorities.add(new SimpleGrantedAuthority(p.getName()));
+	    authorities.add(new SimpleGrantedAuthority(p.getName()));
         }
 
         org.springframework.security.core.userdetails.User userDetails =
