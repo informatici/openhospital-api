@@ -54,18 +54,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user;
         try {
             user = manager.getUserByName(username);
-        } catch (OHServiceException e) {
-            LOGGER.error("User login received an unexpected OHServiceException", e);
-            throw new UsernameNotFoundException(username + " authentication failed", e);
+        } catch (OHServiceException serviceException) {
+            LOGGER.error("User login received an unexpected OHServiceException.", serviceException);
+            throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
         }
         if (user == null) {
-            throw new UsernameNotFoundException(username + " was not found");
+            throw new UsernameNotFoundException(username + " was not found.");
         }
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        List<Permission> permissions = permissionManager.retrievePermissionsByUsername(username);
+        List<Permission> permissions;
+        try {
+            permissions = permissionManager.retrievePermissionsByUsername(username);
+        } catch (OHServiceException serviceException) {
+            LOGGER.error("Retrieving permissions for user received an unexpected OHServiceException.", serviceException);
+            throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
+        }
         for (Permission p : permissions) {
-	     authorities.add(new SimpleGrantedAuthority(p.getName()));
+	        authorities.add(new SimpleGrantedAuthority(p.getName()));
         }
 
         org.springframework.security.core.userdetails.User userDetails =

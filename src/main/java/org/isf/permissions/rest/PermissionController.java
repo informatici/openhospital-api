@@ -4,20 +4,20 @@
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
- * This program is free software: you can redistribute it and/or modify
+ * program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * https://www.gnu.org/licenses/gpl-3.0-standalone.html
  *
- * This program is distributed in the hope that it will be useful,
+ * program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * along with program. If not, see <https://www.gnu.org/licenses/>.
  */
 package org.isf.permissions.rest;
 
@@ -73,9 +73,9 @@ public class PermissionController {
 	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupcode(@PathVariable("userGroupCode") String userGroupCode)
 					throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrievePermissionsByUserGroupcode({})", userGroupCode);
-		List<Permission> domains = this.permissionManager.retrivePermisionsByGroupCode(userGroupCode);
-		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(domains);
+		LOGGER.info("Retrieving permissions: retrievePermissionsByUserGroupCode({}).", userGroupCode);
+		List<Permission> domains = permissionManager.retrievePermissionsByGroupCode(userGroupCode);
+		List<PermissionDTO> dtos = permissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
 		} else {
@@ -85,66 +85,66 @@ public class PermissionController {
 
 	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrieveAllPermissions()");
-		List<Permission> permissions = this.permissionManager.retrieveAllPermissions();
+		LOGGER.info("Retrieving permissions: retrieveAllPermissions().");
+		List<Permission> permissions = permissionManager.retrieveAllPermissions();
 		if (permissions == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		List<PermissionDTO> dtos = this.permissionMapper.map2DTOList(permissions);
+		List<PermissionDTO> dtos = permissionMapper.map2DTOList(permissions);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@GetMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrievePermissionById({})", id);
-		Permission permission = this.permissionManager.retrievePermissionById(id);
+		LOGGER.info("Retrieving permissions: retrievePermissionById({}).", id);
+		Permission permission = permissionManager.retrievePermissionById(id);
 		if (permission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		PermissionDTO dtos = permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@GetMapping(value = "/permissions/name/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrievePermissionByName({})", name);
-		Permission permission = this.permissionManager.retrievePermissionByName(name);
+		LOGGER.info("Retrieving permissions: retrievePermissionByName({}).", name);
+		Permission permission = permissionManager.retrievePermissionByName(name);
 		if (permission == null) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+		PermissionDTO dtos = permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
 	}
 
 	@PostMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> insertPermission(@RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("insertPermission({})", permissionDTO);
-		Permission model = this.permissionMapper.map2Model(permissionDTO);
-		List<UserGroup> userGroups = this.userGroupManager.findByIdIn(permissionDTO.getUserGroupIds());
-		model.setGroupPermission(this.groupPermissionManager.generateGroupPermissionList(model, userGroups));
-		Permission permission = this.permissionManager.insertPermission(model);
+		LOGGER.info("Insert permission({}).", permissionDTO);
+		Permission model = permissionMapper.map2Model(permissionDTO);
+		List<UserGroup> userGroups = userGroupManager.findByIdIn(permissionDTO.getUserGroupIds());
+		model.setGroupPermission(groupPermissionManager.generateGroupPermissionList(model, userGroups));
+		Permission permission = permissionManager.insertPermission(model);
 
-		PermissionDTO resultPermissionDTO = this.permissionMapper.map2DTO(permission);
+		PermissionDTO resultPermissionDTO = permissionMapper.map2DTO(permission);
 		return ResponseEntity.status(HttpStatus.CREATED).body(resultPermissionDTO);
 	}
 
 	@PutMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<PermissionDTO> updatePermission(@PathVariable int id, @RequestBody PermissionDTO permissionDTO) throws OHServiceException {
-		LOGGER.info("Update permission id: {}", id);
+		LOGGER.info("Update permission id: {}.", id);
 		permissionDTO.setId(id);
 
-		if (!this.permissionManager.exists(permissionDTO.getId())) {
+		if (!permissionManager.exists(permissionDTO.getId())) {
 			throw new OHAPIException(new OHExceptionMessage("Permission not found."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		Permission model = this.permissionMapper.map2Model(permissionDTO);
+		Permission model = permissionMapper.map2Model(permissionDTO);
 
-		List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
+		List<GroupPermission> groupPermissions = groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
 						permissionDTO.getUserGroupIds());
 		model.setGroupPermission(groupPermissions);
-		Permission permission = this.permissionManager.updatePermission(model);
+		Permission permission = permissionManager.updatePermission(model);
 		if (permission != null) {
-			PermissionDTO dtos = this.permissionMapper.map2DTO(permission);
+			PermissionDTO dtos = permissionMapper.map2DTO(permission);
 			return ResponseEntity.status(HttpStatus.OK).body(dtos);
 		}
 		throw new OHAPIException(new OHExceptionMessage("Permission not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -163,22 +163,26 @@ public class PermissionController {
 	 * 
 	 * final Integer permissionId = optionalPermissionId.isPresent() ? optionalPermissionId.get() : permissionDTO.getId();
 	 * 
-	 * if (!this.permissionManager.exists(permissionId.intValue())) { throw new OHAPIException(new OHExceptionMessage("permission not found",
+	 * if (!permissionManager.exists(permissionId.intValue())) { throw new OHAPIException(new OHExceptionMessage("permission not found",
 	 * OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR); }
 	 * 
-	 * Permission model = this.permissionMapper.map2Model(permissionDTO);
+	 * Permission model = permissionMapper.map2Model(permissionDTO);
 	 * 
-	 * List<GroupPermission> groupPermissions = this.groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
-	 * permissionDTO.getUserGroupIds()); model.setGroupPermission(groupPermissions); Permission permission = this.permissionManager.updatePermission(model); if
-	 * (permission != null) { PermissionDTO dtos = this.permissionMapper.map2DTO(permission); return ResponseEntity.status(HttpStatus.OK).body(dtos); } throw
+	 * List<GroupPermission> groupPermissions = groupPermissionManager.findByPermissionIdAndUserGroupCodes(permissionDTO.getId(),
+	 * permissionDTO.getUserGroupIds()); model.setGroupPermission(groupPermissions); Permission permission = permissionManager.updatePermission(model); if
+	 * (permission != null) { PermissionDTO dtos = permissionMapper.map2DTO(permission); return ResponseEntity.status(HttpStatus.OK).body(dtos); } throw
 	 * new OHAPIException(new OHExceptionMessage("Permission is not updated.", OHSeverityLevel.ERROR), HttpStatus.INTERNAL_SERVER_ERROR); }
 	 */
-
 	@DeleteMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) throws OHServiceException {
-		LOGGER.info("deletePermission({})", id);
-		Boolean result = this.permissionManager.deletePermission(id);
-		return ResponseEntity.status(result ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+	public ResponseEntity<Boolean> deletePermission(@PathVariable("id") Integer id) {
+		LOGGER.info("Delete permission({}).", id);
+		try {
+			permissionManager.deletePermission(id);
+			return ResponseEntity.status(HttpStatus.OK).body(true);
+		} catch (OHServiceException serviceException) {
+			LOGGER.info("Permission not deleted.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+		}
 	}
 
 }
