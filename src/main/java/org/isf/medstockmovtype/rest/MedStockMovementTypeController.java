@@ -93,9 +93,7 @@ public class MedStockMovementTypeController {
 		if (foundMvmntType == null) {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
 		}
-		else {
-			return ResponseEntity.ok(mapper.map2DTO(foundMvmntType));
-		}
+		return ResponseEntity.ok(mapper.map2DTO(foundMvmntType));
 	}
 	
 	/**
@@ -106,11 +104,12 @@ public class MedStockMovementTypeController {
 	 */
 	@PostMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MovementTypeDTO> newMedicalDsrStockMovementType(@RequestBody @Valid MovementTypeDTO medicalDsrStockMovementType) throws OHServiceException {
-		MovementType isCreatedMovementType = manager.newMedicalDsrStockMovementType(mapper.map2Model(medicalDsrStockMovementType));
-		if (isCreatedMovementType == null) {
+		try {
+			MovementType isCreatedMovementType = manager.newMedicalDsrStockMovementType(mapper.map2Model(medicalDsrStockMovementType));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
+		} catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Movement type not created."));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
 	}
 	
 	/**
@@ -125,11 +124,12 @@ public class MedStockMovementTypeController {
 		if (!manager.isCodePresent(medicalDsrStockMovementType.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
 		}
-		MovementType isUpdatedMovementType = manager.updateMedicalDsrStockMovementType(medicalDsrStockMovementType);
-		if (isUpdatedMovementType == null) {
+		try {
+			MovementType isUpdatedMovementType = manager.updateMedicalDsrStockMovementType(medicalDsrStockMovementType);
+			return ResponseEntity.ok(mapper.map2DTO(isUpdatedMovementType));
+		} catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Movement type not updated."));
         }
-        return ResponseEntity.ok(mapper.map2DTO(isUpdatedMovementType));
 	}
 	
 	/**
@@ -155,10 +155,14 @@ public class MedStockMovementTypeController {
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (!matchedMvmntTypes.isEmpty()) {
-			return ResponseEntity.ok(manager.deleteMedicalDsrStockMovementType(matchedMvmntTypes.get(0)));
-		} else {
+		if (matchedMvmntTypes.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
+		}
+		try {
+			manager.deleteMedicalDsrStockMovementType(matchedMvmntTypes.get(0));
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Movement type not deleted."));
 		}
 	}
 	
