@@ -99,7 +99,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserDTO>> getUser(@RequestParam(name = "group_id", required = false) String groupID) throws OHServiceException {
-		LOGGER.info("Fetching the list of users");
+		LOGGER.info("Fetching the list of users.");
 		List<User> users;
 		if (groupID != null) {
 			users = userManager.getUser(groupID);
@@ -108,10 +108,10 @@ public class UserController {
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
 		if (mappedUsers.isEmpty()) {
-			LOGGER.info("No user found");
+			LOGGER.info("No user found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
 		} else {
-			LOGGER.info("Found {} users", mappedUsers.size());
+			LOGGER.info("Found {} users.", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
 		}
 	}
@@ -138,15 +138,16 @@ public class UserController {
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
-		LOGGER.info("Attempting to create a user");
+		LOGGER.info("Attempting to create a user.");
 		User user = userMapper.map2Model(userDTO);
-		boolean isCreated = userManager.newUser(user);
-		if (!isCreated) {
-			LOGGER.info("User is not created");
+		try {
+			userManager.newUser(user);
+			LOGGER.info("User successfully created.");
+			return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		} catch (OHServiceException serviceException) {
+			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));
 		}
-		LOGGER.info("User successfully created");
-		return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 
 	/**
@@ -195,10 +196,10 @@ public class UserController {
 		if (foundUser == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."));
 		}
-		boolean isDelete = userManager.deleteUser(foundUser);
-		if (isDelete) {
-			return ResponseEntity.ok(isDelete);
-		} else {
+		try {
+			userManager.deleteUser(foundUser);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User not deleted."));
 		}
 	}
@@ -209,14 +210,14 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserGroupDTO>> getUserGroup() throws OHServiceException {
-		LOGGER.info("Attempting to fetch the list of user groups");
+		LOGGER.info("Attempting to fetch the list of user groups.");
 		List<UserGroup> groups = userManager.getUserGroup();
 		List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
 		if (mappedGroups.isEmpty()) {
-			LOGGER.info("No group found");
+			LOGGER.info("No group found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
 		} else {
-			LOGGER.info("Found {} groups", mappedGroups.size());
+			LOGGER.info("Found {} groups.", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
 		}
 	}
@@ -228,11 +229,11 @@ public class UserController {
 	 */
 	@DeleteMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		UserGroup group = loadUserGroup(code);
-		boolean isDeleted = userManager.deleteGroup(group);
-		if (isDeleted) {
-			return ResponseEntity.ok(isDeleted);
-		} else {
+		try {
+			UserGroup group = loadUserGroup(code);
+			userManager.deleteGroup(group);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
 		}
 	}
@@ -245,11 +246,12 @@ public class UserController {
 	@PostMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
 		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
-		boolean isCreated = userManager.newUserGroup(userGroup);
-		if (!isCreated) {
+		try {
+			userManager.newUserGroup(userGroup);
+			return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(isCreated);
 	}
 
 	/**
@@ -289,7 +291,7 @@ public class UserController {
 	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		LOGGER.info("retrieving permissions: retrievePermissionsByCurrentLoggedInUser({})", currentUser);
+		LOGGER.info("Retrieving permissions: retrievePermissionsByCurrentLoggedInUser({}).", currentUser);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUser);
 		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
@@ -309,7 +311,7 @@ public class UserController {
 	@GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserProfileDTO> retrieveProfileByCurrentLoggedInUser() throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		LOGGER.info("retrieving profile: retrieveProfileByCurrentLoggedInUser({})", currentUser);
+		LOGGER.info("Retrieving profile: retrieveProfileByCurrentLoggedInUser({}).", currentUser);
 		List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUser);
 		List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
 		UserProfileDTO userProfileDTO = new UserProfileDTO();
@@ -329,7 +331,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/permissions/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
-		LOGGER.info("retrieving permissions: retrievePermissionsByUsername({})", username);
+		LOGGER.info("Retrieving permissions: retrievePermissionsByUsername({}).", username);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
 		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
@@ -347,15 +349,15 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<UserSettingDTO>> getUserSettings() throws OHServiceException {
-		LOGGER.info("Retrieve all userSettings of the current user");
+		LOGGER.info("Retrieve all userSettings of the current user.");
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(currentUser);
 		if (userSettings == null || userSettings.isEmpty()) {
-			LOGGER.info("No settings for the current user {}", currentUser);
+			LOGGER.info("No settings for the current user {}.", currentUser);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		List<UserSettingDTO> userSettingsDTO = userSettingMapper.map2DTOList(userSettings);
-		LOGGER.info("Found {} user settings", userSettingsDTO);
+		LOGGER.info("Found {} user settings.", userSettingsDTO);
 		return ResponseEntity.ok(userSettingsDTO);
 	}
 
@@ -364,11 +366,11 @@ public class UserController {
 	 * 
 	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
 	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
-	 * @throws OHServiceException.
+	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
-		LOGGER.info("Create a UserSetting");
+		LOGGER.info("Create a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
@@ -399,22 +401,22 @@ public class UserController {
 	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
 	 * @param id - id of {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
-	 * @throws OHServiceException.
+	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
 					throws OHServiceException {
-		LOGGER.info("Update a UserSetting");
+		LOGGER.info("Update a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		final String ADMIN = "admin";
-		if (userSettingDTO.getId() == 0 || (userSettingDTO.getId() != 0 && userSettingDTO.getId() != id)) {
+		if (userSettingDTO.getId() == 0 || userSettingDTO.getId() != 0 && userSettingDTO.getId() != id) {
 			throw new OHAPIException(new OHExceptionMessage("Malformed request."));
 		}
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		UserSetting updated;
-		if (!userSetting.isPresent()) {
-			LOGGER.info("No user settings with id {}", id);
+		if (userSetting.isEmpty()) {
+			LOGGER.info("No user settings with id {}.", id);
 			throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exists."));
 		}
 		if (!userSetting.get().getUser().equals(requestUserName) && !currentUser.equals(ADMIN)) {
@@ -444,14 +446,14 @@ public class UserController {
 	 * 
 	 * @param id - id of userSetting {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
-	 * @throws OHServiceException.
+	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingById(@PathVariable(name = "id") int id) throws OHServiceException {
-		LOGGER.info("Retrieve the userSetting By id {}:", id);
+		LOGGER.info("Retrieve the userSetting By id {}.", id);
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
-		if (!userSetting.isPresent()) {
-			LOGGER.info("No user settings with id {}", id);
+		if (userSetting.isEmpty()) {
+			LOGGER.info("No user settings with id {}.", id);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting.get()));
@@ -463,12 +465,12 @@ public class UserController {
 	 * @param userName - the name of user.
 	 * @param configName - the name of the userSetting {@link UserSetting} . 
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
-	 * @throws OHServiceException.
+	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingByUser(@PathVariable(name = "userName") String userName,
 					@PathVariable(name = "configName") String configName) throws OHServiceException {
-		LOGGER.info("Retrieve the userSetting By user {} and configName {}:", userName, configName);
+		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", userName, configName);
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
 			LOGGER.info("UserSetting not found.");
@@ -476,7 +478,7 @@ public class UserController {
 		}
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
 		if (userSetting == null) {
-			LOGGER.info("No user settings for the user {}", userName);
+			LOGGER.info("No user settings for the user {}.", userName);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
@@ -487,15 +489,15 @@ public class UserController {
 	 * 
 	 * @param id - the id of the userSetting {@link UserSetting} to delete.
 	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException.
+	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		final String ADMIN = "admin";
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (!userSetting.isPresent()) {
-			LOGGER.info("No user settings with id {}", id);
+		if (userSetting.isEmpty()) {
+			LOGGER.info("No user settings with id {}.", id);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
