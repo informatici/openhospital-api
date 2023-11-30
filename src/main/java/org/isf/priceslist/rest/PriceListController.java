@@ -76,35 +76,37 @@ public class PriceListController {
 	/**
 	 * Create a new {@link PriceList}.
 	 * @param priceListDTO
-	 * @return {@code true} if the price list has been stored, {@code false} otherwise.
+	 * @return the new {@link PriceList}.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PriceListDTO> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
-		LOGGER.info("Create price list {}", priceListDTO.getCode());
-		PriceList isCreatedPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
-		if (isCreatedPriceList == null) {
+		LOGGER.info("Create price list {}.", priceListDTO.getCode());
+		try {
+			PriceList createdPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdPriceList));
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPriceList));
 	}
 
 	/**
 	 * Updates the specified {@link PriceList}.
 	 * @param priceListDTO
-	 * @return {@code true} if the price list has been updated, {@code false} otherwise.
+	 * @return the updated {@link PriceList}.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PriceListDTO> updatePriceLists(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
 			throws OHServiceException {
-		LOGGER.info("Update pricelists code: {}", priceListDTO.getCode());
+		LOGGER.info("Update pricelists code: {}.", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);
-		PriceList isUpdatedPriceList = priceListManager.updateList(priceList);
-		if (isUpdatedPriceList == null) {
+		try {
+			PriceList updatedPriceList = priceListManager.updateList(priceList);
+			return ResponseEntity.ok(mapper.map2DTO(updatedPriceList));
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not updated."));
 		}
-		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPriceList));
 	}
 
 	/**
@@ -114,7 +116,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PriceListDTO>> getPriceLists() throws OHServiceException {
-		LOGGER.info("Get all price lists ");
+		LOGGER.info("Get all price lists.");
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceListDTO> priceListDTOs = mapper.map2DTOList(priceLists);
 		if (priceListDTOs.isEmpty()) {
@@ -131,7 +133,7 @@ public class PriceListController {
 	 */
 	@GetMapping(value = "/pricelists/prices", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<PriceDTO>> getPrices() throws OHServiceException {
-		LOGGER.info("Get all price");
+		LOGGER.info("Get all prices.");
 		List<Price> prices = priceListManager.getPrices();
 		List<PriceDTO> priceListDTOs = priceMapper.map2DTOList(prices);
 		if (priceListDTOs.isEmpty()) {
@@ -144,61 +146,65 @@ public class PriceListController {
 	/**
 	 * Delete {@link PriceList} for specified code.
 	 * @param id
-	 * @return {@code true} if the {@link PriceList} has been deleted, {@code false} otherwise.
+	 * @return {@code true} if the {@link PriceList} has been deleted.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePriceList(@PathVariable int id) throws OHServiceException {
-		LOGGER.info("Delete price list id: {}", id);
-		boolean isDeleted;
+		LOGGER.info("Delete price list id: {}.", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
-		if (!priceListFounds.isEmpty()) {
-			isDeleted = priceListManager.deleteList(priceListFounds.get(0));
-		} else {
+		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		return ResponseEntity.ok(isDeleted);
+		try {
+			priceListManager.deleteList(priceListFounds.get(0));
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Price list not deleted."));
+		}
 	}
 	
 	/**
 	 * Duplicate specified {@link PriceList}.
-	 * @return {@code true} if the list has been duplicated, {@code false} otherwise
+	 * @return {@code true} if the list has been duplicated.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/pricelists/duplicate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyList(@PathVariable Long id) throws OHServiceException {
-		LOGGER.info("duplicate list for price list id : {}", id);
+		LOGGER.info("Duplicate list for price list id: {}.", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		boolean isCopied = priceListManager.copyList(priceListFounds.get(0));
-		if (!isCopied) {
+		try {
+			priceListManager.copyList(priceListFounds.get(0));
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
 		}
-		return ResponseEntity.ok(isCopied);
 	}
 	
 	/**
 	 * Duplicate {@link PriceList} multiplying by {@code factor} and rounding by {@code step}.
-	 * @return {@code true} if the list has been duplicated, {@code false} otherwise
+	 * @return {@code true} if the list has been duplicated.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/pricelists/duplicate/byfactor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> copyByFactorAndStep(@PathVariable Long id, @RequestParam double factor, @RequestParam double step) throws OHServiceException {
-		LOGGER.info("duplicate list for price list id : {}", id);
+		LOGGER.info("Duplicate list for price list id: {}.", id);
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-		boolean isCopied = priceListManager.copyList(priceListFounds.get(0), factor, step);
-		if (!isCopied) {
+		try {
+			priceListManager.copyList(priceListFounds.get(0), factor, step);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
 		}
-		return ResponseEntity.ok(isCopied);
 	}
 
 }
