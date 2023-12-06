@@ -470,12 +470,12 @@ public class UserController {
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", userName, configName);
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
-			LOGGER.info("UserSetting not found.");
-			throw new OHAPIException(new OHExceptionMessage("UserSetting not found."));
+			LOGGER.info("No user settings for the user {}.", userName);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
 		if (userSetting == null) {
-			LOGGER.info("No user settings for the user {}.", userName);
+			LOGGER.info("No user settings '{}' for the user {}.", configName, userName);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
