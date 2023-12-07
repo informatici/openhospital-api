@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/deliveryresulttype")
+@RestController(value = "/deliveryresulttypes")
 @Tag(name = "Delivery Result Type")
 @SecurityRequirement(name = "bearerAuth")
 public class DeliveryResultTypeController {
@@ -57,7 +57,7 @@ public class DeliveryResultTypeController {
 
 	@Autowired
 	protected DeliveryResultTypeBrowserManager dlvrrestManager;
-	
+
 	@Autowired
 	protected DeliveryResultTypeMapper mapper;
 
@@ -74,13 +74,13 @@ public class DeliveryResultTypeController {
 	 */
 	@PostMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<DeliveryResultTypeDTO> newDeliveryResultType(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		String code = dlvrrestTypeDTO.getCode();
 		LOGGER.info("Create Delivery Result Type {}", code);
 		dlvrrestManager.newDeliveryResultType(mapper.map2Model(dlvrrestTypeDTO));
 		DeliveryResultType dlvrrestTypeCreated = null;
 		List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestManager.getDeliveryResultType().stream()
-				.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
+						.filter(ad -> ad.getCode().equals(code)).collect(Collectors.toList());
 		if (!dlvrrestTypeFounds.isEmpty()) {
 			dlvrrestTypeCreated = dlvrrestTypeFounds.get(0);
 		}
@@ -98,7 +98,7 @@ public class DeliveryResultTypeController {
 	 */
 	@PutMapping(value = "/deliveryresulttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<DeliveryResultTypeDTO> updateDeliveryResultTypes(@RequestBody DeliveryResultTypeDTO dlvrrestTypeDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Update Delivery Result Type code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
@@ -128,7 +128,7 @@ public class DeliveryResultTypeController {
 			return ResponseEntity.ok(dlvrrestTypeDTOs);
 		}
 	}
-	
+
 	/**
 	 * Delete {@link DeliveryResultType} for the specified code.
 	 * @param code
@@ -137,12 +137,12 @@ public class DeliveryResultTypeController {
 	 */
 	@DeleteMapping(value = "/deliveryresulttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteDeliveryResultType(@PathVariable("code") String code)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Delete Delivery Result Type code: {}", code);
 		if (dlvrrestManager.isCodePresent(code)) {
 			List<DeliveryResultType> dlvrrestTypes = dlvrrestManager.getDeliveryResultType();
 			List<DeliveryResultType> dlvrrestTypeFounds = dlvrrestTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!dlvrrestTypeFounds.isEmpty()) {
 				try {
 					dlvrrestManager.deleteDeliveryResultType(dlvrrestTypeFounds.get(0));

@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/medstockmovementtype")
+@RestController(value = "/medstockmovementtypes")
 @Tag(name = "Medical Stock Movement Type")
 @SecurityRequirement(name = "bearerAuth")
 public class MedStockMovementTypeController {
@@ -59,16 +59,16 @@ public class MedStockMovementTypeController {
 
 	@Autowired
 	private MovementTypeMapper mapper;
-	
+
 	@Autowired
 	private MedicalDsrStockMovementTypeBrowserManager manager;
-	
+
 	/**
 	 * Returns all the medical stock movement types.
 	 * @return all the medical stock movement types.
 	 * @throws OHServiceException 
 	 */
-	@GetMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/medstockmovementtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<MovementTypeDTO>> getMedicalDsrStockMovementType() throws OHServiceException {
 		LOGGER.info("Retrieving all the movement types ...");
 		List<MovementType> movementTypes = manager.getMedicalDsrStockMovementType();
@@ -81,13 +81,13 @@ public class MedStockMovementTypeController {
 			return ResponseEntity.ok(mappedMovements);
 		}
 	}
-	
+
 	/**
 	 * Get the {@link MovementType} by its code.
 	 * @param code - the code of the movement type.
 	 * @return {@link MovementType}.
 	 */
-	@GetMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/medstockmovementtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MovementTypeDTO> getMovementType(@PathVariable("code") String code) throws OHServiceException {
 		MovementType foundMvmntType = manager.getMovementType(code);
 		if (foundMvmntType == null) {
@@ -95,31 +95,33 @@ public class MedStockMovementTypeController {
 		}
 		return ResponseEntity.ok(mapper.map2DTO(foundMvmntType));
 	}
-	
+
 	/**
 	 * Save the specified {@link MovementType}.
 	 * @param medicalDsrStockMovementType the medical stock movement type to save.
 	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the medical stock movement type has been saved.
 	 * @throws OHServiceException 
 	 */
-	@PostMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MovementTypeDTO> newMedicalDsrStockMovementType(@RequestBody @Valid MovementTypeDTO medicalDsrStockMovementType) throws OHServiceException {
+	@PostMapping(value = "/medstockmovementtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MovementTypeDTO> newMedicalDsrStockMovementType(@RequestBody @Valid MovementTypeDTO medicalDsrStockMovementType)
+					throws OHServiceException {
 		try {
 			MovementType isCreatedMovementType = manager.newMedicalDsrStockMovementType(mapper.map2Model(medicalDsrStockMovementType));
 			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
 		} catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Movement type not created."));
-        }
+			throw new OHAPIException(new OHExceptionMessage("Movement type not created."));
+		}
 	}
-	
+
 	/**
 	 * Updates the specified {@link MovementType}.
 	 * @param medicalDsrStockMovementTypeDTO the medical stock movement type to update.
 	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical stock movement type has been updated.
 	 * @throws OHServiceException 
 	 */
-	@PutMapping(value = "/medstockmovementtype", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MovementTypeDTO> updateMedicalDsrStockMovementType(@RequestBody @Valid MovementTypeDTO medicalDsrStockMovementTypeDTO) throws OHServiceException {
+	@PutMapping(value = "/medstockmovementtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MovementTypeDTO> updateMedicalDsrStockMovementType(@RequestBody @Valid MovementTypeDTO medicalDsrStockMovementTypeDTO)
+					throws OHServiceException {
 		MovementType medicalDsrStockMovementType = mapper.map2Model(medicalDsrStockMovementTypeDTO);
 		if (!manager.isCodePresent(medicalDsrStockMovementType.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
@@ -128,33 +130,33 @@ public class MedStockMovementTypeController {
 			MovementType isUpdatedMovementType = manager.updateMedicalDsrStockMovementType(medicalDsrStockMovementType);
 			return ResponseEntity.ok(mapper.map2DTO(isUpdatedMovementType));
 		} catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Movement type not updated."));
-        }
+			throw new OHAPIException(new OHExceptionMessage("Movement type not updated."));
+		}
 	}
-	
+
 	/**
 	 * Checks if the specified movement type's code is already used.
 	 * @param code the code to check.
 	 * @return {@code true} if the code is used, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
-	@GetMapping(value = "/medstockmovementtype/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/medstockmovementtypes/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> isCodeUsed(@PathVariable String code) throws OHServiceException {
 		return ResponseEntity.ok(manager.isCodePresent(code));
 	}
-	
+
 	/**
 	 * Deletes the specified movement type.
 	 * @param code - the code of the medical stock movement type to delete.
 	 * @return {@code true} if the medical stock movement type has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException 
 	 */
-	@DeleteMapping(value = "/medstockmovementtype/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/medstockmovementtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicalDsrStockMovementType(@PathVariable("code") String code) throws OHServiceException {
 		List<MovementType> matchedMvmntTypes = manager.getMedicalDsrStockMovementType()
-				.stream()
-				.filter(item -> item.getCode().equals(code))
-				.collect(Collectors.toList());
+						.stream()
+						.filter(item -> item.getCode().equals(code))
+						.collect(Collectors.toList());
 		if (matchedMvmntTypes.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not found."));
 		}
@@ -165,5 +167,5 @@ public class MedStockMovementTypeController {
 			throw new OHAPIException(new OHExceptionMessage("Movement type not deleted."));
 		}
 	}
-	
+
 }
