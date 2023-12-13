@@ -131,11 +131,6 @@ public class SecurityConfig {
 						// age types
 						.antMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("agetypes.read")
 						.antMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("agetypes.update")
-						// discharges
-						.antMatchers(HttpMethod.POST, "/discharges/**").hasAuthority("discharges.create")
-						.antMatchers(HttpMethod.GET, "/discharges/**").hasAnyAuthority("discharges.read")
-						.antMatchers(HttpMethod.PUT, "/discharges/**").hasAuthority("discharges.update")
-						.antMatchers(HttpMethod.DELETE, "/discharges/**").hasAuthority("discharges.delete")
 						// dischargetypes
 						.antMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("dischargetypes.create")
 						.antMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("dischargetypes.read")
