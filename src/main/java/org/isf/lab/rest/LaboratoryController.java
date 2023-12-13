@@ -76,13 +76,13 @@ public class LaboratoryController {
 	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
 	
-	private static String draft = LaboratoryStatus.DRAFT.toString();
+	private static String draft = LaboratoryStatus.draft.toString();
 	
-	private static String open = LaboratoryStatus.OPEN.toString();
+	private static String open = LaboratoryStatus.open.toString();
 
-	private static String deleted = LaboratoryStatus.DELETED.toString();
+	private static String deleted = LaboratoryStatus.deleted.toString();
 	
-	private static String invalid = LaboratoryStatus.INVALID.toString();
+	private static String invalid = LaboratoryStatus.invalid.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -185,7 +185,7 @@ public class LaboratoryController {
 		labToInsert.setResult("");
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
 
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab : labList) {
@@ -303,7 +303,7 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 		if (!laboratoryDTO.getResult().isEmpty()) {
-			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
+			labToInsert.setStatus(LaboratoryStatus.done.toString());
 		}
 
 		try {
