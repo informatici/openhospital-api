@@ -187,7 +187,7 @@ public class LaboratoryController {
 		labToInsert.setResult("");
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.draft.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(DRAFT)).collect(Collectors.toList());
 
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab : labList) {
