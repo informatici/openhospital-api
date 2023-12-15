@@ -83,6 +83,8 @@ public class LaboratoryController {
 	private static String deleted = LaboratoryStatus.deleted.toString();
 	
 	private static String invalid = LaboratoryStatus.invalid.toString();
+	
+	private static String done = LaboratoryStatus.done.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
