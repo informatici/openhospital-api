@@ -10,7 +10,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
-  * [How to generate opeanpi specs](#how-to-generate-opeanpi-specs)
+  * [How to generate openapi specs](#how-to-generate-openapi-specs)
   * [Cleaning](#cleaning)
   * [How to contribute](#how-to-contribute)
   * [Community](#community)
@@ -101,7 +101,7 @@ When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
 
 You can change the deployment branch using an .env file.
 
-## How to generate opeanpi specs
+## How to generate openapi specs
 
 Make sure to have API started without errors.
 
