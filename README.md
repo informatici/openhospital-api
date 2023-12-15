@@ -10,6 +10,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
+  * [How to generate opeanpi specs](#how-to-generate-opeanpi-specs)
   * [Cleaning](#cleaning)
   * [How to contribute](#how-to-contribute)
   * [Community](#community)
@@ -99,6 +100,19 @@ Make sure you have docker with docker-compose installed, then run the following 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
 
 You can change the deployment branch using an .env file.
+
+## How to generate opeanpi specs
+
+Make sure to have API started without errors.
+
+Run the Maven command and it will overwrite the `openapi/oh.yaml`
+
+	mvn springdoc-openapi:generate
+	
+To redirect the output to another file, use:
+
+	mvn springdoc-openapi:generate -Dspringdoc.outputFileName=my_revision.yaml
+	
 
 ## Cleaning
 
