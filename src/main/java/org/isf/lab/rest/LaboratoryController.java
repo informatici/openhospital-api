@@ -305,7 +305,7 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 		if (!laboratoryDTO.getResult().isEmpty()) {
-			labToInsert.setStatus(LaboratoryStatus.done.toString());
+			labToInsert.setStatus(DONE);
 		}
 
 		try {
