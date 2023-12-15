@@ -307,12 +307,7 @@ public class LaboratoryController {
 		if (!laboratoryDTO.getResult().isEmpty()) {
 			labToInsert.setStatus(DONE);
 		}
-
-		try {
-			laboratoryManager.updateLaboratory(labToInsert, labRows);
-		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
-		}
+		laboratoryManager.updateLaboratory(labToInsert, labRows);
 		return ResponseEntity.ok(true);
 	}
 	
