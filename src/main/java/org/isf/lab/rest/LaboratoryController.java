@@ -76,13 +76,15 @@ public class LaboratoryController {
 	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
 	
-	private static String draft = LaboratoryStatus.DRAFT.toString();
+	private static final String DRAFT = LaboratoryStatus.draft.toString();
 	
-	private static String open = LaboratoryStatus.OPEN.toString();
+	private static final String OPEN = LaboratoryStatus.open.toString();
 
-	private static String deleted = LaboratoryStatus.DELETED.toString();
+	private static final String DELETED = LaboratoryStatus.deleted.toString();
 	
-	private static String invalid = LaboratoryStatus.INVALID.toString();
+	private static final String INVALID = LaboratoryStatus.invalid.toString();
+	
+	private static final String DONE = LaboratoryStatus.done.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
@@ -181,11 +183,11 @@ public class LaboratoryController {
 		labToInsert.setExam(exam);
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
-		labToInsert.setStatus(draft);
+		labToInsert.setStatus(DRAFT);
 		labToInsert.setResult("");
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equals(LaboratoryStatus.DRAFT.toString())).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equals(DRAFT)).collect(Collectors.toList());
 
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab : labList) {
@@ -280,8 +282,8 @@ public class LaboratoryController {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not found."));
 		}
 		Laboratory lab = labo.get();
-		if (lab.getStatus().equalsIgnoreCase(deleted) || lab.getStatus().equalsIgnoreCase(invalid)) {
-			throw new OHAPIException(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus().toUpperCase()));
+		if (lab.getStatus().equalsIgnoreCase(DELETED) || lab.getStatus().equalsIgnoreCase(INVALID)) {
+			throw new OHAPIException(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus()));
 		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
@@ -303,14 +305,9 @@ public class LaboratoryController {
 			labRows = new ArrayList<>(labRow);
 		}
 		if (!laboratoryDTO.getResult().isEmpty()) {
-			labToInsert.setStatus(LaboratoryStatus.DONE.toString());
+			labToInsert.setStatus(DONE);
 		}
-
-		try {
-			laboratoryManager.updateLaboratory(labToInsert, labRows);
-		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
-		}
+		laboratoryManager.updateLaboratory(labToInsert, labRows);
 		return ResponseEntity.ok(true);
 	}
 	
@@ -354,14 +351,14 @@ public class LaboratoryController {
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
 		if (lab.isPresent()) {
 			Laboratory labToDelete = lab.get();
-			if (labToDelete.getStatus().equalsIgnoreCase(deleted)) {
-				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus().toUpperCase()));
+			if (labToDelete.getStatus().equalsIgnoreCase(DELETED)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus()));
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		try {
-			laboratoryManager.updateExamRequest(code, deleted);
+			laboratoryManager.updateExamRequest(code, DELETED);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
@@ -405,7 +402,7 @@ public class LaboratoryController {
 			}
 			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 			labDTO.setLaboratoryDTO(laboratoryDTO);
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
@@ -432,7 +429,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> !e.getStatus().equalsIgnoreCase(draft) && !e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
+				.filter(e -> !e.getStatus().equalsIgnoreCase(DRAFT) && !e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -457,7 +454,7 @@ public class LaboratoryController {
 			}
 			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 			labDTO.setLaboratoryDTO(laboratoryDTO);
 			labDTO.setLaboratoryRowList(labDescription);
 			return labDTO;
@@ -482,7 +479,7 @@ public class LaboratoryController {
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
-				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -491,7 +488,7 @@ public class LaboratoryController {
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 			return laboratoryDTO;
 		}).collect(Collectors.toList()));
 	}
@@ -507,7 +504,7 @@ public class LaboratoryController {
 	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
-				.filter(e -> e.getStatus().equalsIgnoreCase(draft) || e.getStatus().equalsIgnoreCase(open)).collect(Collectors.toList());
+				.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
@@ -516,7 +513,7 @@ public class LaboratoryController {
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 			return laboratoryDTO;
 		}).collect(Collectors.toList()));
 	}
@@ -638,7 +635,7 @@ public class LaboratoryController {
 				}
 				laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 				laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+				laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 				labDTO.setLaboratoryDTO(laboratoryDTO);
 				labDTO.setLaboratoryRowList(labDescription);
 				return labDTO;
@@ -668,7 +665,7 @@ public class LaboratoryController {
 		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 		laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
 		laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
-		laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus().toUpperCase()));
+		laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
 		return ResponseEntity.ok(laboratoryDTO);
 	}
 
@@ -693,7 +690,7 @@ public class LaboratoryController {
 		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
 		labDTO.setRegistrationDate(laboratory.getCreatedDate());
 		labDTO.setInOutPatient(PatientSTATUS.valueOf(laboratory.getInOutPatient()));
-		labDTO.setStatus(LaboratoryStatus.valueOf(laboratory.getStatus().toUpperCase()));
+		labDTO.setStatus(LaboratoryStatus.valueOf(laboratory.getStatus()));
 		lab.setLaboratoryDTO(labDTO);
 
 		List<String> labDescription = new ArrayList<>();
@@ -724,14 +721,14 @@ public class LaboratoryController {
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (labo.isPresent()) {
 			Laboratory lab = labo.get();
-			if (!lab.getStatus().equalsIgnoreCase(draft) && !lab.getStatus().equalsIgnoreCase(open)) {
-				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus().toUpperCase()));
+			if (!lab.getStatus().equalsIgnoreCase(DRAFT) && !lab.getStatus().equalsIgnoreCase(OPEN)) {
+				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus()));
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
 		try {
-			laboratoryManager.updateExamRequest(code, invalid);
+			laboratoryManager.updateExamRequest(code, INVALID);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
 		}
