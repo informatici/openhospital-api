@@ -76,15 +76,15 @@ public class LaboratoryController {
 	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
 	
-	private static String DRAFT = LaboratoryStatus.draft.toString();
+	private static final String DRAFT = LaboratoryStatus.draft.toString();
 	
-	private static String OPEN = LaboratoryStatus.open.toString();
+	private static final String OPEN = LaboratoryStatus.open.toString();
 
-	private static String DELETED = LaboratoryStatus.deleted.toString();
+	private static final String DELETED = LaboratoryStatus.deleted.toString();
 	
-	private static String INVALID = LaboratoryStatus.invalid.toString();
+	private static final String INVALID = LaboratoryStatus.invalid.toString();
 	
-	private static String DONE = LaboratoryStatus.done.toString();
+	private static final String DONE = LaboratoryStatus.done.toString();
 
 	@Autowired
 	protected LabManager laboratoryManager;
