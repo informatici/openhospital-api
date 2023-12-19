@@ -21,26 +21,32 @@
  */
 package org.isf.lab.rest;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.lab.data.LaboratoryHelper;
+import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -73,14 +79,12 @@ public class LaboratoryControllerTest {
 	@Mock
     private PatientBrowserManager patientBrowserManager;
 
-	@Mock
-    private LaboratoryMapper laboratoryMapper;
+    protected LaboratoryMapper laboratoryMapper = new LaboratoryMapper();
 
-	@Mock
-    private LaboratoryRowMapper laboratoryRowMapper;
+    protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
-	@Mock
-    private LaboratoryForPrintMapper laboratoryForPrintMapper;
+
+    protected LaboratoryForPrintMapper laboratoryForPrintMapper = new LaboratoryForPrintMapper();
 
 	private MockMvc mockMvc;
 
@@ -100,15 +104,29 @@ public class LaboratoryControllerTest {
 	@Test
 	public void testNewLaboratory_201() throws Exception {
 		String request = "/laboratories";
-		
+
+		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
 		Laboratory lab = LaboratoryHelper.setup();
+		lab.getExam().setCode(Double.valueOf(Math.random()).toString());
+		Patient patient = PatientHelper.setup();
+		patient.setCode(Double.valueOf(Math.random()).intValue());
+
+		lab.setPatient(patient);
 		List<String> labRows = new ArrayList<>();
 		labRows.add("good");
 		labRows.add("material");
+
 		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
-		when(laboratoryManager.newLaboratory(laboratoryMapper.map2Model(body), labRows));
+		labWithRowsDTO.setLaboratoryDTO(body);
+		labWithRowsDTO.setLaboratoryRowList(labRows);
+
+		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
+		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
+
 		MvcResult result = this.mockMvc
 				.perform(post(request)
+						.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
@@ -120,46 +138,79 @@ public class LaboratoryControllerTest {
 	}
 	
 	@Test
-	public void testUpdateLaboratory_201() throws Exception {
+	public void testUpdateLaboratory_200() throws Exception {
 		String request = "/laboratories/{code}";
-		Integer code = 5;
-		
-		Laboratory lab = LaboratoryHelper.setup();
-		List<String> labRows = new ArrayList<>();
-		labRows.add("lab");
-		labRows.add("material");
-		lab.setCode(code);
-		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
-		when(laboratoryManager.updateLaboratory(laboratoryMapper.map2Model(body), labRows));
-		MvcResult result = this.mockMvc
-				.perform(put(request, code)
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
 
-		LOGGER.debug("result: {}", result);
-	}
-	
-	@Test
-	public void testGetLaboratory_201() throws Exception {
-		String request = "/laboratories/byPatientId/{patId}";
-		Integer patId = 5;
-		
-		Patient patient =PatientHelper.setup();
-		when(patientBrowserManager.getPatientById(patId)).thenReturn(patient);
-		List<Laboratory> labList = LaboratoryHelper.genArrayList(4);
-		when(laboratoryManager.getLaboratory(patient)).thenReturn(labList);
+		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
+		Laboratory lab = LaboratoryHelper.setup();
+		lab.setCode(Double.valueOf(Math.random()).intValue());
+		lab.getExam().setCode(Double.valueOf(Math.random()).toString());
+		lab.setStatus(LaboratoryStatus.OPEN.toString());
+		Patient patient = PatientHelper.setup();
+		patient.setCode(Double.valueOf(Math.random()).intValue());
+
+		lab.setPatient(patient);
+		List<String> labRows = new ArrayList<>();
+		labRows.add("good");
+		labRows.add("material");
+
+		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
+		labWithRowsDTO.setLaboratoryDTO(body);
+		labWithRowsDTO.setLaboratoryRowList(labRows);
+
+		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
+		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
+		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
+
 		MvcResult result = this.mockMvc
-				.perform(get(request,patId)
+				.perform(put(request, lab.getCode())
+						.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(laboratoryMapper.map2DTOList(labList).toString())))
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+	
+	@Test
+	public void testGetLaboratory_200() throws Exception {
+		String request = "/laboratories/byPatientId/{patId}";
+
+		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
+		Laboratory lab = LaboratoryHelper.setup();
+		lab.setCode(Double.valueOf(Math.random()).intValue());
+		lab.getExam().setCode(Double.valueOf(Math.random()).toString());
+		lab.getExam().setProcedure(1);
+		lab.setStatus(LaboratoryStatus.DONE.toString());
+		Patient patient = PatientHelper.setup();
+		patient.setCode(Double.valueOf(Math.random()).intValue());
+
+		lab.setPatient(patient);
+		List<String> labRows = new ArrayList<>();
+		labRows.add("good");
+		labRows.add("material");
+
+		LaboratoryDTO body = laboratoryMapper.map2DTO(lab);
+		labWithRowsDTO.setLaboratoryDTO(body);
+		labWithRowsDTO.setLaboratoryRowList(labRows);
+
+		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
+		when(laboratoryManager.getLaboratory(any(Patient.class))).thenReturn(Collections.singletonList(lab));
+		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
+		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
+		MvcResult result = this.mockMvc
+				.perform(get(request, patient.getCode())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().is2xxSuccessful())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

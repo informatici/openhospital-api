@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.exa.model.Exam;
+import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.test.TestLaboratory;
@@ -35,6 +36,9 @@ import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class LaboratoryHelper {
 	public static Laboratory setup() throws OHException {
@@ -53,7 +57,25 @@ public class LaboratoryHelper {
 	public static String asJsonString(LaboratoryDTO body) {
 		// TODO Auto-generated method stub
 		try {
-			return new ObjectMapper().writeValueAsString(body);
+			return new ObjectMapper()
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(body);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String asJsonString(LabWithRowsDTO body) {
+		// TODO Auto-generated method stub
+		try {
+			return new ObjectMapper()
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(body);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
