@@ -112,7 +112,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testNewVisit_201() throws Exception {
-		String request = "/visit";
+		String request = "/visits";
 		int id = 1;
 		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(id));
 
@@ -134,7 +134,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testNewVisits_201() throws Exception {
-		String request = "/visits";
+		String request = "/visits/insertList";
 
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
 

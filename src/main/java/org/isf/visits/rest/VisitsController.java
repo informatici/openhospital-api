@@ -96,7 +96,7 @@ public class VisitsController {
 	 * @return an error if there are some problem, the visitor id (Integer) otherwise
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value = "/visit", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 		LOGGER.info("Create Visit: {}", newVisit);
 		Visit visitD = mapper.map2Model(newVisit);
@@ -111,7 +111,7 @@ public class VisitsController {
 	 * @return an error message if there are some problem, ok otherwise
 	 * @throws OHServiceException
 	 */
-	@PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/visits/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
 		LOGGER.info("Create Visits");
 		List<Visit> listVisits = mapper.map2ModelList(newVisits);
