@@ -41,21 +41,22 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class LaboratoryHelper {
+
 	public static Laboratory setup() throws OHException {
 		Patient patient = new Patient();
 		boolean usingSet = true;
 		Exam exam = new Exam();
-		return new TestLaboratory().setup( exam,  patient, usingSet);
+		return new TestLaboratory().setup(exam, patient, usingSet);
 	}
+
 	public static Laboratory setup(Integer id) throws OHException {
 		Laboratory lab = LaboratoryHelper.setup();
 		lab.setCode(id);
 		return lab;
 	}
 
-
 	public static String asJsonString(LaboratoryDTO body) {
-		// TODO Auto-generated method stub
+
 		try {
 			return new ObjectMapper()
 				.registerModule(new ParameterNamesModule())
@@ -69,7 +70,7 @@ public class LaboratoryHelper {
 	}
 
 	public static String asJsonString(LabWithRowsDTO body) {
-		// TODO Auto-generated method stub
+
 		try {
 			return new ObjectMapper()
 				.registerModule(new ParameterNamesModule())
@@ -81,17 +82,18 @@ public class LaboratoryHelper {
 		}
 		return null;
 	}
+
 	public static List<Laboratory> genList(int n) {
 
 		return IntStream.range(0, n)
-				.mapToObj(i -> {
-					try {
-						return LaboratoryHelper.setup(i);
-					} catch (OHException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}).collect(Collectors.toList());
+			.mapToObj(i -> {
+				try {
+					return LaboratoryHelper.setup(i);
+				} catch (OHException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}).collect(Collectors.toList());
 
 	}
 
