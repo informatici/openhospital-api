@@ -28,10 +28,13 @@ import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.model.User;
 import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
+import org.isf.sessionaudit.model.UserSession;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
@@ -66,6 +69,9 @@ public class LoginController {
 
 	@Autowired
 	private CustomAuthenticationManager authenticationManager;
+	
+	@Autowired
+	private UserBrowsingManager userManager;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
@@ -77,11 +83,11 @@ public class LoginController {
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
-		MDC.put("OHUser", loginRequest.getUsername());
-
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
 							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
+			User user = userManager.getUserByName(loginRequest.getUsername());
+			UserSession.setUser(user);
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
