@@ -67,24 +67,23 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class LaboratoryControllerTest {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(LaboratoryControllerTest.class);
 
 	@Mock
-    protected LabManager laboratoryManager;
+	protected LabManager laboratoryManager;
 
 	@Mock
-    protected ExamBrowsingManager examManager;
+	protected ExamBrowsingManager examManager;
 
 	@Mock
-    private PatientBrowserManager patientBrowserManager;
+	private PatientBrowserManager patientBrowserManager;
 
-    protected LaboratoryMapper laboratoryMapper = new LaboratoryMapper();
+	protected LaboratoryMapper laboratoryMapper = new LaboratoryMapper();
 
-    protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
+	protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
-
-    protected LaboratoryForPrintMapper laboratoryForPrintMapper = new LaboratoryForPrintMapper();
+	protected LaboratoryForPrintMapper laboratoryForPrintMapper = new LaboratoryForPrintMapper();
 
 	private MockMvc mockMvc;
 
@@ -92,9 +91,10 @@ public class LaboratoryControllerTest {
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper, laboratoryForPrintMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+						.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper,
+										laboratoryForPrintMapper))
+						.setControllerAdvice(new OHResponseEntityExceptionHandler())
+						.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -125,18 +125,17 @@ public class LaboratoryControllerTest {
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+						.perform(post(request)
+										.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
+										.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().is2xxSuccessful())
+						.andExpect(status().isCreated())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
-	
+
 	@Test
 	public void testUpdateLaboratory_200() throws Exception {
 		String request = "/laboratories/{code}";
@@ -145,7 +144,7 @@ public class LaboratoryControllerTest {
 		Laboratory lab = LaboratoryHelper.setup();
 		lab.setCode(Double.valueOf(Math.random()).intValue());
 		lab.getExam().setCode(Double.valueOf(Math.random()).toString());
-		lab.setStatus(LaboratoryStatus.OPEN.toString());
+		lab.setStatus(LaboratoryStatus.open.toString());
 		Patient patient = PatientHelper.setup();
 		patient.setCode(Double.valueOf(Math.random()).intValue());
 
@@ -164,18 +163,17 @@ public class LaboratoryControllerTest {
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
 		MvcResult result = this.mockMvc
-				.perform(put(request, lab.getCode())
-						.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+						.perform(put(request, lab.getCode())
+										.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
+										.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().is2xxSuccessful())
+						.andExpect(status().isOk())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
-	
+
 	@Test
 	public void testGetLaboratory_200() throws Exception {
 		String request = "/laboratories/byPatientId/{patId}";
@@ -185,7 +183,7 @@ public class LaboratoryControllerTest {
 		lab.setCode(Double.valueOf(Math.random()).intValue());
 		lab.getExam().setCode(Double.valueOf(Math.random()).toString());
 		lab.getExam().setProcedure(1);
-		lab.setStatus(LaboratoryStatus.DONE.toString());
+		lab.setStatus(LaboratoryStatus.done.toString());
 		Patient patient = PatientHelper.setup();
 		patient.setCode(Double.valueOf(Math.random()).intValue());
 
@@ -204,14 +202,13 @@ public class LaboratoryControllerTest {
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 		MvcResult result = this.mockMvc
-				.perform(get(request, patient.getCode())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
-				.andReturn();
+						.perform(get(request, patient.getCode())
+										.contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().is2xxSuccessful())
+						.andExpect(status().isOk())
+						.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
