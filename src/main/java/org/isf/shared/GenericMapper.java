@@ -71,7 +71,7 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 	}
 
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
-		// TODO Auto-generated method stub
+		
 		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
 
 		if (status) {
