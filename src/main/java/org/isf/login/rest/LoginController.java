@@ -23,7 +23,6 @@ package org.isf.login.rest;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
@@ -72,7 +71,7 @@ public class LoginController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) throws OHAPIException {
+	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		Authentication authentication = authenticationManager.authenticate(
 						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
