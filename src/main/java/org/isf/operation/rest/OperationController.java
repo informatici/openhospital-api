@@ -195,13 +195,16 @@ public class OperationController {
 	public ResponseEntity<Boolean> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation code: {}.", code);
 		Operation operation = operationManager.getOperationByCode(code);
-		if (operation != null) {
-			operationManager.deleteOperation(operation);
-		} else {
+
+		if (operation == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(true);
+		try {
+			operationManager.deleteOperation(operation);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
+			return ResponseEntity.ok(false);
+		}
 	}
 	
 	/**
