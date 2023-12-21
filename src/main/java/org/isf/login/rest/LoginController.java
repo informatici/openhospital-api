@@ -83,11 +83,18 @@ public class LoginController {
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
+		User user;
+		try {
+			user = userManager.getUserByName(loginRequest.getUsername());
+			UserSession.setUser(user);
+		} catch (OHServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
 							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
-			User user = userManager.getUserByName(loginRequest.getUsername());
-			UserSession.setUser(user);
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
