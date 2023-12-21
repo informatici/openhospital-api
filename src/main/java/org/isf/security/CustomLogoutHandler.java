@@ -53,7 +53,6 @@ public class CustomLogoutHandler implements LogoutHandler {
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		try {
 			int sessionAuditId = UserSession.getSessionAuditId();
-			System.out.println("sessionAudit :"+sessionAuditId);
 			if (sessionAuditId != -1) {
 				Optional<SessionAudit> sa = sessionAuditManager.getSessionAudit(sessionAuditId);
 				if (sa.isPresent()) {
