@@ -23,7 +23,6 @@ package org.isf.login.rest;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
@@ -39,7 +38,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -57,9 +55,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Login")
 @SecurityRequirement(name = "bearerAuth")
 public class LoginController {
-
-	@Autowired
-	private HttpSession httpSession;
 
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
@@ -81,17 +76,17 @@ public class LoginController {
 						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
-
-		String userDetails = (String) authentication.getPrincipal();
+		User user = new User();
+		String userDetails = null;
 		try {
-			this.httpSession.setAttribute("sessionAuditId",
-							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
-			User user = userManager.getUserByName(loginRequest.getUsername());
+			user = userManager.getUserByName(loginRequest.getUsername());
 			UserSession.setUser(user);
-		} catch (OHServiceException e1) {
+			userDetails = (String) authentication.getPrincipal();
+			int sessionAuditId = sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null));
+			UserSession.setSessionAuditId(sessionAuditId);
+		} catch (OHServiceException e) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
-
 		return ResponseEntity.ok(new LoginResponse(jwt, userDetails));
 	}
 }
