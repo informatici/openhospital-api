@@ -25,10 +25,12 @@ import java.util.Arrays;
 
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.CustomLogoutHandler;
+import org.isf.security.CustomAuditorAwareImpl;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTConfigurer;
 import org.isf.security.jwt.TokenProvider;
+import org.isf.utils.db.AuditorAwareInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +70,7 @@ public class SecurityConfig {
 
 	@Autowired
 	protected PermissionManager permissionManager;
-	
+
 	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager) {
 		this.tokenProvider = tokenProvider;
 		this.permissionManager = permissionManager;
@@ -299,7 +301,7 @@ public class SecurityConfig {
 						.antMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
 						.antMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
 						.antMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
-						
+
 //			.and()
 //			.formLogin()
 //				 .loginPage("/auth/login")
@@ -337,5 +339,10 @@ public class SecurityConfig {
 		String hierarchy = "ROLE_ADMIN > ROLE_FAMILYMANAGER \n ROLE_FAMILYMANAGER > ROLE_USER";
 		roleHierarchy.setHierarchy(hierarchy);
 		return roleHierarchy;
+	}
+
+	@Bean
+	public AuditorAwareInterface auditorAwareCustomizer() {
+		return new CustomAuditorAwareImpl();
 	}
 }

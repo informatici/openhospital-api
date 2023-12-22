@@ -23,7 +23,7 @@ package org.isf.login.rest;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
@@ -58,6 +58,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class LoginController {
 
 	@Autowired
+	private HttpSession httpSession;
+
+	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
 	@Autowired
@@ -72,22 +75,29 @@ public class LoginController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletRequest request) throws OHAPIException {
+	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		Authentication authentication = authenticationManager.authenticate(
 						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
-		User user = new User();
-		String userDetails = null;
+
+		String userDetails = (String) authentication.getPrincipal();
+		User user;
 		try {
 			user = userManager.getUserByName(loginRequest.getUsername());
 			UserSession.setUser(user);
-			userDetails = (String) authentication.getPrincipal();
-			int sessionAuditId = sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null));
-			UserSession.setSessionAuditId(sessionAuditId);
 		} catch (OHServiceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			this.httpSession.setAttribute("sessionAuditId",
+							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
+		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
+
 		return ResponseEntity.ok(new LoginResponse(jwt, userDetails));
 	}
 }

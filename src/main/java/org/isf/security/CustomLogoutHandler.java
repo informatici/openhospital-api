@@ -30,7 +30,6 @@ import javax.servlet.http.HttpSession;
 
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
-import org.isf.sessionaudit.model.UserSession;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +44,9 @@ import org.springframework.stereotype.Service;
 public class CustomLogoutHandler implements LogoutHandler {
 
 	@Autowired
+	private HttpSession httpSession;
+
+	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomLogoutHandler.class);
@@ -52,14 +54,14 @@ public class CustomLogoutHandler implements LogoutHandler {
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		try {
-			int sessionAuditId = UserSession.getSessionAuditId();
-			if (sessionAuditId != -1) {
+			Optional<Object> sessionAuditIdOpt = Optional.ofNullable(httpSession.getAttribute("sessionAuditId"));
+			if (sessionAuditIdOpt.isPresent()) {
+				int sessionAuditId = (int) sessionAuditIdOpt.get();
 				Optional<SessionAudit> sa = sessionAuditManager.getSessionAudit(sessionAuditId);
 				if (sa.isPresent()) {
 					SessionAudit sessionAudit = sa.get();
 					sessionAudit.setLogoutDate(LocalDateTime.now());
 					sessionAuditManager.updateSessionAudit(sessionAudit);
-					UserSession.removeUser();
 				}
 			} else {
 				LOGGER.error("Unable to find the session. Are you sure that you are logged in?");
