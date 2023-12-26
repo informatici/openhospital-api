@@ -68,7 +68,7 @@ public class LoginController {
 
 	@Autowired
 	private CustomAuthenticationManager authenticationManager;
-	
+
 	@Autowired
 	private UserBrowsingManager userManager;
 
@@ -87,10 +87,9 @@ public class LoginController {
 			user = userManager.getUserByName(loginRequest.getUsername());
 			UserSession.setUser(user);
 		} catch (OHServiceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
 							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));

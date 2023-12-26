@@ -15,8 +15,7 @@ public class CustomAuditorAwareImpl implements AuditorAwareInterface {
 		if (authentication != null && authentication.isAuthenticated()) {
 			return Optional.of(authentication.getName());
 		} else {
-			// Handle the case when no authentication is available, return a default or throw an exception
-			return Optional.empty(); // Or return a default auditor name
+			return Optional.empty();
 		}
 	}
 }
