@@ -6,7 +6,7 @@ import org.isf.utils.db.AuditorAwareInterface;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class CustomAuditorAwareImpl implements AuditorAwareInterface {
+public class ApiAuditorAwareImpl implements AuditorAwareInterface {
 
 	@Override
 	public Optional<String> getCurrentAuditor() {

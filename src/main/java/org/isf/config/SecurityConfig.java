@@ -25,7 +25,7 @@ import java.util.Arrays;
 
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.CustomLogoutHandler;
-import org.isf.security.CustomAuditorAwareImpl;
+import org.isf.security.ApiAuditorAwareImpl;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTConfigurer;
@@ -343,6 +343,6 @@ public class SecurityConfig {
 
 	@Bean
 	public AuditorAwareInterface auditorAwareCustomizer() {
-		return new CustomAuditorAwareImpl();
+		return new ApiAuditorAwareImpl();
 	}
 }
