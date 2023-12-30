@@ -50,6 +50,18 @@ jobs:
           mvn install -DskipTests=true
           echo ${{ steps.extract_branch.outputs.branch }}
           
+  generate_openapi:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy artifacts from build job
+        run: |
+          cp -r ${{ needs.build.outputs.artifacts }}/* .
+          
       - name: Run API
         run: |
           cd target
