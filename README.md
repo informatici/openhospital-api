@@ -62,7 +62,7 @@ For the moment, to build this project you should
 
 You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/index.html
 
-![image](https://github.com/informatici/openhospital-api/assets/2938553/ff2abec9-9c2a-4baf-90b9-2688c82ffd08)
+![image](https://github.com/informatici/openhospital-api/assets/2938553/ea855a4a-2a57-4b6e-aa62-f218d4937ed8)
 
 ### Using Swagger-UI
 
