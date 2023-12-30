@@ -72,7 +72,7 @@ jobs:
 
       - name: Run API
         run: |
-          cd target
+          cd openhospital-core/target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
           sleep 60
           
