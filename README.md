@@ -60,7 +60,7 @@ For the moment, to build this project you should
     - URL patients: http://localhost:8080/patients
     - URL swagger: http://localhost:8080/swagger-ui.html
 
-You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/index.html
+You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index.html
 
 ![image](https://github.com/informatici/openhospital-api/assets/2938553/ea855a4a-2a57-4b6e-aa62-f218d4937ed8)
 

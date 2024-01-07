@@ -50,8 +50,8 @@ public class OpenAPIConfiguration {
 	public OpenAPI springShopOpenAPI() {
 		return new OpenAPI().addSecurityItem(
 						new SecurityRequirement().addList("bearerAuth"))
-						.info(new Info().title("Open Hospital Api Documentation")
-										.description("Open Hospital Api Documentation")
+						.info(new Info().title("Open Hospital API Documentation")
+										.description("Open Hospital API Documentation")
 										.version("0.1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
 										.license(new License().name("GPL-3.0 license")
 														.url("https://github.com/informatici/openhospital-api?tab=GPL-3.0-1-ov-file#readme")))
