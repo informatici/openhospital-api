@@ -16,7 +16,7 @@ jobs:
           
       - name: Checkout core
         run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
-        
+
       - name: Set up Maven Cache
         uses: actions/setup-java@v1
         with:
@@ -25,15 +25,16 @@ jobs:
           cache: 'maven'
 
       - name: Install core dependencies
-        run: cd openhospital-core && mvn dependency:go-offline && cd ..
+        run: cd openhospital-core && mvn -q dependency:go-offline && cd ..
 
       - name: Install core
-        run: cd openhospital-core && mvn install -DskipTests=true && cd ..
+        run: cd openhospital-core && mvn -q install -DskipTests=true && cd ..
 
-      - name: Set up JDK 11
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+#      - name: Debug Maven Local Repository [build]
+#        run: |
+#          echo "User's home directory: $HOME"
+#          echo "Contents of Maven Local Repository:"
+#          ls -R /root/.m2/repository || ls -R /root/.m2 || ls -R /root
           
       - name: Generate JWT Token
         id: jwt
@@ -57,13 +58,19 @@ jobs:
           cp rsc/log4j.properties.dist rsc/log4j.properties
           cp rsc/settings.properties.dist rsc/settings.properties
           sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
-          mvn install -DskipTests=true
+          mvn -q install -DskipTests=true
           echo ${{ steps.extract_branch.outputs.branch }}
 
-      - name: Upload artifacts
+      - name: Upload Maven
         uses: actions/upload-artifact@v3
         with:
           name: artifacts
+          path: /root/.m2
+          
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: openhospital-api
           path: target
 
   generate_openapi:
@@ -85,14 +92,26 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: artifacts
+          path: /root/.m2
+          
+      - name: Download openhospital-api
+        uses: actions/download-artifact@v3
+        with:
+          name: openhospital-api
           path: target
-
+          
       - name: Run API
         run: |
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
           sleep 60
-          
+
+#      - name: Debug Maven Local Repository [generate_openapi]
+#        run: |
+#          echo "User's home directory: $HOME"
+#          echo "Contents of Maven Local Repository:"
+#          ls -R /root/.m2/repository || ls -R /root/.m2 || ls -R /root
+
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
 
