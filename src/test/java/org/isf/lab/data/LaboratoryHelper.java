@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.exa.model.Exam;
+import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.test.TestLaboratory;
@@ -35,41 +36,64 @@ import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class LaboratoryHelper {
+
 	public static Laboratory setup() throws OHException {
 		Patient patient = new Patient();
 		boolean usingSet = true;
 		Exam exam = new Exam();
-		return new TestLaboratory().setup( exam,  patient, usingSet);
+		return new TestLaboratory().setup(exam, patient, usingSet);
 	}
+
 	public static Laboratory setup(Integer id) throws OHException {
 		Laboratory lab = LaboratoryHelper.setup();
 		lab.setCode(id);
 		return lab;
 	}
 
-
 	public static String asJsonString(LaboratoryDTO body) {
-		// TODO Auto-generated method stub
+
 		try {
-			return new ObjectMapper().writeValueAsString(body);
+			return new ObjectMapper()
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(body);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+
+	public static String asJsonString(LabWithRowsDTO body) {
+
+		try {
+			return new ObjectMapper()
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(body);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static List<Laboratory> genList(int n) {
 
 		return IntStream.range(0, n)
-				.mapToObj(i -> {
-					try {
-						return LaboratoryHelper.setup(i);
-					} catch (OHException e) {
-						e.printStackTrace();
-					}
-					return null;
-				}).collect(Collectors.toList());
+			.mapToObj(i -> {
+				try {
+					return LaboratoryHelper.setup(i);
+				} catch (OHException e) {
+					e.printStackTrace();
+				}
+				return null;
+			}).collect(Collectors.toList());
 
 	}
 

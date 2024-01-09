@@ -39,7 +39,7 @@ public class LaboratoryRowHelper {
 
 
 	public static String asJsonString(LaboratoryRowDTO body) {
-		// TODO Auto-generated method stub
+		
 		try {
 			return new ObjectMapper().writeValueAsString(body);
 		} catch (JsonProcessingException e) {

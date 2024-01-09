@@ -235,11 +235,11 @@ public class AdmissionController {
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
-			@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
-			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-			@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
-			@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
-			throws OHServiceException {
+					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
+					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
+					@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
+					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
 		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
@@ -267,7 +267,7 @@ public class AdmissionController {
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Page<AdmissionDTO>> getDischarges(
 					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
