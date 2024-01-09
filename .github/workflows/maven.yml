@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'zulu'
           cache: 'maven'
 
       - name: Install core dependencies
@@ -34,7 +34,7 @@ jobs:
 #        run: |
 #          echo "User's home directory: $HOME"
 #          echo "Contents of Maven Local Repository:"
-#          ls -R /root/.m2/repository || ls -R /root/.m2 || ls -R /root
+#          ls -R $RUNNER_WORKSPACE/.m2/repository || ls -R $RUNNER_WORKSPACE/.m2 || ls -R $RUNNER_WORKSPACE
           
       - name: Generate JWT Token
         id: jwt
@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: /root/.m2
+          path: $RUNNER_WORKSPACE/.m2/repository
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -85,14 +85,14 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-          distribution: 'adopt'
+          distribution: 'zulu'
           cache: 'maven'
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: artifacts
-          path: /root/.m2
+          path: $RUNNER_WORKSPACE/.m2/repository
           
       - name: Download openhospital-api
         uses: actions/download-artifact@v3
@@ -110,7 +110,7 @@ jobs:
 #        run: |
 #          echo "User's home directory: $HOME"
 #          echo "Contents of Maven Local Repository:"
-#          ls -R /root/.m2/repository || ls -R /root/.m2 || ls -R /root
+#          ls -R $RUNNER_WORKSPACE/.m2/repository || ls -R $RUNNER_WORKSPACE/.m2 || ls -R $RUNNER_WORKSPACE
 
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
