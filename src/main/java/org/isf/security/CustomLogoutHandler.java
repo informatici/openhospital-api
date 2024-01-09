@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomLogoutHandler implements LogoutHandler {
+
 	@Autowired
 	private HttpSession httpSession;
 
