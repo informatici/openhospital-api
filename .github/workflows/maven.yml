@@ -62,13 +62,13 @@ jobs:
           echo ${{ steps.extract_branch.outputs.branch }}
 
       - name: Upload Maven
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: artifacts
           path: /root/.m2
           
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: openhospital-api
           path: target
