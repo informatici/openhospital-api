@@ -61,11 +61,11 @@ jobs:
           mvn -q install -DskipTests=true
           echo ${{ steps.extract_branch.outputs.branch }}
 
-      - name: Upload Maven
-        uses: actions/upload-artifact@v4
+      - name: Upload Maven Cache
+        uses: actions/cache@v2
         with:
-          name: artifacts
           path: $RUNNER_WORKSPACE/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -88,11 +88,11 @@ jobs:
           distribution: 'zulu'
           cache: 'maven'
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
+      - name: Download Maven Cache
+        uses: actions/cache@v2
         with:
-          name: artifacts
           path: $RUNNER_WORKSPACE/.m2/repository
+          key: maven-${{ hashFiles('**/pom.xml') }}
           
       - name: Download openhospital-api
         uses: actions/download-artifact@v3
