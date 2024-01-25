@@ -19,32 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.lab.data;
+package org.isf.security;
 
-import org.isf.lab.dto.LaboratoryRowDTO;
-import org.isf.lab.model.Laboratory;
-import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.test.TestLaboratoryRow;
-import org.isf.utils.exception.OHException;
+import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.isf.utils.db.AuditorAwareInterface;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-public class LaboratoryRowHelper {
-	public static LaboratoryRow setup() throws OHException {
-		Laboratory lab = new Laboratory();
-		boolean usingSet = true;
-		return new TestLaboratoryRow().setup(lab, usingSet);
-	}
+public class ApiAuditorAwareImpl implements AuditorAwareInterface {
 
+	@Override
+	public Optional<String> getCurrentAuditor() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	public static String asJsonString(LaboratoryRowDTO body) {
-		
-		try {
-			return new ObjectMapper().writeValueAsString(body);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		if (authentication != null && authentication.isAuthenticated()) {
+			return Optional.of(authentication.getName());
+		} else {
+			return Optional.empty();
 		}
-		return null;
 	}
 }

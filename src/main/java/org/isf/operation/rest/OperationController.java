@@ -194,15 +194,17 @@ public class OperationController {
 	@DeleteMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation code: {}.", code);
-		boolean isDeleted;
 		Operation operation = operationManager.getOperationByCode(code);
-		if (operation != null) {
-			isDeleted = operationManager.deleteOperation(operation);
-		} else {
+
+		if (operation == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		try {
+			operationManager.deleteOperation(operation);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
+			return ResponseEntity.ok(false);
+		}
 	}
 	
 	/**
