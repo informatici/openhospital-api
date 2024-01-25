@@ -39,3 +39,4 @@ bin
 ### VScode ###
 .vscode
 /deps/
+OH_API_PID

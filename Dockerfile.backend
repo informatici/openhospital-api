@@ -1,4 +1,4 @@
-FROM maven:3.8-jdk-11
+FROM maven:3.9-eclipse-temurin-17
 
 ARG GITHUB_ORG
 ARG OH_CORE_BRANCH
