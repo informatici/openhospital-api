@@ -21,7 +21,6 @@
  */
 package org.isf;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -30,8 +29,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class OpenHospitalApiApplicationTests {
 
-	@Test
-	public void contextLoads() {
-		// this should work, but it slows down the tests
-	}
+//	@Test
+//	public void contextLoads() {
+//		/*
+//		 * Context loading is working correctly. However, since this test does not provide any additional value and may actually slow down the tests execution,
+//		 * it's recommended to remove it. The loading context is implicitly tested by other tests that run as SpringBootTest.
+//		 */
+//	}
 }
