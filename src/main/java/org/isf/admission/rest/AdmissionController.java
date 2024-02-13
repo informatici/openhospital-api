@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -153,11 +153,11 @@ public class AdmissionController {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
 		if (listAdmissions == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		List<AdmissionDTO> listAdmissionsDTO = listAdmissions.stream().map(admission -> {
 
@@ -185,11 +185,11 @@ public class AdmissionController {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		if (admission == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		AdmissionDTO admDTO = admissionMapper.map2DTO(admission);
 		return ResponseEntity.ok(admDTO);
@@ -220,7 +220,7 @@ public class AdmissionController {
 
 		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
 		if (admittedPatients.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 
 		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
@@ -254,7 +254,7 @@ public class AdmissionController {
 			admissionsDTO = admissionMapper.map2DTOList(adms);
 		}
 		if (admissionsDTO.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		admissionsPageableDTO.setData(admissionsDTO);
 		return ResponseEntity.ok(admissionsPageableDTO);
@@ -277,7 +277,7 @@ public class AdmissionController {
 
 		PagedResponse<Admission> admissionsPageable = admissionManager.getDischargesPageable(dischargeRange[0], dischargeRange[1], page, size);
 		if (admissionsPageable.getData().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
@@ -334,7 +334,7 @@ public class AdmissionController {
 		LOGGER.info("setting admission to deleted: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		admissionManager.setDeleted(id);
 		return ResponseEntity.ok(true);
@@ -355,17 +355,17 @@ public class AdmissionController {
 		Patient patient = patientManager.getPatientById(patientCode);
 
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+			return ResponseEntity.notFound().build();
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 
 		if (admission == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 
 		if (adm == null || admission.getId() != adm.getId()) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.internalServerError().build();
 		}
 		if (adm.getDiseaseOut1() == null) {
 			throw new OHAPIException(new OHExceptionMessage("at least one disease must be give."));
@@ -382,7 +382,7 @@ public class AdmissionController {
 		adm.setAdmitted(0);
 		Admission admissionUpdated = admissionManager.updateAdmission(adm);
 
-		return ResponseEntity.status(HttpStatus.OK).body(admissionUpdated != null);
+		return ResponseEntity.ok().body(admissionUpdated != null);
 	}
 
 	/**
@@ -402,7 +402,7 @@ public class AdmissionController {
 			List<Ward> wards = wardManager.getWards().stream()
 							.filter(w -> w.getCode().equals(newAdmissionDTO.getWard().getCode())).collect(Collectors.toList());
 			if (wards.isEmpty()) {
-				throw new OHAPIException(new OHExceptionMessage("Ward not found."));
+				ResponseEntity.notFound().build();
 			}
 			newAdmission.setWard(wards.get(0));
 		} else {

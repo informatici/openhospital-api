@@ -109,7 +109,7 @@ public class UserController {
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
 		if (mappedUsers.isEmpty()) {
 			LOGGER.info("No user found.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} users.", mappedUsers.size());
 			return ResponseEntity.ok(mappedUsers);
@@ -125,7 +125,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		User user = userManager.getUserByName(userName);
 		if (user == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+			ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(userMapper.map2DTO(user));
 	}
@@ -143,7 +143,7 @@ public class UserController {
 		try {
 			userManager.newUser(user);
 			LOGGER.info("User successfully created.");
-			return ResponseEntity.status(HttpStatus.CREATED).body(true);
+			return ResponseEntity.ok().body(true);
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));
@@ -215,7 +215,7 @@ public class UserController {
 		List<UserGroupDTO> mappedGroups = userGroupMapper.map2DTOList(groups);
 		if (mappedGroups.isEmpty()) {
 			LOGGER.info("No group found.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedGroups);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} groups.", mappedGroups.size());
 			return ResponseEntity.ok(mappedGroups);
@@ -248,7 +248,7 @@ public class UserController {
 		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
 		try {
 			userManager.newUserGroup(userGroup);
-			return ResponseEntity.status(HttpStatus.CREATED).body(true);
+			return ResponseEntity.ok().body(true);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
 		}
@@ -295,9 +295,9 @@ public class UserController {
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUser);
 		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
+			return ResponseEntity.notFound().build();
 		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+			return ResponseEntity.ok().body(dtos);
 		}
 	}
 
@@ -319,7 +319,7 @@ public class UserController {
 		userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
 		userProfileDTO.setUserName(currentUser);
 		userProfileDTO.setPermissions(permissionsCode);
-		return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
+		return ResponseEntity.ok().body(userProfileDTO);
 	}
 
 	/**
@@ -335,9 +335,9 @@ public class UserController {
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
 		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
 		if (dtos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
+			return ResponseEntity.notFound().build();
 		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+			return ResponseEntity.ok().body(dtos);
 		}
 	}
 
@@ -354,7 +354,7 @@ public class UserController {
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(currentUser);
 		if (userSettings == null || userSettings.isEmpty()) {
 			LOGGER.info("No settings for the current user {}.", currentUser);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		List<UserSettingDTO> userSettingsDTO = userSettingMapper.map2DTOList(userSettings);
 		LOGGER.info("Found {} user settings.", userSettingsDTO);
@@ -392,7 +392,7 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
 		}
 		LOGGER.info("UserSetting successfully created.");
-		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(created));
+		return ResponseEntity.ok().body(userSettingMapper.map2DTO(created));
 	}
 
 	/**
@@ -451,7 +451,7 @@ public class UserController {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		if (userSetting.isEmpty()) {
 			LOGGER.info("No user settings with id {}.", id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting.get()));
 	}
@@ -471,12 +471,12 @@ public class UserController {
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
 			LOGGER.info("No user settings for the user {}.", userName);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
 		if (userSetting == null) {
 			LOGGER.info("No user settings '{}' for the user {}.", configName, userName);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting));
 	}
@@ -495,7 +495,7 @@ public class UserController {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		if (userSetting.isEmpty()) {
 			LOGGER.info("No user settings with id {}.", id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			try {

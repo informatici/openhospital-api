@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -123,13 +123,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
@@ -141,7 +141,7 @@ public class BillController {
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
+		return ResponseEntity.ok().body(newBillDto);
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill to update not found."));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Bill to update not found."));
 		}
 
 		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
@@ -172,13 +172,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
@@ -190,7 +190,7 @@ public class BillController {
 		} catch (OHServiceException e) {
 			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
+		return ResponseEntity.ok().body(odBillDto);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -255,7 +255,7 @@ public class BillController {
 		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
 
 		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(paymentsDTOS);
 	}
@@ -276,7 +276,7 @@ public class BillController {
 		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
 
 		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(paymentsDTOS);
 	}
@@ -296,7 +296,7 @@ public class BillController {
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
 		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(itemsDTOS);
 	}
@@ -316,7 +316,7 @@ public class BillController {
 		BillDTO billDTO = billMapper.map2DTO(bill);
 
 		if (billDTO == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTO);
 	}
@@ -336,7 +336,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -356,7 +356,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -384,7 +384,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -405,7 +405,7 @@ public class BillController {
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
 		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(itemsDTOS);
 	}
@@ -415,7 +415,7 @@ public class BillController {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
 		if (bill == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		try {
 			billManager.deleteBill(bill);
@@ -441,7 +441,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
