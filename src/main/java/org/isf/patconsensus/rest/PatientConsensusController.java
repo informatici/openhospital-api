@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -27,13 +27,11 @@ import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.manager.PatientConsensusBrowserManager;
 import org.isf.patconsensus.mapper.PatientConsensusMapper;
 import org.isf.patconsensus.model.PatientConsensus;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,22 +61,22 @@ public class PatientConsensusController {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
 		if (patientConsensus.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		PatientConsensusDTO patientDTO = mapper.map2DTO(patientConsensus.get());
 		return ResponseEntity.ok(patientDTO);
 	}
 
 	@PutMapping(value = "/patientconsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
+	ResponseEntity<?> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);
 		if (!patientId.equals(patientConsensus.getPatientId())) {
-			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Optional<PatientConsensus> patConsensusOpt = this.manager.getPatientConsensusByUserId(patientId);
 		if (patConsensusOpt.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("PatientConsensus not found."));
 		}
 		PatientConsensus updatedPatienConsensusModel = mapper.map2Model(patientConsensus);
 		updatedPatienConsensusModel.setId(patConsensusOpt.get().getId());
@@ -87,7 +85,7 @@ public class PatientConsensusController {
 			PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
 			return ResponseEntity.ok(patientConsensusDTO);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("PatientConsensus is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("PatientConsensus is not updated."));
 		}
 	}
 

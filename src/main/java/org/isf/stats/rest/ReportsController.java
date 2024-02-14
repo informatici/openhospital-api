@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -29,7 +29,6 @@ import java.nio.file.Paths;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.poi.util.IOUtils;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.utils.exception.OHServiceException;
@@ -54,32 +53,32 @@ public class ReportsController {
 	private JasperReportsManager reportsManager;
 
 	@GetMapping(value = "/reports/exams-list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<byte[]> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<?> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getExamsListPdf(), request);
 	}
 
 	@GetMapping(value = "/reports/diseases-list", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<?> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
 	}
 
-	private ResponseEntity<byte[]> getReport(JasperReportResultDto resultDto, HttpServletRequest request) throws OHServiceException, IOException {
+	private ResponseEntity<?> getReport(JasperReportResultDto resultDto, HttpServletRequest request) throws OHServiceException, IOException {
 		Path report = Paths.get(resultDto.getFilename()).normalize();
 		Resource resource;
 		try {
 			resource = new UrlResource(report.toUri());
 			if (!resource.exists()) {
-				throw new OHAPIException(new OHExceptionMessage("File not found."));
+				return ResponseEntity.badRequest().body(new OHExceptionMessage("File not found."));
 			}
 		} catch (MalformedURLException e) {
-			throw new OHAPIException(new OHExceptionMessage("File not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("File not found."));
 		}
 
 		String contentType;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 		} catch (IOException ex) {
-			throw new OHAPIException(new OHExceptionMessage("Failed to load the file's type."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Failed to load the file's type."));
 		}
 
 		// Fallback to the default content type if type could not be determined

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -73,14 +73,14 @@ public class PregnantTreatmentTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PregnantTreatmentTypeDTO> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO) throws OHServiceException {
+	ResponseEntity<?> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO) throws OHServiceException {
 		String code = pregnantTreatmentTypeDTO.getCode();
 		LOGGER.info("Create PregnantTreatmentType {}", code);
 		PregnantTreatmentType isCreatedPregnantTreatmentType = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
 		if (isCreatedPregnantTreatmentType == null) {
-			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Pregnant Treatment Type not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPregnantTreatmentType));
+		return ResponseEntity.ok().body(mapper.map2DTO(isCreatedPregnantTreatmentType));
 	}
 
 	/**
@@ -90,16 +90,16 @@ public class PregnantTreatmentTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PregnantTreatmentTypeDTO> updatePregnantTreatmentTypes(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
+	ResponseEntity<?> updatePregnantTreatmentTypes(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update PregnantTreatmentType code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not found."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Pregnant Treatment Type not found."));
 		}
 		PregnantTreatmentType isUpdatedPregnantTreatmentType = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
 		if (isUpdatedPregnantTreatmentType == null) {
-			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Pregnant Treatment Type not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPregnantTreatmentType));
 	}
@@ -115,7 +115,7 @@ public class PregnantTreatmentTypeController {
 		List<PregnantTreatmentType> pregnantTreatmentTypes = pregTreatTypeManager.getPregnantTreatmentType();
 		List<PregnantTreatmentTypeDTO> pregnantTreatmentTypeDTOs = mapper.map2DTOList(pregnantTreatmentTypes);
 		if (pregnantTreatmentTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pregnantTreatmentTypeDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(pregnantTreatmentTypeDTOs);
 		}
@@ -139,11 +139,11 @@ public class PregnantTreatmentTypeController {
 					pregTreatTypeManager.deletePregnantTreatmentType(pregTreatTypeFounds.get(0));
 				} catch (OHServiceException serviceException) {
 					LOGGER.info("Delete PregnantTreatment Type code: {} failed.", code);
-					return ResponseEntity.ok(false);
+					return ResponseEntity.internalServerError().body(false);
 				}
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(true);
 	}

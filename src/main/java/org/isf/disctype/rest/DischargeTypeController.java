@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,13 +28,11 @@ import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,14 +71,14 @@ public class DischargeTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DischargeTypeDTO> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
+	ResponseEntity<?> newDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		String code = dischTypeDTO.getCode();
 		LOGGER.info("Create discharge type {}", code);
 		DischargeType newDischargeType = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		if (!discTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newDischargeType));
+		return ResponseEntity.ok().body(mapper.map2DTO(newDischargeType));
 	}
 
 	/**
@@ -90,15 +88,15 @@ public class DischargeTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DischargeTypeDTO> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
+	ResponseEntity<?> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update discharge type with code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Discharge Type not found."));
+			return ResponseEntity.notFound().build();
 		}
 		DischargeType updatedDischargeType = discTypeManager.updateDischargeType(dischType);
 		if (!discTypeManager.isCodePresent(updatedDischargeType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Discharge Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type is not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}
@@ -114,7 +112,7 @@ public class DischargeTypeController {
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
 		if (dischTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dischTypeDTOs);
+			return ResponseEntity.internalServerError().body(dischTypeDTOs);
 		} else {
 			return ResponseEntity.ok(dischTypeDTOs);
 		}
@@ -137,7 +135,7 @@ public class DischargeTypeController {
 				discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(true);
 	}

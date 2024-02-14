@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -36,7 +36,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -76,7 +75,7 @@ public class MedicalController {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
 			LOGGER.info("Medical not found.");
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Medical retrieved successfully.");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
@@ -90,7 +89,7 @@ public class MedicalController {
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MedicalDTO>> getMedicals(@RequestParam(name="sort_by", required=false) MedicalSortBy sortBy) 
+	public ResponseEntity<?> getMedicals(@RequestParam(name="sort_by", required=false) MedicalSortBy sortBy) 
 			throws OHServiceException {
 		LOGGER.info("Retrieving all the medicals...");
 		List<Medical> medicals;
@@ -103,12 +102,12 @@ public class MedicalController {
 			medicals = medicalManager.getMedicalsSortedByName();
 		}
 		if (medicals == null) {
-			throw new OHAPIException(new OHExceptionMessage("Error while retrieving medicals."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error while retrieving medicals."));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
@@ -125,7 +124,7 @@ public class MedicalController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/medicals/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MedicalDTO>> filterMedicals(
+	public ResponseEntity<?> filterMedicals(
 			@RequestParam(name="desc", required=false) String description,
 			@RequestParam(name="type", required=false) String type,
 			@RequestParam(name="critical", defaultValue="false") boolean critical,
@@ -145,12 +144,12 @@ public class MedicalController {
 		}
 		
 		if (medicals == null) {
-			throw new OHAPIException(new OHExceptionMessage("Error while retrieving medicals."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error while retrieving medicals."));
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
@@ -165,7 +164,7 @@ public class MedicalController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalDTO> newMedical(
+	public ResponseEntity<?> newMedical(
 			@RequestBody MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Creating a new medical ...");
@@ -174,10 +173,10 @@ public class MedicalController {
 			createdMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("Medical is not created.");
-            throw new OHAPIException(new OHExceptionMessage("Medical not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical not created."));
         }
 		LOGGER.info("Medical successfully created.");
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdMedical));
+        return ResponseEntity.ok().body(mapper.map2DTO(createdMedical));
 	}
 	
 	/**
@@ -188,7 +187,7 @@ public class MedicalController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalDTO> updateMedical(
+	public ResponseEntity<?> updateMedical(
 			@RequestBody @Valid MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Updating a medical ...");
@@ -197,10 +196,10 @@ public class MedicalController {
 			updatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("Medical is not updated.");
-            throw new OHAPIException(new OHExceptionMessage("Medical not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical not updated."));
         }
 		LOGGER.info("Medical successfully updated.");
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedMedical));
+        return ResponseEntity.ok().body(mapper.map2DTO(updatedMedical));
 	}
 	
 	/**
@@ -213,7 +212,7 @@ public class MedicalController {
 	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		}
 		try {
 			medicalManager.deleteMedical(medical);

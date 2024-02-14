@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -35,12 +35,9 @@ import org.isf.medicalstock.mapper.LotMapper;
 import org.isf.medicalstock.mapper.MovementMapper;
 import org.isf.medicalstock.model.Lot;
 import org.isf.medicalstock.model.Movement;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -87,7 +84,7 @@ public class MedicalStockMovementController {
 					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 
 	/**
@@ -104,7 +101,7 @@ public class MedicalStockMovementController {
 					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 
 	/**
@@ -187,15 +184,15 @@ public class MedicalStockMovementController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/medicalstockmovements/lot/{med_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LotDTO>> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
+	public ResponseEntity<?> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		}
 		List<Lot> lots = movInsertingManager.getLotByMedical(med);
 		List<LotDTO> mappedLots = lotMapper.map2DTOList(lots);
 		if (mappedLots.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedLots);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedLots);
 		}
@@ -209,12 +206,12 @@ public class MedicalStockMovementController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/medicalstockmovements/critical/check", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> alertCriticalQuantity(
+	public ResponseEntity<?> alertCriticalQuantity(
 					@RequestParam("med_code") int medCode,
 					@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(movInsertingManager.alertCriticalQuantity(med, specifiedQuantity));
 	}
@@ -222,7 +219,7 @@ public class MedicalStockMovementController {
 	private ResponseEntity<List<MovementDTO>> collectResults(List<Movement> movements) {
 		List<MovementDTO> mappedMovements = movMapper.map2DTOList(movements);
 		if (mappedMovements.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedMovements);
 		}

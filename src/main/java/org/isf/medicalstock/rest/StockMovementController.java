@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -40,7 +40,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,7 +85,7 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public class StockMovementController {
 			@RequestParam(name="ref", required=true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 	
 	/**
@@ -194,7 +193,7 @@ public class StockMovementController {
 		List<Lot> lots = movInsertingManager.getLotByMedical(med);
 		List<LotDTO> mappedLots = lotMapper.map2DTOList(lots);
 		if (mappedLots.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedLots);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedLots);
 		}
@@ -213,7 +212,7 @@ public class StockMovementController {
 			@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(movInsertingManager.alertCriticalQuantity(med, specifiedQuantity));
 	}
@@ -221,7 +220,7 @@ public class StockMovementController {
 	private ResponseEntity<List<MovementDTO>> collectResults(List<Movement> movements) {
 		List<MovementDTO> mappedMovements = movMapper.map2DTOList(movements);
 		if (mappedMovements.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedMovements);
 		}

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -98,40 +98,40 @@ public class PatientController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/patients", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientDTO> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
+	ResponseEntity<?> newPatient(@RequestBody PatientDTO newPatient) throws OHServiceException {
 		String name = StringUtils.hasLength(newPatient.getName()) ? newPatient.getFirstName() + ' ' + newPatient.getSecondName() : newPatient.getName();
 		LOGGER.info("Create patient '{}'.", name);
 
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
 		if (newPatient.getBlobPhoto() != null && newPatient.getBlobPhoto().length == 0) {
-			throw new OHAPIException(new OHExceptionMessage("Malformed picture."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed picture."));
 		}
 		Patient patientModel = patientMapper.map2Model(newPatient);
 		Patient patient = patientManager.savePatient(patientModel);
 
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(patientMapper.map2DTO(patient));
+		return ResponseEntity.ok().body(patientMapper.map2DTO(patient));
 	}
 
 	@PutMapping(value = "/patients/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientDTO> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
+	ResponseEntity<?> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: '{}'.", code);
 		if (!updatePatient.getCode().equals(code)) {
-			throw new OHAPIException(new OHExceptionMessage("Patient code mismatch."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Patient patientRead = patientManager.getPatientById(code);
 		if (patientRead == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 		Optional<PatientConsensus> patientConsensus = patientConsensusManager.getPatientConsensusByUserId(patientRead.getCode());
 		if (patientConsensus.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("PatientConsensus not found."));
 		}
 		if (updatePatient.getBlobPhoto() != null && updatePatient.getBlobPhoto().length == 0) {
-			throw new OHAPIException(new OHExceptionMessage("Malformed picture."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed picture."));
 		}
 		Patient updatePatientModel = patientMapper.map2Model(updatePatient);
 		updatePatientModel.getPatientConsensus().setPatient(updatePatientModel);
@@ -139,7 +139,7 @@ public class PatientController {
 		updatePatientModel.setLock(patientRead.getLock());
 		Patient patient = patientManager.savePatient(updatePatientModel);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient not updated."));
 		}
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 		return ResponseEntity.ok(patientDTO);
@@ -152,7 +152,7 @@ public class PatientController {
 		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
 		if (patients.getData().isEmpty()) {
 			LOGGER.info("The patient list is empty.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		Page<PatientDTO> patientPageableDTO = new Page<>();
 		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients.getData());
@@ -167,7 +167,7 @@ public class PatientController {
 		Patient patient = patientManager.getPatientById(code);
 		LOGGER.info("Patient retrieved: {}.", patient);
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		LOGGER.debug("AdmissionBrowserManager injected: {}.", admissionManager);
 		Admission admission = admissionManager.getCurrentAdmission(patient);
@@ -207,7 +207,7 @@ public class PatientController {
 		}
 
 		if (patientList == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 
 		List<PatientDTO> patientListDTO = patientList.stream().map(patient -> {
@@ -223,7 +223,7 @@ public class PatientController {
 		LOGGER.info("Get patient for provided code even if logically deleted: '{}'.", code);
 		Patient patient = patientManager.getPatientAll(code);
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		PatientDTO patientDTO = patientMapper.map2DTO(patient);
 		return ResponseEntity.ok(patientDTO);
@@ -242,7 +242,7 @@ public class PatientController {
 		Patient patient = patientManager.getPatientById(code);
 
 		if (patient == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		try {
 			patientManager.deletePatient(patient);

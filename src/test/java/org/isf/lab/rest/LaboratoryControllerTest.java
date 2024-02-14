@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -42,7 +42,6 @@ import org.isf.lab.data.LaboratoryHelper;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.manager.LabManager;
-import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
@@ -83,16 +82,13 @@ public class LaboratoryControllerTest {
 
 	protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
-	protected LaboratoryForPrintMapper laboratoryForPrintMapper = new LaboratoryForPrintMapper();
-
 	private MockMvc mockMvc;
 
 	@BeforeEach
 	public void setup() {
 		MockitoAnnotations.initMocks(this);
 		this.mockMvc = MockMvcBuilders
-						.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper,
-										laboratoryForPrintMapper))
+						.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper))
 						.setControllerAdvice(new OHResponseEntityExceptionHandler())
 						.build();
 		ModelMapper modelMapper = new ModelMapper();

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,13 +28,11 @@ import org.isf.opetype.dto.OperationTypeDTO;
 import org.isf.opetype.manager.OperationTypeBrowserManager;
 import org.isf.opetype.mapper.OperationTypeMapper;
 import org.isf.opetype.model.OperationType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,16 +71,16 @@ public class OperationTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/operationtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationTypeDTO> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
+	ResponseEntity<?> newOperationType(@RequestBody OperationTypeDTO operationTypeDTO) throws OHServiceException {
 		String code = operationTypeDTO.getCode();
 		LOGGER.info("Create Operation Type {}", code);
 		OperationType newOperationType;
 		try {
 			newOperationType = opeTypeManager.newOperationType(mapper.map2Model(operationTypeDTO));
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Operation Type not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Operation Type not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newOperationType));
+		return ResponseEntity.ok().body(mapper.map2DTO(newOperationType));
 	}
 
 	/**
@@ -92,18 +90,18 @@ public class OperationTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationTypeDTO> updateOperationTypes(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
+	ResponseEntity<?> updateOperationTypes(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.isCodePresent(code)) {
-			throw new OHAPIException(new OHExceptionMessage("Operation Type not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Operation Type not found."));
 		}
 		OperationType updatedOperationType;
 		try {
 			 updatedOperationType = opeTypeManager.updateOperationType(opeType);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Operation Type not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Operation Type not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(updatedOperationType));
 	}
@@ -119,7 +117,7 @@ public class OperationTypeController {
 		List<OperationType> operationTypes = opeTypeManager.getOperationType();
 		List<OperationTypeDTO> operationTypeDTOs = mapper.map2DTOList(operationTypes);
 		if (operationTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationTypeDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(operationTypeDTOs);
 		}
@@ -143,11 +141,11 @@ public class OperationTypeController {
 					opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
 				} catch (OHServiceException serviceException) {
 					LOGGER.error("Delete Operation Type code: {} failed.", code);
-					return ResponseEntity.ok(false);
+					return ResponseEntity.internalServerError().body(false);
 				}
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(true);
 	}

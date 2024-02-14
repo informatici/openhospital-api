@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -32,11 +32,9 @@ import org.isf.distype.dto.DiseaseTypeDTO;
 import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.distype.mapper.DiseaseTypeMapper;
 import org.isf.distype.model.DiseaseType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,7 +76,7 @@ public class DiseaseTypeController {
 		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
         } else {
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
+        	return ResponseEntity.notFound().build();
         }
 	}	
 	
@@ -89,17 +87,17 @@ public class DiseaseTypeController {
 	 * @throws OHServiceException - in case of duplicated code or in case of error
 	 */
 	@PostMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
+	public ResponseEntity<?> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Specified Disease Type code is already used."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified Disease Type code is already used."));
         }
         try {
 	        diseaseTypeManager.newDiseaseType(diseaseType);
         } catch (OHServiceException serviceException) {
-	        throw new OHAPIException(new OHExceptionMessage("Disease Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type is not created."));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
+        return ResponseEntity.ok().body(diseaseTypeDTO);
 	}
 	
 	/**
@@ -109,16 +107,16 @@ public class DiseaseTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
+	public ResponseEntity<?> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
 		DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
 		if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease Type not found."));
 		}
 		try {
 			diseaseTypeManager.updateDiseaseType(diseaseType);
 			return ResponseEntity.ok(diseaseTypeDTO);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type not updated."));
 		}
 	}
 	
@@ -129,7 +127,7 @@ public class DiseaseTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseasetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Boolean>> deleteDiseaseType(@PathVariable String code) throws OHServiceException {
+	public ResponseEntity<?> deleteDiseaseType(@PathVariable String code) throws OHServiceException {
 		Optional<DiseaseType> optDiseaseType = diseaseTypeManager.getDiseaseType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
@@ -141,10 +139,10 @@ public class DiseaseTypeController {
 				result.put("deleted", true);
 				return ResponseEntity.ok(result);
 			} catch (OHServiceException serviceException) {
-				throw new OHAPIException(new OHExceptionMessage("Disease Type not deleted."), HttpStatus.INTERNAL_SERVER_ERROR);
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type not deleted."));
 			}
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("No Disease Type found with the given code."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.notFound().build();
 		}
 	}
 

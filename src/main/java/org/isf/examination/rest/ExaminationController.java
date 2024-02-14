@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -34,7 +34,6 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.generaldata.ExaminationParameters;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -81,10 +80,10 @@ public class ExaminationController {
 	}
 
 	@PostMapping(value = "/examinations", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
+	public ResponseEntity<?> newPatientExamination(@RequestBody PatientExaminationDTO newPatientExamination) throws OHServiceException {
 		Patient patient = patientBrowserManager.getPatientById(newPatientExamination.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient does not exist."));
 		}
 		validateExamination(newPatientExamination);
 		PatientExamination patientExamination = patientExaminationMapper.map2Model(newPatientExamination);
@@ -92,22 +91,22 @@ public class ExaminationController {
 		patientExamination.setPex_date(newPatientExamination.getPex_date());
 		examinationBrowserManager.saveOrUpdate(patientExamination);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 
 	@PutMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Boolean> updateExamination(@PathVariable Integer id, @RequestBody PatientExaminationDTO dto) throws OHServiceException {
+	public ResponseEntity<?> updateExamination(@PathVariable Integer id, @RequestBody PatientExaminationDTO dto) throws OHServiceException {
 		if (dto.getPex_ID() != id) {
-			throw new OHAPIException(new OHExceptionMessage("Patient examination id mismatch."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient examination id mismatch."));
 		}
 		if (examinationBrowserManager.getByID(id) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient examination not found."));
 		}
 
 		Patient patient = patientBrowserManager.getPatientById(dto.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient does not exist."));
 		}
 		validateExamination(dto);
 		PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
@@ -119,16 +118,16 @@ public class ExaminationController {
 	}
 
 	@GetMapping(value = "/examinations/defaultPatientExamination", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PatientExaminationDTO> getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
+	public ResponseEntity<?> getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
 
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient does not exist."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient does not exist."));
 		}
 		PatientExamination patientExamination = examinationBrowserManager.getDefaultPatientExamination(patient);
 		PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 		if (patientExaminationDTO == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(patientExaminationDTO);
 		}
@@ -141,7 +140,7 @@ public class ExaminationController {
 		PatientExaminationDTO patientExaminationDTO = patientExaminationMapper
 						.map2DTO(examinationBrowserManager.getFromLastPatientExamination(lastPatientExamination));
 		if (patientExaminationDTO == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(patientExaminationDTO);
 		}
@@ -153,7 +152,7 @@ public class ExaminationController {
 		PatientExamination patientExamination = examinationBrowserManager.getByID(id);
 
 		if (patientExamination == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 			return ResponseEntity.ok(patientExaminationDTO);
@@ -167,7 +166,7 @@ public class ExaminationController {
 		PatientExamination patientExamination = examinationBrowserManager.getLastByPatID(patId);
 
 		if (patientExamination == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			PatientExaminationDTO patientExaminationDTO = patientExaminationMapper.map2DTO(patientExamination);
 			return ResponseEntity.ok(patientExaminationDTO);
@@ -181,7 +180,7 @@ public class ExaminationController {
 
 		if (patientExaminationListPageable == null || patientExaminationListPageable.getData().isEmpty()) {
 			LOGGER.info("The patient list is empty.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			Page<PatientExaminationDTO> patientExaminationPageableDTO = new Page<>();
 			List<PatientExaminationDTO> patientExaminationDTO = patientExaminationMapper.map2DTOList(patientExaminationListPageable.getData());
@@ -196,7 +195,7 @@ public class ExaminationController {
 
 		List<PatientExamination> patientExamination = examinationBrowserManager.getByPatID(patId);
 		if (patientExamination == null || patientExamination.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			List<PatientExaminationDTO> listPatientExaminationDTO = patientExamination.stream().map(pat -> {
 				return patientExaminationMapper.map2DTO(pat);
@@ -211,69 +210,69 @@ public class ExaminationController {
 		Integer pex_height = newPatientExamination.getPex_height();
 		Double pex_weight = newPatientExamination.getPex_weight();
 		if (pex_height == null || pex_weight == null) {
-			throw new OHAPIException(new OHExceptionMessage("The height and weight are compulsory"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("The height and weight are compulsory"));
 		}
 		if (pex_height < ExaminationParameters.HEIGHT_MIN
 						|| pex_height > ExaminationParameters.HEIGHT_MAX) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"The height should be between " + ExaminationParameters.HEIGHT_MIN + " and " + ExaminationParameters.HEIGHT_MAX));
 		}
 		if (pex_weight < ExaminationParameters.WEIGHT_MIN || pex_weight > ExaminationParameters.WEIGHT_MAX) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"The weight should be between" + ExaminationParameters.WEIGHT_MIN + " and " + ExaminationParameters.WEIGHT_MAX));
 		}
 		Integer pex_ap_min = newPatientExamination.getPex_ap_min();
 		Integer pex_ap_max = newPatientExamination.getPex_ap_max();
 		if (pex_ap_min == null && pex_ap_max != null) {
-			throw new OHAPIException(new OHExceptionMessage("Malformed minimum/maximum blood pressure: minimum missing"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed minimum/maximum blood pressure: minimum missing"));
 		}
 		if (pex_ap_min != null && pex_ap_max == null) {
-			throw new OHAPIException(new OHExceptionMessage("Malformed minimum/maximum blood pressure: maximum missing"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed minimum/maximum blood pressure: maximum missing"));
 		}
 		if (pex_ap_min != null && pex_ap_max != null && pex_ap_min > pex_ap_max) {
-			throw new OHAPIException(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("The minimum blood pressure must be lower than the maximum blood pressure"));
 		}
 		Integer pex_hr = newPatientExamination.getPex_hr();
 		if (pex_hr != null && (pex_hr < ExaminationParameters.HR_MIN || pex_hr > ExaminationParameters.HR_MAX)) {
-			throw new OHAPIException(
+			ResponseEntity.badRequest().body(
 							new OHExceptionMessage("Heart rate should be between " + ExaminationParameters.HR_MIN + " and " + ExaminationParameters.HR_MAX));
 		}
 		Double pex_temp = newPatientExamination.getPex_temp();
 		if (pex_temp != null && (pex_temp < ExaminationParameters.TEMP_MIN || pex_temp > ExaminationParameters.TEMP_MAX)) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"The temperature should be between " + ExaminationParameters.TEMP_MIN + " and " + ExaminationParameters.TEMP_MAX));
 		}
 		Double pex_sat = newPatientExamination.getPex_sat();
 		if (pex_sat != null && (pex_sat < ExaminationParameters.SAT_MIN || pex_sat > ExaminationParameters.SAT_MAX)) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"The saturation should be between " + ExaminationParameters.SAT_MIN + " and " + ExaminationParameters.SAT_MAX));
 		}
 		Integer pex_hgt = newPatientExamination.getPex_hgt();
 		if (pex_hgt != null && (pex_hgt < ExaminationParameters.HGT_MIN || pex_hgt > ExaminationParameters.HGT_MAX)) {
-			throw new OHAPIException(
+			ResponseEntity.badRequest().body(
 							new OHExceptionMessage("HGT should be between " + ExaminationParameters.HGT_MIN + " and " + ExaminationParameters.HGT_MAX));
 		}
 		Integer pex_rr = newPatientExamination.getPex_rr();
 		if (pex_rr != null && (pex_rr < ExaminationParameters.RR_MIN || pex_rr > ExaminationParameters.RR_MAX)) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"Respiratory rate should be between " + ExaminationParameters.RR_MIN + " and " + ExaminationParameters.RR_MAX));
 		}
 		Integer pex_diuresis = newPatientExamination.getPex_diuresis();
 		if (pex_diuresis != null && (pex_diuresis < ExaminationParameters.DIURESIS_MIN || pex_diuresis > ExaminationParameters.DIURESIS_MAX)) {
-			throw new OHAPIException(new OHExceptionMessage(
+			ResponseEntity.badRequest().body(new OHExceptionMessage(
 							"Diuresis should be between " + ExaminationParameters.DIURESIS_MIN + " and " + ExaminationParameters.DIURESIS_MAX));
 		}
 		Diurese pex_diuresis_desc = newPatientExamination.getPex_diuresis_desc();
 		if (pex_diuresis_desc != null && Diurese.valueOf(pex_diuresis_desc.toString()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Diuresis description is not found"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Diuresis description is not found"));
 		}
 		Bowel pex_bowel_desc = newPatientExamination.getPex_bowel_desc();
 		if (pex_bowel_desc != null && Bowel.valueOf(pex_bowel_desc.toString()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bowel description is not found"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Bowel description is not found"));
 		}
 		Ausculation pex_auscultation = newPatientExamination.getPex_auscultation();
 		if (pex_auscultation != null && Ausculation.valueOf(pex_auscultation.toString()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Auscultation is not found"));
+			ResponseEntity.badRequest().body(new OHExceptionMessage("Auscultation is not found"));
 		}
 	}
 }

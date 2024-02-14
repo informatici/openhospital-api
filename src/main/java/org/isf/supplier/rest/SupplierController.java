@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -25,7 +25,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.supplier.dto.SupplierDTO;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.mapper.SupplierMapper;
@@ -35,7 +34,6 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -69,15 +67,15 @@ public class SupplierController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SupplierDTO> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	public ResponseEntity<?> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
 		try {
 			Supplier newSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 			LOGGER.info("Supplier saved successfully.");
-			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newSupplier));
+			return ResponseEntity.ok().body(mapper.map2DTO(newSupplier));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not created.");
-			throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Supplier not created."));
 		}
 	}
 	
@@ -88,9 +86,9 @@ public class SupplierController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SupplierDTO> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	public ResponseEntity<?> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		if (supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Supplier not found."));
 		}
 		LOGGER.info("Updating supplier...");
 		try {
@@ -99,7 +97,7 @@ public class SupplierController {
 			return ResponseEntity.ok(mapper.map2DTO(updatedSupplier));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not updated.");
-			throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Supplier not updated."));
 		}
 	}
 	
@@ -117,7 +115,7 @@ public class SupplierController {
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
 		if (mappedSuppliers.isEmpty()) {
 			LOGGER.info("No supplier found.");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} suppliers.", mappedSuppliers.size());
 			return ResponseEntity.ok(mappedSuppliers);
@@ -136,7 +134,7 @@ public class SupplierController {
 		Supplier supplier = manager.getByID(id);
 		if (supplier == null) {
 			LOGGER.info("Supplier not found.");
-			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found supplier.");
 			return ResponseEntity.ok(mapper.map2DTO(supplier));

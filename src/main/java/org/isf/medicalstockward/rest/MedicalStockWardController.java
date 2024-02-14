@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -93,7 +93,7 @@ public class MedicalStockWardController {
 		List<MedicalWardDTO> mappedMedWards = medicalWardMapper.map2DTOList(medWards);
 		if (mappedMedWards.isEmpty()) {
 			LOGGER.info("No medical found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedWards);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} medicals", mappedMedWards.size());
 			return ResponseEntity.ok(mappedMedWards);
@@ -109,16 +109,16 @@ public class MedicalStockWardController {
 	 * @throws OHServiceException if an error occurs retrieving the quantity.
 	 */
 	@GetMapping(value = "/medicalstockward/current/{ward_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> getCurrentQuantityInWard(
+	public ResponseEntity<?> getCurrentQuantityInWard(
 			@PathVariable("ward_code") String wardId,
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Medical not found."));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("Ward not found."));
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}
@@ -168,7 +168,7 @@ public class MedicalStockWardController {
 		List<MovementWard> movs = movWardBrowserManager.getMovementWard(wardId, dateFromTime, dateToTime);
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if (mappedMovs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedMovs);
 		}
@@ -192,7 +192,7 @@ public class MedicalStockWardController {
 		List<MovementWard> movs = movWardBrowserManager.getWardMovementsToWard(idwardTo, dateFrom, dateTo);
 		List<MovementWardDTO> mappedMovs = movementWardMapper.map2DTOList(movs);
 		if (mappedMovs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovs);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(mappedMovs);
 	}
@@ -208,7 +208,7 @@ public class MedicalStockWardController {
 	public ResponseEntity<Boolean> newMovementWard(@Valid @RequestBody MovementWardDTO newMovementDTO) throws OHServiceException {
 		MovementWard newMovement = movementWardMapper.map2Model(newMovementDTO);
 		movWardBrowserManager.newMovementWard(newMovement);
-		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+		return ResponseEntity.ok().body(null);
 	}
 
 // TODO: needs update when UI supports movements wards
