@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -82,9 +82,9 @@ public class TherapyController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TherapyRowDTO> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
+	public ResponseEntity<?> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
 		if (thRowDTO.getPatID() == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
 		thRow = manager.newTherapy(thRow);
@@ -98,13 +98,13 @@ public class TherapyController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/therapies/replace", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TherapyRow> replaceTherapies(@RequestBody @Valid List<TherapyRowDTO> thRowDTOs) throws OHServiceException {
+	public ResponseEntity<?> replaceTherapies(@RequestBody @Valid List<TherapyRowDTO> thRowDTOs) throws OHServiceException {
 		ArrayList<TherapyRow> therapies = (ArrayList<TherapyRow>)therapyRowMapper.map2ModelList(thRowDTOs);
 		TherapyRow done = manager.newTherapy(therapies.get(0));
 		if (done != null) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(done);
+			return ResponseEntity.ok().body(done);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Therapies not replaced."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Therapies not replaced."));
 		}
 	}
 	
@@ -115,11 +115,11 @@ public class TherapyController {
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/therapies/{code_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAllTherapies(@PathVariable("code_patient") Integer code) throws OHServiceException {
+	public ResponseEntity<?> deleteAllTherapies(@PathVariable("code_patient") Integer code) throws OHServiceException {
 		try {
 			manager.deleteAllTherapies(code);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Therapies not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Therapies not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -136,7 +136,7 @@ public class TherapyController {
 		List<Medical> meds = manager.getMedicalsOutOfStock(therapyRows);
 		List<MedicalDTO> mappedMeds = medicalMapper.map2DTOList(meds);
 		if (mappedMeds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMeds);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} medicals", mappedMeds.size());
 			return ResponseEntity.ok(mappedMeds);
@@ -154,7 +154,7 @@ public class TherapyController {
 		List<TherapyRow> thRows = manager.getTherapyRows(patientID);
 		List<TherapyRowDTO> mappedThRows = therapyRowMapper.map2DTOList(thRows);
 		if (mappedThRows.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedThRows);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} therapies", mappedThRows.size());
 			return ResponseEntity.ok(mappedThRows);
@@ -173,7 +173,7 @@ public class TherapyController {
 		List<Therapy> therapies = manager.getTherapies(thRows);
 		List<TherapyDTO> mappedTherapies = therapies != null? therapyMapper.map2DTOList(therapies) : null;
 		if (mappedTherapies == null || mappedTherapies.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedTherapies);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} therapies", mappedTherapies.size());
 			return ResponseEntity.ok(mappedTherapies);

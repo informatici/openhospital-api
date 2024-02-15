@@ -28,7 +28,6 @@ import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.mapper.PregnantTreatmentTypeMapper;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -80,7 +79,7 @@ public class PregnantTreatmentTypeController {
 		if (isCreatedPregnantTreatmentType == null) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Pregnant Treatment Type not created."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(isCreatedPregnantTreatmentType));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPregnantTreatmentType));
 	}
 
 	/**
@@ -95,7 +94,7 @@ public class PregnantTreatmentTypeController {
 		LOGGER.info("Update PregnantTreatmentType code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Pregnant Treatment Type not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Pregnant Treatment Type not found."));
 		}
 		PregnantTreatmentType isUpdatedPregnantTreatmentType = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
 		if (isUpdatedPregnantTreatmentType == null) {
@@ -128,7 +127,7 @@ public class PregnantTreatmentTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePregnantTreatmentType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deletePregnantTreatmentType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete PregnantTreatment Type code: {}", code);
 		if (pregTreatTypeManager.isCodePresent(code)) {
 			List<PregnantTreatmentType> pregTreatTypes = pregTreatTypeManager.getPregnantTreatmentType();
@@ -143,7 +142,7 @@ public class PregnantTreatmentTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No pregnanc treatment found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

@@ -105,7 +105,7 @@ public class AgeTypeController {
 			ageTypeManager.updateAgeType(ageTypes);
 			return ResponseEntity.ok(ageTypeDTO);
 		} catch (OHServiceException ex) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The age type is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("The age type is not updated."));
 		}
 	}
 	

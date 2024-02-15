@@ -36,6 +36,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -82,7 +83,7 @@ public class PriceListController {
 		LOGGER.info("Create price list {}.", priceListDTO.getCode());
 		try {
 			PriceList createdPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
-			return ResponseEntity.ok().body(mapper.map2DTO(createdPriceList));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdPriceList));
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Price list not created."));
 		}
@@ -153,7 +154,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.deleteList(priceListFounds.get(0));
@@ -174,7 +175,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.copyList(priceListFounds.get(0));
@@ -195,7 +196,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.copyList(priceListFounds.get(0), factor, step);

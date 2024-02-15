@@ -24,7 +24,6 @@ package org.isf.visits.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.visits.dto.VisitDTO;
@@ -101,7 +100,7 @@ public class VisitsController {
 		LOGGER.info("Create Visit: {}", newVisit);
 		Visit visitD = mapper.map2Model(newVisit);
 		Visit visit = visitManager.newVisit(visitD);
-		return ResponseEntity.ok().body(mapper.map2DTO(visit)); // TODO: verify if it's correct
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); // TODO: verify if it's correct
 	}
 
 	/**
@@ -119,7 +118,7 @@ public class VisitsController {
 		if (!areCreated) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Visits not created."));
 		}
-		return ResponseEntity.ok().body(areCreated);
+		return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
 	}
 
 	/**
@@ -155,7 +154,7 @@ public class VisitsController {
 		}
 
 		if (visit.getVisitID() != updateVisit.getVisitID()) {
-			return ResponseEntity.badRequest().body(null);
+			return ResponseEntity.badRequest().body("Visit not found");
 		}
 
 		Visit visitUp = mapper.map2Model(updateVisit);

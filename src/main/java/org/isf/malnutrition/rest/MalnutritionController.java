@@ -36,6 +36,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,7 +79,7 @@ public class MalnutritionController {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Malnutrition not created."));
         }
 		LOGGER.info("Malnutrition successfully created!");
-        return ResponseEntity.ok().body(mapper.map2DTO(isCreatedMalnutrition));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMalnutrition));
 	}
 	
 	/**
@@ -92,7 +93,7 @@ public class MalnutritionController {
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if (malnutritions == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Error while retrieving malnutrition controls."));
+			return ResponseEntity.notFound().build();
 		}
 		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
 		if (mappedMalnutritions.isEmpty()) {
@@ -150,7 +151,7 @@ public class MalnutritionController {
 					.collect(Collectors.toList());
 		}
 		if (matchedMalnutritions.isEmpty()) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Malnutrition control not found."));
+			return ResponseEntity.badRequest().body("No Malnutrition found with the specified code.");
 		}
 		try {
 			manager.deleteMalnutrition(matchedMalnutritions.get(0));

@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,7 +81,7 @@ public class OperationTypeController {
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Operation Type not created."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(newOperationType));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newOperationType));
 	}
 
 	/**
@@ -130,7 +131,7 @@ public class OperationTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteOperationType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Operation Type code: {}", code);
 		if (opeTypeManager.isCodePresent(code)) {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();
@@ -145,7 +146,7 @@ public class OperationTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No operation type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

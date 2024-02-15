@@ -71,17 +71,17 @@ public class ExamTypeController {
 
 		ExamType examType = examTypeMapper.map2Model(newExamType);
 		ExamType createdExamType = examTypeBrowserManager.newExamType(examType);
-		return ResponseEntity.ok().body(examTypeMapper.map2DTO(createdExamType));
+		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
 	}
 
     @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
+    public ResponseEntity<?> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
 
         if (!updateExamType.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type code mismatch."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type code mismatch."));
         }
         if (!examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
+        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
@@ -95,21 +95,21 @@ public class ExamTypeController {
         List<ExamTypeDTO> examTypeDTOS = examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
 
         if (examTypeDTOS == null || examTypeDTOS.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(examTypeDTOS);
     }
 
     @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<?> deleteExamType(@PathVariable String code) throws OHServiceException {
 	    LOGGER.info("Delete Exam Type code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (examType.isEmpty()) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
+        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
         }
         examTypeBrowserManager.deleteExamType(examType.get());
         if (examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not deleted."));
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam Type not deleted."));
         }
         return ResponseEntity.ok(true);
     }

@@ -37,7 +37,6 @@ import org.isf.medicalstockward.mapper.MedicalWardMapper;
 import org.isf.medicalstockward.mapper.MovementWardMapper;
 import org.isf.medicalstockward.model.MedicalWard;
 import org.isf.medicalstockward.model.MovementWard;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.manager.WardBrowserManager;
@@ -45,7 +44,6 @@ import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -114,11 +112,11 @@ public class MedicalStockWardController {
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("The medical not found with the  specified code"));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("The ward not found with the  specified code"));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}

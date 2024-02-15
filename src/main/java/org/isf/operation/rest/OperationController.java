@@ -44,6 +44,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -108,7 +109,7 @@ public class OperationController {
 		if (isCreatedOperation == null) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Operation not created."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(isCreatedOperation));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperation));
 	}
 
 	/**
@@ -190,12 +191,12 @@ public class OperationController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation code: {}.", code);
 		Operation operation = operationManager.getOperationByCode(code);
 
 		if (operation == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No operation found with the specified code.");
 		}
 		try {
 			operationManager.deleteOperation(operation);
@@ -231,7 +232,7 @@ public class OperationController {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Operation row not created."));
 		}
 		OperationRowDTO opR =  opRowMapper.map2DTO(opCreated);
-		return ResponseEntity.ok().body(opR);
+		return ResponseEntity.status(HttpStatus.CREATED).body(opR);
 	}
 	
 	/**
@@ -252,7 +253,7 @@ public class OperationController {
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Operation not found");
 		}
 		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
 		if (updateOpeRow == null) {

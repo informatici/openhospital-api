@@ -36,6 +36,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -123,7 +124,7 @@ public class PermissionController {
 		Permission permission = permissionManager.insertPermission(model);
 
 		PermissionDTO resultPermissionDTO = permissionMapper.map2DTO(permission);
-		return ResponseEntity.ok().body(resultPermissionDTO);
+		return ResponseEntity.status(HttpStatus.CREATED).body(resultPermissionDTO);
 	}
 
 	@PutMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

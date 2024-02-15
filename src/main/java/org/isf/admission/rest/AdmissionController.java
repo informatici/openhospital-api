@@ -148,11 +148,11 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/patient/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
+	public ResponseEntity<?> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No patient found with the specified code.");
 		}
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
 		if (listAdmissions == null) {
@@ -179,12 +179,12 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions/current", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
+	public ResponseEntity<?> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
 					throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No patient found with the specified code.");
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		if (admission == null) {
@@ -297,7 +297,7 @@ public class AdmissionController {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No ward found with the specified code.");
 		}
 
 		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
@@ -315,7 +315,7 @@ public class AdmissionController {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No ward found with the specified code.");
 		}
 
 		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
@@ -329,11 +329,11 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
+	public ResponseEntity<?> deleteAdmission(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No admission found with the specified id.");
 		}
 		admissionManager.setDeleted(id);
 		return ResponseEntity.ok(true);
@@ -354,17 +354,17 @@ public class AdmissionController {
 		Patient patient = patientManager.getPatientById(patientCode);
 
 		if (patient == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No patient found with the specified code.");
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 
 		if (admission == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Patient is not admitted.");
 		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 
 		if (adm == null || admission.getId() != adm.getId()) {
-			return ResponseEntity.internalServerError().build();
+			return ResponseEntity.badRequest().body("Current admission not found.");
 		}
 		if (adm.getDiseaseOut1() == null) {
 			return ResponseEntity.badRequest().body(new OHExceptionMessage("at least one disease must be give."));
@@ -529,7 +529,7 @@ public class AdmissionController {
 			newAdmission.setId(aId);
 		}
 		AdmissionDTO admDTO = admissionMapper.map2DTO(newAdmission);
-		return ResponseEntity.ok().body(admDTO);
+		return ResponseEntity.status(HttpStatus.CREATED).body(admDTO);
 	}
 
 	@ExceptionHandler
@@ -550,7 +550,7 @@ public class AdmissionController {
 
 		Admission old = admissionManager.getAdmission(updateAdmissionDTO.getId());
 		if (old == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Admission not found.");
 		}
 		Admission updateAdmission = admissionMapper.map2Model(updateAdmissionDTO);
 

@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -78,7 +79,7 @@ public class DischargeTypeController {
 		if (!discTypeManager.isCodePresent(code)) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(newDischargeType));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newDischargeType));
 	}
 
 	/**
@@ -88,15 +89,15 @@ public class DischargeTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/dischargetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<?> updateDischargeTypet(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
+	ResponseEntity<?> updateDischargeType(@RequestBody DischargeTypeDTO dischTypeDTO) throws OHServiceException {
 		LOGGER.info("Update discharge type with code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body(null);
 		}
 		DischargeType updatedDischargeType = discTypeManager.updateDischargeType(dischType);
 		if (!discTypeManager.isCodePresent(updatedDischargeType.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type is not updated."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type not found."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}
@@ -112,7 +113,7 @@ public class DischargeTypeController {
 		List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 		List<DischargeTypeDTO> dischTypeDTOs = mapper.map2DTOList(dischTypes);
 		if (dischTypeDTOs.isEmpty()) {
-			return ResponseEntity.internalServerError().body(dischTypeDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(dischTypeDTOs);
 		}
@@ -125,7 +126,7 @@ public class DischargeTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/dischargetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteDischargeType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete discharge type code: {}", code);
 		if (discTypeManager.isCodePresent(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
@@ -135,7 +136,7 @@ public class DischargeTypeController {
 				discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Discharge Type not found.");
 		}
 		return ResponseEntity.ok(true);
 	}

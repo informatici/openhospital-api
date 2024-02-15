@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -49,6 +49,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -142,7 +143,7 @@ public class UserController {
 		try {
 			userManager.newUser(user);
 			LOGGER.info("User successfully created.");
-			return ResponseEntity.ok().body(true);
+			return ResponseEntity.status(HttpStatus.CREATED).body(true);
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("User not created."));
@@ -165,7 +166,7 @@ public class UserController {
 		boolean isAdminOrSameUser = requestUserName.equals(currentUser) || currentUser.equals(ADMIN);
 		boolean isSameUserUpdatingPassword = requestUserName.equals(currentUser) && updatePassword;
 		if (!isAdminOrSameUser || !isSameUserUpdatingPassword) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Not allowed."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Not allowed."));
 		}
 		if (userManager.getUserByName(requestUserName) == null) {
 			return ResponseEntity.badRequest().body(new OHExceptionMessage("The specified user does not exist."));
@@ -193,7 +194,7 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
 		if (foundUser == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No user found with the specified username.");
 		}
 		try {
 			userManager.deleteUser(foundUser);
@@ -247,7 +248,7 @@ public class UserController {
 		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
 		try {
 			userManager.newUserGroup(userGroup);
-			return ResponseEntity.ok().body(true);
+			return ResponseEntity.status(HttpStatus.CREATED).body(true);
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("User group not created."));
 		}
@@ -262,7 +263,7 @@ public class UserController {
 	public ResponseEntity<?> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
 		UserGroup group = userGroupMapper.map2Model(aGroup);
 		if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("User group not found");
 		}
 		boolean isUpdated = userManager.updateUserGroup(group);
 		if (isUpdated) {
@@ -391,7 +392,7 @@ public class UserController {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("UserSetting not created."));
 		}
 		LOGGER.info("UserSetting successfully created.");
-		return ResponseEntity.ok().body(userSettingMapper.map2DTO(created));
+		return ResponseEntity.status(HttpStatus.CREATED).body(userSettingMapper.map2DTO(created));
 	}
 
 	/**
@@ -494,7 +495,7 @@ public class UserController {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		if (userSetting.isEmpty()) {
 			LOGGER.info("No user settings with id {}.", id);
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No user setting found with the specified id.");
 		}
 		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			try {

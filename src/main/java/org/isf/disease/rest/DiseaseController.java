@@ -36,6 +36,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,7 +80,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error getting OPO diseases."));
+	    	return ResponseEntity.notFound().build();
 	    }
 	}
 	
@@ -112,7 +113,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error getting IPD out diseases."));
+	    	return ResponseEntity.notFound().build();
 	    }
 	}
 	
@@ -145,7 +146,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error getting IPD-in diseases."));
+	    	return ResponseEntity.notFound().build();
 	    }
 	}
 	
@@ -178,7 +179,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error getting diseases."));
+	    	return ResponseEntity.notFound().build();
 	    }
 	}
 	
@@ -211,7 +212,7 @@ public class DiseaseController {
 	    if (diseases != null) {
 	    	return computeResponse(diseases);
 	    } else {
-	    	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error getting all diseases."));
+	    	return ResponseEntity.notFound().build();
 	    }
 	}
 	
@@ -243,14 +244,14 @@ public class DiseaseController {
 	public ResponseEntity<?> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (diseaseManager.isCodePresent(disease.getCode())) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Duplicated disease code."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Duplicated disease code."));
 		}
 		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Duplicated disease description for the same disease type."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Duplicated disease description for the same disease type."));
 		}
 		try {
 			diseaseManager.newDisease(disease);
-			return ResponseEntity.ok().body(diseaseDTO);
+			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease not created."));
 		}
@@ -284,7 +285,7 @@ public class DiseaseController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/diseases/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, Boolean>> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteDisease(@PathVariable("code") String code) throws OHServiceException {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();
@@ -298,7 +299,7 @@ public class DiseaseController {
 			result.put("deleted", isDeleted);
 			return ResponseEntity.ok(result);
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No disease found with the specified code.");
 		}
 	}
 	

@@ -105,10 +105,10 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
+	public ResponseEntity<?> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is null."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Bill is null."));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
 
@@ -123,13 +123,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
@@ -139,9 +139,9 @@ public class BillController {
 		try {
 			billManager.newBill(bill, billItems, billPayments);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not created."));
 		}
-		return ResponseEntity.ok().body(newBillDto);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
+	public ResponseEntity<?> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
 		LOGGER.info("updated Bill {}", odBillDto);
 		Bill bill = billMapper.map2Model(odBillDto.getBill());
@@ -160,7 +160,7 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			ResponseEntity.badRequest().body(new OHExceptionMessage("Bill to update not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Bill to update not found."));
 		}
 
 		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
@@ -172,13 +172,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
@@ -188,7 +188,7 @@ public class BillController {
 		try {
 			billManager.updateBill(bill, billItems, billPayments);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not updated."));
 		}
 		return ResponseEntity.ok().body(odBillDto);
 	}
@@ -411,11 +411,11 @@ public class BillController {
 	}
 
 	@DeleteMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteBill(@PathVariable Integer id) throws OHServiceException {
+	public ResponseEntity<?> deleteBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
 		if (bill == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No bill found with the specified id.");
 		}
 		try {
 			billManager.deleteBill(bill);

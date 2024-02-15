@@ -33,6 +33,7 @@ import org.isf.exatype.model.ExamType;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,14 +81,14 @@ public class ExamController {
         } catch (OHServiceException serviceException) {
         	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not created."));
         }
-        return ResponseEntity.ok(examMapper.map2DTO(exam));
+        return ResponseEntity.status(HttpStatus.CREATED).body(examMapper.map2DTO(exam));
     }
 
     @PutMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body("The specified code is different with the Exam code.");
         }
         if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
         	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
@@ -136,7 +137,7 @@ public class ExamController {
     public ResponseEntity<?> deleteExam(@PathVariable String code) throws OHServiceException {
         Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!exam.isPresent()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.badRequest().body("No Exam found with the specified code.");
         }
         try {
             examManager.deleteExam(exam.get());

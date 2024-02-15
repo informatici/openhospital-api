@@ -36,6 +36,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -102,13 +103,10 @@ public class MedicalController {
 			medicals = medicalManager.getMedicalsSortedByName();
 		}
 		if (medicals == null) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error while retrieving medicals."));
-		}
-		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
-		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found.");
 			return ResponseEntity.notFound().build();
 		} else {
+			List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
@@ -144,13 +142,10 @@ public class MedicalController {
 		}
 		
 		if (medicals == null) {
-			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Error while retrieving medicals."));
-		}
-		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
-		if (mappedMedicals.isEmpty()) {
 			LOGGER.info("No medical found.");
 			return ResponseEntity.notFound().build();
 		} else {
+			List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
@@ -176,7 +171,7 @@ public class MedicalController {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical not created."));
         }
 		LOGGER.info("Medical successfully created.");
-        return ResponseEntity.ok().body(mapper.map2DTO(createdMedical));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdMedical));
 	}
 	
 	/**
@@ -209,15 +204,15 @@ public class MedicalController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/medicals/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteMedical(@PathVariable Integer code) throws OHServiceException {
+	public ResponseEntity<?> deleteMedical(@PathVariable Integer code) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No Medical found with the specified code");
 		}
 		try {
 			medicalManager.deleteMedical(medical);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not deleted"));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical not deleted"));
 		}
 		return ResponseEntity.ok(true);
 	}

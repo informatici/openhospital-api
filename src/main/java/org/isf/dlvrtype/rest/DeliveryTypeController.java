@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -84,7 +85,7 @@ public class DeliveryTypeController {
 		if (dlvrTypeCreated == null) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Delivery Type not created."));
 		}
-		return ResponseEntity.ok().body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
+		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class DeliveryTypeController {
 		LOGGER.info("Update Delivery Type code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Delivery Type not found.");
 		}
 		try {
 			dlvrtypeManager.updateDeliveryType(dlvrType);
@@ -132,7 +133,7 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Delivery Type code: {}", code);
 		if (dlvrtypeManager.isCodePresent(code)) {
 			List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
@@ -142,7 +143,7 @@ public class DeliveryTypeController {
 				dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No Delivery Type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

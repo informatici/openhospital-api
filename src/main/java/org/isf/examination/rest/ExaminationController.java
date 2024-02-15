@@ -91,7 +91,7 @@ public class ExaminationController {
 		patientExamination.setPex_date(newPatientExamination.getPex_date());
 		examinationBrowserManager.saveOrUpdate(patientExamination);
 
-		return ResponseEntity.ok().body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	@PutMapping(value = "/examinations/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

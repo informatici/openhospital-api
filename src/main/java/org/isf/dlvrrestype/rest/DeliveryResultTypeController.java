@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -85,7 +86,7 @@ public class DeliveryResultTypeController {
 		if (dlvrrestTypeCreated == null) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Delivery result type is not created."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(dlvrrestTypeCreated));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(dlvrrestTypeCreated));
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class DeliveryResultTypeController {
 		LOGGER.info("Update Delivery Result Type code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Delivery Result Type not found.");
 		}
 		try {
 			dlvrrestManager.updateDeliveryResultType(dlvrrestType);
@@ -149,7 +150,7 @@ public class DeliveryResultTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No delivery result type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

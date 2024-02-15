@@ -33,6 +33,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,10 +76,10 @@ public class AdmissionTypeController {
 		String code = admissionTypeDTO.getCode();
 		LOGGER.info("Create Admission Type {}", code);
 		AdmissionType newAdmissionType = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
-		if (!admtManager.isCodePresent(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission Type is not created."));
+		if (admtManager.isCodePresent(code)) {
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("The code of Admission Type is already used."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(newAdmissionType));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newAdmissionType));
 	}
 
 	/**
@@ -88,12 +89,12 @@ public class AdmissionTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
+	ResponseEntity<?> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("The Admission Type is not found."));
 		}
 		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
 		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
@@ -110,7 +111,7 @@ public class AdmissionTypeController {
 		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
 		if (admissionTypeDTOs.isEmpty()) {
-			return ResponseEntity.internalServerError().build();
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(admissionTypeDTOs);
 		}
@@ -123,7 +124,7 @@ public class AdmissionTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Admission Type code: {}", code);
 		if (admtManager.isCodePresent(code)) {
 			List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
@@ -133,7 +134,7 @@ public class AdmissionTypeController {
 				admtManager.deleteAdmissionType(admtFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("The Admission Type is not found.");
 		}
 		return ResponseEntity.ok(true);
 	}

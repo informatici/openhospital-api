@@ -38,6 +38,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.ward.model.Ward;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,7 +85,7 @@ public class MedicalStockMovementController {
 					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
-		return ResponseEntity.ok().body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**

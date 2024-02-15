@@ -35,6 +35,7 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -90,14 +91,14 @@ public class DiseaseTypeController {
 	public ResponseEntity<?> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified Disease Type code is already used."));
+        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified disease type code is already used."));
         }
         try {
 	        diseaseTypeManager.newDiseaseType(diseaseType);
         } catch (OHServiceException serviceException) {
         	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type is not created."));
         }
-        return ResponseEntity.ok().body(diseaseTypeDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
 	}
 	
 	/**
@@ -142,7 +143,7 @@ public class DiseaseTypeController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type not deleted."));
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No disease type found with the specified code.");
 		}
 	}
 
