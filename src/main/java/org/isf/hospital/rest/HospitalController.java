@@ -59,10 +59,10 @@ public class HospitalController {
     public ResponseEntity<?> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
 
         if (!hospitalDTO.getCode().equals(code)) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Hospital code mismatch."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Hospital code mismatch."));
         }
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Hospital not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Hospital not found."));
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);

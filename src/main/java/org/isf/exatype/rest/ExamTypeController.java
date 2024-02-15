@@ -81,7 +81,7 @@ public class ExamTypeController {
             return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type code mismatch."));
         }
         if (!examTypeBrowserManager.isCodePresent(code)) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
         }
 
         ExamType examType = examTypeMapper.map2Model(updateExamType);
@@ -105,11 +105,11 @@ public class ExamTypeController {
 	    LOGGER.info("Delete Exam Type code: {}", code);
         Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (examType.isEmpty()) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam Type not found."));
         }
         examTypeBrowserManager.deleteExamType(examType.get());
         if (examTypeBrowserManager.isCodePresent(code)) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam Type not deleted."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam Type not deleted."));
         }
         return ResponseEntity.ok(true);
     }

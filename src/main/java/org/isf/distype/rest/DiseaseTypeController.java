@@ -91,7 +91,7 @@ public class DiseaseTypeController {
 	public ResponseEntity<?> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified disease type code is already used."));
+        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified Disease Type code is already used."));
         }
         try {
 	        diseaseTypeManager.newDiseaseType(diseaseType);
@@ -143,7 +143,7 @@ public class DiseaseTypeController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type not deleted."));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No disease type found with the specified code.");
+			return ResponseEntity.badRequest().body("No Disease Type found with the given code.");
 		}
 	}
 

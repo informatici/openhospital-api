@@ -97,7 +97,7 @@ public class DischargeTypeController {
 		}
 		DischargeType updatedDischargeType = discTypeManager.updateDischargeType(dischType);
 		if (!discTypeManager.isCodePresent(updatedDischargeType.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type is not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}

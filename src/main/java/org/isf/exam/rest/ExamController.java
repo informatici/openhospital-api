@@ -71,7 +71,7 @@ public class ExamController {
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> newExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
 
         if (examType == null) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(newExam);
@@ -79,7 +79,7 @@ public class ExamController {
         try {
             examManager.newExam(exam);
         } catch (OHServiceException serviceException) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not created."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(examMapper.map2DTO(exam));
     }
@@ -91,12 +91,12 @@ public class ExamController {
             return ResponseEntity.badRequest().body("The specified code is different with the Exam code.");
         }
         if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
         }
 
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> updateExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
         if (examType == null) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(updateExam);
@@ -104,7 +104,7 @@ public class ExamController {
         exam.setLock(updateExam.getLock());
         Exam examUpdated = examManager.updateExam(exam);
         if (examUpdated == null) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not updated."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not updated."));
         }
 
         return ResponseEntity.ok(examMapper.map2DTO(examUpdated));
@@ -142,7 +142,7 @@ public class ExamController {
         try {
             examManager.deleteExam(exam.get());
         } catch (OHServiceException serviceException) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not deleted."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not deleted."));
         }
         return ResponseEntity.ok(true);
     }

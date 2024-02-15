@@ -42,7 +42,6 @@ import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -147,7 +146,7 @@ public class LaboratoryController {
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Laboratory not created."));
 		}
-		return ResponseEntity.ok().body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**
@@ -357,7 +356,7 @@ public class LaboratoryController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus()));
 			}
 		} else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No Exam found with the specified code.");
 		}
 		try {
 			laboratoryManager.updateExamRequest(code, DELETED);

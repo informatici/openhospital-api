@@ -297,7 +297,7 @@ public class AdmissionController {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.badRequest().body("No ward found with the specified code.");
+			return ResponseEntity.badRequest().body("Ward not found for code:" + wardCode);
 		}
 
 		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
@@ -315,7 +315,7 @@ public class AdmissionController {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.badRequest().body("No ward found with the specified code.");
+			return ResponseEntity.badRequest().body("Ward not found for code:" + wardCode);
 		}
 
 		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));

@@ -94,7 +94,7 @@ public class AdmissionTypeController {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The Admission Type is not found."));
+			return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission Type not found."));
 		}
 		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
 		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
@@ -134,7 +134,7 @@ public class AdmissionTypeController {
 				admtManager.deleteAdmissionType(admtFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("The Admission Type is not found.");
+			return ResponseEntity.badRequest().body("Admission Type not found.");
 		}
 		return ResponseEntity.ok(true);
 	}

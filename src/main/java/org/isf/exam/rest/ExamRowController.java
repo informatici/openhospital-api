@@ -81,7 +81,7 @@ public class ExamRowController {
 
         ExamRow isCreatedExamRow = examRowBrowsingManager.newExamRow(examRow);
         if (isCreatedExamRow == null) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("ExamRow not created."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("ExamRow not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(examRowMapper.map2DTO(isCreatedExamRow));
     }
@@ -123,15 +123,15 @@ public class ExamRowController {
     public ResponseEntity<?> deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("No ExamRows found with the specified code."));
+            return ResponseEntity.badRequest().body(new OHExceptionMessage("No ExamRows found with the specified code."));
         }
         if (examRows.size() > 1) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Found multiple ExamRows."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Found multiple ExamRows."));
         }
         try {
             examRowBrowsingManager.deleteExamRow(examRows.get(0));
         } catch (OHServiceException serviceException) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("ExamRow not deleted."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("ExamRow not deleted."));
         }
         return ResponseEntity.ok(true);
     }

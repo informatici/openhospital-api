@@ -102,7 +102,7 @@ public class MedicalStockMovementController {
 					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
-		return ResponseEntity.ok().body(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 
 	/**
