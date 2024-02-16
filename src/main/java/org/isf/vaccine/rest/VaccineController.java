@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -23,7 +23,6 @@ package org.isf.vaccine.rest;
 
 import java.util.List;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +78,7 @@ public class VaccineController {
         List<Vaccine> vaccines = vaccineManager.getVaccine();
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(listVaccines);
         }
@@ -97,7 +97,7 @@ public class VaccineController {
         List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
         List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
         if (listVaccines.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(listVaccines);
         }
@@ -111,15 +111,15 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VaccineDTO> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
+    public ResponseEntity<?> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
         LOGGER.info("Create vaccine: {}", newVaccine);
         Vaccine isCreatedVaccine;
         try {
              isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
         } catch (OHDataIntegrityViolationException e) {
-            throw new OHAPIException(new OHExceptionMessage("Vaccine type already present."));
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine type already present."));
         } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Vaccine not created."));
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
@@ -132,13 +132,13 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VaccineDTO> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
+    public ResponseEntity<?> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         LOGGER.info("Update vaccine: {}", updateVaccine);
         Vaccine updatedVaccine;
         try {
             updatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
         } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Vaccine not updated."));
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(updatedVaccine));
     }
@@ -151,18 +151,18 @@ public class VaccineController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
+    public ResponseEntity<?> deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Delete vaccine code: {}", code);
         Vaccine vaccine = vaccineManager.findVaccine(code);
         if (vaccine != null) {
            try {
                vaccineManager.deleteVaccine(vaccine);
            } catch (OHServiceException serviceException) {
-                throw new OHAPIException(new OHExceptionMessage("Vaccine not deleted."));
+               return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine not deleted."));
            }
            return ResponseEntity.ok(true);
         }
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		return ((BodyBuilder) ResponseEntity.notFound()).body("Vaccine not fount with the specified code.");
     }
     
     /**

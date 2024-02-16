@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,7 +28,6 @@ import org.isf.patvac.dto.PatientVaccineDTO;
 import org.isf.patvac.manager.PatVacManager;
 import org.isf.patvac.mapper.PatVacMapper;
 import org.isf.patvac.model.PatientVaccine;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -74,7 +73,7 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
+	ResponseEntity<?> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		LOGGER.info("Create patient vaccine {}", code);
 		PatientVaccine newPatientVaccine;
@@ -83,7 +82,7 @@ public class PatVacController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPatientVaccine));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Patient vaccine not created.");
-			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient vaccine not created."));
 		}
 	}
 
@@ -94,7 +93,7 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientVaccineDTO> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
+	ResponseEntity<?> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
 			throws OHServiceException {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
@@ -105,7 +104,7 @@ public class PatVacController {
 			return ResponseEntity.ok(mapper.map2DTO(updatedPatientVaccine));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Patient vaccine not updated.");
-			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient vaccine not updated."));
 		}
 	}
 
@@ -123,7 +122,7 @@ public class PatVacController {
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(oneWeek);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
 		if (patientVaccineDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
 		}
@@ -142,7 +141,7 @@ public class PatVacController {
 		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom.atStartOfDay(), dateTo.atStartOfDay(), sex, ageFrom, ageTo);
 		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
 		if (patientVaccineDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(patientVaccineDTOs);
 		}
@@ -167,7 +166,7 @@ public class PatVacController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
+	public ResponseEntity<?> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
@@ -175,7 +174,7 @@ public class PatVacController {
 			patVacManager.deletePatientVaccine(patVac);
 			return ResponseEntity.ok(true);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient vaccine not deleted."));
 		}
 	}
 

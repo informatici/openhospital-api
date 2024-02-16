@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -39,7 +39,6 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -49,6 +48,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -105,10 +105,10 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<FullBillDTO> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
+	public ResponseEntity<?> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is null."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Bill is null."));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
 
@@ -123,13 +123,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
@@ -139,7 +139,7 @@ public class BillController {
 		try {
 			billManager.newBill(bill, billItems, billPayments);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(newBillDto);
 	}
@@ -152,7 +152,7 @@ public class BillController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<FullBillDTO> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
+	public ResponseEntity<?> updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
 		LOGGER.info("updated Bill {}", odBillDto);
 		Bill bill = billMapper.map2Model(odBillDto.getBill());
@@ -160,7 +160,7 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Bill to update not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Bill to update not found."));
 		}
 
 		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
@@ -172,13 +172,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Price list not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
@@ -188,9 +188,9 @@ public class BillController {
 		try {
 			billManager.updateBill(bill, billItems, billPayments);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not updated."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(odBillDto);
+		return ResponseEntity.ok().body(odBillDto);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -255,7 +255,7 @@ public class BillController {
 		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
 
 		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(paymentsDTOS);
 	}
@@ -276,7 +276,7 @@ public class BillController {
 		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
 
 		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(paymentsDTOS);
 	}
@@ -296,7 +296,7 @@ public class BillController {
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
 		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(itemsDTOS);
 	}
@@ -316,7 +316,7 @@ public class BillController {
 		BillDTO billDTO = billMapper.map2DTO(bill);
 
 		if (billDTO == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTO);
 	}
@@ -336,7 +336,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -356,7 +356,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -384,7 +384,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}
@@ -405,22 +405,22 @@ public class BillController {
 		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
 
 		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(itemsDTOS);
 	}
 
 	@DeleteMapping(value = "/bills/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteBill(@PathVariable Integer id) throws OHServiceException {
+	public ResponseEntity<?> deleteBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
 		if (bill == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		try {
 			billManager.deleteBill(bill);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -441,7 +441,7 @@ public class BillController {
 		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
 
 		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(billDTOS);
 	}

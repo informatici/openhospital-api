@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -34,7 +34,6 @@ import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.dto.LaboratoryRowDTO;
 import org.isf.lab.manager.LabManager;
-import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
@@ -43,7 +42,6 @@ import org.isf.lab.model.LaboratoryStatus;
 import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -54,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,18 +100,13 @@ public class LaboratoryController {
 	@Autowired
 	private LaboratoryRowMapper laboratoryRowMapper;
 
-	@Autowired
-	private LaboratoryForPrintMapper laboratoryForPrintMapper;
-
 	public LaboratoryController(LabManager laboratoryManager, PatientBrowserManager patientBrowserManager,
-					ExamBrowsingManager examManager, LaboratoryMapper laboratoryMapper, LaboratoryRowMapper laboratoryRowMapper,
-					LaboratoryForPrintMapper laboratoryForPrintMapper) {
+					ExamBrowsingManager examManager, LaboratoryMapper laboratoryMapper, LaboratoryRowMapper laboratoryRowMapper) {
 		this.laboratoryManager = laboratoryManager;
 		this.patientBrowserManager = patientBrowserManager;
 		this.examManager = examManager;
 		this.laboratoryMapper = laboratoryMapper;
 		this.laboratoryRowMapper = laboratoryRowMapper;
-		this.laboratoryForPrintMapper = laboratoryForPrintMapper;
 	}
 
 	/**
@@ -123,20 +117,20 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/laboratories", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
+	public ResponseEntity<?> newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 		LOGGER.info("store exam with result");
 		LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
 		List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -151,7 +145,7 @@ public class LaboratoryController {
 		try {
 			laboratoryManager.newLaboratory(labToInsert, labRows);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Laboratory not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
@@ -165,18 +159,18 @@ public class LaboratoryController {
 	 * @author Arnaud
 	 */
 	@PostMapping(value = "/laboratories/examRequest", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
+	public ResponseEntity<?> newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
 		LOGGER.info("store exam request");
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -192,7 +186,7 @@ public class LaboratoryController {
 		if (!(labList == null || labList.isEmpty())) {
 			for (Laboratory lab : labList) {
 				if (lab.getExam().equals(exam)) {
-					throw new OHAPIException(new OHExceptionMessage("Exam Request already exists."));
+					return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam Request already exists."));
 				}
 			}
 		}
@@ -200,7 +194,7 @@ public class LaboratoryController {
 		try {
 			laboratoryManager.newExamRequest(labToInsert);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Laboratory not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
@@ -213,7 +207,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/laboratories/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows)
+	public ResponseEntity<?> newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows)
 					throws OHServiceException {
 		LOGGER.info("store List of Exam with result");
 		List<Laboratory> labsToInsert = new ArrayList<>();
@@ -223,13 +217,13 @@ public class LaboratoryController {
 			LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
 			Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 			if (patient == null) {
-				throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 			}
 
 			Exam exam = examManager.getExams().stream()
 							.filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode())).findFirst().orElse(null);
 			if (exam == null) {
-				throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 			}
 
 			Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -253,9 +247,9 @@ public class LaboratoryController {
 		try {
 			laboratoryManager.newLaboratory2(labsToInsert, labsRowsToInsert);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Laboratory not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return ResponseEntity.ok().body(true);
 	}
 
 	/**
@@ -267,33 +261,33 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateLaboratory(@PathVariable Integer code,
+	public ResponseEntity<?> updateLaboratory(@PathVariable Integer code,
 					@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 		LOGGER.info("Update labWithRows code: {}", code);
 		LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
 		List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
 		if (!code.equals(laboratoryDTO.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory code mismatch."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Laboratory code mismatch."));
 		}
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (!labo.isPresent()) {
-			throw new OHAPIException(new OHExceptionMessage("Laboratory not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Laboratory not found."));
 		}
 		Laboratory lab = labo.get();
 		if (lab.getStatus().equalsIgnoreCase(DELETED) || lab.getStatus().equalsIgnoreCase(INVALID)) {
-			throw new OHAPIException(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus()));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus()));
 		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -312,9 +306,9 @@ public class LaboratoryController {
 		} catch (OHServiceException e) {
 			// TODO: workaround waiting OH2-182
 			if (e.getMessages().get(0).getMessage().equals("angal.labnew.someexamswithoutresultpleasecheck.msg")) {
-				throw new OHAPIException(new OHExceptionMessage("errors.lab.someexamswithoutresultpleasecheck"));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("errors.lab.someexamswithoutresultpleasecheck"));
 			}
-			throw new OHAPIException(e.getMessages().get(0));
+			return ResponseEntity.internalServerError().body(e.getMessages().get(0));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -329,7 +323,7 @@ public class LaboratoryController {
 	 * @author Arnaud
 	 */
 	@PutMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
+	public ResponseEntity<?> updateExamRequest(@PathVariable Integer code, @RequestParam String status)
 					throws OHServiceException {
 		LOGGER.info("Update exam request code: {}", code);
 		LaboratoryStatus stat = LaboratoryStatus.valueOf(status);
@@ -337,11 +331,11 @@ public class LaboratoryController {
 			try {
 				laboratoryManager.updateExamRequest(code, status);
 			} catch (OHServiceException serviceException) {
-				throw new OHAPIException(new OHExceptionMessage("Laboratory not updated."));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Laboratory not updated."));
 			}
 			return ResponseEntity.ok(true);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("This status doesn't exist."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("This status doesn't exist."));
 		}
 
 	}
@@ -354,21 +348,21 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/laboratories/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
+	public ResponseEntity<?> deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
 		if (lab.isPresent()) {
 			Laboratory labToDelete = lab.get();
 			if (labToDelete.getStatus().equalsIgnoreCase(DELETED)) {
-				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus()));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus()));
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
 		}
 		try {
 			laboratoryManager.updateExamRequest(code, DELETED);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -388,7 +382,7 @@ public class LaboratoryController {
 		LOGGER.info("Get all LabWithRows");
 		PagedResponse<Laboratory> labListPageable = laboratoryManager.getLaboratoryPageable(oneWeek, page, size);
 		if (labListPageable == null || labListPageable.getData().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		List<LabWithRowsDTO> labWithRowsDto = labListPageable.getData().stream().map(lab -> {
 			LabWithRowsDTO labDTO = new LabWithRowsDTO();
@@ -430,17 +424,17 @@ public class LaboratoryController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/laboratories/byPatientId/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LabWithRowsDTO>> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
+	public ResponseEntity<?> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
 		LOGGER.info("Get LabWithRows for patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
 						.filter(e -> !e.getStatus().equalsIgnoreCase(DRAFT) && !e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(labList.stream().map(lab -> {
 			LabWithRowsDTO labDTO = new LabWithRowsDTO();
@@ -479,18 +473,18 @@ public class LaboratoryController {
 	 * @author Arnaud
 	 */
 	@GetMapping(value = "/laboratories/examRequest/patient/{patId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LaboratoryDTO>> getLaboratoryExamRequest(@PathVariable Integer patId)
+	public ResponseEntity<?> getLaboratoryExamRequest(@PathVariable Integer patId)
 					throws OHServiceException {
 		LOGGER.info("Get Exam requested by patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
 						.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 
 		return ResponseEntity.ok(labList.stream().map(lab -> {
@@ -515,7 +509,7 @@ public class LaboratoryController {
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
 						.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).collect(Collectors.toList());
 		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 
 		return ResponseEntity.ok(labList.stream().map(lab -> {
@@ -538,7 +532,7 @@ public class LaboratoryController {
 		LOGGER.info("Get all Material");
 		List<String> materialList = laboratoryManager.getMaterialList();
 		if (materialList == null || materialList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(materialList);
 		}
@@ -556,7 +550,7 @@ public class LaboratoryController {
 	 */
 
 	@GetMapping(value = "/laboratories/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Page<LabWithRowsDTO>> getLaboratoryForPrint(
+	public ResponseEntity<?> getLaboratoryForPrint(
 					@RequestParam(required = false, defaultValue = "") String examName,
 					@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
 					@RequestParam(value = "patientCode", required = false, defaultValue = "0") int patientCode,
@@ -583,8 +577,7 @@ public class LaboratoryController {
 		if (patientCode != 0) {
 			patient = patientBrowserManager.getPatientById(patientCode);
 			if (patient == null || laboratoryManager.getLaboratory(patient) == null) {
-				throw new OHAPIException(new OHExceptionMessage("Patient not found."),
-								HttpStatus.INTERNAL_SERVER_ERROR);
+				return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
 			}
 		}
 		PagedResponse<Laboratory> laboratoryPageable;
@@ -622,7 +615,7 @@ public class LaboratoryController {
 		}
 
 		if (labList == null || labList.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			List<LabWithRowsDTO> labWithRowList = labList.stream().map(lab -> {
 				LabWithRowsDTO labDTO = new LabWithRowsDTO();
@@ -633,9 +626,9 @@ public class LaboratoryController {
 					try {
 						labDes = laboratoryManager.getLaboratoryRowList(lab.getCode());
 					} catch (OHServiceException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
 					if (!labDes.isEmpty()) {
 						for (LaboratoryRow laboratoryRow : labDes) {
 							labDescription.add(laboratoryRow.getDescription());
@@ -669,7 +662,7 @@ public class LaboratoryController {
 		if (labo.isPresent()) {
 			lab = labo.get();
 		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
 		laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
@@ -694,7 +687,7 @@ public class LaboratoryController {
 		if (labo.isPresent()) {
 			laboratory = labo.get();
 		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		}
 		LaboratoryDTO labDTO = laboratoryMapper.map2DTO(laboratory);
 		labDTO.setRegistrationDate(laboratory.getCreatedDate());
@@ -725,21 +718,21 @@ public class LaboratoryController {
 	 * @author Arnaud
 	 */
 	@DeleteMapping(value = "/laboratories/examRequest/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
+	public ResponseEntity<?> deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (labo.isPresent()) {
 			Laboratory lab = labo.get();
 			if (!lab.getStatus().equalsIgnoreCase(DRAFT) && !lab.getStatus().equalsIgnoreCase(OPEN)) {
-				throw new OHAPIException(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus()));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus()));
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
 		}
 		try {
 			laboratoryManager.updateExamRequest(code, INVALID);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Exam request is not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam request is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}

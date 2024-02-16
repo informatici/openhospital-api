@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -194,7 +194,7 @@ public class StockMovementController {
 		List<Lot> lots = movInsertingManager.getLotByMedical(med);
 		List<LotDTO> mappedLots = lotMapper.map2DTOList(lots);
 		if (mappedLots.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedLots);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedLots);
 		}
@@ -213,7 +213,7 @@ public class StockMovementController {
 			@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok(movInsertingManager.alertCriticalQuantity(med, specifiedQuantity));
 	}
@@ -221,7 +221,7 @@ public class StockMovementController {
 	private ResponseEntity<List<MovementDTO>> collectResults(List<Movement> movements) {
 		List<MovementDTO> mappedMovements = movMapper.map2DTOList(movements);
 		if (mappedMovements.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mappedMovements);
 		}

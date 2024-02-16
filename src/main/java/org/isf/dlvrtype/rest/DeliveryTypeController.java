@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,7 +28,6 @@ import org.isf.dlvrtype.dto.DeliveryTypeDTO;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
 import org.isf.dlvrtype.mapper.DeliveryTypeMapper;
 import org.isf.dlvrtype.model.DeliveryType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,7 +73,7 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DeliveryTypeDTO> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
+	ResponseEntity<?> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		String code = dlvrTypeDTO.getCode();
 		LOGGER.info("Create Delivery Type {}", code);
 		dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
@@ -84,7 +84,7 @@ public class DeliveryTypeController {
 			dlvrTypeCreated = dlvrTypeFounds.get(0);
 		}
 		if (dlvrTypeCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Type not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Delivery Type not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
 	}
@@ -96,16 +96,16 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DeliveryTypeDTO> updateDeliveryTypes(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
+	ResponseEntity<?> updateDeliveryTypes(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
 		LOGGER.info("Update Delivery Type code: {}", dlvrTypeDTO.getCode());
 		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
 		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Delivery Type not found.");
 		}
 		try {
 			dlvrtypeManager.updateDeliveryType(dlvrType);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Type is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Delivery Type is not updated."));
 		}
 		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}
@@ -121,7 +121,7 @@ public class DeliveryTypeController {
 		List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
 		List<DeliveryTypeDTO> dlvrTypeDTOs = deliveryTypeMapper.map2DTOList(dlvrTypes);
 		if (dlvrTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrTypeDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(dlvrTypeDTOs);
 		}
@@ -134,7 +134,7 @@ public class DeliveryTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Delivery Type code: {}", code);
 		if (dlvrtypeManager.isCodePresent(code)) {
 			List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
@@ -144,7 +144,7 @@ public class DeliveryTypeController {
 				dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Delivery Type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}
