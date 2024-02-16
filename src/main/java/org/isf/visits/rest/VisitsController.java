@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -150,7 +151,7 @@ public class VisitsController {
 		LOGGER.info("Create Visits");
 		Visit visit = visitManager.findVisit(visitID);
 		if (visit == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Visit not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Visit not found."));
 		}
 
 		if (visit.getVisitID() != updateVisit.getVisitID()) {

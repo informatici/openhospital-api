@@ -36,7 +36,6 @@ import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -47,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,7 +105,7 @@ public class PatientController {
 		// TODO: remove this line when UI will be ready to collect the patient consensus
 		newPatient.setConsensusFlag(true);
 		if (newPatient.getBlobPhoto() != null && newPatient.getBlobPhoto().length == 0) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed picture."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Malformed picture."));
 		}
 		Patient patientModel = patientMapper.map2Model(newPatient);
 		Patient patient = patientManager.savePatient(patientModel);
@@ -120,15 +120,15 @@ public class PatientController {
 	ResponseEntity<?> updatePatient(@PathVariable int code, @RequestBody PatientDTO updatePatient) throws OHServiceException {
 		LOGGER.info("Update patient code: '{}'.", code);
 		if (!updatePatient.getCode().equals(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient code mismatch."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient code mismatch."));
 		}
 		Patient patientRead = patientManager.getPatientById(code);
 		if (patientRead == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		Optional<PatientConsensus> patientConsensus = patientConsensusManager.getPatientConsensusByUserId(patientRead.getCode());
 		if (patientConsensus.isEmpty()) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("PatientConsensus not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("PatientConsensus not found."));
 		}
 		if (updatePatient.getBlobPhoto() != null && updatePatient.getBlobPhoto().length == 0) {
 			return ResponseEntity.badRequest().body(new OHExceptionMessage("Malformed picture."));
@@ -242,7 +242,7 @@ public class PatientController {
 		Patient patient = patientManager.getPatientById(code);
 
 		if (patient == null) {
-			return ResponseEntity.badRequest().body("No patient found with the specified code");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Patient not found");
 		}
 		try {
 			patientManager.deletePatient(patient);
@@ -258,7 +258,7 @@ public class PatientController {
 		Patient mergedPatient = patientManager.getPatientById(mergedcode);
 		Patient patient2 = patientManager.getPatientById(code2);
 		if (mergedPatient == null || patient2 == null) {
-			return ResponseEntity.badRequest().body("Patient not found");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Patient not found");
 		}
 		try {
 			patientManager.mergePatient(mergedPatient, patient2);

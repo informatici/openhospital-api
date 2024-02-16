@@ -62,6 +62,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -152,7 +153,7 @@ public class AdmissionController {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.badRequest().body("No patient found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No patient found with the specified code.");
 		}
 		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
 		if (listAdmissions == null) {
@@ -184,7 +185,7 @@ public class AdmissionController {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
-			return ResponseEntity.badRequest().body("No patient found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No patient found with the specified code.");
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 		if (admission == null) {
@@ -297,7 +298,7 @@ public class AdmissionController {
 		LOGGER.info("get the next prog in the year for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.badRequest().body("Ward not found for code:" + wardCode);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Ward not found for code:" + wardCode);
 		}
 
 		return ResponseEntity.ok(admissionManager.getNextYProg(wardCode));
@@ -315,7 +316,7 @@ public class AdmissionController {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
 		if (wardCode.trim().isEmpty() || !wardManager.isCodePresent(wardCode)) {
-			return ResponseEntity.badRequest().body("Ward not found for code:" + wardCode);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Ward not found for code:" + wardCode);
 		}
 
 		return ResponseEntity.ok(admissionManager.getUsedWardBed(wardCode));
@@ -333,7 +334,7 @@ public class AdmissionController {
 		LOGGER.info("setting admission to deleted: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
 		if (admission == null) {
-			return ResponseEntity.badRequest().body("No admission found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No admission found with the specified id.");
 		}
 		admissionManager.setDeleted(id);
 		return ResponseEntity.ok(true);
@@ -354,29 +355,29 @@ public class AdmissionController {
 		Patient patient = patientManager.getPatientById(patientCode);
 
 		if (patient == null) {
-			return ResponseEntity.badRequest().body("No patient found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No patient found with the specified code.");
 		}
 		Admission admission = admissionManager.getCurrentAdmission(patient);
 
 		if (admission == null) {
-			return ResponseEntity.badRequest().body("Patient is not admitted.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Patient is not admitted.");
 		}
 		Admission adm = admissionMapper.map2Model(currentAdmissionDTO);
 
 		if (adm == null || admission.getId() != adm.getId()) {
-			return ResponseEntity.badRequest().body("Current admission not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Current admission not found.");
 		}
 		if (adm.getDiseaseOut1() == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("at least one disease must be give."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("at least one disease must be give."));
 		}
 		if (adm.getDisDate() == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("the exit date must be filled in."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("the exit date must be filled in."));
 		}
 		if (adm.getDisDate().isBefore(adm.getAdmDate())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("the exit date must be after the entry date."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("the exit date must be after the entry date."));
 		}
 		if (adm.getDisType() == null || !dischargeTypeManager.isCodePresent(adm.getDisType().getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("the type of output is mandatory or does not exist."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("the type of output is mandatory or does not exist."));
 		}
 		adm.setAdmitted(0);
 		Admission admissionUpdated = admissionManager.updateAdmission(adm);
@@ -401,11 +402,11 @@ public class AdmissionController {
 			List<Ward> wards = wardManager.getWards().stream()
 							.filter(w -> w.getCode().equals(newAdmissionDTO.getWard().getCode())).collect(Collectors.toList());
 			if (wards.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Ward not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Ward not found."));
 			}
 			newAdmission.setWard(wards.get(0));
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Ward field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward field is required."));
 		}
 
 		if (newAdmissionDTO.getAdmType() != null && newAdmissionDTO.getAdmType().getCode() != null
@@ -414,21 +415,21 @@ public class AdmissionController {
 							.filter(admt -> admt.getCode().equals(newAdmissionDTO.getAdmType().getCode()))
 							.collect(Collectors.toList());
 			if (types.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Admission type not found."));
 			}
 			newAdmission.setAdmType(types.get(0));
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission type field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Admission type field is required."));
 		}
 
 		if (newAdmissionDTO.getPatient() != null && newAdmissionDTO.getPatient().getCode() != null) {
 			Patient patient = patientManager.getPatientById(newAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 			}
 			newAdmission.setPatient(patient);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient field is required."));
 		}
 		List<Disease> diseases = diseaseManager.getDiseaseAll();
 
@@ -437,7 +438,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseIn().getCode()))
 							.collect(Collectors.toList());
 			if (dIns.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease in not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease in not found."));
 			}
 			newAdmission.setDiseaseIn(dIns.get(0));
 		}
@@ -447,7 +448,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut1().getCode()))
 							.collect(Collectors.toList());
 			if (dOut1.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 1 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 1 not found."));
 			}
 			newAdmission.setDiseaseOut1(dOut1.get(0));
 		}
@@ -457,7 +458,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut2().getCode()))
 							.collect(Collectors.toList());
 			if (dOut2.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 2 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 2 not found."));
 			}
 			newAdmission.setDiseaseOut2(dOut2.get(0));
 		}
@@ -467,7 +468,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(newAdmissionDTO.getDiseaseOut3().getCode()))
 							.collect(Collectors.toList());
 			if (dOut3.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 3 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 3 not found."));
 			}
 			newAdmission.setDiseaseOut3(dOut3.get(0));
 		}
@@ -479,7 +480,7 @@ public class AdmissionController {
 							.filter(dtp -> dtp.getCode().equals(newAdmissionDTO.getDisType().getCode()))
 							.collect(Collectors.toList());
 			if (disTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Discharge type not found."));
 			}
 			newAdmission.setDisType(disTypesF.get(0));
 		}
@@ -491,7 +492,7 @@ public class AdmissionController {
 							.filter(pregtt -> pregtt.getCode().equals(newAdmissionDTO.getPregTreatmentType().getCode()))
 							.collect(Collectors.toList());
 			if (pregTTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Pregnant treatment type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Pregnant treatment type not found."));
 			}
 			newAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
@@ -503,7 +504,7 @@ public class AdmissionController {
 							.filter(dlvrType -> dlvrType.getCode().equals(newAdmissionDTO.getDeliveryType().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Delivery type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Delivery type not found."));
 			}
 			newAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
@@ -550,7 +551,7 @@ public class AdmissionController {
 
 		Admission old = admissionManager.getAdmission(updateAdmissionDTO.getId());
 		if (old == null) {
-			return ResponseEntity.badRequest().body("Admission not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Admission not found.");
 		}
 		Admission updateAdmission = admissionMapper.map2Model(updateAdmissionDTO);
 
@@ -559,11 +560,11 @@ public class AdmissionController {
 			List<Ward> wards = wardManager.getWards().stream()
 							.filter(w -> w.getCode().equals(updateAdmissionDTO.getWard().getCode())).collect(Collectors.toList());
 			if (wards.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Ward not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Ward not found."));
 			}
 			updateAdmission.setWard(wards.get(0));
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Ward field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward field is required."));
 		}
 
 		if (updateAdmissionDTO.getAdmType() != null && updateAdmissionDTO.getAdmType().getCode() != null
@@ -572,21 +573,21 @@ public class AdmissionController {
 							.filter(admt -> admt.getCode().equals(updateAdmissionDTO.getAdmType().getCode()))
 							.collect(Collectors.toList());
 			if (types.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Admission type not found."));
 			}
 			updateAdmission.setAdmType(types.get(0));
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission type field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Admission type field is required."));
 		}
 
 		if (updateAdmissionDTO.getPatient() != null && updateAdmissionDTO.getPatient().getCode() != null) {
 			Patient patient = patientManager.getPatientById(updateAdmissionDTO.getPatient().getCode());
 			if (patient == null) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 			}
 			updateAdmission.setPatient(patient);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient field is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Patient field is required."));
 		}
 		List<Disease> diseases = diseaseManager.getDiseaseAll();
 		if (updateAdmissionDTO.getDiseaseIn() != null && updateAdmissionDTO.getDiseaseIn().getCode() != null) {
@@ -594,7 +595,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseIn().getCode()))
 							.collect(Collectors.toList());
 			if (dIns.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease in not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease in not found."));
 			}
 			updateAdmission.setDiseaseIn(dIns.get(0));
 		}
@@ -604,7 +605,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut1().getCode()))
 							.collect(Collectors.toList());
 			if (dOut1s.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 1 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 1 not found."));
 			}
 			updateAdmission.setDiseaseOut1(dOut1s.get(0));
 		}
@@ -614,7 +615,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut2().getCode()))
 							.collect(Collectors.toList());
 			if (dOut2s.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 2 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 2 not found."));
 			}
 			updateAdmission.setDiseaseOut2(dOut2s.get(0));
 		}
@@ -624,7 +625,7 @@ public class AdmissionController {
 							.filter(d -> d.getCode().equals(updateAdmissionDTO.getDiseaseOut3().getCode()))
 							.collect(Collectors.toList());
 			if (dOut3s.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease out 3 not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease out 3 not found."));
 			}
 			updateAdmission.setDiseaseOut3(dOut3s.get(0));
 		}
@@ -636,7 +637,7 @@ public class AdmissionController {
 							.filter(dtp -> dtp.getCode().equals(updateAdmissionDTO.getDisType().getCode()))
 							.collect(Collectors.toList());
 			if (disTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Discharge type not found."));
 			}
 			updateAdmission.setDisType(disTypesF.get(0));
 		}
@@ -648,7 +649,7 @@ public class AdmissionController {
 							.filter(pregtt -> pregtt.getCode().equals(updateAdmissionDTO.getPregTreatmentType().getCode()))
 							.collect(Collectors.toList());
 			if (pregTTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Pregnant treatment type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Pregnant treatment type not found."));
 			}
 			updateAdmission.setPregTreatmentType(pregTTypesF.get(0));
 		}
@@ -660,7 +661,7 @@ public class AdmissionController {
 							.filter(dlvrType -> dlvrType.getCode().equals(updateAdmissionDTO.getDeliveryType().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Delivery type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Delivery type not found."));
 			}
 			updateAdmission.setDeliveryType(dlvrTypesF.get(0));
 		}
@@ -672,7 +673,7 @@ public class AdmissionController {
 							dlvrrestType -> dlvrrestType.getCode().equals(updateAdmissionDTO.getDeliveryResult().getCode()))
 							.collect(Collectors.toList());
 			if (dlvrrestTypesF.isEmpty()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Delivery result type not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Delivery result type not found."));
 			}
 			updateAdmission.setDeliveryResult(dlvrrestTypesF.get(0));
 		}

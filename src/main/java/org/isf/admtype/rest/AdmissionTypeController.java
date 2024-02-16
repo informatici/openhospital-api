@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,8 +77,8 @@ public class AdmissionTypeController {
 		String code = admissionTypeDTO.getCode();
 		LOGGER.info("Create Admission Type {}", code);
 		AdmissionType newAdmissionType = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
-		if (admtManager.isCodePresent(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The code of Admission Type is already used."));
+		if (!admtManager.isCodePresent(code)) {
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("The code of Admission Type is already used."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newAdmissionType));
 	}
@@ -94,7 +95,7 @@ public class AdmissionTypeController {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Admission Type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Admission Type not found."));
 		}
 		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
 		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
@@ -134,7 +135,7 @@ public class AdmissionTypeController {
 				admtManager.deleteAdmissionType(admtFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("Admission Type not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Admission Type not found.");
 		}
 		return ResponseEntity.ok(true);
 	}

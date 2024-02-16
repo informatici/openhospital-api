@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,7 +72,7 @@ public class ExamController {
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> newExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
 
         if (examType == null) {
-            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(newExam);
@@ -88,15 +89,15 @@ public class ExamController {
     public ResponseEntity<?> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
-            return ResponseEntity.badRequest().body("The specified code is different with the Exam code.");
+            return ((BodyBuilder) ResponseEntity.notFound()).body("The specified code is different with the Exam code.");
         }
         if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
-            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
         }
 
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> updateExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
         if (examType == null) {
-            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam type not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(updateExam);
@@ -137,7 +138,7 @@ public class ExamController {
     public ResponseEntity<?> deleteExam(@PathVariable String code) throws OHServiceException {
         Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!exam.isPresent()) {
-            return ResponseEntity.badRequest().body("No Exam found with the specified code.");
+            return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
         }
         try {
             examManager.deleteExam(exam.get());

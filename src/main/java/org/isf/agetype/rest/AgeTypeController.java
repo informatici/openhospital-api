@@ -32,7 +32,6 @@ import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.mapper.AgeTypeMapper;
 import org.isf.agetype.model.AgeType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -40,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -95,7 +95,7 @@ public class AgeTypeController {
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<?> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The age type is not valid."));
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);

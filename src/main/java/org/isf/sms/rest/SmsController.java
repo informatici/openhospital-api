@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -110,7 +111,7 @@ public class SmsController {
 	public ResponseEntity<?> deleteSms(@RequestBody @Valid List<SmsDTO> smsDTOList) throws OHServiceException {
 		List<Sms> smsList = smsMapper.map2ModelList(smsDTOList);
 		if (smsList.stream().anyMatch(sms -> sms.getSmsId() <= 0)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Some Sms are not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Some Sms are not found."));
 		}
 		smsManager.delete(smsList);
 		return ResponseEntity.ok(true);

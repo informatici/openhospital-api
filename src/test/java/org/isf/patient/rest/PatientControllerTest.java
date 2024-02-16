@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -178,7 +178,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_InternalServerError() throws Exception {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
@@ -190,8 +190,8 @@ public class PatientControllerTest {
 														.contentType(MediaType.APPLICATION_JSON)
 														.content(PatientHelper.asJsonString(newPatientDTO)))
 						.andDo(log())
-						.andExpect(status().is4xxClientError())
-						.andExpect(status().isBadRequest()) // TODO Create OHCreateAPIException
+						.andExpect(status().is5xxServerError())
+						.andExpect(status().isInternalServerError()) // TODO Create OHCreateAPIException
 						.andExpect(content().string(containsString("Patient not created.")))
 						.andReturn();
 
@@ -265,7 +265,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
+	public void when_put_update_patient_with_valid_body_and_existent_code_then_InternalServerError() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 12345;
@@ -293,8 +293,8 @@ public class PatientControllerTest {
 														.content(PatientHelper.asJsonString(newPatientDTO)))
 						.andDo(log())
 						.andDo(print())
-						.andExpect(status().is4xxClientError())
-						.andExpect(status().isBadRequest())
+						.andExpect(status().is5xxServerError())
+						.andExpect(status().isInternalServerError())
 						.andExpect(content().string(containsString("Patient not updated.")));
 
 	}
@@ -331,7 +331,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
+	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_Not_Found() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 123;
@@ -345,7 +345,7 @@ public class PatientControllerTest {
 										.content(PatientHelper.asJsonString(newPatientDTO)))
 						.andDo(log())
 						.andExpect(status().is4xxClientError())
-						.andExpect(status().isBadRequest()) // TODO Create OHUpdateAPIException
+						.andExpect(status().isNotFound()) // TODO Create OHUpdateAPIException
 						.andExpect(content().string(containsString("Patient not found."))).andReturn();
 
 		// TODO Create OHUpdateAPIException
@@ -456,7 +456,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
+	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NOT_Fount() throws Exception {
 		Integer code = 1000;
 		String request = "/patients/search";
 
@@ -468,7 +468,7 @@ public class PatientControllerTest {
 														.param("code", code.toString())
 														.contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
-						.andExpect(status().isNoContent());
+						.andExpect(status().isNotFound());
 	}
 
 	/**
@@ -478,7 +478,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	public void when_get_patients_search_without_name_and_without_code_then_response_null_and_NOT_Found() throws Exception {
 		String request = "/patients/search";
 
 		this.mockMvc
@@ -486,7 +486,7 @@ public class PatientControllerTest {
 										get(request)
 														.contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
-						.andExpect(status().isNoContent());
+						.andExpect(status().isNotFound());
 	}
 
 	/**
@@ -496,7 +496,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NOT_Found() throws Exception {
 		String name = null;
 		String request = "/patients/search";
 
@@ -508,7 +508,7 @@ public class PatientControllerTest {
 														.param("name", name)
 														.contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
-						.andExpect(status().isNoContent());
+						.andExpect(status().isNotFound());
 	}
 
 	/**
@@ -560,7 +560,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
+	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_InternalServerError() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -575,8 +575,8 @@ public class PatientControllerTest {
 										delete(request, code)
 														.contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
-						.andExpect(status().is4xxClientError())
-						.andExpect(status().isBadRequest()) // TODO Create OHDeleteAPIException
+						.andExpect(status().is5xxServerError())
+						.andExpect(status().isInternalServerError()) // TODO Create OHDeleteAPIException
 						.andExpect(content().string(containsString("Patient not deleted.")))
 						.andReturn();
 

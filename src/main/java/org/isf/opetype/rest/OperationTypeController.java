@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +97,7 @@ public class OperationTypeController {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.isCodePresent(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Operation Type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Operation Type not found."));
 		}
 		OperationType updatedOperationType;
 		try {
@@ -146,7 +147,7 @@ public class OperationTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No operation type found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No operation type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

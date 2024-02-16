@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,7 +124,7 @@ public class MedStockMovementTypeController {
 					throws OHServiceException {
 		MovementType medicalDsrStockMovementType = mapper.map2Model(medicalDsrStockMovementTypeDTO);
 		if (!manager.isCodePresent(medicalDsrStockMovementType.getCode())) {
-			return ResponseEntity.badRequest().body("Movement type not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Movement type not found.");
 		}
 		try {
 			MovementType isUpdatedMovementType = manager.updateMedicalDsrStockMovementType(medicalDsrStockMovementType);
@@ -157,7 +158,7 @@ public class MedStockMovementTypeController {
 						.filter(item -> item.getCode().equals(code))
 						.collect(Collectors.toList());
 		if (matchedMvmntTypes.isEmpty()) {
-			return ResponseEntity.badRequest().body("No Movement type found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Movement type found with the specified code.");
 		}
 		try {
 			manager.deleteMedicalDsrStockMovementType(matchedMvmntTypes.get(0));

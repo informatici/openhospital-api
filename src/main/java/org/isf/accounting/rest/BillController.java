@@ -39,7 +39,6 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -49,6 +48,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -108,7 +108,7 @@ public class BillController {
 	public ResponseEntity<?> newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
 		if (newBillDto == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Bill is null."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Bill is null."));
 		}
 		LOGGER.info("Create Bill {}", newBillDto);
 
@@ -123,13 +123,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(newBillDto.getBillItems());
@@ -160,7 +160,7 @@ public class BillController {
 		bill.setId(id);
 
 		if (billManager.getBill(id) == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Bill to update not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Bill to update not found."));
 		}
 
 		Patient pat = patientManager.getPatientById(bill.getBillPatient().getCode());
@@ -172,13 +172,13 @@ public class BillController {
 		if (pat != null) {
 			bill.setBillPatient(pat);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		if (plist != null) {
 			bill.setPriceList(plist);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Price list not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Price list not found."));
 		}
 
 		List<BillItems> billItems = billItemsMapper.map2ModelList(odBillDto.getBillItems());
@@ -415,12 +415,12 @@ public class BillController {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
 		if (bill == null) {
-			return ResponseEntity.badRequest().body("No bill found with the specified id.");
+			return ResponseEntity.notFound().build();
 		}
 		try {
 			billManager.deleteBill(bill);
 		} catch (OHServiceException e) {
-			throw new OHAPIException(new OHExceptionMessage("Bill is not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Bill is not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}

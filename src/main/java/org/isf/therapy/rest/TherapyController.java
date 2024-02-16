@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,7 +84,7 @@ public class TherapyController {
 	@PostMapping(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> newTherapy(@RequestBody TherapyRowDTO thRowDTO) throws OHServiceException {
 		if (thRowDTO.getPatID() == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		TherapyRow thRow = therapyRowMapper.map2Model(thRowDTO);
 		thRow = manager.newTherapy(thRow);

@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,7 +95,7 @@ public class PregnantTreatmentTypeController {
 		LOGGER.info("Update PregnantTreatmentType code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Pregnant Treatment Type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Pregnant Treatment Type not found."));
 		}
 		PregnantTreatmentType isUpdatedPregnantTreatmentType = pregTreatTypeManager.updatePregnantTreatmentType(pregTreatType);
 		if (isUpdatedPregnantTreatmentType == null) {
@@ -142,7 +143,7 @@ public class PregnantTreatmentTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No pregnanc treatment found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No pregnanc treatment found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

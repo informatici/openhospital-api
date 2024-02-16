@@ -52,6 +52,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,10 +120,10 @@ public class OpdController {
 		LOGGER.info("store Out patient {}", code);
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		if (" ".equals(opdDTO.getNote())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Note field mandatory."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
 		opdToInsert.setPatient(patient);
@@ -146,10 +147,10 @@ public class OpdController {
 		OpdWithOperationRowDTO opdWithOperatioRow = new OpdWithOperationRowDTO();
 		Patient patient = patientManager.getPatientById(opdWithOperationRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		if (" ".equals(opdWithOperationRowDTO.getOpdDTO().getNote())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Note field mandatory."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
 		opdToInsert.setPatient(patient);
@@ -182,16 +183,16 @@ public class OpdController {
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdById(code).isEmpty()) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
@@ -216,16 +217,16 @@ public class OpdController {
 		LOGGER.info("Update opds code: {}", code);
 		OpdWithOperationRowDTO opdWithOperatioRow = new OpdWithOperationRowDTO();
 		if (opdManager.getOpdById(code).isEmpty()) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdWithOperationRowDTO.getOpdDTO().getCode() != 0 && opdWithOperationRowDTO.getOpdDTO().getCode() != code) {	
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdWithOperationRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());

@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -169,7 +170,7 @@ public class UserController {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Not allowed."));
 		}
 		if (userManager.getUserByName(requestUserName) == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The specified user does not exist."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The specified user does not exist."));
 		}
 		User user = userMapper.map2Model(userDTO);
 		boolean isUpdated;
@@ -194,7 +195,7 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
 		if (foundUser == null) {
-			return ResponseEntity.badRequest().body("No user found with the specified username.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No user found with the specified username.");
 		}
 		try {
 			userManager.deleteUser(foundUser);
@@ -263,7 +264,7 @@ public class UserController {
 	public ResponseEntity<?> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
 		UserGroup group = userGroupMapper.map2Model(aGroup);
 		if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
-			return ResponseEntity.badRequest().body("User group not found");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("User group not found");
 		}
 		boolean isUpdated = userManager.updateUserGroup(group);
 		if (isUpdated) {
@@ -276,7 +277,7 @@ public class UserController {
 	private UserGroup loadUserGroup(String code) throws OHServiceException {
 		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
 		if (group.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+			((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("User group not found."));
 		}
 		return group.get(0);
 	}
@@ -376,13 +377,13 @@ public class UserController {
 		final String ADMIN = "admin";
 		if (!requestUserName.equals(currentUser)
 						&& !currentUser.equals(ADMIN)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Not allowed."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Not allowed."));
 		}
 		if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("A setting with that name already exists."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("A setting with that name already exists."));
 		}
 		if (userManager.getUserByName(requestUserName) == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The specified user does not exist."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The specified user does not exist."));
 		}
 		userSettingDTO.setId(0);
 		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
@@ -417,14 +418,14 @@ public class UserController {
 		UserSetting updated;
 		if (userSetting.isEmpty()) {
 			LOGGER.info("No user settings with id {}.", id);
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("UserSetting doesn't exists."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("UserSetting doesn't exists."));
 		}
 		if (!userSetting.get().getUser().equals(requestUserName) && !currentUser.equals(ADMIN)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Not allowed."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Not allowed."));
 		}
 		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			if (userManager.getUserByName(requestUserName) == null) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("The specified user does not exist."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The specified user does not exist."));
 			}
 			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
 			updated = userSettingManager.updateUserSetting(uSetting);
@@ -495,7 +496,7 @@ public class UserController {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		if (userSetting.isEmpty()) {
 			LOGGER.info("No user settings with id {}.", id);
-			return ResponseEntity.badRequest().body("No user setting found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No user setting found with the specified id.");
 		}
 		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
 			try {

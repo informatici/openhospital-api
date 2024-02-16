@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,7 +102,7 @@ public class DeliveryResultTypeController {
 		LOGGER.info("Update Delivery Result Type code: {}", dlvrrestTypeDTO.getCode());
 		DeliveryResultType dlvrrestType = mapper.map2Model(dlvrrestTypeDTO);
 		if (!dlvrrestManager.isCodePresent(dlvrrestType.getCode())) {
-			return ResponseEntity.badRequest().body("Delivery Result Type not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Delivery Result Type not found.");
 		}
 		try {
 			dlvrrestManager.updateDeliveryResultType(dlvrrestType);
@@ -150,7 +151,7 @@ public class DeliveryResultTypeController {
 				}
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No delivery result type found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No delivery result type found with the specified code.");
 		}
 		return ResponseEntity.ok(true);
 	}

@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -144,7 +145,7 @@ public class VaccineTypeController {
 			}
 			return ResponseEntity.ok(true);
 		}
-		return ResponseEntity.badRequest().body("Vaccine type not found with th specified code.");
+		return ((BodyBuilder) ResponseEntity.notFound()).body("Vaccine type not found with th specified code.");
 	}
 
 	/**

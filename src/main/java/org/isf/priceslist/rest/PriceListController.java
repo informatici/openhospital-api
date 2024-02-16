@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -154,7 +155,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("No price list found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.deleteList(priceListFounds.get(0));
@@ -175,7 +176,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("No price list found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.copyList(priceListFounds.get(0));
@@ -196,7 +197,7 @@ public class PriceListController {
 		List<PriceList> priceLists = priceListManager.getLists();
 		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("No price list found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No price list found with the specified id.");
 		}
 		try {
 			priceListManager.copyList(priceListFounds.get(0), factor, step);

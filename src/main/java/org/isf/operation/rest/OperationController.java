@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,7 +104,7 @@ public class OperationController {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}.", code);
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Another operation already created with provided description and types."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Another operation already created with provided description and types."));
 		}
 		Operation isCreatedOperation = operationManager.newOperation(mapper.map2Model(operationDTO));
 		if (isCreatedOperation == null) {
@@ -124,7 +125,7 @@ public class OperationController {
 		LOGGER.info("Update operations code: {}.", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Operation not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Operation not found."));
 		}
 		operation.setLock(operationDTO.getLock());
 		Operation isUpdatedOperation = operationManager.updateOperation(operation);
@@ -196,7 +197,7 @@ public class OperationController {
 		Operation operation = operationManager.getOperationByCode(code);
 
 		if (operation == null) {
-			return ResponseEntity.badRequest().body("No operation found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No operation found with the specified code.");
 		}
 		try {
 			operationManager.deleteOperation(operation);
@@ -217,7 +218,7 @@ public class OperationController {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation: {}.", code);
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("At least one field between admission and Opd is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 		
@@ -246,14 +247,14 @@ public class OperationController {
 	ResponseEntity<?> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}.", operationRowDTO.getId());
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("At least one field between admission and Opd is required."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("Operation row not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Operation row not found.");
 		}
 		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
 		if (updateOpeRow == null) {

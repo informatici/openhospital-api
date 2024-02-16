@@ -39,6 +39,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -68,10 +69,10 @@ public class ReportsController {
 		try {
 			resource = new UrlResource(report.toUri());
 			if (!resource.exists()) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("File not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("File not found."));
 			}
 		} catch (MalformedURLException e) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("File not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("File not found."));
 		}
 
 		String contentType;

@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -91,7 +92,7 @@ public class DiseaseTypeController {
 	public ResponseEntity<?> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	return ResponseEntity.badRequest().body(new OHExceptionMessage("Specified Disease Type code is already used."));
+        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Specified Disease Type code is already used."));
         }
         try {
 	        diseaseTypeManager.newDiseaseType(diseaseType);
@@ -111,7 +112,7 @@ public class DiseaseTypeController {
 	public ResponseEntity<?> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
 		DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
 		if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease Type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease Type not found."));
 		}
 		try {
 			diseaseTypeManager.updateDiseaseType(diseaseType);
@@ -143,7 +144,7 @@ public class DiseaseTypeController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Disease Type not deleted."));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No Disease Type found with the given code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Disease Type found with the given code.");
 		}
 	}
 

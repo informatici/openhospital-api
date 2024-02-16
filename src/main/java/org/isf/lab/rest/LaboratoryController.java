@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -123,13 +124,13 @@ public class LaboratoryController {
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -163,13 +164,13 @@ public class LaboratoryController {
 
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -216,13 +217,13 @@ public class LaboratoryController {
 			LaboratoryDTO laboratoryDTO = labWithRowsDTO.getLaboratoryDTO();
 			Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 			if (patient == null) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 			}
 
 			Exam exam = examManager.getExams().stream()
 							.filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode())).findFirst().orElse(null);
 			if (exam == null) {
-				return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+				return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 			}
 
 			Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -267,26 +268,26 @@ public class LaboratoryController {
 		List<String> labRow = labWithRowsDTO.getLaboratoryRowList();
 
 		if (!code.equals(laboratoryDTO.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Laboratory code mismatch."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Laboratory code mismatch."));
 		}
 
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
 		if (!labo.isPresent()) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Laboratory not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Laboratory not found."));
 		}
 		Laboratory lab = labo.get();
 		if (lab.getStatus().equalsIgnoreCase(DELETED) || lab.getStatus().equalsIgnoreCase(INVALID)) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus()));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be update because its status is " + lab.getStatus()));
 		}
 		Patient patient = patientBrowserManager.getPatientById(laboratoryDTO.getPatientCode());
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Exam exam = examManager.getExams().stream().filter(e -> e.getCode().equals(laboratoryDTO.getExam().getCode()))
 						.findFirst().orElse(null);
 		if (exam == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
 		}
 
 		Laboratory labToInsert = laboratoryMapper.map2Model(laboratoryDTO);
@@ -334,7 +335,7 @@ public class LaboratoryController {
 			}
 			return ResponseEntity.ok(true);
 		} else {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("This status doesn't exist."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("This status doesn't exist."));
 		}
 
 	}
@@ -356,7 +357,7 @@ public class LaboratoryController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be deleted because its status is " + labToDelete.getStatus()));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No Exam found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
 		}
 		try {
 			laboratoryManager.updateExamRequest(code, DELETED);
@@ -427,7 +428,7 @@ public class LaboratoryController {
 		LOGGER.info("Get LabWithRows for patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
@@ -477,7 +478,7 @@ public class LaboratoryController {
 		LOGGER.info("Get Exam requested by patient Id: {}", patId);
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		List<Laboratory> labList = laboratoryManager.getLaboratory(patient).stream()
@@ -726,7 +727,7 @@ public class LaboratoryController {
 				return ResponseEntity.internalServerError().body(new OHExceptionMessage("This exam can not be deleted because its status is " + lab.getStatus()));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("No Exam found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
 		}
 		try {
 			laboratoryManager.updateExamRequest(code, INVALID);

@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -113,11 +114,11 @@ public class MedicalStockWardController {
 			@RequestParam("med_id") int medicalId) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(medicalId);
 		if (medical == null) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The medical not found with the  specified code"));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The medical not found with the  specified code"));
 		}
 		List<Ward> wards = wardManager.getWards().stream().filter(w -> w.getCode().equals(wardId)).collect(Collectors.toList());
 		if (wards == null || wards.isEmpty()) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("The ward not found with the  specified code"));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The ward not found with the  specified code"));
 		}
 		return ResponseEntity.ok(movWardBrowserManager.getCurrentQuantityInWard(wards.get(0), medical));
 	}

@@ -30,7 +30,6 @@ import org.isf.medical.dto.MedicalSortBy;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.manager.MedicalBrowsingManager;
 import org.isf.medicals.model.Medical;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -39,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -207,7 +207,7 @@ public class MedicalController {
 	public ResponseEntity<?> deleteMedical(@PathVariable Integer code) throws OHServiceException {
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
-			return ResponseEntity.badRequest().body("No Medical found with the specified code");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Medical found with the specified code");
 		}
 		try {
 			medicalManager.deleteMedical(medical);

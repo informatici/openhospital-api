@@ -29,20 +29,19 @@ import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exam.dto.ExamRowDTO;
 import org.isf.exam.mapper.ExamRowMapper;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -73,7 +72,7 @@ public class ExamRowController {
         Exam exam = examManager.getExams().stream().filter(e -> examRowDTO.getExam().getCode().equals(e.getCode())).findFirst().orElse(null);
 
         if (exam == null) {
-            return ResponseEntity.badRequest().body(new OHExceptionMessage("Exam not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
         }
 
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
@@ -123,7 +122,7 @@ public class ExamRowController {
     public ResponseEntity<?> deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
-            return ResponseEntity.badRequest().body(new OHExceptionMessage("No ExamRows found with the specified code."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("No ExamRows found with the specified code."));
         }
         if (examRows.size() > 1) {
             return ResponseEntity.internalServerError().body(new OHExceptionMessage("Found multiple ExamRows."));

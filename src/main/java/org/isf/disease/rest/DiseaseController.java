@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -244,10 +245,10 @@ public class DiseaseController {
 	public ResponseEntity<?> newDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (diseaseManager.isCodePresent(disease.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Duplicated disease code."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Duplicated disease code."));
 		}
 		if (diseaseManager.descriptionControl(disease.getDescription(), disease.getType().getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Duplicated disease description for the same disease type."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Duplicated disease description for the same disease type."));
 		}
 		try {
 			diseaseManager.newDisease(disease);
@@ -267,7 +268,7 @@ public class DiseaseController {
 	public ResponseEntity<?> updateDisease(@Valid @RequestBody DiseaseDTO diseaseDTO) throws OHServiceException {
 		Disease disease = mapper.map2Model(diseaseDTO);
 		if (!diseaseManager.isCodePresent(disease.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Disease not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Disease not found."));
 		}
 		disease.setLock(diseaseDTO.getLock());
 		try {
@@ -299,7 +300,7 @@ public class DiseaseController {
 			result.put("deleted", isDeleted);
 			return ResponseEntity.ok(result);
 		} else {
-			return ResponseEntity.badRequest().body("No disease found with the specified code.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No disease found with the specified code.");
 		}
 	}
 	

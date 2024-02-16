@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -97,7 +98,7 @@ public class PricesOthersController {
 		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId())
 						.collect(Collectors.toList());
 		if (pricesOthersFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("Price others not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Price others not found.");
 		}
 		PricesOthers isUpdatedPricesOthers;
 		try {
@@ -137,7 +138,7 @@ public class PricesOthersController {
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
 		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
 		if (pricesOthersFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("No price others found with the specified id.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No price others found with the specified id.");
 		}
 		try {
 			pricesOthersManager.deleteOther(pricesOthersFounds.get(0));

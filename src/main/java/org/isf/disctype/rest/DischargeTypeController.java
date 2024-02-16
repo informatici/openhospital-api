@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,7 +78,7 @@ public class DischargeTypeController {
 		LOGGER.info("Create discharge type {}", code);
 		DischargeType newDischargeType = discTypeManager.newDischargeType(mapper.map2Model(dischTypeDTO));
 		if (!discTypeManager.isCodePresent(code)) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.internalServerError().body("Discharge Type is not created.");
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newDischargeType));
 	}
@@ -93,11 +94,11 @@ public class DischargeTypeController {
 		LOGGER.info("Update discharge type with code: {}", dischTypeDTO.getCode());
 		DischargeType dischType = mapper.map2Model(dischTypeDTO);
 		if (!discTypeManager.isCodePresent(dischTypeDTO.getCode())) {
-			return ResponseEntity.badRequest().body(null);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Discharge Type not found.");
 		}
 		DischargeType updatedDischargeType = discTypeManager.updateDischargeType(dischType);
 		if (!discTypeManager.isCodePresent(updatedDischargeType.getCode())) {
-			return ResponseEntity.badRequest().body(new OHExceptionMessage("Discharge Type is not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Discharge Type is not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(dischType));
 	}
@@ -136,7 +137,7 @@ public class DischargeTypeController {
 				discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
 			}
 		} else {
-			return ResponseEntity.badRequest().body("Discharge Type not found.");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Discharge Type not found.");
 		}
 		return ResponseEntity.ok(true);
 	}
