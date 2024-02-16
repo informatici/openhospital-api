@@ -134,7 +134,7 @@ public class WardController {
         if (wardCreated == null) {
             return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not created."));
         }
-        return ResponseEntity.ok().body(mapper.map2DTO(wardCreated));
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(wardCreated));
     }
 
     /**
@@ -165,18 +165,18 @@ public class WardController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteWard(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<?> deleteWard(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete Ward with code: {}", code);
         Ward ward = wardManager.findWard(code);
         if (ward != null) {
             try {
                 wardManager.deleteWard(ward);
             } catch (OHServiceException serviceException) {
-                throw new OHAPIException(new OHExceptionMessage("Ward not deleted."));
+                return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not deleted."));
             }
             return ResponseEntity.ok(true);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.badRequest().body("No ward found with the specified code.");
     }
 
     /**
