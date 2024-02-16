@@ -155,7 +155,7 @@ public class VisitsController {
 		}
 
 		if (visit.getVisitID() != updateVisit.getVisitID()) {
-			return ResponseEntity.badRequest().body("Visit not found");
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Visit not found");
 		}
 
 		Visit visitUp = mapper.map2Model(updateVisit);
