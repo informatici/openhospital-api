@@ -29,7 +29,6 @@ import javax.validation.Valid;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medical.mapper.MedicalMapper;
 import org.isf.medicals.model.Medical;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.therapy.dto.TherapyDTO;
 import org.isf.therapy.dto.TherapyRowDTO;
 import org.isf.therapy.manager.TherapyManager;

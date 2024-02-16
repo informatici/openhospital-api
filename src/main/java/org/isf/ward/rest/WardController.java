@@ -114,7 +114,7 @@ public class WardController {
         Ward ward = wardManager.findWard(code);
         int numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
-        	return ResponseEntity.internalServerError().body(null);
+            return ResponseEntity.internalServerError().body(null);
         } else {
             return ResponseEntity.ok(numberOfPatients);
         }
@@ -132,7 +132,7 @@ public class WardController {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (wardCreated == null) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not created."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not created."));
         }
         return ResponseEntity.ok().body(mapper.map2DTO(wardCreated));
     }
@@ -151,7 +151,7 @@ public class WardController {
 	    ward.setLock(updateWard.getLock());
         Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
-        	return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not updated."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(wardUpdated));
 

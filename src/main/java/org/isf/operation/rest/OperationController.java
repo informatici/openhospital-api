@@ -253,7 +253,7 @@ public class OperationController {
 		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
 						.collect(Collectors.toList());
 		if (opRowFounds.isEmpty()) {
-			return ResponseEntity.badRequest().body("Operation not found");
+			return ResponseEntity.badRequest().body("Operation row not found.");
 		}
 		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
 		if (updateOpeRow == null) {

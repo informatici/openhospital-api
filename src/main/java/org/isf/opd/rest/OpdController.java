@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -129,7 +130,7 @@ public class OpdController {
 		if (isCreatedOpd == null) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not created."));
 		}
-		return ResponseEntity.ok().body(mapper.map2DTO(isCreatedOpd));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
 
 	/**
@@ -167,7 +168,7 @@ public class OpdController {
 			}
 		}
 		opdWithOperatioRow.setOperationRows(listOp);
-		return ResponseEntity.ok().body(opdWithOperatioRow);
+		return ResponseEntity.status(HttpStatus.CREATED).body(opdWithOperatioRow);
 	}
 	
 	/**
@@ -354,7 +355,6 @@ public class OpdController {
 				try {
 					listOp = operationRowManager.getOperationRowByOpd(opd);
 				} catch (OHServiceException e) {
-					// TODO Auto-generated catch block
 					LOGGER.error("Unable to get the List of operation associate to this Opd");
 				}
 				if (!listOp.isEmpty()) {

@@ -157,11 +157,11 @@ public class VaccineController {
            try {
                vaccineManager.deleteVaccine(vaccine);
            } catch (OHServiceException serviceException) {
-        	   return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine not deleted."));
+               return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine not deleted."));
            }
            return ResponseEntity.ok(true);
         }
-		return ResponseEntity.badRequest().body("Vaccine not fount with the specified code");
+		return ResponseEntity.badRequest().body("Vaccine not fount with the specified code.");
     }
     
     /**

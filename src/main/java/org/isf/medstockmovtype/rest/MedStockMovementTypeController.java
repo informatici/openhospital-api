@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -35,6 +35,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -105,7 +106,7 @@ public class MedStockMovementTypeController {
 					throws OHServiceException {
 		try {
 			MovementType isCreatedMovementType = manager.newMedicalDsrStockMovementType(mapper.map2Model(medicalDsrStockMovementType));
-			return ResponseEntity.ok().body(mapper.map2DTO(isCreatedMovementType));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMovementType));
 		} catch (OHServiceException serviceException) {
 			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Movement type not created."));
 		}
@@ -122,7 +123,7 @@ public class MedStockMovementTypeController {
 					throws OHServiceException {
 		MovementType medicalDsrStockMovementType = mapper.map2Model(medicalDsrStockMovementTypeDTO);
 		if (!manager.isCodePresent(medicalDsrStockMovementType.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Movement type not found.");
 		}
 		try {
 			MovementType isUpdatedMovementType = manager.updateMedicalDsrStockMovementType(medicalDsrStockMovementType);
@@ -156,7 +157,7 @@ public class MedStockMovementTypeController {
 						.filter(item -> item.getCode().equals(code))
 						.collect(Collectors.toList());
 		if (matchedMvmntTypes.isEmpty()) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("No Movement type found with the specified code.");
 		}
 		try {
 			manager.deleteMedicalDsrStockMovementType(matchedMvmntTypes.get(0));

@@ -106,7 +106,7 @@ public class MedicalTypeController {
 	public ResponseEntity<?> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
 		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode())) {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.badRequest().body("Medical type not found.");
 		}
 		MedicalType isUpdatedMedicalType = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (isUpdatedMedicalType == null) {
