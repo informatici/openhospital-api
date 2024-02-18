@@ -23,45 +23,45 @@ package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserMenuItemDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="code of the menu item (must be unique)", example = "admtype", position = 1)
-	private String 	code;
+	@Schema(description = "Code of the menu item (must be unique)", example = "admtype", maxLength = 50)
+	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes="button label of the menu item", example = "Admission Type", position = 2)
-	private String 	buttonLabel;
+	@Schema(description = "Button label of the menu item", example = "Admission Type", maxLength = 50)
+	private String buttonLabel;
 
 	@NotNull
-	@ApiModelProperty(notes="alt label of the menu item", example = "Admission Type", position = 3)
-	private String 	altLabel;
+	@Schema(description = "Alt label of the menu item", example = "Admission Type", maxLength = 50)
+	private String altLabel;
 
-	@ApiModelProperty(notes="tooltip label of the menu item", example = "Admission Type", position = 4)
-	private String 	tooltip;
+	@Schema(description = "Tooltip label of the menu item", example = "Admission Type", maxLength = 100)
+	private String tooltip;
 
-	@ApiModelProperty(notes="shortcut of the menu item", example = "A", position = 5)
+	@Schema(description = "Shortcut of the menu item", example = "A")
 	private char shortcut;
 
 	@NotNull
-	@ApiModelProperty(notes="parent submenu of the menu item", example = "types", position = 6)
-	private String	mySubmenu;
+	@Schema(description = "Parent submenu of the menu item", example = "types", maxLength = 50)
+	private String mySubmenu;
 
 	@NotNull
-	@ApiModelProperty(notes="the main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser", position = 7)
+	@Schema(description = "The main window class associated", example = "org.isf.admtype.gui.AdmissionTypeBrowser", maxLength = 100)
 	private String myClass;
 
 	@NotNull
-	@ApiModelProperty(notes="indicates if the menu item is a submenu or not", example = "true", position = 8)
-	private boolean	isASubMenu;
+	@Schema(description = "Indicates if the menu item is a submenu or not", example = "true")
+	private boolean isASubMenu;
 
 	@NotNull
-	@ApiModelProperty(notes="position of the menu item", example = "5", position = 9)
+	@Schema(description = "Position of the menu item", example = "5")
 	private int position;
-	
-	public UserMenuItemDTO(){
+
+	public UserMenuItemDTO() {
 	}
 
 	public UserMenuItemDTO(String code, String buttonLabel, String altLabel, String tooltip, char shortcut,

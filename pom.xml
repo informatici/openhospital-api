@@ -5,21 +5,22 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.12</version>
+        <version>2.7.18</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
 
     <properties>
-        <oh-core.version>1.13.0</oh-core.version>
-        <java.version>11</java.version>
+        <oh-core.version>1.14.0</oh-core.version>
+        <java.version>17</java.version>
         <spring-boot-admin.version>2.1.3</spring-boot-admin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <license.maven.plugin.version>4.2</license.maven.plugin.version>
+        <license.maven.plugin.version>4.3</license.maven.plugin.version>
+        <springdoc.outputFileName>oh.yaml</springdoc.outputFileName>
     </properties>
 
     <dependencies>
@@ -87,12 +88,12 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>3.1.1</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -122,16 +123,9 @@
             <version>1.2.3</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-modules-java8</artifactId>
-            <version>2.15.2</version>
-            <type>pom</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
-            <version>3.19.4</version>
+            <version>4.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -149,12 +143,12 @@
                 </configuration>
             </plugin>
             <plugin>
-			  <artifactId>maven-surefire-plugin</artifactId>
-			  <configuration>
-			    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-			    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
-			  </configuration>
-			</plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <reportsDirectory>${project.build.directory}/test-reports</reportsDirectory>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -246,6 +240,24 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                   <version>1.4</version>
+                   <executions>
+                       <execution>
+                           <phase>integration-test</phase>
+                           <goals>
+                               <goal>generate</goal>
+                           </goals>
+                       </execution>
+                   </executions>
+                   <configuration>
+                       <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+                       <outputFileName>${springdoc.outputFileName}</outputFileName> 
+                       <outputDir>openapi/</outputDir> 
+                   </configuration>
+               </plugin>
         </plugins>
     </build>
 

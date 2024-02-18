@@ -23,19 +23,24 @@ package org.isf.ward.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class WardDTO {
 
+	@Schema(description = "The ward code", maxLength = 3)
 	private String code;
 
 	@NotNull
+	@Schema(description = "The name of the ward", maxLength = 50)
 	private String description;
 
+	@Schema(description = "The phone number of the ward", maxLength = 50)
 	private String telephone;
 
+	@Schema(description = "The fax number of the ward", maxLength = 50)
 	private String fax;
 
+	@Schema(description = "The email of the ward", maxLength = 50)
 	private String email;
 
 	@NotNull
@@ -56,12 +61,14 @@ public class WardDTO {
 	@NotNull
 	private boolean isFemale;
 
+	private boolean isOpd;
+
 	@NotNull
 	private int visitDuration;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "lock", example = "0")
 	private Integer lock;
-	
+
 	public String getCode() {
 		return this.code;
 	}
@@ -164,5 +171,13 @@ public class WardDTO {
 
 	public void setLock(Integer lock) {
 		this.lock = lock;
+	}
+
+	public boolean isOpd() {
+		return isOpd;
+	}
+
+	public void setOpd(boolean isOpd) {
+		this.isOpd = isOpd;
 	}
 }

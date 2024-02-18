@@ -43,6 +43,7 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,13 +55,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/medicalstockward", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/medicalstockward")
+@Tag(name = "Medical Stock Ward")
+@SecurityRequirement(name = "bearerAuth")
 public class MedicalStockWardController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalStockWardController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MedicalStockWardController.class);
 
 	@Autowired
 	private MedicalWardMapper medicalWardMapper;

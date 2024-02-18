@@ -21,31 +21,28 @@
  */
 package org.isf.exatype.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamTypeDTO {
 
-    @ApiModelProperty(notes = "Exam Type Code", example = "HB", position = 1)
-    private String code;
+	@Schema(description = "Exam Type Code", example = "HB")
+	private String code;
 
-    @ApiModelProperty(notes = "Exam Type Description", example = "1.Haematology", position = 2)
-    private String description;
+	@Schema(description = "Exam Type Description", example = "1.Haematology", maxLength = 50)
+	private String description;
 
-    public ExamTypeDTO() {
-    }
+	public ExamTypeDTO() {
+	}
 
-    public ExamTypeDTO(String code, String description) {
-        this.code = code;
-        this.description = description;
-    }
+	public ExamTypeDTO(String code, String description) {
+		this.code = code;
+		this.description = description;
+	}
 
-    @Override
-    public String toString() {
-        return "ExamTypeDTO{" +
-                "code='" + code + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "ExamTypeDTO{" + "code='" + code + '\'' + ", description='" + description + '\'' + '}';
+	}
 
 	public String getCode() {
 		return this.code;

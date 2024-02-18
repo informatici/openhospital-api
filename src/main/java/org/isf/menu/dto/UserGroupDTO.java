@@ -23,17 +23,17 @@ package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserGroupDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="name of the group (must be unique)", example = "labo", position = 1)
+	@Schema(description = "Name of the group (must be unique)", example = "labo", maxLength = 50)
 	private String code;
-	
-	@ApiModelProperty(notes="the description of the group", example = "Staff members working in the laboratory", position = 2)
+
+	@Schema(description = "The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
 	private String desc;
-	
+
 	public UserGroupDTO() {
 	}
 

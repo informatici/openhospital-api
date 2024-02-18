@@ -19,10 +19,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.permissions.dto;
 
-public class GroupPermissionDTO {
+package org.isf.opd.dto;
 
-	private Integer id;
-	
+import java.util.List;
+
+import org.isf.operation.dto.OperationRowDTO;
+
+public class OpdWithOperationRowDTO {
+
+	private OpdDTO opdDTO;
+	private List<OperationRowDTO> operationRows;
+
+	public OpdDTO getOpdDTO() {
+		return opdDTO;
+	}
+
+	public void setOpdDTO(OpdDTO opdDTO) {
+		this.opdDTO = opdDTO;
+	}
+
+	public List<OperationRowDTO> getOperationRows() {
+		return operationRows;
+	}
+
+	public void setOperationRows(List<OperationRowDTO> operationRows) {
+		this.operationRows = operationRows;
+	}
+
 }

@@ -86,6 +86,7 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.module.jsr310.Jsr310Module;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -99,7 +100,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
  */
 public class BillControllerTest extends ControllerBaseTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(BillControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BillControllerTest.class);
 
 	@Mock
 	private BillBrowserManager billManagerMock;
@@ -234,7 +235,6 @@ public class BillControllerTest extends ControllerBaseTest {
 		Bill bill = BillHelper.setup();
 		when(patientManagerMock.getPatientById(bill.getBillPatient().getCode())).thenReturn(null);
 		when(billManagerMock.getBill(id)).thenReturn(bill);
-		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(
@@ -294,7 +294,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO  check eq(bill) case
 		//when(billManagerMock.updateBill(bill, billItemsArrayList, billPaymentsList))
 		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsList), eq(billPaymentsList)))
-				.thenReturn(true);
+				.thenReturn(bill);
 
 		this.mockMvc
 				.perform(
@@ -316,8 +316,8 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		List<BillItems> itemsDTOSExpected = new ArrayList<>();
-		itemsDTOSExpected.addAll(newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		List<BillItems> itemsDTOSExpected = new ArrayList<>(
+				newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
 
 		when(billManagerMock.getItems(id)).thenReturn(itemsDTOSExpected);
 
@@ -348,7 +348,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_bill_with_existent_id_then_response_BillDTO_and_OK() throws Exception {
-		Integer id = 123;
+		int id = 123;
 		String request = "/bills/{id}";
 
 		Bill bill = BillHelper.setup();
@@ -369,14 +369,12 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_delete_bill_with_existent_id_then_response_true_and_OK() throws Exception {
-		Integer id = 123;
+		int id = 123;
 		String request = "/bills/{id}";
 
 		Bill bill = BillHelper.setup();
 
 		when(billManagerMock.getBill(id)).thenReturn(bill);
-
-		when(billManagerMock.deleteBill(bill)).thenReturn(true);
 
 		this.mockMvc
 				.perform(
@@ -390,7 +388,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_bill_pending_affiliate_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/bills/pending/affiliate?patient_code={code}";
 
 		List<Bill> billList = BillHelper.genList(2);
@@ -439,7 +437,7 @@ public class BillControllerTest extends ControllerBaseTest {
 
 	@Test
 	public void when_get_pendingBills_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
-		Integer code = 123;
+		int code = 123;
 		String request = "/bills/pending?patient_code={code}";
 
 		List<Bill> billList = BillHelper.genList(2);
@@ -559,7 +557,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	public void when_get_getPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
 		String request = "/bills/payments/{bill_id}";
 
-		Integer billId = 123;
+		int billId = 123;
 
 		List<BillPaymentsDTO> billPaymentsDTOList = BillPaymentsDTOHelper.genList(3, billPaymentsMapper);
 

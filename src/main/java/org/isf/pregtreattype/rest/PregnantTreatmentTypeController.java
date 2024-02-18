@@ -32,6 +32,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,13 +45,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/pregnanttreatmenttypes")
+@Tag(name = "Pregnant Treatment Types")
+@SecurityRequirement(name = "bearerAuth")
 public class PregnantTreatmentTypeController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PregnantTreatmentTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PregnantTreatmentTypeController.class);
 
 	@Autowired
 	protected PregnantTreatmentTypeBrowserManager pregTreatTypeManager;
@@ -66,13 +69,13 @@ public class PregnantTreatmentTypeController {
 	/**
 	 * Create a new {@link PregnantTreatmentType}.
 	 * @param pregnantTreatmentTypeDTO
-	 * @return {@code true} if the pregnant treatment type has been stored, {@code false} otherwise.
+	 * @return the newly stored {@link PregnantTreatmentType} object.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PregnantTreatmentTypeDTO> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO) throws OHServiceException {
 		String code = pregnantTreatmentTypeDTO.getCode();
-		LOGGER.info("Create pregnant treatment Type {}", code);
+		LOGGER.info("Create PregnantTreatmentType {}", code);
 		PregnantTreatmentType isCreatedPregnantTreatmentType = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
 		if (isCreatedPregnantTreatmentType == null) {
 			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not created."));
@@ -83,13 +86,13 @@ public class PregnantTreatmentTypeController {
 	/**
 	 * Updates the specified {@link PregnantTreatmentType}.
 	 * @param pregnantTreatmentTypeDTO
-	 * @return {@code true} if the pregnant treatment type has been updated, {@code false} otherwise.
+	 * @return the updated {@link PregnantTreatmentType} object.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PregnantTreatmentTypeDTO> updatePregnantTreatmentTypet(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
+	ResponseEntity<PregnantTreatmentTypeDTO> updatePregnantTreatmentTypes(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
 			throws OHServiceException {
-		LOGGER.info("Update pregnanttreatmenttypes code: {}", pregnantTreatmentTypeDTO.getCode());
+		LOGGER.info("Update PregnantTreatmentType code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Pregnant Treatment Type not found."));
@@ -119,27 +122,30 @@ public class PregnantTreatmentTypeController {
 	}
 
 	/**
-	 * Delete {@link PregnantTreatmentType} for the specified code.
+	 * Delete the {@link PregnantTreatmentType} for the specified code.
 	 * @param code
 	 * @return {@code true} if the {@link PregnantTreatmentType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deletePregnantTreatmentType(@PathVariable("code") String code) throws OHServiceException {
-		LOGGER.info("Delete pregnantTreatment Type code: {}", code);
-		boolean isDeleted = false;
+		LOGGER.info("Delete PregnantTreatment Type code: {}", code);
 		if (pregTreatTypeManager.isCodePresent(code)) {
 			List<PregnantTreatmentType> pregTreatTypes = pregTreatTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTreatTypeFounds = pregTreatTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!pregTreatTypeFounds.isEmpty()) {
-				isDeleted = pregTreatTypeManager.deletePregnantTreatmentType(pregTreatTypeFounds.get(0));
+				try {
+					pregTreatTypeManager.deletePregnantTreatmentType(pregTreatTypeFounds.get(0));
+				} catch (OHServiceException serviceException) {
+					LOGGER.info("Delete PregnantTreatment Type code: {} failed.", code);
+					return ResponseEntity.ok(false);
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 
 }

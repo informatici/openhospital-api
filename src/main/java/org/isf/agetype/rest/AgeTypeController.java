@@ -36,6 +36,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,14 +48,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value="/agetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/agetypes")
+@Tag(name = "AgeTypes")
+@SecurityRequirement(name = "bearerAuth")
 public class AgeTypeController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AgeTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeController.class);
 
 	@Autowired
 	private AgeTypeBrowserManager ageTypeManager;
@@ -100,9 +102,10 @@ public class AgeTypeController {
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
-		if (ageTypeManager.updateAgeType(ageTypes)) {
+		try {
+			ageTypeManager.updateAgeType(ageTypes);
 			return ResponseEntity.ok(ageTypeDTO);
-		} else {
+		} catch (OHServiceException ex) {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

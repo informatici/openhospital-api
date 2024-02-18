@@ -19,8 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.lab.data;
+package org.isf.security;
 
-public class LaboratoryForPrintHelper {
+import java.util.Optional;
 
+import org.isf.utils.db.AuditorAwareInterface;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+public class ApiAuditorAwareImpl implements AuditorAwareInterface {
+
+	@Override
+	public Optional<String> getCurrentAuditor() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null && authentication.isAuthenticated()) {
+			return Optional.of(authentication.getName());
+		} else {
+			return Optional.empty();
+		}
+	}
 }

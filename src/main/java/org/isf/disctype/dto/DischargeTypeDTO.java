@@ -23,7 +23,7 @@ package org.isf.disctype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author gildas
@@ -31,11 +31,11 @@ import io.swagger.annotations.ApiModelProperty;
 public class DischargeTypeDTO {
 
 	@NotNull
-	@ApiModelProperty(notes = "code of the discharge type", example = "SN", position = 1)
+	@Schema(description = "Code of the discharge type", example = "SN")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "description of the discharge type", example = "SORTIE NORMALE", position = 2)
+	@Schema(description = "Description of the discharge type", example = "SORTIE NORMALE", maxLength = 50)
 	private String description;
 
 	public String getCode() {

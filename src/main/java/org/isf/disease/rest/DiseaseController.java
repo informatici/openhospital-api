@@ -35,6 +35,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,14 +48,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value="/diseases",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/diseases")
+@Tag(name = "Diseases")
+@SecurityRequirement(name = "bearerAuth")
 public class DiseaseController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseController.class);
 
 	@Autowired
 	protected DiseaseBrowserManager diseaseManager;
@@ -249,11 +251,12 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage("Duplicated disease description for the same disease type."),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		if (diseaseManager.newDisease(disease) != null) {
+		try {
+			diseaseManager.newDisease(disease);
 			return ResponseEntity.status(HttpStatus.CREATED).body(diseaseDTO);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		throw new OHAPIException(new OHExceptionMessage("Disease not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	/**
@@ -269,11 +272,12 @@ public class DiseaseController {
 			throw new OHAPIException(new OHExceptionMessage("Disease not found."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		disease.setLock(diseaseDTO.getLock());
-		if (diseaseManager.updateDisease(disease) != null) {
-        	return ResponseEntity.ok(diseaseDTO);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+		try {
+			diseaseManager.updateDisease(disease);
+			return ResponseEntity.ok(diseaseDTO);
+		} catch (OHServiceException serviceException) {
+        		throw new OHAPIException(new OHExceptionMessage("Disease not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	}
 	}
 	
 	/**
@@ -287,7 +291,14 @@ public class DiseaseController {
 		Disease disease = diseaseManager.getDiseaseByCode(code);
 		if (disease != null) {
 			Map<String, Boolean> result = new HashMap<>();
-			result.put("deleted", diseaseManager.deleteDisease(disease));
+			boolean isDeleted;
+			try {
+				diseaseManager.deleteDisease(disease);
+				isDeleted = true;
+			} catch (OHServiceException serviceException) {
+				isDeleted = false;
+			}
+			result.put("deleted", isDeleted);
 			return ResponseEntity.ok(result);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("No disease found with the specified code."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -296,11 +307,11 @@ public class DiseaseController {
 	
 	private ResponseEntity<List<DiseaseDTO>> computeResponse(List<Disease> diseases) {
 		List<DiseaseDTO> diseasesDTO = mapper.map2DTOList(diseases);
-        if (diseasesDTO.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
-        } else {
-            return ResponseEntity.ok(diseasesDTO);
-        }
+        	if (diseasesDTO.isEmpty()) {
+            		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(diseasesDTO);
+        	} else {
+            		return ResponseEntity.ok(diseasesDTO);
+        	}
 	}
 
 }

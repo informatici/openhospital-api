@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -65,12 +65,13 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		return (List<SourceType>) list.stream().map(it -> modelMapper.map(it, sourceClass)).collect(Collectors.toList());
 	}
 
+	@Override
 	public ModelMapper getMapper() {
 		return this.modelMapper;
 	}
 
 	public PatientDTO map2DTOWS(Patient fromObj, Boolean status) {
-		// TODO Auto-generated method stub
+		
 		PatientDTO patientDTO = modelMapper.map(fromObj, destClass);
 
 		if (status) {
@@ -89,7 +90,8 @@ public class GenericMapper<SourceType, DestType> implements Mapper<SourceType, D
 		pageInfoDTO.setHasNextPage(pageInfo.isHasNextPage());
 		pageInfoDTO.setHasPreviousPage(pageInfo.isHasPreviousPage());
 		pageInfoDTO.setSize(pageInfo.getSize());
-		pageInfoDTO.setTotalCount(pageInfo.getTotalCount());
+		pageInfoDTO.setTotalNbOfElements(pageInfo.getTotalNbOfElements());
+		pageInfoDTO.setTotalPages(pageInfo.getTotalPages());
 		return pageInfoDTO;
 	}
 }

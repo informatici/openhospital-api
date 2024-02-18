@@ -32,6 +32,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,13 +46,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/patientvaccines")
+@Tag(name = "Patient Vaccines")
+@SecurityRequirement(name = "bearerAuth")
 public class PatVacController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatVacController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PatVacController.class);
 
 	@Autowired
 	protected PatVacManager patVacManager;
@@ -74,11 +77,14 @@ public class PatVacController {
 	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
 		int code = patientVaccineDTO.getCode();
 		LOGGER.info("Create patient vaccine {}", code);
-		PatientVaccine isCreatedPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
-		if (isCreatedPatientVaccine == null) {
+		PatientVaccine newPatientVaccine;
+		try {
+			newPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
+			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPatientVaccine));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Patient vaccine not created.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedPatientVaccine));
 	}
 
 	/**
@@ -93,11 +99,14 @@ public class PatVacController {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
 		patvac.setLock(patientVaccineDTO.getLock());
-		PatientVaccine isUpdatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
-		if (isUpdatedPatientVaccine == null) {
+		PatientVaccine updatedPatientVaccine;
+		try {
+			updatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
+			return ResponseEntity.ok(mapper.map2DTO(updatedPatientVaccine));
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Patient vaccine not updated.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not updated."));
 		}
-		return ResponseEntity.ok(mapper.map2DTO(isUpdatedPatientVaccine));
 	}
 
 	/**
@@ -162,11 +171,12 @@ public class PatVacController {
 		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
-		boolean isDeleted = patVacManager.deletePatientVaccine(patVac);
-		if (!isDeleted) {
+		try {
+			patVacManager.deletePatientVaccine(patVac);
+			return ResponseEntity.ok(true);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not deleted."));
 		}
-		return ResponseEntity.ok(isDeleted);
 	}
 
 }

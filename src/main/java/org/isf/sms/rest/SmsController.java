@@ -35,6 +35,7 @@ import org.isf.sms.model.Sms;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,14 +46,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value="/sms",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/sms")
+@Tag(name = "SMS")
+@SecurityRequirement(name = "bearerAuth")
 public class SmsController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(SmsController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SmsController.class);
 
 	@Autowired
 	private SmsManager smsManager;

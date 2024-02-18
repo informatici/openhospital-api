@@ -23,19 +23,19 @@ package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class GroupMenuDTO {
 
-	@ApiModelProperty(notes="code of the group menu", example = "1", position = 1)
+	@Schema(description = "Code of the group menu", example = "1", maxLength = 50)
 	private Integer code;
-	
+
 	@NotNull
-	@ApiModelProperty(notes="the related user group's code", example = "labo", position = 2)
+	@Schema(description = "The related user group's code", example = "labo", maxLength = 50)
 	private String userGroup;
-	
+
 	@NotNull
-	@ApiModelProperty(notes="the related menu item's code", example = "admtype", position = 3)
+	@Schema(description = "The related menu item's code", example = "admtype")
 	private String menuItem;
 
 	public GroupMenuDTO() {

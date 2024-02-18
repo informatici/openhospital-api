@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -50,13 +50,14 @@ import org.isf.patient.model.Patient;
 import org.isf.pregtreattype.manager.PregnantTreatmentTypeBrowserManager;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHAPIException;
-import org.isf.shared.pagination.PagedResponseDTO;
+import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.utils.pagination.PagedResponse;
 import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -75,13 +76,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/admissions", produces = "application/vnd.ohapi.app-v1+json")
+@RestController(value = "/admissions")
+@Tag(name = "Admissions")
+@SecurityRequirement(name = "bearerAuth")
 public class AdmissionController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionController.class);
 
 	// TODO: to centralize
 	protected static final String DEFAULT_PAGE_SIZE = "80";
@@ -143,7 +148,7 @@ public class AdmissionController {
 	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/admissions/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissions/patient/{patientCode}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -202,8 +207,8 @@ public class AdmissionController {
 	@GetMapping(value = "/admissions/admittedPatients", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 					@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
-					@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
-					@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange)
+					@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
+					@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange)
 					throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 		if (admissionRange != null && admissionRange.length == 2) {
@@ -229,22 +234,29 @@ public class AdmissionController {
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<AdmissionDTO>> getAdmissions(
-					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] admissionRange,
+	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
+					@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
-					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
+					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
+					@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
 					throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
-		PagedResponse<Admission> admissions = admissionManager.getAdmissionsPageable(admissionRange[0], admissionRange[1], page, size);
+		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
+		List<AdmissionDTO> admissionsDTO;
 
-		if (admissions.getData().isEmpty()) {
+		if (paged) {
+			PagedResponse<Admission> admissions = admissionManager.getAdmissionsPageable(admissionRange[0], admissionRange[1], page, size);
+			admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
+			admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
+		} else {
+			List<Admission> adms = admissionManager.getAdmissionsByDate(admissionRange[0], admissionRange[1]);
+			admissionsDTO = admissionMapper.map2DTOList(adms);
+		}
+		if (admissionsDTO.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
-		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
-		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
 		return ResponseEntity.ok(admissionsPageableDTO);
 	}
 
@@ -255,9 +267,9 @@ public class AdmissionController {
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PagedResponseDTO<AdmissionDTO>> getDischarges(
-					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime[] dischargeRange,
+	@GetMapping(value = "/admissions/discharges", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Page<AdmissionDTO>> getDischarges(
+					@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange,
 					@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 					@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size)
 					throws OHServiceException {
@@ -267,7 +279,7 @@ public class AdmissionController {
 		if (admissionsPageable.getData().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
-		PagedResponseDTO<AdmissionDTO> admissionsPageableDTO = new PagedResponseDTO<AdmissionDTO>();
+		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
 		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissionsPageable.getPageInfo()));
@@ -311,7 +323,7 @@ public class AdmissionController {
 	}
 
 	/**
-	 * Set an {@link Admission} record to deleted.
+	 * Set an {@link Admission} record to be deleted.
 	 * 
 	 * @param id
 	 * @return {@code true} if the record has been set to delete.
@@ -320,15 +332,12 @@ public class AdmissionController {
 	@DeleteMapping(value = "/admissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
-		boolean isDeleted;
 		Admission admission = admissionManager.getAdmission(id);
-		if (admission != null) {
-			isDeleted = admissionManager.setDeleted(id);
-		} else {
+		if (admission == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		admissionManager.setDeleted(id);
+		return ResponseEntity.ok(true);
 	}
 
 	/**
@@ -344,7 +353,6 @@ public class AdmissionController {
 
 		LOGGER.info("discharge the patient");
 		Patient patient = patientManager.getPatientById(patientCode);
-		Admission admissionUpdated;
 
 		if (patient == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
@@ -372,7 +380,7 @@ public class AdmissionController {
 			throw new OHAPIException(new OHExceptionMessage("the type of output is mandatory or does not exist."));
 		}
 		adm.setAdmitted(0);
-		admissionUpdated = admissionManager.updateAdmission(adm);
+		Admission admissionUpdated = admissionManager.updateAdmission(adm);
 
 		return ResponseEntity.status(HttpStatus.OK).body(admissionUpdated != null);
 	}
@@ -528,7 +536,7 @@ public class AdmissionController {
 	@ExceptionHandler
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public void handle(HttpMessageNotReadableException e) {
-		e.printStackTrace();
+		LOGGER.error("", e);
 	}
 
 	/**

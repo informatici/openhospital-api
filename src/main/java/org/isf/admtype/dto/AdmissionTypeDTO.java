@@ -23,20 +23,20 @@ package org.isf.admtype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @author antonio
  */
 public class AdmissionTypeDTO {
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "code of the admission type", example="A", position = 1)
+	@Schema(description = "Code of the admission type", example = "A")
 	private String code;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "description of the admission type", example="AMBULANCE", position = 2)
-    private String description;
+	@Schema(description = "Description of the admission type", example = "AMBULANCE", maxLength = 50)
+	private String description;
 
 	public String getCode() {
 		return this.code;

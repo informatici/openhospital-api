@@ -30,51 +30,51 @@ import org.isf.utils.time.TimeTools;
 
 import com.drew.lang.annotations.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class LaboratoryDTO {
 
-	@ApiModelProperty(notes = "Laboratory Code", position = 1)
+	@Schema(description = "Laboratory Code")
 	private Integer code;
 
-	@ApiModelProperty(notes = "Laboratory Material", value = "Blood", position = 2)
+	@Schema(description = "Laboratory Material", example = "Blood")
 	private String material;
 
-	@ApiModelProperty(notes = "Laboratory Exam", position = 3)
+	@Schema(description = "Laboratory Exam")
 	private ExamDTO exam;
 
-	@ApiModelProperty(notes = "Laboratory Registration Date", position = 4)
+	@Schema(description = "Laboratory Registration Date", type = "string")
 	private LocalDateTime registrationDate;
 
 	@NotNull
-	@ApiModelProperty(notes = "Laboratory Exam Date", position = 5)
+	@Schema(description = "Laboratory Exam Date", type = "string")
 	private LocalDateTime labDate;
 
-	@ApiModelProperty(notes = "Laboratory Result", position = 6)
+	@Schema(description = "Laboratory Result")
 	private String result;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
-	@ApiModelProperty(notes = "Laboratory Note", value = "Note by laboratorist", position = 7)
+	@Schema(description = "Laboratory Note", example = "Note by laboratorist", maxLength = 255)
 	private String note;
 
-	@ApiModelProperty(notes = "Laboratory Patient Code", position = 8)
+	@Schema(description = "Laboratory Patient Code")
 	private Integer patientCode;
 
-	@ApiModelProperty(notes = "Laboratory Patient Name", position = 9)
+	@Schema(description = "Laboratory Patient Name")
 	private String patName;
 
-	@ApiModelProperty(notes = "Laboratory Patient InOut", example = "0", position = 10)
+	@Schema(description = "Laboratory Patient InOut", example = "0")
 	private PatientSTATUS inOutPatient;
 
-	@ApiModelProperty(notes = "Laboratory Patient Age", position = 11)
+	@Schema(description = "Laboratory Patient Age")
 	private Integer age;
 
-	@ApiModelProperty(notes = "Laboratory Patient Sex", example = "M", position = 12)
+	@Schema(description = "Laboratory Patient Sex", example = "M")
 	private String sex;
 
-	@ApiModelProperty(notes = "Laboratory status", example = "DRAFT", position = 13)
+	@Schema(description = "Laboratory status", example = "DRAFT")
 	private LaboratoryStatus status;
 
 	public int getLock() {

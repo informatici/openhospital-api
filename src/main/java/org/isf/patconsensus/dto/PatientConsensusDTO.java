@@ -23,20 +23,19 @@ package org.isf.patconsensus.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a patient consensus")
+@Schema(description = "Class representing a patient consensus")
 public class PatientConsensusDTO {
 
-	@ApiModelProperty(notes = "consensus flag", position = 1)
+	@Schema(description = "Consensus flag")
 	private boolean consensusFlag;
 
-	@ApiModelProperty(notes = "service flag", position = 3)
+	@Schema(description = "Service flag")
 	private boolean serviceFlag;
 
 	@NotNull
-	@ApiModelProperty(notes = "patient id", position = 4)
+	@Schema(description = "Patient id")
 	private Integer patientId;
 
 	public boolean isConsensusFlag() {
@@ -46,7 +45,6 @@ public class PatientConsensusDTO {
 	public void setConsensusFlag(boolean consensusFlag) {
 		this.consensusFlag = consensusFlag;
 	}
-
 
 	public boolean isServiceFlag() {
 		return serviceFlag;

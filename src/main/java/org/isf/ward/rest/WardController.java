@@ -31,6 +31,7 @@ import org.isf.ward.manager.WardBrowserManager;
 import org.isf.ward.mapper.WardMapper;
 import org.isf.ward.model.Ward;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,14 +44,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/wards")
+@Tag(name = "Wards")
+@SecurityRequirement(name = "bearerAuth")
 public class WardController {
 
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(WardController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WardController.class);
 
     @Autowired
     protected WardBrowserManager wardManager;
@@ -64,7 +66,7 @@ public class WardController {
     }
 
     /**
-     * Get all the wards.
+     * Get all the {@link Ward}s.
      *
      * @return NO_CONTENT if there aren't wards, {@code List<WardDTO>} otherwise
      * @throws OHServiceException
@@ -82,7 +84,7 @@ public class WardController {
     }
 
     /**
-     * Get all the wards with maternity flag {@code false}.
+     * Get all the {@link Ward}s with maternity flag {@code false}.
      *
      * @return NO_CONTENT if there aren't wards, {@code List<WardDTO>} otherwise
      * @throws OHServiceException
@@ -100,7 +102,7 @@ public class WardController {
     }
 
     /**
-     * Get current number of patients inside a ward.
+     * Get current number of patients inside a {@link Ward}.
      *
      * @param code
      * @return BAD_REQUEST if there are some problem, integer otherwise
@@ -119,7 +121,7 @@ public class WardController {
     }
 
     /**
-     * Create a new ward.
+     * Create a new {@link Ward}.
      *
      * @param newWard
      * @return an error message if there are some problem, ok otherwise
@@ -136,7 +138,7 @@ public class WardController {
     }
 
     /**
-     * Update a specified ward.
+     * Update a specified {@link Ward}.
      *
      * @param updateWard
      * @return an error message if there are some problem, ok otherwise
@@ -156,7 +158,7 @@ public class WardController {
     }
 
     /**
-     * Delete a ward.
+     * Delete a {@link Ward}.
      *
      * @param code the ward to delete
      * @return an error message if there are some problem, ok otherwise
@@ -165,20 +167,20 @@ public class WardController {
     @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Boolean> deleteWard(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete Ward with code: {}", code);
-        boolean isDeleted;
         Ward ward = wardManager.findWard(code);
         if (ward != null) {
-            isDeleted = wardManager.deleteWard(ward);
-            if (!isDeleted) {
+            try {
+                wardManager.deleteWard(ward);
+            } catch (OHServiceException serviceException) {
                 throw new OHAPIException(new OHExceptionMessage("Ward not deleted."));
             }
-            return ResponseEntity.ok(isDeleted);
+            return ResponseEntity.ok(true);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     /**
-     * Check if the code is already used by other ward.
+     * Check if the code is already used by other {@link Ward}.
      *
      * @param code
      * @return {@code true} if it is already used, false otherwise
@@ -192,7 +194,7 @@ public class WardController {
     }
 
     /**
-     * Check if the Maternity Ward with code "M" exists or not.
+     * Check if the Maternity {@link Ward} with code "M" exists or not.
      *
      * @param createIfNotExist if {@code true} it will create the missing {@link Ward} (with default values)
      *                         and will return {@link true}

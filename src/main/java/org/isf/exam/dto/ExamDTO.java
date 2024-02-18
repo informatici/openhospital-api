@@ -23,26 +23,26 @@ package org.isf.exam.dto;
 
 import org.isf.exatype.dto.ExamTypeDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamDTO {
 
-	@ApiModelProperty(notes = "Exam Code", example = "01.01", position = 1)
+	@Schema(description = "Exam Code", example = "01.01", maxLength = 10)
 	private String code;
 
-	@ApiModelProperty(notes = "Exam Description", example = "1.1 HB", position = 2)
+	@Schema(description = "Exam Description", example = "1.1 HB", maxLength = 100)
 	private String description;
 
-	@ApiModelProperty(notes = "Exam Procedure", example = "1", position = 3)
+	@Schema(description = "Exam Procedure", example = "1")
 	private Integer procedure;
 
-	@ApiModelProperty(notes = "Exam Default Result", example = ">=12 (NORMAL)", position = 4)
+	@Schema(description = "Exam Default Result", example = ">=12 (NORMAL)", maxLength = 50)
 	private String defaultResult;
 
-	@ApiModelProperty(notes = "Exam Type", position = 5)
+	@Schema(description = "Exam Type")
 	private ExamTypeDTO examtype;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
 
 	public String getCode() {

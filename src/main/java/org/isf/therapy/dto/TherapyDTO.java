@@ -25,45 +25,45 @@ import java.time.LocalDateTime;
 
 import org.isf.medical.dto.MedicalDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class TherapyDTO {
 
-	@ApiModelProperty(notes="The therapy's ID", example = "1", position = 1)
+	@Schema(description = "The therapy's ID", example = "1")
 	private Integer therapyID;
-	
-	@ApiModelProperty(notes="The patient's ID", example = "1", position = 2)
+
+	@Schema(description = "The patient's ID", example = "1")
 	private Integer patID;
-	
-	@ApiModelProperty(notes="The dates of the therapy", position = 3)
+
+	@Schema(description = "The dates of the therapy", type = "string[]", example = "[\"2022-01-01T10:00:00\", \"2022-01-02T15:30:00\"]")
 	private LocalDateTime[] dates;
-	
-	@ApiModelProperty(notes="The medical associated to the therapy", position = 4)
+
+	@Schema(description = "The medical associated to the therapy")
 	private MedicalDTO medical;
-	
-	@ApiModelProperty(notes="The quantity of the medical", example = "48", position = 5)
+
+	@Schema(description = "The quantity of the medical", example = "48")
 	private Double qty;
-	
-	@ApiModelProperty(notes="The units", position = 6)
+
+	@Schema(description = "The units")
 	private String units;
-	
-	@ApiModelProperty(notes="The frequency in day", example = "2", position = 7)
+
+	@Schema(description = "The frequency in day", example = "2")
 	private Integer freqInDay;
-	
-	@ApiModelProperty(notes="A note for the therapy", example = "Sample note", position = 8)
+
+	@Schema(description = "A note for the therapy", example = "Sample note", maxLength = 65535)
 	private String note;
-	
-	@ApiModelProperty(notes="the notify flag: true if the notification need to be activated, false otherwise", example = "false", position = 9)	
+
+	@Schema(description = "The notify flag: true if the notification need to be activated, false otherwise", example = "false")
 	private boolean notify;
-	
-	@ApiModelProperty(notes="the sms flag: true if sms need to be sent to patient, false otherwise", example = "false", position = 10)
+
+	@Schema(description = "The sms flag: true if sms need to be sent to patient, false otherwise", example = "false")
 	private boolean sms;
 
 	public TherapyDTO() {
 	}
 
-	public TherapyDTO(Integer therapyID, Integer patID, LocalDateTime[] dates, MedicalDTO medical, Double qty, String units,
-			Integer freqInDay, String note, boolean notify, boolean sms) {
+	public TherapyDTO(Integer therapyID, Integer patID, LocalDateTime[] dates, MedicalDTO medical, Double qty,
+			String units, Integer freqInDay, String note, boolean notify, boolean sms) {
 		this.therapyID = therapyID;
 		this.patID = patID;
 		this.dates = dates;

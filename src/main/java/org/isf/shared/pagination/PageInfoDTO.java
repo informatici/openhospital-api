@@ -26,47 +26,66 @@ public class PageInfoDTO {
 	int size;
 	int page;
 	int nbOfElements;
-	long totalCount;
+	long totalPages;
+	long totalNbOfElements ;
 	boolean hasPreviousPage;
 	boolean hasNextPage;
 
 	public PageInfoDTO() {
-		super();
 	}
 
 	public int getSize() {
 		return size;
 	}
+	
 	public void setSize(int size) {
 		this.size = size;
 	}
+	
 	public int getPage() {
 		return page;
 	}
+	
 	public void setPage(int page) {
 		this.page = page;
 	}
+	
 	public int getNbOfElements() {
 		return nbOfElements;
 	}
+	
 	public void setNbOfElements(int nbOfElements) {
 		this.nbOfElements = nbOfElements;
 	}
-	public long getTotalCount() {
-		return totalCount;
+	
+	public long getTotalPages() {
+		return totalPages;
 	}
-	public void setTotalCount(long l) {
-		this.totalCount = l;
+	
+	public void setTotalPages(long l) {
+		this.totalPages = l;
 	}
+	
+	public long getTotalNbOfElements() {
+		return totalNbOfElements;
+	}
+
+	public void setTotalNbOfElements(long totalNbOfElements) {
+		this.totalNbOfElements = totalNbOfElements;
+	}
+
 	public boolean isHasPreviousPage() {
 		return hasPreviousPage;
 	}
+	
 	public void setHasPreviousPage(boolean hasPreviousPage) {
 		this.hasPreviousPage = hasPreviousPage;
 	}
+	
 	public boolean isHasNextPage() {
 		return hasNextPage;
 	}
+	
 	public void setHasNextPage(boolean hasNextPage) {
 		this.hasNextPage = hasNextPage;
 	}

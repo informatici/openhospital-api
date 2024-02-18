@@ -25,67 +25,71 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import org.isf.examination.model.Ausculation;
+import org.isf.examination.model.Bowel;
+import org.isf.examination.model.Diurese;
+
 import com.drew.lang.annotations.Nullable;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class PatientExaminationDTO {
 
-    @ApiModelProperty(notes = "Patient Examination Id", example = "1", position = 1)
-    private int pex_ID;
+	@Schema(description = "Patient Examination Id", example = "1")
+	private int pex_ID;
 
-    @NotNull
-    @ApiModelProperty(notes = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", position = 2)
-    private LocalDateTime pex_date;
+	@NotNull
+	@Schema(description = "Date of Patient Examination", example = "2020-03-19T14:58:00.000Z", type = "string")
+	private LocalDateTime pex_date;
 
-    @NotNull
-    @ApiModelProperty(notes = "Patient Examination Code", position = 3)
-    private Integer patientCode;
+	@NotNull
+	@Schema(description = "Patient Examination Code")
+	private Integer patientCode;
 
-    @ApiModelProperty(notes = "Patient Height in cm", position = 4)
-    private Integer pex_height;
+	@Schema(description = "Patient Height in cm")
+	private Integer pex_height;
 
-    @ApiModelProperty(notes = "Patient Weight in Kg", position = 5)
-    private Double pex_weight;
+	@Schema(description = "Patient Weight in Kg")
+	private Double pex_weight;
 
-    @ApiModelProperty(notes = "Blood Pressure MIN in mmHg", position = 6)
-    private Integer pex_ap_min;
+	@Schema(description = "Blood Pressure MIN in mmHg")
+	private Integer pex_ap_min;
 
-    @ApiModelProperty(notes = "Blood Pressure MAX in mmHg", position = 7)
-    private Integer pex_ap_max;
+	@Schema(description = "Blood Pressure MAX in mmHg")
+	private Integer pex_ap_max;
 
-    @ApiModelProperty(notes = "Respiratory Rate in bpm", position = 8)
-    private Integer pex_rr;
+	@Schema(description = "Respiratory Rate in bpm")
+	private Integer pex_rr;
 
-    @ApiModelProperty(notes = "Patient Temperature in °C", position = 9)
-    private Double pex_temp;
+	@Schema(description = "Patient Temperature in °C")
+	private Double pex_temp;
 
-    @ApiModelProperty(notes = "Patient Saturation in %", position = 10)
-    private Double pex_sat;
-    
-    @ApiModelProperty(notes = "Heart Rate in Apm", position = 11)
-    private Integer pex_hr;
-    
-    @Nullable
-    @ApiModelProperty(notes = "patient ausculation", example="normal", position = 12)
-    private Ausculation pex_auscultation;
-    
-    @ApiModelProperty(notes = "Hemo Glucose Test", position = 13)
-    private Integer pex_hgt;
-    
-    @ApiModelProperty(notes = "Daily urine Volume in ml", position = 14)
-    private Integer pex_diuresis;
-    
-    @Nullable
-    @ApiModelProperty(notes = "Diuresis description", example="physiological", position = 15)
-    private Diurese pex_diuresis_desc;
-    
-    @ApiModelProperty(notes = "Examination Note", position = 16)
-    private String pex_note;
-    
-    @Nullable
-    @ApiModelProperty(notes = "Bowel Function",example="regular", position = 17)
-    private Bowel pex_bowel_desc;
+	@Schema(description = "Patient Saturation in %")
+	private Double pex_sat;
+
+	@Schema(description = "Heart Rate in Apm")
+	private Integer pex_hr;
+
+	@Nullable
+	@Schema(description = "Patient ausculation", example = "normal")
+	private Ausculation pex_auscultation;
+
+	@Schema(description = "Hemo Glucose Test")
+	private Integer pex_hgt;
+
+	@Schema(description = "Daily urine Volume in ml")
+	private Integer pex_diuresis;
+
+	@Nullable
+	@Schema(description = "Diuresis description", example = "physiological")
+	private Diurese pex_diuresis_desc;
+
+	@Schema(description = "Examination Note", maxLength = 2000)
+	private String pex_note;
+
+	@Nullable
+	@Schema(description = "Bowel Function", example = "regular")
+	private Bowel pex_bowel_desc;
 
 	public int getPex_ID() {
 		return this.pex_ID;

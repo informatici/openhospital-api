@@ -20,27 +20,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.isf.opd.dto;
+package org.isf.shared.pagination;
 
 import java.util.List;
 
-import org.isf.operation.dto.OperationRowDTO;
-
-public class OpdWithOperatioRowDTO {
+public class Page<T> {
 	
-	private OpdDTO opdDTO;
-	private List<OperationRowDTO> operationRows;
-	public OpdDTO getOpdDTO() {
-		return opdDTO;
-	}
-	public void setOpdDTO(OpdDTO opdDTO) {
-		this.opdDTO = opdDTO;
-	}
-	public List<OperationRowDTO> getOperationRows() {
-		return operationRows;
-	}
-	public void setOperationRows(List<OperationRowDTO> operationRows) {
-		this.operationRows = operationRows;
-	}
+	List<T> data;
+	PageInfoDTO pageInfoDTO;
 
+	public List<T> getData() {
+		return data;
+	}
+	public void setData(List<T> data) {
+		this.data = data;
+	}
+	public PageInfoDTO getPageInfo() {
+		return pageInfoDTO;
+	}
+	public void setPageInfo(PageInfoDTO pageInfoDTO) {
+		this.pageInfoDTO = pageInfoDTO;
+	}
 }

@@ -34,6 +34,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,13 +48,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/medicals", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/medicals")
+@Tag(name = "Medicals")
+@SecurityRequirement(name = "bearerAuth")
 public class MedicalController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MedicalController.class);
 
 	@Autowired
 	private MedicalBrowsingManager medicalManager;
@@ -72,10 +75,10 @@ public class MedicalController {
 		LOGGER.info("Retrieving medical with code {} ...", code);
 		Medical medical = medicalManager.getMedical(code);
 		if (medical == null) {
-			LOGGER.info("Medical not found");
+			LOGGER.info("Medical not found.");
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		} else {
-			LOGGER.info("Medical retrieved successfully");
+			LOGGER.info("Medical retrieved successfully.");
 			return ResponseEntity.ok(mapper.map2DTO(medical));
 		}
 	}
@@ -104,10 +107,10 @@ public class MedicalController {
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
-			LOGGER.info("No medical found");
+			LOGGER.info("No medical found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			LOGGER.info("Found {} medicals", mappedMedicals.size());
+			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
@@ -128,21 +131,17 @@ public class MedicalController {
 			@RequestParam(name="critical", defaultValue="false") boolean critical,
 			@RequestParam(name="name_sorted", defaultValue="false") boolean nameSorted) throws OHServiceException {
 		LOGGER.info("Filtering the medicals...");
-		List<Medical> medicals = null;
+		List<Medical> medicals;
 		if (description != null && type != null) {
 			medicals = medicalManager.getMedicals(description, type, critical);
-		}
-		else if (description != null && type == null) {
+		} else if (description != null && type == null) {
 			medicals = medicalManager.getMedicals(description);
-		}
-		else if (description == null && type != null) {
+		} else if (description == null && type != null) {
 			medicals = medicalManager.getMedicals(type, nameSorted);
-		}
-		else if (nameSorted){
+		} else if (nameSorted){
 			medicals = medicalManager.getMedicals(null, nameSorted);
-		}
-		else {
-			medicalManager.getMedicals();
+		} else {
+			medicals = medicalManager.getMedicals();
 		}
 		
 		if (medicals == null) {
@@ -150,10 +149,10 @@ public class MedicalController {
 		}
 		List<MedicalDTO> mappedMedicals = mapper.map2DTOList(medicals);
 		if (mappedMedicals.isEmpty()) {
-			LOGGER.info("No medical found");
+			LOGGER.info("No medical found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicals);
 		} else {
-			LOGGER.info("Found {} medicals", mappedMedicals.size());
+			LOGGER.info("Found {} medicals.", mappedMedicals.size());
 			return ResponseEntity.ok(mappedMedicals);
 		}
 	}
@@ -170,13 +169,15 @@ public class MedicalController {
 			@RequestBody MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Creating a new medical ...");
-		Medical isCreatedMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
-		if (isCreatedMedical == null) {
-			LOGGER.info("Medical is not created!");
+		Medical createdMedical;
+		try {
+			createdMedical = medicalManager.newMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		} catch (OHServiceException serviceException) {
+			LOGGER.info("Medical is not created.");
             throw new OHAPIException(new OHExceptionMessage("Medical not created."));
         }
-		LOGGER.info("Medical successfully created!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMedical));
+		LOGGER.info("Medical successfully created.");
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdMedical));
 	}
 	
 	/**
@@ -191,13 +192,15 @@ public class MedicalController {
 			@RequestBody @Valid MedicalDTO medicalDTO,
 			@RequestParam(name="ignore_similar", defaultValue="false") boolean ignoreSimilar) throws OHServiceException {
 		LOGGER.info("Updating a medical ...");
-		Medical isUpdatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
-		if (isUpdatedMedical == null) {
-			LOGGER.info("Medical is not updated!");
+		Medical updatedMedical;
+		try {
+			updatedMedical = medicalManager.updateMedical(mapper.map2Model(medicalDTO), ignoreSimilar);
+		} catch (OHServiceException serviceException) {
+			LOGGER.info("Medical is not updated.");
             throw new OHAPIException(new OHExceptionMessage("Medical not updated."));
         }
-		LOGGER.info("Medical successfully updated!");
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(isUpdatedMedical));
+		LOGGER.info("Medical successfully updated.");
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedMedical));
 	}
 	
 	/**
@@ -212,7 +215,11 @@ public class MedicalController {
 		if (medical == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
 		}
-		boolean isDeleted = medicalManager.deleteMedical(medical);
-		return ResponseEntity.ok(isDeleted);
+		try {
+			medicalManager.deleteMedical(medical);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Medical not deleted"));
+		}
+		return ResponseEntity.ok(true);
 	}
 }

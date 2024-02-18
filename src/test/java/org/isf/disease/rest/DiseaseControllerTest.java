@@ -48,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +57,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class DiseaseControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseControllerTest.class);
 
 	@Mock
 	private DiseaseBrowserManager diseaseBrowserManagerMock;
@@ -352,9 +353,6 @@ public class DiseaseControllerTest {
 
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
 				.thenReturn(disease);
-
-		when(diseaseBrowserManagerMock.deleteDisease(disease))
-				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code)

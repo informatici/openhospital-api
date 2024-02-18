@@ -23,18 +23,26 @@ package org.isf.lab.dto;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class LaboratoryForPrintDTO {
 
+	@Schema(description = "Exam name", type = "string")
 	private String exam;
 
+	@Schema(description = "Laboratory Date", type = "string")
 	private LocalDateTime date;
 
+	@Schema(description = "Result of exam", type = "string")
 	private String result;
 
+	@Schema(description = "Code")
 	private Integer code;
 
+	@Schema(description = "Patient name", type = "string")
 	private String patName;
 
+	@Schema(description = "Patient code")
 	private Integer patientCode;
 
 	public String getExam() {

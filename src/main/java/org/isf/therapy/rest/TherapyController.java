@@ -40,6 +40,7 @@ import org.isf.therapy.model.TherapyRow;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -51,14 +52,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/therapies", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/therapies")
+@Tag(name = "Therapies")
+@SecurityRequirement(name = "bearerAuth")
 public class TherapyController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(TherapyController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TherapyController.class);
 
 	@Autowired
 	private TherapyManager manager;
@@ -109,17 +111,17 @@ public class TherapyController {
 	/**
 	 * Deletes all therapies for specified Patient Code.
 	 * @param code - the Patient Code
-	 * @return {@code true} if the therapies have been deleted, {@code false} otherwise
+	 * @return {@code true} if the therapies have been deleted, throws an exception otherwise
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/therapies/{code_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAllTherapies(@PathVariable("code_patient") Integer code) throws OHServiceException {
-		boolean done = manager.deleteAllTherapies(code);
-		if (done) {
-			return ResponseEntity.ok(done);
-		} else {
+		try {
+			manager.deleteAllTherapies(code);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Therapies not deleted."));
 		}
+		return ResponseEntity.ok(true);
 	}
 	
 	/**

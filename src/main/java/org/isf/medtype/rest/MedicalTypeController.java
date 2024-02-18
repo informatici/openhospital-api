@@ -34,6 +34,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,13 +47,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/medicaltypes")
+@Tag(name = "Medical Types")
+@SecurityRequirement(name = "bearerAuth")
 public class MedicalTypeController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(MedicalTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MedicalTypeController.class);
 
 	@Autowired
 	private MedicalTypeBrowserManager medicalTypeBrowserManager;
@@ -132,12 +135,17 @@ public class MedicalTypeController {
 	 */
 	@DeleteMapping(value = "/medicaltypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteMedicalType(@PathVariable("code") String code) throws OHServiceException {
-		List<MedicalType> machedMedicalTypes = medicalTypeBrowserManager.getMedicalType()
+		List<MedicalType> matchedMedicalTypes = medicalTypeBrowserManager.getMedicalType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
 				.collect(Collectors.toList());
-		if (!machedMedicalTypes.isEmpty()) {
-			return ResponseEntity.ok(medicalTypeBrowserManager.deleteMedicalType(machedMedicalTypes.get(0)));
+		if (!matchedMedicalTypes.isEmpty()) {
+			try {
+				medicalTypeBrowserManager.deleteMedicalType(matchedMedicalTypes.get(0));
+			} catch (OHServiceException serviceException) {
+				throw new OHAPIException(new OHExceptionMessage("Medical type not deleted."));
+			}
+			return ResponseEntity.ok(true);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Medical type not found."));
 		}

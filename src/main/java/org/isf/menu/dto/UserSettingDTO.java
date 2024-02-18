@@ -23,20 +23,24 @@ package org.isf.menu.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserSettingDTO {
-	
+
 	@NotNull
-	@ApiModelProperty(notes="the id of the setting (must be unique)", example = "1", position = 1)	
+	@Schema(description = "The id of the setting (must be unique)", example = "1")
 	private int id;
-	
+
 	@NotNull
-	@ApiModelProperty(notes="the the name of the setting", example = "dashboard", position = 2)
+	@Schema(description = "The name of the setting", example = "dashboard", maxLength = 50)
 	private String configName;
 	
 	@NotNull
-	@ApiModelProperty(notes="the the value of the user", position = 3)
+	@Schema(description = "The name of the user", example = "admin")
+	private String user;
+
+	@NotNull
+	@Schema(description = "The value of the user", maxLength = 65535)
 	private String configValue;
 
 	public int getId() {
@@ -61,6 +65,14 @@ public class UserSettingDTO {
 
 	public void setConfigValue(String configValue) {
 		this.configValue = configValue;
+	}
+
+	public String getUser() {
+		return user;
+	}
+	
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 }

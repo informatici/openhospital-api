@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -29,9 +29,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @SpringBootTest
 public class OpenHospitalApiApplicationTests {
 
-//  FIXME: test application context loading	
 //	@Test
 //	public void contextLoads() {
+//		/*
+//		 * Context loading is working correctly. However, since this test does not provide any additional value and may actually slow down the tests execution,
+//		 * it's recommended to remove it. The loading context is implicitly tested by other tests that run as SpringBootTest.
+//		 */
 //	}
-
 }

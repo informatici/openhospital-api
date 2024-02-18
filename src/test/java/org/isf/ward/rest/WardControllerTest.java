@@ -48,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +57,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class WardControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(WardControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WardControllerTest.class);
 
 	@Mock
 	protected WardBrowserManager wardBrowserManagerMock;
@@ -187,7 +188,6 @@ public class WardControllerTest {
 		Ward ward = WardHelper.setup(code);
 		WardDTO body = wardMapper.map2DTO(ward);
 
-		boolean isUpdated = true;
 		when(wardBrowserManagerMock.updateWard(wardMapper.map2Model(body)))
 				.thenReturn(ward);
 
@@ -215,9 +215,6 @@ public class WardControllerTest {
 
 		when(wardBrowserManagerMock.findWard(code))
 				.thenReturn(ward);
-
-		when(wardBrowserManagerMock.deleteWard(wardMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc

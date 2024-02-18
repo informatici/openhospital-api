@@ -24,16 +24,17 @@ package org.isf.security;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.isf.login.dto.LoginResponse;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -56,7 +57,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OHSimpleUrlAuthenticationSuccessHandler.class);
 
 	public OHSimpleUrlAuthenticationSuccessHandler(TokenProvider tokenProvider) {
 		this.tokenProvider = tokenProvider;
@@ -64,13 +65,13 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-					throws ServletException, IOException {
+					throws IOException {
 
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
 		LoginResponse loginResponse = new LoginResponse();
 		loginResponse.setToken(this.tokenProvider.generateJwtToken(authentication, true));
-		loginResponse.setDisplayName(authentication.getName());
+		loginResponse.setUsername(authentication.getName());
 		ObjectMapper mapper = new ObjectMapper();
 
 		response.getWriter().append(mapper.writeValueAsString(loginResponse));

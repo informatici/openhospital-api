@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
 
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.model.Opd;
-import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.shared.GenericMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -37,9 +35,6 @@ public class OpdMapper extends GenericMapper<Opd, OpdDTO> {
 	public OpdMapper() {
 		super(Opd.class, OpdDTO.class);
 	}
-
-	@Autowired
-	protected PatientBrowserManager patientManager = new PatientBrowserManager();
 	
 	@Override
 	public OpdDTO map2DTO(Opd fromObj) {

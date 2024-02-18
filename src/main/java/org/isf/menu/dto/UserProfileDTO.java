@@ -28,6 +28,8 @@ public class UserProfileDTO {
 	private String userName;
 
 	private List<String> permissions;
+	
+	private UserGroupDTO userGroup;
 
 	public String getUserName() {
 		return userName;
@@ -43,6 +45,14 @@ public class UserProfileDTO {
 
 	public void setPermissions(List<String> permission) {
 		this.permissions = permission;
+	}
+
+	public UserGroupDTO getUserGroup() {
+		return userGroup;
+	}
+
+	public void setUserGroup(UserGroupDTO userGroup) {
+		this.userGroup = userGroup;
 	}
 
 }

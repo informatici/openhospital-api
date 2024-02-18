@@ -35,7 +35,6 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,14 +47,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value="/diseasetypes",produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/diseasetypes")
+@Tag(name = "Disease Types")
+@SecurityRequirement(name = "bearerAuth")
 public class DiseaseTypeController {
-
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseTypeController.class);
 
 	@Autowired
 	private DiseaseTypeBrowserManager diseaseTypeManager;
@@ -85,7 +83,7 @@ public class DiseaseTypeController {
 	}	
 	
 	/**
-	 * Create a new disease type.
+	 * Create a new {@link DiseaseType}.
 	 * @param diseaseTypeDTO
 	 * @return the disease type created
 	 * @throws OHServiceException - in case of duplicated code or in case of error
@@ -94,14 +92,14 @@ public class DiseaseTypeController {
 	public ResponseEntity<DiseaseTypeDTO> newDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
         DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
         if (diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Specified code is already used."), HttpStatus.INTERNAL_SERVER_ERROR);
+        	throw new OHAPIException(new OHExceptionMessage("Specified Disease Type code is already used."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
-        if (diseaseTypeManager.newDiseaseType(diseaseType)) {
-        	return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+	        diseaseTypeManager.newDiseaseType(diseaseType);
+        } catch (OHServiceException serviceException) {
+	        throw new OHAPIException(new OHExceptionMessage("Disease Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return ResponseEntity.status(HttpStatus.CREATED).body(diseaseTypeDTO);
 	}
 	
 	/**
@@ -112,16 +110,16 @@ public class DiseaseTypeController {
 	 */
 	@PutMapping(value = "/diseasetypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<DiseaseTypeDTO> updateDiseaseType(@Valid @RequestBody DiseaseTypeDTO diseaseTypeDTO) throws OHServiceException {
-        DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
-        if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        
-        if (diseaseTypeManager.updateDiseaseType(diseaseType)) {
-        	return ResponseEntity.ok(diseaseTypeDTO);
-        } else {
-        	throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+		DiseaseType diseaseType = mapper.map2Model(diseaseTypeDTO);
+		if (!diseaseTypeManager.isCodePresent(diseaseType.getCode())) {
+			throw new OHAPIException(new OHExceptionMessage("Disease Type not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		try {
+			diseaseTypeManager.updateDiseaseType(diseaseType);
+			return ResponseEntity.ok(diseaseTypeDTO);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Disease Type not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	/**
@@ -137,13 +135,17 @@ public class DiseaseTypeController {
 				.filter(item -> item.getCode().equals(code))
 				.findFirst();
 		if (optDiseaseType.isPresent()) {
-			boolean deleted = diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
-			Map<String, Boolean> result = new HashMap<>();
-			result.put("deleted", deleted);
-			return ResponseEntity.ok(result);
+			try {
+				diseaseTypeManager.deleteDiseaseType(optDiseaseType.get());
+				Map<String, Boolean> result = new HashMap<>(1);
+				result.put("deleted", true);
+				return ResponseEntity.ok(result);
+			} catch (OHServiceException serviceException) {
+				throw new OHAPIException(new OHExceptionMessage("Disease Type not deleted."), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("No disease type found with the given code."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(new OHExceptionMessage("No Disease Type found with the given code."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 }

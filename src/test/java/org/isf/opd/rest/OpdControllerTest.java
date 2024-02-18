@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.isf.distype.manager.DiseaseTypeBrowserManager;
 import org.isf.opd.data.OpdHelper;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -47,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,7 +57,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class OpdControllerTest {
 	
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(OpdControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OpdControllerTest.class);
 
 	@Mock
 	protected OpdBrowserManager opdBrowserManagerMock;
@@ -70,6 +72,8 @@ public class OpdControllerTest {
 	protected OperationRowMapper opRowMapper = new OperationRowMapper();
 	
 	protected WardBrowserManager wardManager = new WardBrowserManager();
+	
+	protected DiseaseTypeBrowserManager diseaseType = new DiseaseTypeBrowserManager();
 
 	private MockMvc mockMvc;
 
@@ -79,7 +83,7 @@ public class OpdControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowManager, opRowMapper, wardManager))
+				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowManager, opRowMapper, wardManager, diseaseType))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();

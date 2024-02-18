@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -31,6 +31,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,18 +40,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController()
-@RequestMapping("/patientConsensus")
-@Api(value = "/patientConsensus", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = { @Authorization(value = "apiKey") })
+@RestController(value = "/patientconsensus")
+@Tag(name = "Patient Consensus")
+@SecurityRequirement(name = "bearerAuth")
 public class PatientConsensusController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(PatientConsensusController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PatientConsensusController.class);
 
 	@Autowired
 	protected PatientConsensusBrowserManager manager;
@@ -58,7 +58,7 @@ public class PatientConsensusController {
 	@Autowired
 	protected PatientConsensusMapper mapper;
 
-	@GetMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/patientconsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> getPatientConsensus(@PathVariable Integer patientId) throws OHServiceException {
 		LOGGER.info("Retrieving patient consensus: {}", patientId);
 		Optional<PatientConsensus> patientConsensus = manager.getPatientConsensusByUserId(patientId);
@@ -69,7 +69,7 @@ public class PatientConsensusController {
 		return ResponseEntity.ok(patientDTO);
 	}
 
-	@PutMapping(value = "/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/patientconsensus/{patientId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<PatientConsensusDTO> updatePatientConsensus(@PathVariable Integer patientId, @RequestBody PatientConsensusDTO patientConsensus)
 					throws OHServiceException {
 		LOGGER.info("Update patient consensus by id: {}", patientId);
@@ -80,14 +80,15 @@ public class PatientConsensusController {
 		if (patConsensusOpt.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("PatientConsensus not found."));
 		}
-		PatientConsensus updatedPatienConsensustModel = mapper.map2Model(patientConsensus);
-		updatedPatienConsensustModel.setId(this.manager.getPatientConsensusByUserId(patientId).get().getId());
-		PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensustModel);
-		if (patientConsensusUpdated == null) {
+		PatientConsensus updatedPatienConsensusModel = mapper.map2Model(patientConsensus);
+		updatedPatienConsensusModel.setId(patConsensusOpt.get().getId());
+		try {
+			PatientConsensus patientConsensusUpdated = manager.updatePatientConsensus(updatedPatienConsensusModel);
+			PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
+			return ResponseEntity.ok(patientConsensusDTO);
+		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("PatientConsensus is not updated."));
 		}
-		PatientConsensusDTO patientConsensusDTO = mapper.map2DTO(patientConsensusUpdated);
-		return ResponseEntity.ok(patientConsensusDTO);
 	}
 
 }

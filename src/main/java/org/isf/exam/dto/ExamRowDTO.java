@@ -21,17 +21,17 @@
  */
 package org.isf.exam.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ExamRowDTO {
 
-    @ApiModelProperty(notes = "Exam Row Code", example = "999", position = 1)
-    private int code;
+	@Schema(description = "Exam Row Code", example = "999")
+	private int code;
 
-    @ApiModelProperty(notes = "Exam Row Code", example = "NEGATIVE", position = 2)
-    private String description;
+	@Schema(description = "Exam Row Code", example = "NEGATIVE")
+	private String description;
 
-    private ExamDTO exam;
+	private ExamDTO exam;
 
 	public int getCode() {
 		return this.code;

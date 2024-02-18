@@ -28,7 +28,6 @@ import org.isf.hospital.model.Hospital;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,14 +38,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/hospitals")
+@Tag(name = "Hospitals")
+@SecurityRequirement(name = "bearerAuth")
 public class HospitalController {
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HospitalController.class);
 
     @Autowired
     private HospitalBrowsingManager hospitalBrowsingManager;

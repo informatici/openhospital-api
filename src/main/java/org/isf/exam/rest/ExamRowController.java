@@ -32,7 +32,6 @@ import org.isf.exam.mapper.ExamRowMapper;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,14 +45,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.Authorization;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value="apiKey")})
+@RestController(value = "/examrows")
+@Tag(name = "Exam Rows")
+@SecurityRequirement(name = "bearerAuth")
 public class ExamRowController {
-
-    private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ExamRowController.class);
 
     @Autowired
     protected ExamBrowsingManager examManager;
@@ -134,7 +132,9 @@ public class ExamRowController {
         if (examRows.size() > 1) {
             throw new OHAPIException(new OHExceptionMessage("Found multiple ExamRows."));
         }
-        if (!examRowBrowsingManager.deleteExamRow(examRows.get(0))) {
+        try {
+            examRowBrowsingManager.deleteExamRow(examRows.get(0));
+        } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("ExamRow not deleted."));
         }
         return ResponseEntity.ok(true);

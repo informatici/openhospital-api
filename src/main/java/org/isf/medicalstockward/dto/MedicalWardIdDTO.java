@@ -26,18 +26,18 @@ import javax.validation.constraints.NotNull;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.ward.dto.WardDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalWardIdDTO {
 
 	@NotNull
-	@ApiModelProperty(notes="The ward", position = 1)
+	@Schema(description = "The ward")
 	private WardDTO ward;
-	
+
 	@NotNull
-	@ApiModelProperty(notes="The medical", position = 2)
+	@Schema(description = "The medical")
 	private MedicalDTO medical;
-	
+
 	public MedicalWardIdDTO() {
 	}
 

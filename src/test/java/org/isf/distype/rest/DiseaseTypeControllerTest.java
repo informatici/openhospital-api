@@ -48,6 +48,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +57,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class DiseaseTypeControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
 
 	@Mock
 	protected DiseaseTypeBrowserManager diseaseTypeBrowserManager;
@@ -111,14 +112,14 @@ public class DiseaseTypeControllerTest {
 	public void testNewDiseaseType_201() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
-		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(code));
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
 
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(false);
 
-		boolean isCreated = true;
 		when(diseaseTypeBrowserManager.newDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(diseaseType);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -144,9 +145,8 @@ public class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(diseaseTypeBrowserManager.updateDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(diseaseType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -170,9 +170,6 @@ public class DiseaseTypeControllerTest {
 
 		when(diseaseTypeBrowserManager.getDiseaseType())
 				.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1));
-
-		when(diseaseTypeBrowserManager.deleteDiseaseType(diseaseTypeMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc

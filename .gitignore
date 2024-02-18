@@ -9,6 +9,8 @@ bin
 /static
 !static/swagger-ui/
 
+#Project related
+.env
 
 ### STS ###
 .apt_generated
@@ -37,3 +39,4 @@ bin
 ### VScode ###
 .vscode
 /deps/
+OH_API_PID

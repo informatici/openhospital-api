@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -23,11 +23,14 @@ package org.isf.config;
 
 import java.util.Arrays;
 
+import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.CustomLogoutHandler;
+import org.isf.security.ApiAuditorAwareImpl;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTConfigurer;
 import org.isf.security.jwt.TokenProvider;
+import org.isf.utils.db.AuditorAwareInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,8 +68,12 @@ public class SecurityConfig {
 	@Autowired
 	private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-	public SecurityConfig(TokenProvider tokenProvider) {
+	@Autowired
+	protected PermissionManager permissionManager;
+
+	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager) {
 		this.tokenProvider = tokenProvider;
+		this.permissionManager = permissionManager;
 	}
 
 	@Autowired
@@ -113,168 +120,215 @@ public class SecurityConfig {
 						.authenticationEntryPoint(restAuthenticationEntryPoint)
 						.and().authorizeRequests().antMatchers("/auth/**").permitAll()
 
-						// patients
-						.antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/patients/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/patients/**").hasAnyAuthority("admin", "guest")
-						// admissiontypes
-						.antMatchers(HttpMethod.POST, "/admissiontypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/admissiontypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/admissiontypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/admissiontypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/admissiontypes/**").hasAnyAuthority("admin", "guest")
-						// deliveryresulttype
-						.antMatchers(HttpMethod.POST, "/deliveryresulttype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/deliveryresulttype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/deliveryresulttype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/deliveryresulttype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/deliveryresulttype/**").hasAnyAuthority("admin", "guest")
-						// deliverytypes
-						.antMatchers(HttpMethod.POST, "/deliverytypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/deliverytypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/deliverytypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/deliverytypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/deliverytypes/**").hasAnyAuthority("admin", "guest")
-						// dischargetypes
-						.antMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/dischargetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/dischargetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/dischargetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("admin", "guest")
 						// admissions
-						.antMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/admissions/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/admissions/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/admissions/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admin", "guest")
-						// discharges
-						.antMatchers(HttpMethod.POST, "/discharges/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/discharges/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/discharges/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/discharges/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/discharges/**").hasAnyAuthority("admin", "guest")
-						// vaccines
-						.antMatchers(HttpMethod.POST, "/vaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/vaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/vaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/vaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/vaccines/**").hasAnyAuthority("admin", "guest")
-						// vaccineType
-						.antMatchers(HttpMethod.POST, "/vaccinetype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/vaccinetype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/vaccinetype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/vaccinetype/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/vaccinetype/**")
-						.hasAnyAuthority("admin", "guest")
-						// visit
-						.antMatchers(HttpMethod.POST, "/visit/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/visit/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/visit/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/visit/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/visit/**").hasAnyAuthority("admin", "guest")
-						// wards
-						.antMatchers(HttpMethod.POST, "/wards/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/wards/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
+						.antMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admissions.read")
+						.antMatchers(HttpMethod.PUT, "/admissions/**").hasAuthority("admissions.update")
+						.antMatchers(HttpMethod.DELETE, "/admissions/**").hasAuthority("admissions.delete")
+						// admissiontypes
+						.antMatchers(HttpMethod.POST, "/admissiontypes/**").hasAuthority("admissiontypes.create")
+						.antMatchers(HttpMethod.GET, "/admissiontypes/**").hasAnyAuthority("admissiontypes.read")
+						.antMatchers(HttpMethod.PUT, "/admissiontypes/**").hasAuthority("admissiontypes.update")
+						.antMatchers(HttpMethod.DELETE, "/admissiontypes/**").hasAuthority("admissiontypes.delete")
+						// age types
+						.antMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("agetypes.read")
+						.antMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("agetypes.update")
+						// dischargetypes
+						.antMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("dischargetypes.create")
+						.antMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("dischargetypes.read")
+						.antMatchers(HttpMethod.PUT, "/dischargetypes/**").hasAuthority("dischargetypes.update")
+						.antMatchers(HttpMethod.DELETE, "/dischargetypes/**").hasAuthority("dischargetypes.delete")
+						// diseases
+						.antMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("diseases.create")
+						.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("diseases.read")
+						.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("diseases.update")
+						.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("diseases.delete")
+						// diseasetypes
+						.antMatchers(HttpMethod.POST, "/diseasetypes/**").hasAuthority("diseasetypes.create")
+						.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("diseasetypes.read")
+						.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("diseasetypes.update")
+						.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("diseasetypes.delete")
+						// deliveryresulttype
+						.antMatchers(HttpMethod.POST, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.create")
+						.antMatchers(HttpMethod.GET, "/deliveryresulttypes/**").hasAnyAuthority("deliveryresulttypes.read")
+						.antMatchers(HttpMethod.PUT, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.update")
+						.antMatchers(HttpMethod.DELETE, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.delete")
+						// deliverytypes
+						.antMatchers(HttpMethod.POST, "/deliverytypes/**").hasAuthority("deliverytypes.create")
+						.antMatchers(HttpMethod.GET, "/deliverytypes/**").hasAnyAuthority("deliverytypes.read")
+						.antMatchers(HttpMethod.PUT, "/deliverytypes/**").hasAuthority("deliverytypes.update")
+						.antMatchers(HttpMethod.DELETE, "/deliverytypes/**").hasAuthority("deliverytypes.delete")
 						// exams
-						.antMatchers(HttpMethod.POST, "/exams/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/exams/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/exams/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.POST, "/exams/**").hasAuthority("exams.create")
+						.antMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("exams.read")
+						.antMatchers(HttpMethod.PUT, "/exams/**").hasAuthority("exams.update")
+						.antMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("exams.delete")
 						// examrows
-						.antMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/examrows/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/examrows/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/examrows/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/examrows/**").hasAnyAuthority("admin", "guest")
-						// examtypes
-						.antMatchers(HttpMethod.POST, "/examtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/examtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/examtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/examtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/examtypes/**").hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("examrows.create")
+						.antMatchers(HttpMethod.GET, "/examrows/**").hasAnyAuthority("examrows.read")
+						.antMatchers(HttpMethod.PUT, "/examrows/**").hasAuthority("examrows.update")
+						.antMatchers(HttpMethod.DELETE, "/examrows/**").hasAuthority("examrows.delete")
 						// examinations
-						.antMatchers(HttpMethod.POST, "/examinations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/examinations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/examinations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/examinations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/examinations/**").hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.POST, "/examinations/**").hasAuthority("examinations.create")
+						.antMatchers(HttpMethod.GET, "/examinations/**").hasAnyAuthority("examinations.read")
+						.antMatchers(HttpMethod.PUT, "/examinations/**").hasAuthority("examinations.update")
+						.antMatchers(HttpMethod.DELETE, "/examinations/**").hasAuthority("examinations.delete")
+						// examtypes
+						.antMatchers(HttpMethod.POST, "/examtypes/**").hasAuthority("examtypes.create")
+						.antMatchers(HttpMethod.GET, "/examtypes/**").hasAnyAuthority("examtypes.read")
+						.antMatchers(HttpMethod.PUT, "/examtypes/**").hasAuthority("examtypes.update")
+						.antMatchers(HttpMethod.DELETE, "/examtypes/**").hasAuthority("examtypes.delete")
 						// hospitals
-						.antMatchers(HttpMethod.POST, "/hospitals/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/hospitals/**").hasAuthority("admin")
-						// .antMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("admin", "guest") to anyone
+						.antMatchers(HttpMethod.POST, "/hospitals/**").hasAuthority("hospitals.create")
+						// .antMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("hospital.read") to anyone
+						.antMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("hospitals.update")
+						.antMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("hospitals.delete")
 						// laboratories
-						.antMatchers(HttpMethod.POST, "/laboratories/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/laboratories/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/laboratories/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/laboratories/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/laboratories/**").hasAnyAuthority("admin", "guest")
+						.antMatchers(HttpMethod.POST, "/laboratories/**").hasAuthority("laboratories.create")
+						.antMatchers(HttpMethod.GET, "/laboratories/**").hasAnyAuthority("laboratories.read")
+						.antMatchers(HttpMethod.PUT, "/laboratories/**").hasAuthority("laboratories.update")
+						.antMatchers(HttpMethod.DELETE, "/laboratories/**").hasAuthority("laboratories.delete")
+						// malnutrition
+						.antMatchers(HttpMethod.POST, "/malnutritions/**").hasAuthority("malnutritions.create")
+						.antMatchers(HttpMethod.GET, "/malnutritions/**").hasAuthority("malnutritions.read")
+						.antMatchers(HttpMethod.PUT, "/malnutritions/**").hasAuthority("malnutritions.update")
+						.antMatchers(HttpMethod.DELETE, "/malnutritions/**").hasAuthority("malnutritions.delete")
+						// medicals
+						.antMatchers(HttpMethod.POST, "/medicals/**").hasAuthority("medicals.create")
+						.antMatchers(HttpMethod.GET, "/medicals/**").hasAuthority("medicals.read")
+						.antMatchers(HttpMethod.PUT, "/medicals/**").hasAuthority("medicals.update")
+						.antMatchers(HttpMethod.DELETE, "/medicals/**").hasAuthority("medicals.delete")
+						// medicalstock
+						.antMatchers(HttpMethod.POST, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.create")
+						.antMatchers(HttpMethod.GET, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.read")
+						.antMatchers(HttpMethod.PUT, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.update")
+						.antMatchers(HttpMethod.DELETE, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.delete")
+						// medicalstockward
+						.antMatchers(HttpMethod.POST, "/medicalstockward/**").hasAuthority("medicalstockward.create")
+						.antMatchers(HttpMethod.GET, "/medicalstockward/**").hasAuthority("medicalstockward.read")
+						.antMatchers(HttpMethod.PUT, "/medicalstockward/**").hasAuthority("medicalstockward.update")
+						.antMatchers(HttpMethod.DELETE, "/medicalstockward/**").hasAuthority("medicalstockward.delete")
+						// medicalstockmovtype
+						.antMatchers(HttpMethod.POST, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.create")
+						.antMatchers(HttpMethod.GET, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.read")
+						.antMatchers(HttpMethod.PUT, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.update")
+						.antMatchers(HttpMethod.DELETE, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.delete")
+						// medicaltype
+						.antMatchers(HttpMethod.POST, "/medicaltypes/**").hasAuthority("medicaltypes.create")
+						.antMatchers(HttpMethod.GET, "/medicaltypes/**").hasAuthority("medicaltypes.read")
+						.antMatchers(HttpMethod.PUT, "/medicaltypes/**").hasAuthority("medicaltypes.update")
+						.antMatchers(HttpMethod.DELETE, "/medicaltypes/**").hasAuthority("medicaltypes.delete")
+						// opd
+						.antMatchers(HttpMethod.POST, "/opds/**").hasAuthority("opds.create")
+						.antMatchers(HttpMethod.GET, "/opds/**").hasAnyAuthority("opds.read")
+						.antMatchers(HttpMethod.PUT, "/opds/**").hasAuthority("opds.update")
+						.antMatchers(HttpMethod.DELETE, "/opds/**").hasAuthority("opds.delete")
+						// operations
+						.antMatchers(HttpMethod.POST, "/operations/**").hasAuthority("operations.create")
+						.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("operations.read")
+						.antMatchers(HttpMethod.PUT, "/operations/**").hasAuthority("operations.update")
+						.antMatchers(HttpMethod.DELETE, "/operations/**").hasAuthority("operations.delete")
+						// operation types
+						.antMatchers(HttpMethod.POST, "/operationtypes/**").hasAuthority("operationtypes.create")
+						.antMatchers(HttpMethod.GET, "/operationtypes/**").hasAnyAuthority("operationtypes.read")
+						.antMatchers(HttpMethod.PUT, "/operationtypes/**").hasAuthority("operationtypes.update")
+						.antMatchers(HttpMethod.DELETE, "/operationtypes/**").hasAuthority("operationtypes.delete")
+						// patientconsensus
+						.antMatchers(HttpMethod.POST, "/patientconsensus/**").hasAuthority("patientconsensus.create")
+						.antMatchers(HttpMethod.GET, "/patientconsensus/**").hasAuthority("patientconsensus.read")
+						.antMatchers(HttpMethod.PUT, "/patientconsensus/**").hasAuthority("patientconsensus.update")
+						.antMatchers(HttpMethod.DELETE, "/patientconsensus/**").hasAuthority("patientconsensus.delete")
+						// patients
+						.antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("patients.create")
+						.antMatchers(HttpMethod.GET, "/patients/**").hasAuthority("patients.read")
+						.antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("patients.update")
+						.antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("patients.delete")
+						// patientvaccines
+						.antMatchers(HttpMethod.POST, "/patientvaccines/**").hasAuthority("patientvaccines.create")
+						.antMatchers(HttpMethod.GET, "/patientvaccines/**").hasAnyAuthority("patientvaccines.read")
+						.antMatchers(HttpMethod.PUT, "/patientvaccines/**").hasAuthority("patientvaccines.update")
+						.antMatchers(HttpMethod.DELETE, "/patientvaccines/**").hasAuthority("patientvaccines.delete")
+						// permission
+						.antMatchers(HttpMethod.POST, "/permissions/**").hasAuthority("permissions.create")
+						.antMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
+						.antMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
+						.antMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
+						// grouppermission
+						.antMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
+						.antMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("grouppermission.read")
+						.antMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
+						.antMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
+						// user
+						.antMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
+						.antMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
+						.antMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
+						.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
+						// user setting
+						.antMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersettings.read")
+						.antMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersettings.read")
+						.antMatchers(HttpMethod.POST, "/users/settings/**").hasAuthority("usersettings.create")
+						.antMatchers(HttpMethod.PUT, "/users/settings/**").hasAuthority("usersettings.update")
+						.antMatchers(HttpMethod.DELETE, "/users/settings/**").hasAuthority("usersettings.delete")
+						// pregnanttreatmenttypes
+						.antMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
+						.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")
+						.antMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.update")
+						.antMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.delete")
+						// pricelists
+						.antMatchers(HttpMethod.POST, "/pricelists/**").hasAuthority("pricelists.create")
+						.antMatchers(HttpMethod.GET, "/pricelists/**").hasAnyAuthority("pricelists.read")
+						.antMatchers(HttpMethod.PUT, "/pricelists/**").hasAuthority("pricelists.update")
+						.antMatchers(HttpMethod.DELETE, "/pricelists/**").hasAuthority("pricelists.delete")
+						// pricesothers
+						.antMatchers(HttpMethod.POST, "/pricesothers/**").hasAuthority("pricesothers.create")
+						.antMatchers(HttpMethod.GET, "/pricesothers/**").hasAnyAuthority("pricesothers.read")
+						.antMatchers(HttpMethod.PUT, "/pricesothers/**").hasAuthority("pricesothers.update")
+						.antMatchers(HttpMethod.DELETE, "/pricesothers/**").hasAuthority("pricesothers.delete")
+						// reports
+						.antMatchers(HttpMethod.POST, "/reports/**").hasAuthority("reports.create")
+						.antMatchers(HttpMethod.GET, "/reports/**").hasAnyAuthority("reports.read")
+						.antMatchers(HttpMethod.PUT, "/reports/**").hasAuthority("reports.update")
+						.antMatchers(HttpMethod.DELETE, "/reports/**").hasAuthority("reports.delete")
+						// sms
+						.antMatchers(HttpMethod.POST, "/sms/**").hasAuthority("sms.create")
+						.antMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
+						.antMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
+						.antMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
+						// suppliers
+						.antMatchers(HttpMethod.POST, "/suppliers/**").hasAuthority("suppliers.create")
+						.antMatchers(HttpMethod.GET, "/suppliers/**").hasAnyAuthority("suppliers.read")
+						.antMatchers(HttpMethod.PUT, "/suppliers/**").hasAuthority("suppliers.update")
+						.antMatchers(HttpMethod.DELETE, "/suppliers/**").hasAuthority("suppliers.delete")
+						// therapy
+						.antMatchers(HttpMethod.POST, "/therapies/**").hasAuthority("therapies.create")
+						.antMatchers(HttpMethod.GET, "/therapies/**").hasAnyAuthority("therapies.read")
+						.antMatchers(HttpMethod.PUT, "/therapies/**").hasAuthority("therapies.update")
+						.antMatchers(HttpMethod.DELETE, "/therapies/**").hasAuthority("therapies.delete")
+						// vaccines
+						.antMatchers(HttpMethod.POST, "/vaccines/**").hasAuthority("vaccines.create")
+						.antMatchers(HttpMethod.GET, "/vaccines/**").hasAnyAuthority("vaccines.read")
+						.antMatchers(HttpMethod.PUT, "/vaccines/**").hasAuthority("vaccines.update")
+						.antMatchers(HttpMethod.DELETE, "/vaccines/**").hasAuthority("vaccines.delete")
+						// vaccineType
+						.antMatchers(HttpMethod.POST, "/vaccinetypes/**").hasAuthority("vaccinetypes.create")
+						.antMatchers(HttpMethod.GET, "/vaccinetypes/**").hasAnyAuthority("vaccinetypes.read")
+						.antMatchers(HttpMethod.PUT, "/vaccinetypes/**").hasAuthority("vaccinetypes.update")
+						.antMatchers(HttpMethod.DELETE, "/vaccinetypes/**").hasAuthority("vaccinetypes.delete")
+						// visit
+						.antMatchers(HttpMethod.POST, "/visits/**").hasAuthority("visits.create")
+						.antMatchers(HttpMethod.GET, "/visits/**").hasAnyAuthority("visits.read")
+						.antMatchers(HttpMethod.PUT, "/visits/**").hasAuthority("visits.update")
+						.antMatchers(HttpMethod.DELETE, "/visits/**").hasAuthority("visits.delete")
+						// wards
+						.antMatchers(HttpMethod.POST, "/wards/**").hasAuthority("wards.create")
+						.antMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("wards.read")
+						.antMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("wards.update")
+						.antMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
+
 						// .antMatchers("/auth-needed/**").authenticated()
 						// .antMatchers("/noauth-public/**").permitAll()
 						// .antMatchers("/admin/**").hasAuthority("admin")
-						// age types
-						.antMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("admin", "guest")
-						// disease types
-						.antMatchers(HttpMethod.POST, "/diseasetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("admin", "guest")
-						// opd
-						.antMatchers(HttpMethod.POST, "/opds/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/opds/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/opds/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/opds/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/opds/**").hasAnyAuthority("admin", "guest")
-						// operations
-						.antMatchers(HttpMethod.POST, "/operations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/operations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/operations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/operations/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("admin", "guest")
-						// patientvaccines
-						.antMatchers(HttpMethod.POST, "/patientvaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/patientvaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/patientvaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/patientvaccines/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/patientvaccines/**").hasAnyAuthority("admin", "guest")
-						// pregnanttreatmenttypes
-						.antMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/pregnanttreatmenttypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**")
-						.hasAnyAuthority("admin", "guest")
-						// pricelists
-						.antMatchers(HttpMethod.POST, "/pricelists/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/pricelists/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/pricelists/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/pricelists/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/pricelists/**").hasAnyAuthority("admin", "guest")
-						// pricesothers
-						.antMatchers(HttpMethod.POST, "/pricesothers/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/pricesothers/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/pricesothers/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/pricesothers/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/pricesothers/**").hasAnyAuthority("admin", "guest")
-						// operation types
-						.antMatchers(HttpMethod.POST, "/operationtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/operationtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/operationtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PATCH, "/operationtypes/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/operationtypes/**").hasAnyAuthority("admin", "guest")
-						// diseases
-						.antMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("admin")
-						.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("admin", "guest")
+
 //			.and()
 //			.formLogin()
 //				 .loginPage("/auth/login")
@@ -312,5 +366,10 @@ public class SecurityConfig {
 		String hierarchy = "ROLE_ADMIN > ROLE_FAMILYMANAGER \n ROLE_FAMILYMANAGER > ROLE_USER";
 		roleHierarchy.setHierarchy(hierarchy);
 		return roleHierarchy;
+	}
+
+	@Bean
+	public AuditorAwareInterface auditorAwareCustomizer() {
+		return new ApiAuditorAwareImpl();
 	}
 }

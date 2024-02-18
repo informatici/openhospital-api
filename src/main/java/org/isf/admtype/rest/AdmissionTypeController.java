@@ -32,6 +32,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,13 +45,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/admissiontypes")
+@Tag(name = "AdmissionTypes")
+@SecurityRequirement(name = "bearerAuth")
 public class AdmissionTypeController {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeController.class);
 
 	@Autowired
 	protected AdmissionTypeBrowserManager admtManager;
@@ -73,17 +76,11 @@ public class AdmissionTypeController {
 	ResponseEntity<AdmissionTypeDTO> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
 		LOGGER.info("Create Admission Type {}", code);
-		boolean isCreated = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
-		AdmissionType admtCreated = null;
-		List<AdmissionType> admtFounds = admtManager.getAdmissionType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
-		if (!admtFounds.isEmpty()) {
-			admtCreated = admtFounds.get(0);
-		}
-		if (!isCreated || admtCreated == null) {
+		AdmissionType newAdmissionType = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
+		if (!admtManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(admtCreated));
+		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newAdmissionType));
 	}
 
 	/**
@@ -93,18 +90,15 @@ public class AdmissionTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypet(@RequestBody AdmissionTypeDTO admissionTypeDTO)
+	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
 			throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
 		}
-		boolean isUpdated = admtManager.updateAdmissionType(admt);
-		if (!isUpdated) {
-			throw new OHAPIException(new OHExceptionMessage("Admission Type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return ResponseEntity.ok(mapper.map2DTO(admt));
+		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
+		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
 	}
 
 	/**
@@ -133,19 +127,17 @@ public class AdmissionTypeController {
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Admission Type code: {}", code);
-		boolean isDeleted = false;
 		if (admtManager.isCodePresent(code)) {
-			List<AdmissionType> admts = admtManager.getAdmissionType();
-			List<AdmissionType> admtFounds = admts.stream().filter(ad -> ad.getCode().equals(code))
+			List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
+			List<AdmissionType> admtFounds = admissionTypes.stream().filter(ad -> ad.getCode().equals(code))
 					.collect(Collectors.toList());
 			if (!admtFounds.isEmpty()) {
-				isDeleted = admtManager.deleteAdmissionType(admtFounds.get(0));
+				admtManager.deleteAdmissionType(admtFounds.get(0));
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
-
-		return ResponseEntity.ok(isDeleted);
+		return ResponseEntity.ok(true);
 	}
 
 }

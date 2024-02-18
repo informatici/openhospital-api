@@ -27,56 +27,55 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing a bill")
+@Schema(description = "Class representing a bill")
 public class BillDTO {
-	
+
 	private Integer id;
-	
-	private PatientDTO patient; 
-	
+
+	private PatientDTO patient;
+
 	private Integer listId;
 
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill creation", example="2020-03-19T14:58:00.000Z", position = 1)
+	@Schema(description = "Date of bill creation", example = "2020-03-19T14:58:00.000Z", type = "string")
 	private LocalDateTime date;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "Date of bill updated", example="2020-03-19T14:58:00.000Z", position = 2)
+	@Schema(description = "Date of bill updated", example = "2020-03-19T14:58:00.000Z", type = "string")
 	private LocalDateTime update;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "boolean which tells if a price list is applied", example="true", position = 3)
+	@Schema(description = "boolean which tells if a price list is applied", example = "true")
 	private boolean isList;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "Price list name", example="Basic", position = 4)
+	@Schema(description = "Price list name", example = "Basic", maxLength = 50)
 	private String listName;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "Is bill belongs to a patient?", example="true", position = 5)
+	@Schema(description = "Is bill belongs to a patient?", example = "true")
 	private boolean patientTrue;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "patient name", example="Mario Rossi", position = 6)
+	@Schema(description = "Patient name", example = "Mario Rossi", maxLength = 100)
 	private String patName;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "Bill status", example="O", position = 7)
+	@Schema(description = "Bill status", example = "O")
 	private String status;
 
 	@NotNull
-	@ApiModelProperty(notes = "Bill Amount", example="1000", position = 8)
+	@Schema(description = "Bill Amount", example = "1000")
 	private Double amount;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "Bill balance", example="1500", position = 9)
+	@Schema(description = "Bill balance", example = "1500")
 	private Double balance;
-	
+
 	@NotNull
-	@ApiModelProperty(notes = "user name who create the bill", example="admin", position = 10)
+	@Schema(description = "user name who create the bill", example = "admin")
 	private String user;
 
 	public Integer getId() {

@@ -25,27 +25,29 @@ import javax.validation.constraints.NotNull;
 
 import org.isf.opetype.dto.OperationTypeDTO;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class OperationDTO {
 
+	@NotNull
+	@Schema(description = "The code of operation", maxLength = 10)
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "the operation description", position = 2)
+	@Schema(description = "The operation description", maxLength = 50)
 	private String description;
 
 	@NotNull
-	@ApiModelProperty(notes = "the operation type", position = 3)
+	@Schema(description = "The operation type")
 	private OperationTypeDTO type;
 
 	@NotNull
-	@ApiModelProperty(notes = "the operation major", position = 4)
+	@Schema(description = "The operation major")
 	private Integer major;
 
-	@ApiModelProperty(notes = "lock", example = "0")
+	@Schema(description = "Lock", example = "0")
 	private int lock;
-	
+
 	public int getLock() {
 		return lock;
 	}

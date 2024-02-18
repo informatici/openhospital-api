@@ -23,26 +23,25 @@ package org.isf.agetype.dto;
 
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-@ApiModel(description = "Class representing an age type which is typically a range")
+@Schema(description = "Class representing an age type which is typically a range")
 public class AgeTypeDTO {
 
-	@ApiModelProperty(notes = "Age type code")
+	@Schema(description = "Age type code")
 	private String code;
 
 	@NotNull
-	@ApiModelProperty(notes = "Age type description")
-    private String description;
-
-	@NotNull	
-	@ApiModelProperty(notes = "The minimum value of the range", example="0")
-    private int from;
+	@Schema(description = "Age type description", maxLength = 100)
+	private String description;
 
 	@NotNull
-	@ApiModelProperty(notes = "The maximum value of the range", example="0")
-    private int to;
+	@Schema(description = "The minimum value of the range", example = "0")
+	private int from;
+
+	@NotNull
+	@Schema(description = "The maximum value of the range", example = "0")
+	private int to;
 
 	public String getCode() {
 		return this.code;

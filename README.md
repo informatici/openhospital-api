@@ -10,6 +10,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
+  * [How to generate openapi specs](#how-to-generate-openapi-specs)
   * [Cleaning](#cleaning)
   * [How to contribute](#how-to-contribute)
   * [Community](#community)
@@ -48,41 +49,39 @@ For the moment, to build this project you should
  5. start openhospital-api (in `target` folder)
  
         # Windows
-        java -cp "openhospital-api-0.0.2.jar;rsc/;static/" org.springframework.boot.loader.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar;rsc/;static/" org.springframework.boot.loader.JarLauncher
 
         # Linux
-        java -cp "openhospital-api-0.0.2.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
         
  6. call services
     - URL base: http://localhost:8080
     - URL login: http://localhost:8080/auth/login
     - URL patients: http://localhost:8080/patients
-    - URL swagger: http://localhost:8080/swagger-ui/
+    - URL swagger: http://localhost:8080/swagger-ui.html
 
-You can see Swagger Api Documentation at: http://localhost:8080/swagger-ui/
+You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index.html
 
-![image](https://user-images.githubusercontent.com/2938553/215335720-73d59075-f0df-44c4-93ed-eae79945bb71.png)
-   
+![image](https://github.com/informatici/openhospital-api/assets/2938553/ea855a4a-2a57-4b6e-aa62-f218d4937ed8)
+
 ### Using Swagger-UI
 
  1. use endpoint /auth/login to login and get the token
  
-![image](https://user-images.githubusercontent.com/2938553/228294801-4d27dd2c-9053-4f62-9497-690706232c9f.png)
-![image](https://user-images.githubusercontent.com/2938553/228294867-79d6a326-9e7d-4ca0-93cd-ce34c7b7373f.png)
- 
- 2. use the Authorize button at the top of the Swagger-UI and paste the token form step #1 prefixed by the string "Bearer " and click Authorize
+![image](https://github.com/informatici/openhospital-api/assets/2938553/d77d88a7-893d-4163-a89d-06c0bbdccb4b)
+![image](https://github.com/informatici/openhospital-api/assets/2938553/ce1a6ace-b4db-4672-9f36-b6d5aefc005f)
 
-![image](https://user-images.githubusercontent.com/2938553/228296149-64905464-441f-4b20-80af-4dcfb40aef4c.png)
+ 2. use the Authorize button at the top of the Swagger-UI, paste the token from step #1 and click Authorize
+
+![image](https://github.com/informatici/openhospital-api/assets/2938553/388450d5-7b8b-4f54-8210-ef37e5f85324)
  
  3. close the dialog
 
-![image](https://user-images.githubusercontent.com/2938553/228294994-56c1ae3b-f7cb-49b6-94d4-c899fa20374e.png)
+![image](https://github.com/informatici/openhospital-api/assets/2938553/787546c1-8378-4aac-99a1-ace2e28af160)
 
  4. now all the endpoints are automatically secured and the token will be added to the request
 
-![image](https://user-images.githubusercontent.com/2938553/228295504-910a6036-4656-4645-8756-3dec0154eed4.png)
-![image](https://user-images.githubusercontent.com/2938553/228295166-d1948976-fbdb-4f7e-ab12-8f0621b21373.png)
-
+![image](https://github.com/informatici/openhospital-api/assets/2938553/131aa220-b134-4afc-a508-5e369427c0b8)
 
 ### Using Postman
 
@@ -95,12 +94,25 @@ Make sure you have docker with docker-compose installed, then run the following 
 - copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
 - run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
-- (optional - demo data) run `docker compose run --rm oh-database-init`
+- (optional - demo data after set the database container) run `docker compose run --rm oh-database-init`
 - run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
 
 You can change the deployment branch using an .env file.
+
+## How to generate openapi specs
+
+Make sure to have API started without errors.
+
+Run the Maven command and it will overwrite the `openapi/oh.yaml`
+
+	mvn springdoc-openapi:generate
+	
+To redirect the output to another file, use:
+
+	mvn springdoc-openapi:generate -Dspringdoc.outputFileName=my_revision.yaml
+	
 
 ## Cleaning
 

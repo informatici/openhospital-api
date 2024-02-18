@@ -49,6 +49,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,7 +58,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class DeliveryTypeControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
 
 	@Mock
 	protected DeliveryTypeBrowserManager deliveryTypeBrowserManagerMock;
@@ -101,7 +102,7 @@ public class DeliveryTypeControllerTest {
 
 		boolean isCreated = true;
 		when(deliveryTypeBrowserManagerMock.newDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(isCreated);
+				.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -129,7 +130,7 @@ public class DeliveryTypeControllerTest {
 
 		boolean isUpdated = true;
 		when(deliveryTypeBrowserManagerMock.updateDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(isUpdated);
+				.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request, "ZZ" + code)
@@ -178,9 +179,6 @@ public class DeliveryTypeControllerTest {
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
 				.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
-
-		when(deliveryTypeBrowserManagerMock.deleteDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(true);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc

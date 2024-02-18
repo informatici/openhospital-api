@@ -47,6 +47,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,7 +56,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class AdmissionTypeControllerTest {
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
 
 	@Mock
 	protected AdmissionTypeBrowserManager admtManagerMock;
@@ -90,14 +91,14 @@ public class AdmissionTypeControllerTest {
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
 		boolean isCreated = true;
-		when(admtManagerMock.newAdmissionType(admissionTypemapper.map2Model(body)))
-				.thenReturn(isCreated);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		List<AdmissionType> admtFounds = new ArrayList<>();
-		admtFounds.add(admissionType);
-		when(admtManagerMock.getAdmissionType())
-				.thenReturn(admtFounds);
+
+		when(admtManagerMock.newAdmissionType(admissionType))
+				.thenReturn(admissionType);
+
+		when(admtManagerMock.isCodePresent(body.getCode()))
+				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(post(request)
@@ -113,16 +114,16 @@ public class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateAdmissionTypet_200() throws Exception {
+	public void testUpdateAdmissionType_200() throws Exception {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
+		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
 
-		when(admtManagerMock.isCodePresent(body.getCode()))
+		when(admtManagerMock.isCodePresent(admissionType.getCode()))
 				.thenReturn(true);
 
-		boolean isUpdated = true;
-		when(admtManagerMock.updateAdmissionType(admissionTypemapper.map2Model(body)))
-				.thenReturn(isUpdated);
+		when(admtManagerMock.updateAdmissionType(admissionType))
+				.thenReturn(admissionType);
 
 		MvcResult result = this.mockMvc
 				.perform(put(request)
@@ -171,9 +172,6 @@ public class AdmissionTypeControllerTest {
 		admtFounds.add(admissionType);
 		when(admtManagerMock.getAdmissionType())
 				.thenReturn(admtFounds);
-
-		when(admtManagerMock.deleteAdmissionType(admtFounds.get(0)))
-				.thenReturn(true);
 
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code))

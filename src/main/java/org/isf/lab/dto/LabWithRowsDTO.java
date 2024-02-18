@@ -25,9 +25,9 @@ import java.util.List;
 
 public class LabWithRowsDTO {
 
-    private LaboratoryDTO laboratoryDTO;
+	private LaboratoryDTO laboratoryDTO;
 
-    private List<String> laboratoryRowList;
+	private List<String> laboratoryRowList;
 
 	public LaboratoryDTO getLaboratoryDTO() {
 		return this.laboratoryDTO;

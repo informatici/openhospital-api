@@ -1,4 +1,4 @@
-FROM maven:3.8-jdk-11
+FROM maven:3.9-eclipse-temurin-17
 
 ARG GITHUB_ORG
 ARG OH_CORE_BRANCH
@@ -18,4 +18,4 @@ WORKDIR ./openhospital-api
 RUN --mount=type=cache,target=/root/.m2 mvn clean install -DskipTests=true
 
 WORKDIR ./target
-CMD java -cp "openhospital-api-0.0.2.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
+CMD java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher

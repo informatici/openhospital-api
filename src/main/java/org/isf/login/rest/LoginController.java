@@ -28,14 +28,17 @@ import javax.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.model.User;
 import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
+import org.isf.sessionaudit.model.UserSession;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,10 +49,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController
-@Api(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
+@RestController(value = "/auth")
+@Tag(name = "Login")
+@SecurityRequirement(name = "bearerAuth")
 public class LoginController {
 
 	@Autowired
@@ -64,17 +69,26 @@ public class LoginController {
 	@Autowired
 	private CustomAuthenticationManager authenticationManager;
 
-	private static final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LoginController.class);
+	@Autowired
+	private UserBrowsingManager userManager;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity< ? > authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
+	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
 		Authentication authentication = authenticationManager.authenticate(
 						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, true);
 
 		String userDetails = (String) authentication.getPrincipal();
-		MDC.put("OHUser", loginRequest.getUsername());
+		User user;
+		try {
+			user = userManager.getUserByName(loginRequest.getUsername());
+			UserSession.setUser(user);
+		} catch (OHServiceException e) {
+			e.printStackTrace();
+		}
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
