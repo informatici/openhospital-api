@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.dlvrrestype.TestDeliveryResultType;
 import org.isf.dlvrrestype.dto.DeliveryResultTypeDTO;
 import org.isf.dlvrrestype.model.DeliveryResultType;
-import org.isf.dlvrrestype.test.TestDeliveryResultType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

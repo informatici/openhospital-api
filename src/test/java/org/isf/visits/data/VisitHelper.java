@@ -27,9 +27,9 @@ import java.util.stream.IntStream;
 
 import org.isf.patient.data.PatientHelper;
 import org.isf.utils.exception.OHException;
+import org.isf.visits.TestVisit;
 import org.isf.visits.dto.VisitDTO;
 import org.isf.visits.model.Visit;
-import org.isf.visits.test.TestVisit;
 import org.isf.ward.data.WardHelper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.agetype.TestAgeType;
 import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.model.AgeType;
-import org.isf.agetype.test.TestAgeType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
