@@ -24,10 +24,10 @@ package org.isf.accounting.data;
 import java.util.List;
 
 import org.isf.accounting.dto.BillDTO;
+import org.isf.patient.TestPatient;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

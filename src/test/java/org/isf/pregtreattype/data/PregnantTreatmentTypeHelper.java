@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.pregtreattype.TestPregnantTreatmentType;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
-import org.isf.pregtreattype.test.TestPregnantTreatmentType;
 import org.isf.utils.exception.OHException;
 
 public class PregnantTreatmentTypeHelper {

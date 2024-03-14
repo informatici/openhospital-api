@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.admtype.TestAdmissionType;
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.mapper.AdmissionTypeMapper;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.admtype.test.TestAdmissionType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

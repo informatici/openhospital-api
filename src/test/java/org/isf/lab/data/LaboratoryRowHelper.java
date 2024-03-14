@@ -21,10 +21,10 @@
  */
 package org.isf.lab.data;
 
+import org.isf.lab.TestLaboratoryRow;
 import org.isf.lab.dto.LaboratoryRowDTO;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.test.TestLaboratoryRow;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

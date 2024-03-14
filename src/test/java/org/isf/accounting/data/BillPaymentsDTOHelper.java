@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.accounting.TestBillPayments;
 import org.isf.accounting.dto.BillPaymentsDTO;
 import org.isf.accounting.mapper.BillPaymentsMapper;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillPayments;
-import org.isf.accounting.test.TestBillPayments;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.utils.exception.OHException;
+import org.isf.vaccine.TestVaccine;
 import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.model.Vaccine;
-import org.isf.vaccine.test.TestVaccine;
-import org.isf.vactype.test.TestVaccineType;
+import org.isf.vactype.TestVaccineType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

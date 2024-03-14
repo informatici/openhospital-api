@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.disease.TestDisease;
 import org.isf.disease.dto.DiseaseDTO;
 import org.isf.disease.model.Disease;
-import org.isf.disease.test.TestDisease;
+import org.isf.distype.TestDiseaseType;
 import org.isf.distype.model.DiseaseType;
-import org.isf.distype.test.TestDiseaseType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

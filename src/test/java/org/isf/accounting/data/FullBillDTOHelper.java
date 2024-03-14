@@ -24,6 +24,8 @@ package org.isf.accounting.data;
 import java.util.Arrays;
 import java.util.List;
 
+import org.isf.accounting.TestBillItems;
+import org.isf.accounting.TestBillPayments;
 import org.isf.accounting.dto.BillDTO;
 import org.isf.accounting.dto.BillItemsDTO;
 import org.isf.accounting.dto.BillPaymentsDTO;
@@ -33,12 +35,10 @@ import org.isf.accounting.mapper.BillPaymentsMapper;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.accounting.test.TestBillItems;
-import org.isf.accounting.test.TestBillPayments;
+import org.isf.patient.TestPatient;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

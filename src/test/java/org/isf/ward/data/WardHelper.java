@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.utils.exception.OHException;
+import org.isf.ward.TestWard;
 import org.isf.ward.dto.WardDTO;
 import org.isf.ward.model.Ward;
-import org.isf.ward.test.TestWard;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
