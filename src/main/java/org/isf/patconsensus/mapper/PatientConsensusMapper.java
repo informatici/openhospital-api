@@ -21,7 +21,7 @@
  */
 package org.isf.patconsensus.mapper;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.isf.patconsensus.dto.PatientConsensusDTO;
 import org.isf.patconsensus.model.PatientConsensus;

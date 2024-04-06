@@ -23,7 +23,7 @@ package org.isf.medicalstock.dto;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medstockmovtype.dto.MovementTypeDTO;

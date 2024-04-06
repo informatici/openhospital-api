@@ -21,7 +21,7 @@
  */
 package org.isf.disease.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.distype.dto.DiseaseTypeDTO;
 

@@ -23,7 +23,7 @@ package org.isf.supplier.rest;
 
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.supplier.dto.SupplierDTO;

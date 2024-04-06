@@ -23,7 +23,7 @@ package org.isf.admission.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.disctype.dto.DischargeTypeDTO;
