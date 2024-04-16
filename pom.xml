@@ -95,13 +95,13 @@
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.8.0</version>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>3.0.1-b12</version>
+            <artifactId>jakarta.el</artifactId>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
