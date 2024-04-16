@@ -21,7 +21,7 @@
  */
 package org.isf.medicalstockward.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.ward.dto.WardDTO;

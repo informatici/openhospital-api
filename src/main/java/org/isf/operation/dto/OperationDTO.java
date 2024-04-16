@@ -21,7 +21,7 @@
  */
 package org.isf.operation.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.opetype.dto.OperationTypeDTO;
 

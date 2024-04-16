@@ -21,11 +21,8 @@
  */
 package org.isf.patient.rest;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -136,7 +133,8 @@ public class PatientControllerTest {
 						.andDo(log())
 						.andExpect(status().is4xxClientError())
 						.andExpect(status().isUnsupportedMediaType())
-						.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						.andExpect(content().string(containsString("Unsupported Media Type")))
 						.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
@@ -163,7 +161,8 @@ public class PatientControllerTest {
 						.andDo(log())
 						.andExpect(status().is4xxClientError())
 						.andExpect(status().isBadRequest())
-						.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+						.andExpect(content().string(containsString("Failed to read request")))
 						.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());

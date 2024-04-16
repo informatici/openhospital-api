@@ -23,8 +23,8 @@ package org.isf.login.rest;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
