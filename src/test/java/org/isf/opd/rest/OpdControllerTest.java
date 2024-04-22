@@ -66,14 +66,16 @@ public class OpdControllerTest {
 	protected PatientBrowserManager patientBrowserManagerMock;
 
 	protected OpdMapper opdMapper = new OpdMapper();
-	
-	protected OperationRowBrowserManager operationRowManager = new OperationRowBrowserManager();
+
+	@Mock
+	protected OperationRowBrowserManager operationRowManager;
 	
 	protected OperationRowMapper opRowMapper = new OperationRowMapper();
 	
 	protected WardBrowserManager wardManager = new WardBrowserManager();
-	
-	protected DiseaseTypeBrowserManager diseaseType = new DiseaseTypeBrowserManager();
+
+	@Mock
+	protected DiseaseTypeBrowserManager diseaseType;
 
 	private MockMvc mockMvc;
 
