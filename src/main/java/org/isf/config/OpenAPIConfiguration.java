@@ -52,9 +52,9 @@ public class OpenAPIConfiguration {
 						new SecurityRequirement().addList("bearerAuth"))
 						.info(new Info().title("Open Hospital API Documentation")
 										.description("Open Hospital API Documentation")
-										.version("0.1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
-										.license(new License().name("GPL-3.0 license")
-														.url("https://github.com/informatici/openhospital-api?tab=GPL-3.0-1-ov-file#readme")))
+										.version("1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
+										.license(new License().name("Apache 2.0")
+														.url("https://www.apache.org/licenses/LICENSE-2.0")))
 						.servers(List.of(new Server().url("http://localhost:8080")))
 						.components(new Components().schemas(Map.of(
 										"LocalDate", new DateSchema().name("LocalDate").type("string").format(null),
