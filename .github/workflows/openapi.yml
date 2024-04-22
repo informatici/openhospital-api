@@ -58,7 +58,7 @@ jobs:
       - name: Run API
         run: |
           cd target
-          java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher &
+          java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.launch.JarLauncher &
           sleep 60
           
       - name: Generate OpenAPI yaml
