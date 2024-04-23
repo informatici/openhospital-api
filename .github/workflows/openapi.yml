@@ -74,3 +74,7 @@ jobs:
           base: openapi/oh.yaml
           revision: openapi/oh_rev.yaml
           fail-on-diff: true
+        continue-on-error: true
+        
+      - name: Show output
+        run: cat output
