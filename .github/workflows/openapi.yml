@@ -74,7 +74,7 @@ jobs:
         with:
           base: openapi/oh.yaml
           revision: openapi/oh_rev.yaml
-          fail-on-diff: false
+          #fail-on-diff: false
       
-      - name: show output
-        run: echo ${{ steps.oasdiff.outputs.breaking }}
+      #- name: show output
+      #  run: echo ${{ steps.oasdiff.outputs.breaking }}
