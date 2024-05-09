@@ -68,14 +68,14 @@ public class OpdControllerTest {
 	protected OpdMapper opdMapper = new OpdMapper();
 
 	@Mock
-	protected OperationRowBrowserManager operationRowManager;
+	protected OperationRowBrowserManager operationRowBrowserManagerMock;
 	
 	protected OperationRowMapper opRowMapper = new OperationRowMapper();
 	
 	protected WardBrowserManager wardManager = new WardBrowserManager();
 
 	@Mock
-	protected DiseaseTypeBrowserManager diseaseType;
+	protected DiseaseTypeBrowserManager diseaseTypeBrowserManagerMock;
 
 	private MockMvc mockMvc;
 
@@ -85,7 +85,7 @@ public class OpdControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowManager, opRowMapper, wardManager, diseaseType))
+				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock, opRowMapper, wardManager, diseaseTypeBrowserManagerMock))
 				.setControllerAdvice(new OHResponseEntityExceptionHandler())
 				.build();
 		ModelMapper modelMapper = new ModelMapper();
