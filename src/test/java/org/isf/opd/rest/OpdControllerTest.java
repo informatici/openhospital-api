@@ -56,12 +56,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class OpdControllerTest {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpdControllerTest.class);
 
 	@Mock
 	protected OpdBrowserManager opdBrowserManagerMock;
-	
+
 	@Mock
 	protected PatientBrowserManager patientBrowserManagerMock;
 
@@ -69,10 +69,11 @@ public class OpdControllerTest {
 
 	@Mock
 	protected OperationRowBrowserManager operationRowBrowserManagerMock;
-	
+
 	protected OperationRowMapper opRowMapper = new OperationRowMapper();
-	
-	protected WardBrowserManager wardManager = new WardBrowserManager();
+
+	@Mock
+	protected WardBrowserManager wardBrowserManager;
 
 	@Mock
 	protected DiseaseTypeBrowserManager diseaseTypeBrowserManagerMock;
@@ -85,9 +86,10 @@ public class OpdControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock, opRowMapper, wardManager, diseaseTypeBrowserManagerMock))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+						.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock,
+										opRowMapper, wardBrowserManager, diseaseTypeBrowserManagerMock))
+						.setControllerAdvice(new OHResponseEntityExceptionHandler())
+						.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -105,28 +107,26 @@ public class OpdControllerTest {
 		Patient patient = PatientHelper.setup();
 		Integer patientCode = 1;
 		patient.setCode(patientCode);
-		
+
 		Opd opd = OpdHelper.setup();
 		opd.setPatient(patient);
-		
+
 		OpdDTO body = opdMapper.map2DTO(opd);
-		
+
 		when(patientBrowserManagerMock.getPatientById(patientCode)).thenReturn(patient);
 
 		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body))).thenReturn(opd);
-		
+
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(OpdHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+						.perform(post(request)
+										.contentType(MediaType.APPLICATION_JSON)
+										.content(OpdHelper.asJsonString(body)))
+						.andDo(log())
+						.andExpect(status().is2xxSuccessful())
+						.andExpect(status().isCreated())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 }
-
