@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.sms.dto.SmsDTO;

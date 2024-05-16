@@ -21,8 +21,8 @@
  */
 package org.isf.pricesothers.dto;
 
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;

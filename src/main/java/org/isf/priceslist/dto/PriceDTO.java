@@ -21,7 +21,7 @@
  */
 package org.isf.priceslist.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.priceslist.model.PriceList;
 

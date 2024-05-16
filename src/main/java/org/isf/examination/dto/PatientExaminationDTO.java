@@ -23,7 +23,7 @@ package org.isf.examination.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.examination.model.Ausculation;
 import org.isf.examination.model.Bowel;

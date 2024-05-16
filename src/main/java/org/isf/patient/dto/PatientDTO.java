@@ -23,7 +23,7 @@ package org.isf.patient.dto;
 
 import java.time.LocalDate;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import com.drew.lang.annotations.Nullable;
 

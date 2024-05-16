@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.poi.util.IOUtils;
 import org.isf.shared.exceptions.OHAPIException;

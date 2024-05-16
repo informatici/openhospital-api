@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.dto.AdmittedPatientDTO;
