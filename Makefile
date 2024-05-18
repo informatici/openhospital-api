@@ -4,7 +4,7 @@ SHELL=/bin/bash
 # The name of the file to be modified
 OH_APPLICATION_PROPERTIES = ./rsc/application.properties
 OH_DATABASE_PROPERTIES = ./rsc/database.properties
-OH_LOG4J_PROPERTIES = ./rsc/log4j.properties
+OH_LOG4J_PROPERTIES = ./rsc/log4j2-spring.properties
 OH_SETTINGS = ./rsc/settings.properties
 
 .DEFAULT_GOAL = modify
