@@ -39,7 +39,7 @@ For the moment, to build this project you should
  
         rsc/application.properties <- set a SHA-256 jwt token
         rsc/database.properties
-        rsc/log4j.properties
+        rsc/log4j2-spring.properties
         rsc/...
  
  4. set target/rsc/database.properties
