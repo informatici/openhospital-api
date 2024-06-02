@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,11 +21,8 @@
  */
 package org.isf.accounting.rest;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +45,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.isf.accounting.TestBillItems;
 import org.isf.accounting.data.BillDTOHelper;
 import org.isf.accounting.data.BillHelper;
 import org.isf.accounting.data.BillItemsDTOHelper;
@@ -64,11 +62,10 @@ import org.isf.accounting.mapper.BillPaymentsMapper;
 import org.isf.accounting.model.Bill;
 import org.isf.accounting.model.BillItems;
 import org.isf.accounting.model.BillPayments;
-import org.isf.accounting.test.TestBillItems;
+import org.isf.patient.TestPatient;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
-import org.isf.patient.test.TestPatient;
 import org.isf.priceslist.manager.PriceListManager;
 import org.isf.priceslist.model.PriceList;
 import org.isf.shared.Constants;
@@ -157,7 +154,8 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isUnsupportedMediaType())
-				.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+				// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+				.andExpect(content().string(containsString("Unsupported Media Type")))
 				.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
@@ -181,7 +179,8 @@ public class BillControllerTest extends ControllerBaseTest {
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+				// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+				.andExpect(content().string(containsString("Failed to read request")))
 				.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());

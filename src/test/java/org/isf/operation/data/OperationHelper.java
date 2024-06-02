@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.operation.TestOperation;
 import org.isf.operation.dto.OperationDTO;
 import org.isf.operation.model.Operation;
-import org.isf.operation.test.TestOperation;
+import org.isf.opetype.TestOperationType;
 import org.isf.opetype.model.OperationType;
-import org.isf.opetype.test.TestOperationType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,7 +61,7 @@ public class OperationHelper {
 	}
 
 	public static String asJsonString(OperationDTO body) {
-		// TODO Auto-generated method stub
+		
 		try {
 			return new ObjectMapper().writeValueAsString(body);
 		} catch (JsonProcessingException e) {

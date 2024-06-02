@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.isf.malnutrition.dto.MalnutritionDTO;
 import org.isf.malnutrition.manager.MalnutritionManager;

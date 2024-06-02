@@ -19,26 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.security.jwt;
+package org.isf.security;
 
-import java.io.IOException;
+import java.util.Optional;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import org.isf.utils.db.AuditorAwareInterface;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
+public class ApiAuditorAwareImpl implements AuditorAwareInterface {
 
-@Component
-public class AuthEntryPointJwt implements AuthenticationEntryPoint {
-	private static final Logger LOGGER = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException) throws IOException {
-		LOGGER.error("Unauthorized error: {}", authException.getMessage());
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
+	public Optional<String> getCurrentAuditor() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null && authentication.isAuthenticated()) {
+			return Optional.of(authentication.getName());
+		} else {
+			return Optional.empty();
+		}
 	}
 }

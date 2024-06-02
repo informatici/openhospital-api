@@ -21,7 +21,7 @@
  */
 package org.isf;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.isf.generaldata.GeneralData;
 import org.springframework.beans.factory.annotation.Autowired;

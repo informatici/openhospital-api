@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -42,26 +42,22 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 @SecuritySchemes({
-	@SecurityScheme(
-	    name = "bearerAuth",
-	    type = SecuritySchemeType.HTTP,
-	    bearerFormat = "JWT",
-	    scheme = "bearer"
-	)
+		@SecurityScheme(name = "bearerAuth", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 })
 public class OpenAPIConfiguration {
 
 	@Bean
 	public OpenAPI springShopOpenAPI() {
 		return new OpenAPI().addSecurityItem(
-			new SecurityRequirement().addList("bearerAuth"))
-								     .info(new Info().title("OH 2.0 Api Documentation")
-								     .description("OH 2.0 Api Documentation")
-								     .version("1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
-								     .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0")))
-								     .servers(List.of(new Server().url("http://localhost:8080")))
-								     .components(new Components().schemas(Map.of(
-								    		 "LocalDate", new DateSchema().name("LocalDate").type("string").format(null),
-								    		 "LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format(null))));
+						new SecurityRequirement().addList("bearerAuth"))
+						.info(new Info().title("Open Hospital API Documentation")
+										.description("Open Hospital API Documentation")
+										.version("0.1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
+										.license(new License().name("GPL-3.0 license")
+														.url("https://github.com/informatici/openhospital-api?tab=GPL-3.0-1-ov-file#readme")))
+						.servers(List.of(new Server().url("http://localhost:8080")))
+						.components(new Components().schemas(Map.of(
+										"LocalDate", new DateSchema().name("LocalDate").type("string").format(null),
+										"LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format(null))));
 	}
 }

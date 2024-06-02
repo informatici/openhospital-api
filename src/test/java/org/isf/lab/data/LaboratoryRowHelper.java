@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,10 +21,10 @@
  */
 package org.isf.lab.data;
 
+import org.isf.lab.TestLaboratoryRow;
 import org.isf.lab.dto.LaboratoryRowDTO;
 import org.isf.lab.model.Laboratory;
 import org.isf.lab.model.LaboratoryRow;
-import org.isf.lab.test.TestLaboratoryRow;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,7 +39,7 @@ public class LaboratoryRowHelper {
 
 
 	public static String asJsonString(LaboratoryRowDTO body) {
-		// TODO Auto-generated method stub
+		
 		try {
 			return new ObjectMapper().writeValueAsString(body);
 		} catch (JsonProcessingException e) {

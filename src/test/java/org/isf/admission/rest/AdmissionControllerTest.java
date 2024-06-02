@@ -77,7 +77,6 @@ import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -115,21 +114,21 @@ public class AdmissionControllerTest {
 	@Mock
 	private DischargeTypeBrowserManager dischargeTypeManagerMock;
 
-	@Autowired
-	private AdmissionMapper admissionMapper = new AdmissionMapper();
+	private AdmissionMapper admissionMapper;
 
-	@Autowired
-	private AdmittedPatientMapper admittedMapper = new AdmittedPatientMapper();
+	private AdmittedPatientMapper admittedMapper;
 
-	@Autowired
-	private DischargeTypeBrowserManager dischargeManager = new DischargeTypeBrowserManager();
-
-	@Autowired
-	private DischargeTypeMapper dischargeMapper = new DischargeTypeMapper();
+	private DischargeTypeMapper dischargeMapper;
 
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
+
+	public AdmissionControllerTest() {
+		admittedMapper = new AdmittedPatientMapper();
+		admissionMapper = new AdmissionMapper();
+		dischargeMapper = new DischargeTypeMapper();
+	}
 
 	@BeforeEach
 	public void setup() {

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -89,7 +89,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testGetVisit_200() throws Exception {
-		String request = "/visit/patient/{patID}";
+		String request = "/visits/patient/{patID}";
 
 		int patID = 0;
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
@@ -112,7 +112,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testNewVisit_201() throws Exception {
-		String request = "/visit";
+		String request = "/visits";
 		int id = 1;
 		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(id));
 
@@ -134,7 +134,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testNewVisits_201() throws Exception {
-		String request = "/visits";
+		String request = "/visits/insertList";
 
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
 
@@ -159,7 +159,7 @@ public class VisitsControllerTest {
 
 	@Test
 	public void testDeleteVisitsRelatedToPatient_200() throws Exception {
-		String request = "/visit/delete/{patId}";
+		String request = "/visits/delete/{patId}";
 
 		int id = 1;
 

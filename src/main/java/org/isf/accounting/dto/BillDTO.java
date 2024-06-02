@@ -23,7 +23,7 @@ package org.isf.accounting.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
 

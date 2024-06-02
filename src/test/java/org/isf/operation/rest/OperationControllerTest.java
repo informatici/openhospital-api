@@ -177,9 +177,6 @@ public class OperationControllerTest {
 		when(operationBrowserManagerMock.getOperationByCode(code))
 				.thenReturn(OperationHelper.setup());
 
-		when(operationBrowserManagerMock.deleteOperation(deleteOperation))
-				.thenReturn(true);
-
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
 				.perform(delete(request, code))

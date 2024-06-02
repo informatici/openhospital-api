@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -88,7 +88,7 @@ public class VaccineTypeControllerTest {
 
 	@Test
 	public void testGetVaccineType_200() throws Exception {
-		String request = "/vaccinetype";
+		String request = "/vaccinetypes";
 
 		List<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
 
@@ -110,7 +110,7 @@ public class VaccineTypeControllerTest {
 
 	@Test
 	public void testNewVaccineType_200() throws Exception {
-		String request = "/vaccinetype";
+		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
 
@@ -133,7 +133,7 @@ public class VaccineTypeControllerTest {
 
 	@Test
 	public void testUpdateVaccineType_200() throws Exception {
-		String request = "/vaccinetype";
+		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
 
@@ -156,7 +156,7 @@ public class VaccineTypeControllerTest {
 
 	@Test
 	public void testDeleteVaccineType_200() throws Exception {
-		String request = "/vaccinetype/{code}";
+		String request = "/vaccinetypes/{code}";
 		String basecode = "0";
 
 		VaccineType vaccineType = VaccineTypeHelper.setup(basecode);
@@ -180,7 +180,7 @@ public class VaccineTypeControllerTest {
 
 	@Test
 	public void testCheckVaccineTypeCode_200() throws Exception {
-		String request = "/vaccinetype/check/{code}";
+		String request = "/vaccinetypes/check/{code}";
 
 		String code = "AA";
 		VaccineType vaccineType = VaccineTypeHelper.setup(code);
