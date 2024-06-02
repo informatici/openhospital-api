@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -77,7 +78,7 @@ public class WardController {
         List<Ward> wards = wardManager.getWards();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(listWard);
         }
@@ -95,7 +96,7 @@ public class WardController {
         List<Ward> wards = wardManager.getWardsNoMaternity();
         List<WardDTO> listWard = mapper.map2DTOList(wards);
         if (listWard.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(listWard);
         }
@@ -114,7 +115,7 @@ public class WardController {
         Ward ward = wardManager.findWard(code);
         int numberOfPatients = wardManager.getCurrentOccupation(ward);
         if (numberOfPatients == -1) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.internalServerError().body(null);
         } else {
             return ResponseEntity.ok(numberOfPatients);
         }
@@ -128,11 +129,11 @@ public class WardController {
      * @throws OHServiceException
      */
     @PostMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WardDTO> newWard(@RequestBody WardDTO newWard) throws OHServiceException {
+    public ResponseEntity<?> newWard(@RequestBody WardDTO newWard) throws OHServiceException {
 	    LOGGER.info("Create Ward: {}", newWard);
         Ward wardCreated = wardManager.newWard(mapper.map2Model(newWard));
         if (wardCreated == null) {
-            throw new OHAPIException(new OHExceptionMessage("Ward not created."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(wardCreated));
     }
@@ -145,13 +146,13 @@ public class WardController {
      * @throws OHServiceException
      */
     @PutMapping(value = "/wards", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<WardDTO> updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
+    public ResponseEntity<?> updateWard(@RequestBody WardDTO updateWard) throws OHServiceException {
 	    LOGGER.info("Update ward with code: {}", updateWard.getCode());
 	    Ward ward = mapper.map2Model(updateWard);
 	    ward.setLock(updateWard.getLock());
         Ward wardUpdated = wardManager.updateWard(ward);
         if (wardUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage("Ward not updated."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not updated."));
         }
         return ResponseEntity.ok(mapper.map2DTO(wardUpdated));
 
@@ -165,18 +166,18 @@ public class WardController {
      * @throws OHServiceException
      */
     @DeleteMapping(value = "/wards/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteWard(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<?> deleteWard(@PathVariable String code) throws OHServiceException {
         LOGGER.info("Delete Ward with code: {}", code);
         Ward ward = wardManager.findWard(code);
         if (ward != null) {
             try {
                 wardManager.deleteWard(ward);
             } catch (OHServiceException serviceException) {
-                throw new OHAPIException(new OHExceptionMessage("Ward not deleted."));
+                return ResponseEntity.internalServerError().body(new OHExceptionMessage("Ward not deleted."));
             }
             return ResponseEntity.ok(true);
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ((BodyBuilder) ResponseEntity.notFound()).body("No ward found with the specified code.");
     }
 
     /**

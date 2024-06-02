@@ -23,7 +23,6 @@ package org.isf.vactype.rest;
 
 import java.util.List;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,7 +78,7 @@ public class VaccineTypeController {
 		List<VaccineType> vaccinesTypes = vaccineTypeManager.getVaccineType();
 		List<VaccineTypeDTO> listVaccines = mapper.map2DTOList(vaccinesTypes);
 		if (listVaccines.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(listVaccines);
 		}
@@ -92,16 +92,16 @@ public class VaccineTypeController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/vaccinetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<VaccineTypeDTO> newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
+	public ResponseEntity<?> newVaccineType(@RequestBody VaccineTypeDTO newVaccineType) throws OHServiceException {
 		LOGGER.info("Create vaccine type: {}", newVaccineType);
 		VaccineType newVaccineTYpe;
 		try {
 			newVaccineTYpe = vaccineTypeManager.newVaccineType(mapper.map2Model(newVaccineType));
 		} catch (OHDataIntegrityViolationException e) {
-			throw new OHAPIException(new OHExceptionMessage("Vaccine Type already present."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine Type already present."));
 		}
 		if (newVaccineTYpe == null) {
-			throw new OHAPIException(new OHExceptionMessage("Vaccine Type not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine Type not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newVaccineTYpe));
 	}
@@ -114,13 +114,13 @@ public class VaccineTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/vaccinetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<VaccineTypeDTO> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
+	public ResponseEntity<?> updateVaccineType(@RequestBody VaccineTypeDTO updateVaccineType) throws OHServiceException {
 		LOGGER.info("Update vaccine type: {}", updateVaccineType);
 		VaccineType updatedVaccineType;
 		try {
 			updatedVaccineType = vaccineTypeManager.updateVaccineType(mapper.map2Model(updateVaccineType));
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Vaccine Type not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine Type not updated."));
 		}
 		return ResponseEntity.ok(mapper.map2DTO(updatedVaccineType));
 
@@ -134,18 +134,18 @@ public class VaccineTypeController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/vaccinetypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteVaccineType(@PathVariable String code) throws OHServiceException {
+	public ResponseEntity<?> deleteVaccineType(@PathVariable String code) throws OHServiceException {
 		LOGGER.info("Delete vaccine type code: {}", code);
 		VaccineType vaccineType = vaccineTypeManager.findVaccineType(code);
 		if (vaccineType != null) {
 			try {
 				vaccineTypeManager.deleteVaccineType(vaccineType);
 			} catch (OHServiceException serviceException) {
-				throw new OHAPIException(new OHExceptionMessage("Vaccine Type not deleted."));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Vaccine Type not deleted."));
 			}
 			return ResponseEntity.ok(true);
 		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		return ((BodyBuilder) ResponseEntity.notFound()).body("Vaccine type not found with th specified code.");
 	}
 
 	/**

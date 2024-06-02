@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -30,7 +30,6 @@ import org.isf.medtype.dto.MedicalTypeDTO;
 import org.isf.medtype.manager.MedicalTypeBrowserManager;
 import org.isf.medtype.mapper.MedicalTypeMapper;
 import org.isf.medtype.model.MedicalType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -39,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,7 +75,7 @@ public class MedicalTypeController {
 		List<MedicalTypeDTO> mappedMedicalTypes = medicalTypeMapper.map2DTOList(medicalTypes);
 		if (mappedMedicalTypes.isEmpty()) {
 			LOGGER.info("No medical type found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMedicalTypes);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} medical types", mappedMedicalTypes.size());
 			return ResponseEntity.ok(mappedMedicalTypes);
@@ -89,10 +89,10 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PostMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalTypeDTO> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+	public ResponseEntity<?> createMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType isCreatedMedicalType = medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(medicalTypeDTO));
 		if (isCreatedMedicalType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Medical type not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical type not created."));
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(medicalTypeMapper.map2DTO(isCreatedMedicalType));
 	}
@@ -104,14 +104,14 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@PutMapping(value = "/medicaltypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MedicalTypeDTO> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
+	public ResponseEntity<?> updateMedicalType(@RequestBody @Valid MedicalTypeDTO medicalTypeDTO) throws OHServiceException {
 		MedicalType medicalType = medicalTypeMapper.map2Model(medicalTypeDTO);
 		if (!medicalTypeBrowserManager.isCodePresent(medicalType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Medical type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Medical type not found.");
 		}
 		MedicalType isUpdatedMedicalType = medicalTypeBrowserManager.updateMedicalType(medicalType);
 		if (isUpdatedMedicalType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Medical type not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical type not updated."));
         }
         return ResponseEntity.ok(medicalTypeMapper.map2DTO(isUpdatedMedicalType));
 	}
@@ -134,7 +134,7 @@ public class MedicalTypeController {
 	 * @throws OHServiceException 
 	 */
 	@DeleteMapping(value = "/medicaltypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteMedicalType(@PathVariable("code") String code) throws OHServiceException {
+	public ResponseEntity<?> deleteMedicalType(@PathVariable("code") String code) throws OHServiceException {
 		List<MedicalType> matchedMedicalTypes = medicalTypeBrowserManager.getMedicalType()
 				.stream()
 				.filter(item -> item.getCode().equals(code))
@@ -143,11 +143,11 @@ public class MedicalTypeController {
 			try {
 				medicalTypeBrowserManager.deleteMedicalType(matchedMedicalTypes.get(0));
 			} catch (OHServiceException serviceException) {
-				throw new OHAPIException(new OHExceptionMessage("Medical type not deleted."));
+				return ResponseEntity.internalServerError().body(new OHExceptionMessage("Medical type not deleted."));
 			}
 			return ResponseEntity.ok(true);
 		} else {
-			throw new OHAPIException(new OHExceptionMessage("Medical type not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body("No Medical type found with the specified code.");
 		}
 	}
 }

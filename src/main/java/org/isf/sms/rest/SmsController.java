@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -27,7 +27,6 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.sms.dto.SmsDTO;
 import org.isf.sms.manager.SmsManager;
 import org.isf.sms.mapper.SmsMapper;
@@ -40,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -80,7 +80,7 @@ public class SmsController {
 		List<SmsDTO> mappedSmsList = smsMapper.map2DTOList(smsList);
 		if (mappedSmsList.isEmpty()) {
 			LOGGER.info("No sms found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSmsList);
+			return ResponseEntity.notFound().build();
 		} else {
 			LOGGER.info("Found {} sms", mappedSmsList.size());
 			return ResponseEntity.ok(mappedSmsList);
@@ -98,7 +98,7 @@ public class SmsController {
 			@RequestBody @Valid SmsDTO smsDTO,
 			@RequestParam(defaultValue="false") boolean split) throws OHServiceException {
 		smsManager.saveOrUpdate(smsMapper.map2Model(smsDTO), split);
-		return ResponseEntity.ok(true);
+		return ResponseEntity.status(HttpStatus.CREATED).body(true);
 	}
 	
 	/**
@@ -108,10 +108,10 @@ public class SmsController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/sms/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteSms(@RequestBody @Valid List<SmsDTO> smsDTOList) throws OHServiceException {
+	public ResponseEntity<?> deleteSms(@RequestBody @Valid List<SmsDTO> smsDTOList) throws OHServiceException {
 		List<Sms> smsList = smsMapper.map2ModelList(smsDTOList);
 		if (smsList.stream().anyMatch(sms -> sms.getSmsId() <= 0)) {
-			throw new OHAPIException(new OHExceptionMessage("Some Sms are not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Some Sms are not found."));
 		}
 		smsManager.delete(smsList);
 		return ResponseEntity.ok(true);

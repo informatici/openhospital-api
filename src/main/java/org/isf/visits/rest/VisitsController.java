@@ -24,7 +24,6 @@ package org.isf.visits.rest;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.visits.dto.VisitDTO;
@@ -37,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,7 +83,7 @@ public class VisitsController {
 			listVisit.add(visitDTO);
 		}
 		if (listVisit.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(listVisit);
 		}
@@ -112,12 +112,12 @@ public class VisitsController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/visits/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
+	public ResponseEntity<?> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
 		LOGGER.info("Create Visits");
 		List<Visit> listVisits = mapper.map2ModelList(newVisits);
 		boolean areCreated = visitManager.newVisits(listVisits);
 		if (!areCreated) {
-			throw new OHAPIException(new OHExceptionMessage("Visits not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Visits not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
 	}
@@ -130,11 +130,11 @@ public class VisitsController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/visits/delete/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
+	public ResponseEntity<?> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
 		LOGGER.info("Delete Visit related to patId: {}", patID);
 		boolean areDeleted = visitManager.deleteAllVisits(patID);
 		if (!areDeleted) {
-			throw new OHAPIException(new OHExceptionMessage("Visits not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Visits not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -147,23 +147,23 @@ public class VisitsController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/visits/{visitID}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
+	public ResponseEntity<?> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
 		LOGGER.info("Create Visits");
 		Visit visit = visitManager.findVisit(visitID);
 		if (visit == null) {
-			throw new OHAPIException(new OHExceptionMessage("Visit not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Visit not found."));
 		}
 
 		if (visit.getVisitID() != updateVisit.getVisitID()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ((BodyBuilder) ResponseEntity.notFound()).body("Visit not found");
 		}
 
 		Visit visitUp = mapper.map2Model(updateVisit);
 		Visit visitUpdate = visitManager.newVisit(visitUp);
 		if (visitUpdate == null) {
-			throw new OHAPIException(new OHExceptionMessage("Visit not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Visit not updated."));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
+		return ResponseEntity.ok().body(mapper.map2DTO(visitUpdate));
 	}
 
 }

@@ -190,7 +190,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_Not_Found() throws Exception {
 		String request = "/bills";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		Integer id = 0;
@@ -210,7 +210,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				)
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+				.andExpect(status().isNotFound()) //TODO Create OHCreateAPIException
 				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
@@ -222,7 +222,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_Not_Found() throws Exception {
 		Integer id = 123;
 		String request = "/bills/{id}";
 
@@ -243,7 +243,7 @@ public class BillControllerTest extends ControllerBaseTest {
 				)
 				.andDo(log())
 				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+				.andExpect(status().isNotFound()) //TODO Create OHCreateAPIException
 				.andExpect(content().string(containsString("Patient not found.")))
 				.andReturn();
 
@@ -302,7 +302,7 @@ public class BillControllerTest extends ControllerBaseTest {
 								.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
 				)
 				.andDo(log())
-				.andExpect(status().isCreated())
+				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
 				.andReturn();
 	}
@@ -342,7 +342,7 @@ public class BillControllerTest extends ControllerBaseTest {
 								.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().isNoContent());
+				.andExpect(status().isNotFound());
 	}
 
 	@Test

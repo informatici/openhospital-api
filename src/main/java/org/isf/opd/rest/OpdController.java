@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -39,7 +39,6 @@ import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.operation.model.OperationRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.shared.pagination.Page;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -53,6 +52,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -115,21 +115,21 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OpdDTO> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
+	ResponseEntity<?> newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		int code = opdDTO.getCode();
 		LOGGER.info("store Out patient {}", code);
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		if (" ".equals(opdDTO.getNote())) {
-			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdDTO);
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not created."));
 		}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOpd));
 	}
@@ -141,22 +141,22 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/opds/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OpdWithOperationRowDTO> newOpdWithOperationRow(@RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO) throws OHServiceException {
+	ResponseEntity<?> newOpdWithOperationRow(@RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO) throws OHServiceException {
 		int code = opdWithOperationRowDTO.getOpdDTO().getCode();
 		LOGGER.info("store Out patient {}", code);
 		OpdWithOperationRowDTO opdWithOperatioRow = new OpdWithOperationRowDTO();
 		Patient patient = patientManager.getPatientById(opdWithOperationRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 		if (" ".equals(opdWithOperationRowDTO.getOpdDTO().getNote())) {
-			throw new OHAPIException(new OHExceptionMessage("Note field mandatory."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Note field mandatory."));
 		}
 		Opd opdToInsert = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
 		opdToInsert.setPatient(patient);
 		Opd isCreatedOpd = opdManager.newOpd(opdToInsert);
 		if (isCreatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not created."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not created."));
 		}
 		OpdDTO opdDTO = mapper.map2DTO(isCreatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
@@ -179,29 +179,29 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OpdDTO> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
+	ResponseEntity<?> updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdById(code).isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdDTO.getCode() != 0 && opdDTO.getCode() != code) {	
-			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdDTO.getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdDTO);
 		opdToUpdate.setLock(opdDTO.getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not updated."));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(updatedOpd));
+		return ResponseEntity.ok().body(mapper.map2DTO(updatedOpd));
 	}
 
 	/**
@@ -212,28 +212,28 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/opds/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OpdWithOperationRowDTO> updateOpdWithOperationRow(@PathVariable("code") int code, @RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO)
+	ResponseEntity<?> updateOpdWithOperationRow(@PathVariable("code") int code, @RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO)
 			throws OHServiceException {
 		LOGGER.info("Update opds code: {}", code);
 		OpdWithOperationRowDTO opdWithOperatioRow = new OpdWithOperationRowDTO();
 		if (opdManager.getOpdById(code).isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 
 		if (opdWithOperationRowDTO.getOpdDTO().getCode() != 0 && opdWithOperationRowDTO.getOpdDTO().getCode() != code) {	
-			throw new OHAPIException(new OHExceptionMessage("Opd not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Opd not found."));
 		}
 		
 		Patient patient = patientManager.getPatientById(opdWithOperationRowDTO.getOpdDTO().getPatientCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Patient not found."));
 		}
 
 		Opd opdToUpdate = mapper.map2Model(opdWithOperationRowDTO.getOpdDTO());
 		opdToUpdate.setLock(opdWithOperationRowDTO.getOpdDTO().getLock());
 		Opd updatedOpd = opdManager.updateOpd(opdToUpdate);
 		if (updatedOpd == null) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not updated."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not updated."));
 		}
 		OpdDTO opdDTO = mapper.map2DTO(updatedOpd);
 		opdWithOperatioRow.setOpdDTO(opdDTO);
@@ -252,7 +252,7 @@ public class OpdController {
 			}
 		}
 		opdWithOperatioRow.setOperationRows(listOpeRow);
-		return ResponseEntity.status(HttpStatus.OK).body(opdWithOperatioRow);
+		return ResponseEntity.ok().body(opdWithOperatioRow);
 	}
 	
 	/**
@@ -269,7 +269,7 @@ public class OpdController {
 		List<Opd> opds = opdManager.getOpd(oneWeek);
 		List<OpdDTO> opdDTOs = mapper.map2DTOList(opds);
 		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdDTOs);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(opdDTOs);
 		}
@@ -331,7 +331,7 @@ public class OpdController {
 		}
 		opdPageable.setData(opdDTOs);
 		if (opdDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdPageable);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(opdPageable);
 		}
@@ -356,7 +356,6 @@ public class OpdController {
 				try {
 					listOp = operationRowManager.getOperationRowByOpd(opd);
 				} catch (OHServiceException e) {
-					// TODO Auto-generated catch block
 					LOGGER.error("Unable to get the List of operation associate to this Opd");
 				}
 				if (!listOp.isEmpty()) {
@@ -371,7 +370,7 @@ public class OpdController {
 
 		} else {
 
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(opdWithOperations);
+			return ResponseEntity.notFound().build();
 
 		}
 	}
@@ -383,14 +382,14 @@ public class OpdController {
 	 * @throws OHServiceException
 	 */
 	@DeleteMapping(value = "/opds/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteOpd(@PathVariable("code") int code) throws OHServiceException {
+	public ResponseEntity<?> deleteOpd(@PathVariable("code") int code) throws OHServiceException {
 		LOGGER.info("Delete Opd code: {}", code);
 		Opd toDelete = new Opd();
 		toDelete.setCode(code);
 		try {
 			opdManager.deleteOpd(toDelete);
 		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Opd not deleted."));
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("Opd not deleted."));
 		}
 		return ResponseEntity.ok(true);
 	}
@@ -417,7 +416,7 @@ public class OpdController {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
 		if (lastOpd == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			return ResponseEntity.notFound().build();
 		} else {
 			return ResponseEntity.ok(mapper.map2DTO(lastOpd));
 		}

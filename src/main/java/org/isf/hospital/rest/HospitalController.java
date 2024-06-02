@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -25,13 +25,12 @@ import org.isf.hospital.dto.HospitalDTO;
 import org.isf.hospital.manager.HospitalBrowsingManager;
 import org.isf.hospital.mapper.HospitalMapper;
 import org.isf.hospital.model.Hospital;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -58,13 +57,13 @@ public class HospitalController {
     }
 
     @PutMapping(value = "/hospitals/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HospitalDTO> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
+    public ResponseEntity<?> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
 
         if (!hospitalDTO.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Hospital code mismatch."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Hospital code mismatch."));
         }
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-            throw new OHAPIException(new OHExceptionMessage("Hospital not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Hospital not found."));
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);
@@ -79,7 +78,7 @@ public class HospitalController {
         Hospital hospital = hospitalBrowsingManager.getHospital();
 
         if (hospital == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(hospitalMapper.map2DTO(hospital));
         }
@@ -90,7 +89,7 @@ public class HospitalController {
         String hospitalCurrencyCod = hospitalBrowsingManager.getHospitalCurrencyCod();
 
         if (hospitalCurrencyCod == null || hospitalCurrencyCod.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(hospitalCurrencyCod);
         }

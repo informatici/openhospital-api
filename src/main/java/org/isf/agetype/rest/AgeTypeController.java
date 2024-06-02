@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -32,15 +32,14 @@ import org.isf.agetype.dto.AgeTypeDTO;
 import org.isf.agetype.manager.AgeTypeBrowserManager;
 import org.isf.agetype.mapper.AgeTypeMapper;
 import org.isf.agetype.model.AgeType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -83,7 +82,7 @@ public class AgeTypeController {
 			return ResponseEntity.ok(parsedResults);
         } else {
         	LOGGER.info("Empty age types list");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
+        	return ResponseEntity.notFound().build();
         }
 	}
 	
@@ -94,9 +93,9 @@ public class AgeTypeController {
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
+	ResponseEntity<?> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
+			return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("The age type is not valid."));
 		}
 		LOGGER.info("Update age type");
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
@@ -106,7 +105,7 @@ public class AgeTypeController {
 			ageTypeManager.updateAgeType(ageTypes);
 			return ResponseEntity.ok(ageTypeDTO);
 		} catch (OHServiceException ex) {
-			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.internalServerError().body(new OHExceptionMessage("The age type is not updated."));
 		}
 	}
 	
@@ -126,7 +125,7 @@ public class AgeTypeController {
 			return ResponseEntity.ok(responseBody);
         } else {
         	LOGGER.info("No corresponding age code for the given age");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
+        	return ResponseEntity.notFound().build();
         }
 	}
 	
@@ -144,7 +143,7 @@ public class AgeTypeController {
 			return ResponseEntity.ok(result);
         } else {
         	LOGGER.info("No corresponding age code for the given index");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        	return ResponseEntity.notFound().build();
         }
 	}
 	

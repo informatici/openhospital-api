@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -30,13 +30,13 @@ import org.isf.exam.dto.ExamDTO;
 import org.isf.exam.mapper.ExamMapper;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
-import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,11 +68,11 @@ public class ExamController {
     }
 
     @PostMapping(value = "/exams", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamDTO> newExam(@RequestBody ExamDTO newExam) throws OHServiceException {
+    public ResponseEntity<?> newExam(@RequestBody ExamDTO newExam) throws OHServiceException {
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> newExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
 
         if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(newExam);
@@ -80,24 +80,24 @@ public class ExamController {
         try {
             examManager.newExam(exam);
         } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not created."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not created."));
         }
-        return ResponseEntity.ok(examMapper.map2DTO(exam));
+        return ResponseEntity.status(HttpStatus.CREATED).body(examMapper.map2DTO(exam));
     }
 
     @PutMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamDTO> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
+    public ResponseEntity<?> updateExams(@PathVariable String code, @RequestBody ExamDTO updateExam) throws OHServiceException {
 
         if (!updateExam.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body("The specified code is different with the Exam code.");
         }
         if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam not found."));
         }
 
         ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> updateExam.getExamtype().getCode().equals(et.getCode())).findFirst().orElse(null);
         if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body(new OHExceptionMessage("Exam type not found."));
         }
 
         Exam exam = examMapper.map2Model(updateExam);
@@ -105,7 +105,7 @@ public class ExamController {
         exam.setLock(updateExam.getLock());
         Exam examUpdated = examManager.updateExam(exam);
         if (examUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not updated."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not updated."));
         }
 
         return ResponseEntity.ok(examMapper.map2DTO(examUpdated));
@@ -117,7 +117,7 @@ public class ExamController {
         List<ExamDTO> exams = examMapper.map2DTOList(examManager.getExams(description));
 
         if (exams == null || exams.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(exams);
         }
@@ -128,22 +128,22 @@ public class ExamController {
         List<ExamDTO> exams = examMapper.map2DTOList(examManager.getExams());
 
         if (exams == null || exams.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(exams);
         }
     }
 
     @DeleteMapping(value = "/exams/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteExam(@PathVariable String code) throws OHServiceException {
+    public ResponseEntity<?> deleteExam(@PathVariable String code) throws OHServiceException {
         Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
         if (!exam.isPresent()) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+            return ((BodyBuilder) ResponseEntity.notFound()).body("No Exam found with the specified code.");
         }
         try {
             examManager.deleteExam(exam.get());
         } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not deleted."));
+            return ResponseEntity.internalServerError().body(new OHExceptionMessage("Exam not deleted."));
         }
         return ResponseEntity.ok(true);
     }
