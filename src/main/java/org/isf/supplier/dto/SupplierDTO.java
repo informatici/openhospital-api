@@ -28,7 +28,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class SupplierDTO {
 
 	@NotNull(message = "supplier's ID is required")
-	@Schema(description = "The supplier's ID", example = "111")
 	private Integer supId;
 
 	@NotNull(message = "supplier's name is required")
@@ -53,11 +52,15 @@ public class SupplierDTO {
 	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
+	@NotNull
+	@Schema(description = "Flag record deleted, values are 'Y' OR 'N' ", example = "N")
+	private String supDeleted;
+
 	public SupplierDTO() {
 	}
 
 	public SupplierDTO(Integer supId, String supName, String supAddress, String supTaxcode, String supPhone,
-			String supFax, String supEmail, String supNote) {
+					String supFax, String supEmail, String supNote) {
 		this.supId = supId;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -66,6 +69,7 @@ public class SupplierDTO {
 		this.supFax = supFax;
 		this.supEmail = supEmail;
 		this.supNote = supNote;
+		this.supDeleted = "N";
 	}
 
 	public Integer getSupId() {
@@ -130,5 +134,13 @@ public class SupplierDTO {
 
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
+	}
+
+	public String getSupDeleted() {
+		return supDeleted;
+	}
+
+	public void setSupDeleted(String supDeleted) {
+		this.supDeleted = supDeleted;
 	}
 }

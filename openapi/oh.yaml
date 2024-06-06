@@ -6239,6 +6239,7 @@ components:
           description: The value of the user
     SupplierDTO:
       required:
+      - supDeleted
         - supId
         - supName
       type: object
@@ -6282,6 +6283,10 @@ components:
           maxLength: 200
           type: string
           description: The supplier's notes
+        supDeleted:
+          type: string
+          description: "Flag record deleted, values are 'Y' OR 'N' "
+          example: 'N'
     PricesOthersDTO:
       required:
         - code
