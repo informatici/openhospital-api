@@ -21,13 +21,13 @@
  */
 package org.isf.supplier.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SupplierDTO {
 
 	@NotNull(message = "supplier's ID is required")
-	@Schema(description = "The supplier's ID", example = "111")
 	private Integer supId;
 
 	@NotNull(message = "supplier's name is required")
