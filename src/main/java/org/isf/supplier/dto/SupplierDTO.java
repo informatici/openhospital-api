@@ -21,9 +21,8 @@
  */
 package org.isf.supplier.dto;
 
-import jakarta.validation.constraints.NotNull;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 public class SupplierDTO {
 
@@ -53,11 +52,15 @@ public class SupplierDTO {
 	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
+	@NotNull
+	@Schema(description = "Flag record deleted, values are 'Y' OR 'N' ", example = "N")
+	private String supDeleted;
+
 	public SupplierDTO() {
 	}
 
 	public SupplierDTO(Integer supId, String supName, String supAddress, String supTaxcode, String supPhone,
-			String supFax, String supEmail, String supNote) {
+					String supFax, String supEmail, String supNote) {
 		this.supId = supId;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -66,6 +69,7 @@ public class SupplierDTO {
 		this.supFax = supFax;
 		this.supEmail = supEmail;
 		this.supNote = supNote;
+		this.supDeleted = "N";
 	}
 
 	public Integer getSupId() {
@@ -130,5 +134,13 @@ public class SupplierDTO {
 
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
+	}
+
+	public String getSupDeleted() {
+		return supDeleted;
+	}
+
+	public void setSupDeleted(String supDeleted) {
+		this.supDeleted = supDeleted;
 	}
 }
