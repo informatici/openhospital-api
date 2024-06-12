@@ -57,7 +57,7 @@ public class OperationTypeController {
 
 	@Autowired
 	protected OperationTypeBrowserManager opeTypeManager;
-	
+
 	@Autowired
 	protected OperationTypeMapper mapper;
 
@@ -68,6 +68,7 @@ public class OperationTypeController {
 
 	/**
 	 * Create a new {@link OperationType}.
+	 * 
 	 * @param operationTypeDTO
 	 * @return the newly stored {@link OperationType} object.
 	 * @throws OHServiceException
@@ -87,13 +88,14 @@ public class OperationTypeController {
 
 	/**
 	 * Updates the specified {@link OperationType}.
+	 * 
 	 * @param operationTypeDTO
 	 * @return the newly updated {@link OperationType} object.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/operationtypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<OperationTypeDTO> updateOperationTypes(@PathVariable String code, @RequestBody OperationTypeDTO operationTypeDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Update operationtypes code: {}", operationTypeDTO.getCode());
 		OperationType opeType = mapper.map2Model(operationTypeDTO);
 		if (!opeTypeManager.isCodePresent(code)) {
@@ -101,7 +103,7 @@ public class OperationTypeController {
 		}
 		OperationType updatedOperationType;
 		try {
-			 updatedOperationType = opeTypeManager.updateOperationType(opeType);
+			updatedOperationType = opeTypeManager.updateOperationType(opeType);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Operation Type not updated."));
 		}
@@ -110,6 +112,7 @@ public class OperationTypeController {
 
 	/**
 	 * Get all the available {@link OperationType}s.
+	 * 
 	 * @return a {@link List} of {@link OperationType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -127,6 +130,7 @@ public class OperationTypeController {
 
 	/**
 	 * Delete {@link OperationType} with the specified code.
+	 * 
 	 * @param code
 	 * @return {@code true} if the {@link OperationType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -137,13 +141,13 @@ public class OperationTypeController {
 		if (opeTypeManager.isCodePresent(code)) {
 			List<OperationType> opeTypes = opeTypeManager.getOperationType();
 			List<OperationType> opeTypeFounds = opeTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!opeTypeFounds.isEmpty()) {
 				try {
 					opeTypeManager.deleteOperationType(opeTypeFounds.get(0));
 				} catch (OHServiceException serviceException) {
 					LOGGER.error("Delete Operation Type code: {} failed.", code);
-					return ResponseEntity.ok(false);
+					throw new OHAPIException(new OHExceptionMessage("Operation Type not deleted."));
 				}
 			}
 		} else {
