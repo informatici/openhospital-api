@@ -57,7 +57,7 @@ public class DischargeTypeController {
 
 	@Autowired
 	protected DischargeTypeBrowserManager discTypeManager;
-	
+
 	@Autowired
 	protected DischargeTypeMapper mapper;
 
@@ -68,6 +68,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Create a new {@link DischargeType}
+	 * 
 	 * @param dischTypeDTO
 	 * @return {@code true} if the {@link DischargeType} has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -85,6 +86,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Update the specified {@link DischargeType}
+	 * 
 	 * @param dischTypeDTO
 	 * @return {@code true} if the {@link DischargeType} has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -105,6 +107,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Get all the available {@link DischargeType}s
+	 * 
 	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -122,6 +125,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Delete {@link DischargeType} for the specified code.
+	 * 
 	 * @param code
 	 * @return {@code true} if the {@link DischargeType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -132,9 +136,14 @@ public class DischargeTypeController {
 		if (discTypeManager.isCodePresent(code)) {
 			List<DischargeType> dischTypes = discTypeManager.getDischargeType();
 			List<DischargeType> dischTypeFounds = dischTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!dischTypeFounds.isEmpty()) {
-				discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+				try {
+					discTypeManager.deleteDischargeType(dischTypeFounds.get(0));
+				} catch (OHServiceException serviceException) {
+					LOGGER.error("Delete discharge type: {} failed.", code);
+					throw new OHAPIException(new OHExceptionMessage("Discharge type not deleted."));
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
