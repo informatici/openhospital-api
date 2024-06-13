@@ -57,7 +57,7 @@ public class AdmissionTypeController {
 
 	@Autowired
 	protected AdmissionTypeBrowserManager admtManager;
-	
+
 	@Autowired
 	protected AdmissionTypeMapper mapper;
 
@@ -68,6 +68,7 @@ public class AdmissionTypeController {
 
 	/**
 	 * Create a new {@link AdmissionType}
+	 * 
 	 * @param admissionTypeDTO
 	 * @return {@code true} if the admission type has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -85,13 +86,14 @@ public class AdmissionTypeController {
 
 	/**
 	 * Updates the specified {@link AdmissionType}.
+	 * 
 	 * @param admissionTypeDTO
 	 * @return {@code true} if the admission type has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
-			throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
 		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
 		if (!admtManager.isCodePresent(admt.getCode())) {
@@ -103,6 +105,7 @@ public class AdmissionTypeController {
 
 	/**
 	 * Get all the available {@link AdmissionType}s.
+	 * 
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -120,6 +123,7 @@ public class AdmissionTypeController {
 
 	/**
 	 * Delete {@link AdmissionType} for specified code.
+	 * 
 	 * @param code
 	 * @return {@code true} if the {@link AdmissionType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -130,9 +134,14 @@ public class AdmissionTypeController {
 		if (admtManager.isCodePresent(code)) {
 			List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
 			List<AdmissionType> admtFounds = admissionTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!admtFounds.isEmpty()) {
-				admtManager.deleteAdmissionType(admtFounds.get(0));
+				try {
+					admtManager.deleteAdmissionType(admtFounds.get(0));
+				} catch (OHServiceException serviceException) {
+					LOGGER.error("Delete Admission: {} failed.", code);
+					throw new OHAPIException(new OHExceptionMessage("Admission not deleted."));
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
