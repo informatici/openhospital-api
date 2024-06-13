@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value ="/deliverytype")
+@RestController(value = "/deliverytype")
 @Tag(name = "Delivery Type")
 @SecurityRequirement(name = "bearerAuth")
 public class DeliveryTypeController {
@@ -57,7 +57,7 @@ public class DeliveryTypeController {
 
 	@Autowired
 	protected DeliveryTypeBrowserManager dlvrtypeManager;
-	
+
 	@Autowired
 	protected DeliveryTypeMapper deliveryTypeMapper;
 
@@ -68,6 +68,7 @@ public class DeliveryTypeController {
 
 	/**
 	 * Create a new {@link DeliveryType}.
+	 * 
 	 * @param dlvrTypeDTO
 	 * @return {@code true} if the {@link DeliveryType} has been stored, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -79,7 +80,7 @@ public class DeliveryTypeController {
 		dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
 		DeliveryType dlvrTypeCreated = null;
 		List<DeliveryType> dlvrTypeFounds = dlvrtypeManager.getDeliveryType().stream().filter(ad -> ad.getCode().equals(code))
-				.collect(Collectors.toList());
+						.collect(Collectors.toList());
 		if (!dlvrTypeFounds.isEmpty()) {
 			dlvrTypeCreated = dlvrTypeFounds.get(0);
 		}
@@ -91,6 +92,7 @@ public class DeliveryTypeController {
 
 	/**
 	 * Update the specified {@link DeliveryType}.
+	 * 
 	 * @param dlvrTypeDTO
 	 * @return {@code true} if the {@link DeliveryType} has been updated, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -112,6 +114,7 @@ public class DeliveryTypeController {
 
 	/**
 	 * Get all the available {@link DeliveryType}.
+	 * 
 	 * @return a {@link List} of {@link DeliveryType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -129,6 +132,7 @@ public class DeliveryTypeController {
 
 	/**
 	 * Delete {@link DeliveryType} for specified code.
+	 * 
 	 * @param code
 	 * @return {@code true} if the {@link DeliveryType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -139,9 +143,14 @@ public class DeliveryTypeController {
 		if (dlvrtypeManager.isCodePresent(code)) {
 			List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
 			List<DeliveryType> dlvrTypeFounds = dlvrTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!dlvrTypeFounds.isEmpty()) {
-				dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
+				try {
+					dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
+				} catch (OHServiceException serviceException) {
+					LOGGER.error("Delete Delivery Type: {} failed.", code);
+					throw new OHAPIException(new OHExceptionMessage("Delivery Type not deleted."));
+				}
 			}
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
