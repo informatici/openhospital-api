@@ -250,7 +250,7 @@ public class AdmissionController {
 			admissionsDTO = admissionMapper.map2DTOList(admissions.getData());
 			admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissions.getPageInfo()));
 		} else {
-			List<Admission> adms = admissionManager.getAdmissionsByDate(admissionRange[0], admissionRange[1]);
+			List<Admission> adms = admissionManager.getAdmissionsByAdmissionDate(admissionRange[0], admissionRange[1]);
 			admissionsDTO = admissionMapper.map2DTOList(adms);
 		}
 		if (admissionsDTO.isEmpty()) {
