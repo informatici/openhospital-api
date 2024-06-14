@@ -22,7 +22,7 @@
 package org.isf.exatype.rest;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.isf.exatype.dto.ExamTypeDTO;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
@@ -53,18 +53,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class ExamTypeController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExamTypeController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExamTypeController.class);
 
-    @Autowired
-    protected ExamTypeBrowserManager examTypeBrowserManager;
+	@Autowired
+	protected ExamTypeBrowserManager examTypeBrowserManager;
 
-    @Autowired
-    private ExamTypeMapper examTypeMapper;
+	@Autowired
+	private ExamTypeMapper examTypeMapper;
 
-    public ExamTypeController(ExamTypeBrowserManager examTypeBrowserManager, ExamTypeMapper examTypeMapper) {
-        this.examTypeBrowserManager = examTypeBrowserManager;
-        this.examTypeMapper = examTypeMapper;
-    }
+	public ExamTypeController(ExamTypeBrowserManager examTypeBrowserManager, ExamTypeMapper examTypeMapper) {
+		this.examTypeBrowserManager = examTypeBrowserManager;
+		this.examTypeMapper = examTypeMapper;
+	}
 
 	@PostMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ExamTypeDTO> newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
@@ -74,44 +74,50 @@ public class ExamTypeController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(examTypeMapper.map2DTO(createdExamType));
 	}
 
-    @PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
+	@PutMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<ExamTypeDTO> updateExamType(@PathVariable String code, @RequestBody ExamTypeDTO updateExamType) throws OHServiceException {
 
-        if (!updateExamType.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type code mismatch."));
-        }
-        if (!examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
-        }
+		if (!updateExamType.getCode().equals(code)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam Type code mismatch."));
+		}
+		if (!examTypeBrowserManager.isCodePresent(code)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
+		}
 
-        ExamType examType = examTypeMapper.map2Model(updateExamType);
-        ExamType updatedExamType = examTypeBrowserManager.updateExamType(examType);
-        return ResponseEntity.ok(examTypeMapper.map2DTO(updatedExamType));
-    }
+		ExamType examType = examTypeMapper.map2Model(updateExamType);
+		ExamType updatedExamType = examTypeBrowserManager.updateExamType(examType);
+		return ResponseEntity.ok(examTypeMapper.map2DTO(updatedExamType));
+	}
 
+	@GetMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<ExamTypeDTO>> getExamTypes() throws OHServiceException {
+		List<ExamTypeDTO> examTypeDTOS = examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
 
-    @GetMapping(value = "/examtypes", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ExamTypeDTO>> getExamTypes() throws OHServiceException {
-        List<ExamTypeDTO> examTypeDTOS = examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
+		if (examTypeDTOS == null || examTypeDTOS.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+		}
+		return ResponseEntity.ok(examTypeDTOS);
+	}
 
-        if (examTypeDTOS == null || examTypeDTOS.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
-        return ResponseEntity.ok(examTypeDTOS);
-    }
-
-    @DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
-	    LOGGER.info("Delete Exam Type code: {}", code);
-        Optional<ExamType> examType = examTypeBrowserManager.getExamType().stream().filter(e -> e.getCode().equals(code)).findFirst();
-        if (examType.isEmpty()) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not found."));
-        }
-        examTypeBrowserManager.deleteExamType(examType.get());
-        if (examTypeBrowserManager.isCodePresent(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam Type not deleted."));
-        }
-        return ResponseEntity.ok(true);
-    }
+	@DeleteMapping(value = "/examtypes/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> deleteExamType(@PathVariable String code) throws OHServiceException {
+		LOGGER.info("Delete Exam Type Type code: {}", code);
+		if (examTypeBrowserManager.isCodePresent(code)) {
+			List<ExamType> examTypes = examTypeBrowserManager.getExamType();
+			List<ExamType> examFounds = examTypes.stream().filter(ad -> ad.getCode().equals(code))
+							.collect(Collectors.toList());
+			if (!examFounds.isEmpty()) {
+				try {
+					examTypeBrowserManager.deleteExamType(examFounds.get(0));
+				} catch (OHServiceException serviceException) {
+					LOGGER.error("Delete Exam Type: {} failed.", code);
+					throw new OHAPIException(new OHExceptionMessage("Exam Type not deleted."));
+				}
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(true);
+	}
 
 }
