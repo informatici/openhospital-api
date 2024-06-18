@@ -57,7 +57,7 @@ public class PregnantTreatmentTypeController {
 
 	@Autowired
 	protected PregnantTreatmentTypeBrowserManager pregTreatTypeManager;
-	
+
 	@Autowired
 	protected PregnantTreatmentTypeMapper mapper;
 
@@ -68,12 +68,14 @@ public class PregnantTreatmentTypeController {
 
 	/**
 	 * Create a new {@link PregnantTreatmentType}.
+	 * 
 	 * @param pregnantTreatmentTypeDTO
 	 * @return the newly stored {@link PregnantTreatmentType} object.
 	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/pregnanttreatmenttypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PregnantTreatmentTypeDTO> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO) throws OHServiceException {
+	ResponseEntity<PregnantTreatmentTypeDTO> newPregnantTreatmentType(@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
+					throws OHServiceException {
 		String code = pregnantTreatmentTypeDTO.getCode();
 		LOGGER.info("Create PregnantTreatmentType {}", code);
 		PregnantTreatmentType isCreatedPregnantTreatmentType = pregTreatTypeManager.newPregnantTreatmentType(mapper.map2Model(pregnantTreatmentTypeDTO));
@@ -85,13 +87,15 @@ public class PregnantTreatmentTypeController {
 
 	/**
 	 * Updates the specified {@link PregnantTreatmentType}.
+	 * 
 	 * @param pregnantTreatmentTypeDTO
 	 * @return the updated {@link PregnantTreatmentType} object.
 	 * @throws OHServiceException
 	 */
 	@PutMapping(value = "/pregnanttreatmenttypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PregnantTreatmentTypeDTO> updatePregnantTreatmentTypes(@PathVariable String code, @RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
-			throws OHServiceException {
+	ResponseEntity<PregnantTreatmentTypeDTO> updatePregnantTreatmentTypes(@PathVariable String code,
+					@RequestBody PregnantTreatmentTypeDTO pregnantTreatmentTypeDTO)
+					throws OHServiceException {
 		LOGGER.info("Update PregnantTreatmentType code: {}", pregnantTreatmentTypeDTO.getCode());
 		PregnantTreatmentType pregTreatType = mapper.map2Model(pregnantTreatmentTypeDTO);
 		if (!pregTreatTypeManager.isCodePresent(code)) {
@@ -106,6 +110,7 @@ public class PregnantTreatmentTypeController {
 
 	/**
 	 * Get all the available {@link PregnantTreatmentType}s.
+	 * 
 	 * @return a {@link List} of {@link PregnantTreatmentType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException
 	 */
@@ -123,6 +128,7 @@ public class PregnantTreatmentTypeController {
 
 	/**
 	 * Delete the {@link PregnantTreatmentType} for the specified code.
+	 * 
 	 * @param code
 	 * @return {@code true} if the {@link PregnantTreatmentType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
@@ -133,13 +139,13 @@ public class PregnantTreatmentTypeController {
 		if (pregTreatTypeManager.isCodePresent(code)) {
 			List<PregnantTreatmentType> pregTreatTypes = pregTreatTypeManager.getPregnantTreatmentType();
 			List<PregnantTreatmentType> pregTreatTypeFounds = pregTreatTypes.stream().filter(ad -> ad.getCode().equals(code))
-					.collect(Collectors.toList());
+							.collect(Collectors.toList());
 			if (!pregTreatTypeFounds.isEmpty()) {
 				try {
 					pregTreatTypeManager.deletePregnantTreatmentType(pregTreatTypeFounds.get(0));
 				} catch (OHServiceException serviceException) {
-					LOGGER.info("Delete PregnantTreatment Type code: {} failed.", code);
-					return ResponseEntity.ok(false);
+					LOGGER.error("Delete PregnantTreatment Type: {} failed.", code);
+					throw new OHAPIException(new OHExceptionMessage("PregnantTreatment Type not deleted."));
 				}
 			}
 		} else {
