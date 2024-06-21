@@ -593,7 +593,7 @@ public class LaboratoryController {
 			if (!status.isEmpty()) {
 				if (!examName.isEmpty()) {
 					Exam exam = examManager.getExams(examName).get(0);
-					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam.getDescription(), dateF, dateT, patient, page, size);
 				} else {
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(null, dateF, dateT, patient, page, size);
 				}
@@ -602,7 +602,7 @@ public class LaboratoryController {
 			} else {
 				if (!examName.isEmpty()) {
 					Exam exam = examManager.getExams(examName).get(0);
-					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam, dateF, dateT, patient, page, size);
+					laboratoryPageable = laboratoryManager.getLaboratoryPageable(exam.getDescription(), dateF, dateT, patient, page, size);
 				} else {
 					laboratoryPageable = laboratoryManager.getLaboratoryPageable(null, dateF, dateT, patient, page, size);
 				}
