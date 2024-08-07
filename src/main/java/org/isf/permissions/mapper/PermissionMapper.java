@@ -21,13 +21,12 @@
  */
 package org.isf.permissions.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.GenericMapper;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PermissionMapper extends GenericMapper<Permission, PermissionDTO> {
