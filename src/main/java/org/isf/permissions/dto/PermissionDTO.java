@@ -21,11 +21,8 @@
  */
 package org.isf.permissions.dto;
 
-import java.util.List;
-
-import jakarta.validation.constraints.NotNull;
-
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 public class PermissionDTO extends LitePermissionDTO {
 
@@ -36,10 +33,6 @@ public class PermissionDTO extends LitePermissionDTO {
 	@NotNull
 	@Schema(description = "The permission description", maxLength = 255)
 	private String description;
-
-	@NotNull
-	@Schema(description = "The user group id")
-	private List<String> userGroupIds;
 
 	public Integer getId() {
 		return id;
@@ -55,13 +48,5 @@ public class PermissionDTO extends LitePermissionDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public List<String> getUserGroupIds() {
-		return userGroupIds;
-	}
-
-	public void setUserGroupIds(List<String> userGroupIds) {
-		this.userGroupIds = userGroupIds;
 	}
 }
