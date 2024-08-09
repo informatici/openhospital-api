@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.validation.Valid;
+
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserProfileDTO;
@@ -63,7 +65,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController(value = "/users")
 @Tag(name = "Users")
@@ -121,7 +122,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		if (!Objects.equals(currentUser, userName)) {
-			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource"), HttpStatus.FORBIDDEN);
+			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource."), HttpStatus.FORBIDDEN);
 		}
 
 		User user = userManager.getUserByName(userName);
@@ -142,6 +143,7 @@ public class UserController {
 	public ResponseEntity<UserDTO> updateUser(
 		@PathVariable("username") String userName,
 		@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
+		LOGGER.info("Updating the user {}.", userName);
 		String requestUserName = userDTO.getUserName();
 		if (requestUserName != null && !userName.equals(requestUserName)) {
 			throw new OHAPIException(new OHExceptionMessage("Invalid request payload"));
@@ -157,6 +159,7 @@ public class UserController {
 			isUpdated = userManager.updateUser(user);
 		}
 		if (isUpdated) {
+			LOGGER.info("User {} has been updated successfully.", userName);
 			return ResponseEntity.ok(userMapper.map2DTO(userManager.getUserByName(userName)));
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));
@@ -311,8 +314,10 @@ public class UserController {
 		@RequestBody UserDTO userDTO) throws OHServiceException {
 		String requestUserName = userDTO.getUserName();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		LOGGER.info("Updating the user {}.", currentUser);
 		if (!requestUserName.equals(currentUser)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
+			throw new OHAPIException(new OHExceptionMessage(String.format("You're not allowed to update %s's profile.", requestUserName)),
+				HttpStatus.FORBIDDEN);
 		}
 		if (userManager.getUserByName(requestUserName) == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
@@ -325,6 +330,7 @@ public class UserController {
 			isUpdated = userManager.updateUser(user);
 		}
 		if (isUpdated) {
+			LOGGER.info("User {} has been successfully updated.", currentUser);
 			return ResponseEntity.ok(retrieveProfile(currentUser));
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));

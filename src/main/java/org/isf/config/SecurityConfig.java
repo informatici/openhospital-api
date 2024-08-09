@@ -21,7 +21,6 @@
  */
 package org.isf.config;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.isf.permissions.manager.PermissionManager;
@@ -32,6 +31,7 @@ import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTConfigurer;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.utils.db.AuditorAwareInterface;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
