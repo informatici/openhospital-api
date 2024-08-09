@@ -26,8 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.validation.Valid;
-
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserProfileDTO;
@@ -65,6 +63,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController(value = "/users")
 @Tag(name = "Users")
@@ -72,22 +71,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
-	@Autowired
-	private UserMapper userMapper;
-
-	@Autowired
-	private UserGroupMapper userGroupMapper;
-
-	@Autowired
-	private UserBrowsingManager userManager;
-
 	@Autowired
 	protected PermissionManager permissionManager;
-
 	@Autowired
 	protected LitePermissionMapper litePermissionMapper;
-
+	@Autowired
+	private UserMapper userMapper;
+	@Autowired
+	private UserGroupMapper userGroupMapper;
+	@Autowired
+	private UserBrowsingManager userManager;
 	@Autowired
 	private UserSettingManager userSettingManager;
 
@@ -96,6 +89,7 @@ public class UserController {
 
 	/**
 	 * Returns the list of {@link User}s.
+	 *
 	 * @return the list of {@link User}s.
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -119,13 +113,14 @@ public class UserController {
 
 	/**
 	 * Returns a {@link User}.
+	 *
 	 * @param userName - user name
 	 * @return {@link User}
 	 */
 	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if(!Objects.equals(currentUser, userName)) {
+		if (!Objects.equals(currentUser, userName)) {
 			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource"), HttpStatus.FORBIDDEN);
 		}
 
@@ -138,6 +133,7 @@ public class UserController {
 
 	/**
 	 * Updates an existing {@link User}.
+	 *
 	 * @param userDTO - the {@link User} to update
 	 * @return the updated {@link UserDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
@@ -147,7 +143,7 @@ public class UserController {
 		@PathVariable("username") String userName,
 		@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		String requestUserName = userDTO.getUserName();
-		if(requestUserName != null && !userName.equals(requestUserName)) {
+		if (requestUserName != null && !userName.equals(requestUserName)) {
 			throw new OHAPIException(new OHExceptionMessage("Invalid request payload"));
 		}
 		if (userManager.getUserByName(userName) == null) {
@@ -169,9 +165,10 @@ public class UserController {
 
 	/**
 	 * Creates a new {@link User}.
+	 *
 	 * @param userDTO - the {@link User} to insert
 	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
@@ -189,6 +186,7 @@ public class UserController {
 
 	/**
 	 * Deletes an existing {@link User}.
+	 *
 	 * @param username - the name of the {@link User} to delete
 	 * @return {@code true} if the user has been deleted, {@code false} otherwise.
 	 */
@@ -208,6 +206,7 @@ public class UserController {
 
 	/**
 	 * Returns the list of {@link UserGroup}s.
+	 *
 	 * @return the list of {@link UserGroup}s
 	 */
 	@GetMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -226,6 +225,7 @@ public class UserController {
 
 	/**
 	 * Deletes a {@link UserGroup}.
+	 *
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
@@ -242,6 +242,7 @@ public class UserController {
 
 	/**
 	 * Creates a new {@link UserGroup} with a minimum set of rights.
+	 *
 	 * @param aGroup - the {@link UserGroup} to insert
 	 * @return {@code true} if the group has been inserted, {@code false} otherwise.
 	 */
@@ -258,6 +259,7 @@ public class UserController {
 
 	/**
 	 * Updates an existing {@link UserGroup}.
+	 *
 	 * @param aGroup - the {@link UserGroup} to update
 	 * @return {@code true} if the group has been updated, {@code false} otherwise.
 	 */
@@ -299,6 +301,7 @@ public class UserController {
 
 	/**
 	 * Updates the current {@link User}.
+	 *
 	 * @param userDTO - the {@link User} to update
 	 * @return the current {@link UserProfileDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
@@ -349,7 +352,7 @@ public class UserController {
 
 	/**
 	 * Retrieves all userSetting of the current user.
-	 * 
+	 *
 	 * @return list of userSetting {@link UserSettingDTO}.
 	 * @throws OHServiceException
 	 */
@@ -369,7 +372,7 @@ public class UserController {
 
 	/**
 	 * Returns a {@link UserSettingDTO} of userSetting created.
-	 * 
+	 *
 	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
 	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
 	 * @throws OHServiceException
@@ -401,7 +404,7 @@ public class UserController {
 
 	/**
 	 * Updates an existing {@link UserSettingDTO}.
-	 * 
+	 *
 	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
 	 * @param id - id of {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
@@ -409,7 +412,7 @@ public class UserController {
 	 */
 	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
-					throws OHServiceException {
+		throws OHServiceException {
 		LOGGER.info("Update a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -440,7 +443,7 @@ public class UserController {
 
 	/**
 	 * Retrieves an existing {@link UserSettingDTO} by id.
-	 * 
+	 *
 	 * @param id - id of userSetting {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException
@@ -458,15 +461,15 @@ public class UserController {
 
 	/**
 	 * Retrieves an existing {@link UserSettingDTO} by user.
-	 * 
+	 *
 	 * @param userName - the name of user.
-	 * @param configName - the name of the userSetting {@link UserSetting} . 
+	 * @param configName - the name of the userSetting {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException
 	 */
 	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserSettingDTO> getUserSettingByUser(@PathVariable(name = "userName") String userName,
-					@PathVariable(name = "configName") String configName) throws OHServiceException {
+		@PathVariable(name = "configName") String configName) throws OHServiceException {
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", userName, configName);
 		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
 		if (userSettings == null || userSettings.isEmpty()) {
@@ -483,7 +486,7 @@ public class UserController {
 
 	/**
 	 * Deletes a {@link UserSetting}.
-	 * 
+	 *
 	 * @param id - the id of the userSetting {@link UserSetting} to delete.
 	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
