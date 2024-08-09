@@ -175,7 +175,7 @@ public class UserController {
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
-		LOGGER.info("Attempting to create a user.");
+		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
 		User user = userMapper.map2Model(userDTO);
 		try {
 			userManager.newUser(user);
