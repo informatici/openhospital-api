@@ -39,6 +39,7 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,6 +50,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
@@ -261,7 +263,8 @@ public class SecurityConfig {
 						// user
 						.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
 						.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
-						.requestMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
+						.requestMatchers("/users/me").authenticated()
+						.requestMatchers(HttpMethod.PUT, "/users/{username}").access("hasAuthority('users.update') && hasAuthority('users.read')")
 						.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
 						// user setting
 						.requestMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersettings.read")

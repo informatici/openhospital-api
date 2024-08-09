@@ -22,6 +22,7 @@
 package org.isf.menu.rest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -123,11 +124,47 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserDTO> getUserByName(@PathVariable("username") String userName) throws OHServiceException {
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		if(!Objects.equals(currentUser, userName)) {
+			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource"), HttpStatus.FORBIDDEN);
+		}
+
 		User user = userManager.getUserByName(userName);
 		if (user == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."));
 		}
 		return ResponseEntity.ok(userMapper.map2DTO(user));
+	}
+
+	/**
+	 * Updates an existing {@link User}.
+	 * @param userDTO - the {@link User} to update
+	 * @return the updated {@link UserDTO} if the user has been updated.
+	 * @throws OHServiceException throws if the update fails
+	 */
+	@PutMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserDTO> updateUser(
+		@PathVariable("username") String userName,
+		@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
+		String requestUserName = userDTO.getUserName();
+		if(requestUserName != null && !userName.equals(requestUserName)) {
+			throw new OHAPIException(new OHExceptionMessage("Invalid request payload"));
+		}
+		if (userManager.getUserByName(userName) == null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
+		}
+		User user = userMapper.map2Model(userDTO);
+		boolean isUpdated;
+		if (!user.getPasswd().isEmpty()) {
+			isUpdated = userManager.updatePassword(user);
+		} else {
+			isUpdated = userManager.updateUser(user);
+		}
+		if (isUpdated) {
+			return ResponseEntity.ok(userMapper.map2DTO(userManager.getUserByName(userName)));
+		} else {
+			throw new OHAPIException(new OHExceptionMessage("User not updated."));
+		}
 	}
 
 	/**
@@ -147,41 +184,6 @@ public class UserController {
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));
-		}
-	}
-
-	/**
-	 * Updates an existing {@link User}.
-	 * @param userDTO - the {@link User} to update
-	 * @param updatePassword - indicates if it is the password that need to be updated
-	 * @return {@code true} if the user has been updated, {@code false} otherwise.
-	 */
-	@PutMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateUser(
-					@Valid @RequestBody UserDTO userDTO,
-					@RequestParam(name = "password", defaultValue = "false") boolean updatePassword) throws OHServiceException {
-		String requestUserName = userDTO.getUserName();
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		final String ADMIN = "admin";
-		boolean isAdminOrSameUser = requestUserName.equals(currentUser) || currentUser.equals(ADMIN);
-		boolean isSameUserUpdatingPassword = requestUserName.equals(currentUser) && updatePassword;
-		if (!isAdminOrSameUser || !isSameUserUpdatingPassword) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
-		}
-		if (userManager.getUserByName(requestUserName) == null) {
-			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
-		}
-		User user = userMapper.map2Model(userDTO);
-		boolean isUpdated;
-		if (updatePassword) {
-			isUpdated = userManager.updatePassword(user);
-		} else {
-			isUpdated = userManager.updateUser(user);
-		}
-		if (isUpdated) {
-			return ResponseEntity.ok(isUpdated);
-		} else {
-			throw new OHAPIException(new OHExceptionMessage("User not updated."));
 		}
 	}
 
@@ -282,26 +284,6 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves all permissions of the current logged-in user. If user not found,
-	 * an empty list of permissions is returned.
-	 *
-	 * @return list of permissions {@link Permission}
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		LOGGER.info("Retrieving permissions: retrievePermissionsByCurrentLoggedInUser({}).", currentUser);
-		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(currentUser);
-		List<LitePermissionDTO> dtos = this.litePermissionMapper.map2DTOList(domains);
-		if (dtos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
-		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
-		}
-	}
-
-	/**
 	 * Retrieves profile of the current logged in user. If user not found,
 	 * an empty list of permissions is returned
 	 *
@@ -312,14 +294,38 @@ public class UserController {
 	public ResponseEntity<UserProfileDTO> retrieveProfileByCurrentLoggedInUser() throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		LOGGER.info("Retrieving profile: retrieveProfileByCurrentLoggedInUser({}).", currentUser);
-		List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUser);
-		List<String> permissionsCode = permissions.stream().map(p -> p.getName()).collect(Collectors.toList());
-		UserProfileDTO userProfileDTO = new UserProfileDTO();
-		User user = userManager.getUserByName(currentUser);
-		userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
-		userProfileDTO.setUserName(currentUser);
-		userProfileDTO.setPermissions(permissionsCode);
-		return ResponseEntity.status(HttpStatus.OK).body(userProfileDTO);
+		return ResponseEntity.status(HttpStatus.OK).body(retrieveProfile(currentUser));
+	}
+
+	/**
+	 * Updates the current {@link User}.
+	 * @param userDTO - the {@link User} to update
+	 * @return the current {@link UserProfileDTO} if the user has been updated.
+	 * @throws OHServiceException throws if the update fails
+	 */
+	@PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserProfileDTO> updateProfile(
+		@RequestBody UserDTO userDTO) throws OHServiceException {
+		String requestUserName = userDTO.getUserName();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		if (!requestUserName.equals(currentUser)) {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
+		}
+		if (userManager.getUserByName(requestUserName) == null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
+		}
+		User user = userMapper.map2Model(userDTO);
+		boolean isUpdated;
+		if (!user.getPasswd().isEmpty()) {
+			isUpdated = userManager.updatePassword(user);
+		} else {
+			isUpdated = userManager.updateUser(user);
+		}
+		if (isUpdated) {
+			return ResponseEntity.ok(retrieveProfile(currentUser));
+		} else {
+			throw new OHAPIException(new OHExceptionMessage("User not updated."));
+		}
 	}
 
 	/**
@@ -373,10 +379,8 @@ public class UserController {
 		LOGGER.info("Create a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		final String ADMIN = "admin";
-		if (!requestUserName.equals(currentUser)
-						&& !currentUser.equals(ADMIN)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		if (!requestUserName.equals(currentUser)) {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
 		}
 		if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
 			throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
@@ -409,7 +413,6 @@ public class UserController {
 		LOGGER.info("Update a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		final String ADMIN = "admin";
 		if (userSettingDTO.getId() == 0 || userSettingDTO.getId() != 0 && userSettingDTO.getId() != id) {
 			throw new OHAPIException(new OHExceptionMessage("Malformed request."));
 		}
@@ -419,23 +422,20 @@ public class UserController {
 			LOGGER.info("No user settings with id {}.", id);
 			throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exists."));
 		}
-		if (!userSetting.get().getUser().equals(requestUserName) && !currentUser.equals(ADMIN)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		if (!userSetting.get().getUser().equals(requestUserName) || !userSetting.get().getUser().equals(currentUser)) {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
 		}
-		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
-			if (userManager.getUserByName(requestUserName) == null) {
-				throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
-			}
-			UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
-			updated = userSettingManager.updateUserSetting(uSetting);
-			if (updated == null) {
-				LOGGER.info("UserSetting is not updated.");
-				throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
-			}
-			LOGGER.info("UserSetting successfully updated.");
-			return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
+		if (userManager.getUserByName(requestUserName) == null) {
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
-		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+		UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
+		updated = userSettingManager.updateUserSetting(uSetting);
+		if (updated == null) {
+			LOGGER.info("UserSetting is not updated.");
+			throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
+		}
+		LOGGER.info("UserSetting successfully updated.");
+		return ResponseEntity.ok(userSettingMapper.map2DTO(updated));
 	}
 
 	/**
@@ -506,5 +506,16 @@ public class UserController {
 			return ResponseEntity.ok(true);
 		}
 		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
+	}
+
+	private UserProfileDTO retrieveProfile(String currentUser) throws OHServiceException {
+		List<Permission> permissions = this.permissionManager.retrievePermissionsByUsername(currentUser);
+		List<String> permissionsCode = permissions.stream().map(Permission::getName).collect(Collectors.toList());
+		UserProfileDTO userProfileDTO = new UserProfileDTO();
+		User user = userManager.getUserByName(currentUser);
+		userProfileDTO.setUserGroup(userGroupMapper.map2DTO(user.getUserGroupName()));
+		userProfileDTO.setUserName(currentUser);
+		userProfileDTO.setPermissions(permissionsCode);
+		return userProfileDTO;
 	}
 }
