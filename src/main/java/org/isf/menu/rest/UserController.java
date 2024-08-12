@@ -149,7 +149,8 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("Invalid request payload"));
 		}
 		if (userManager.getUserByName(userName) == null) {
-			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
+			LOGGER.info("User with name '{}' has not been found.", userName);
+			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."), HttpStatus.NOT_FOUND);
 		}
 		User user = userMapper.map2Model(userDTO);
 		boolean isUpdated;
