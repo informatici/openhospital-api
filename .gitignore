@@ -40,3 +40,6 @@ bin
 .vscode
 /deps/
 OH_API_PID
+
+### Git ###
+/**/.gitkeep
