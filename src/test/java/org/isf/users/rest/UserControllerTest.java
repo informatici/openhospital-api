@@ -11,107 +11,50 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.manager.UserGroupManager;
-import org.isf.menu.manager.UserSettingManager;
-import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
-import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
-import org.isf.menu.rest.UserController;
 import org.isf.permissions.manager.PermissionManager;
-import org.isf.permissions.mapper.LitePermissionMapper;
-import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.Permission;
-import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
-import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
-import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.utils.exception.OHServiceException;
-import org.isf.vaccine.rest.VaccineController;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
+@SpringBootTest(classes = OpenHospitalApiApplication.class)
+@AutoConfigureMockMvc
 public class UserControllerTest {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(UserControllerTest.class);
 
+	@Autowired
 	private MockMvc mvc;
 
-	final private ObjectMapper objectMapper = new ObjectMapper()
-		.registerModule(new ParameterNamesModule())
-		.registerModule(new Jdk8Module())
-		.registerModule(new JavaTimeModule());
-	;
+	@Autowired
+	private ObjectMapper objectMapper;
 
-	final private UserMapper userMapper = new UserMapper();
+	@Autowired
+	private UserMapper userMapper;
 
-	final private LitePermissionMapper litePermissionMapper = new LitePermissionMapper();
-
-	final private UserGroupMapper userGroupMapper = new UserGroupMapper();
-
-	final private UserSettingMapper userSettingMapper = new UserSettingMapper();
-
-	@Mock
+	@MockBean
 	private UserBrowsingManager userManager;
 
-	@Mock
+	@MockBean
 	private PermissionManager permissionManager;
-
-	@Mock
-	private UserSettingManager userSettingManager;
-
-	@Mock
-	private UserGroupManager userGroupManager;
-
-	private AutoCloseable closeable;
-
-	@BeforeEach
-	public void setup() {
-		closeable = MockitoAnnotations.openMocks(this);
-		this.mvc = MockMvcBuilders
-			.standaloneSetup(
-				new UserController(permissionManager, litePermissionMapper, userMapper, userGroupMapper, userManager, userSettingManager, userSettingMapper))
-			.setControllerAdvice(new OHResponseEntityExceptionHandler())
-			.build();
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.addConverter(new BlobToByteArrayConverter());
-		modelMapper.addConverter(new ByteArrayToBlobConverter());
-		List.of(userMapper, litePermissionMapper, userGroupMapper, userSettingMapper).forEach((item) -> {
-			ReflectionTestUtils.setField(item, "modelMapper", modelMapper);
-		});
-	}
-
-	@AfterEach
-	void closeService() throws Exception {
-		closeable.close();
-	}
 
 	@Nested
 	@DisplayName("Update user")
