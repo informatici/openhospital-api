@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @ImportResource({ "classpath*:/applicationContext.xml" })
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = { "org.isf" })
 public class OpenHospitalApiApplication {
 
 	@Autowired

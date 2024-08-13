@@ -26,8 +26,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import jakarta.validation.Valid;
-
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserGroupDTO;
 import org.isf.menu.dto.UserProfileDTO;
@@ -65,6 +63,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController(value = "/users")
 @Tag(name = "Users")
@@ -87,6 +86,25 @@ public class UserController {
 
 	@Autowired
 	private UserSettingMapper userSettingMapper;
+
+	@Autowired
+	public UserController(
+		PermissionManager permissionManager,
+		LitePermissionMapper litePermissionMapper,
+		UserMapper userMapper,
+		UserGroupMapper userGroupMapper,
+		UserBrowsingManager userManager,
+		UserSettingManager userSettingManager,
+		UserSettingMapper userSettingMapper
+	) {
+		this.permissionManager = permissionManager;
+		this.litePermissionMapper = litePermissionMapper;
+		this.userMapper = userMapper;
+		this.userGroupMapper = userGroupMapper;
+		this.userManager = userManager;
+		this.userSettingManager = userSettingManager;
+		this.userSettingMapper = userSettingMapper;
+	}
 
 	/**
 	 * Returns the list of {@link User}s.
