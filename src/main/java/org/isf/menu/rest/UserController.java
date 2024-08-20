@@ -90,25 +90,6 @@ public class UserController {
 	@Autowired
 	private UserSettingMapper userSettingMapper;
 
-	@Autowired
-	public UserController(
-		PermissionManager permissionManager,
-		LitePermissionMapper litePermissionMapper,
-		UserMapper userMapper,
-		UserGroupMapper userGroupMapper,
-		UserBrowsingManager userManager,
-		UserSettingManager userSettingManager,
-		UserSettingMapper userSettingMapper
-	) {
-		this.permissionManager = permissionManager;
-		this.litePermissionMapper = litePermissionMapper;
-		this.userMapper = userMapper;
-		this.userGroupMapper = userGroupMapper;
-		this.userManager = userManager;
-		this.userSettingManager = userSettingManager;
-		this.userSettingMapper = userSettingMapper;
-	}
-
 	/**
 	 * Returns the list of {@link User}s.
 	 *
