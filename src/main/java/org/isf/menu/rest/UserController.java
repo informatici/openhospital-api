@@ -21,6 +21,7 @@
  */
 package org.isf.menu.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,8 +41,12 @@ import org.isf.menu.model.User;
 import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserSetting;
 import org.isf.permissions.dto.LitePermissionDTO;
+import org.isf.permissions.dto.PermissionDTO;
+import org.isf.permissions.manager.GroupPermissionManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
+import org.isf.permissions.mapper.PermissionMapper;
+import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -79,11 +84,16 @@ public class UserController {
 	private UserGroupMapper userGroupMapper;
 
 	@Autowired
+	private PermissionMapper permissionMapper;
+
+	@Autowired
 	private UserBrowsingManager userManager;
 
 	@Autowired
 	protected PermissionManager permissionManager;
 
+	@Autowired
+	protected GroupPermissionManager groupPermissionManager;
 	@Autowired
 	protected LitePermissionMapper litePermissionMapper;
 
@@ -134,7 +144,7 @@ public class UserController {
 	 * Creates a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
 	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to create user
 	 */
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Boolean> newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
@@ -240,14 +250,22 @@ public class UserController {
 
 	/**
 	 * Creates a new {@link UserGroup} with a minimum set of rights.
-	 * @param aGroup - the {@link UserGroup} to insert
+	 * @param userGroupDTO - the {@link UserGroup} to insert
 	 * @return {@code true} if the group has been inserted, {@code false} otherwise.
 	 */
 	@PostMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
-		UserGroup userGroup = userGroupMapper.map2Model(aGroup);
+	public ResponseEntity<Boolean> newUserGroup(@Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
+		UserGroup userGroup = userGroupMapper.map2Model(userGroupDTO);
+		List<Permission> permissions = new ArrayList<>();
+
+		if (userGroupDTO.getPermissions() != null && !userGroupDTO.getPermissions().isEmpty()) {
+			permissions = userGroupDTO.getPermissions()
+					.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
+					.toList();
+		}
+
 		try {
-			userManager.newUserGroup(userGroup);
+			userManager.newUserGroup(userGroup, permissions);
 			return ResponseEntity.status(HttpStatus.CREATED).body(true);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
@@ -256,21 +274,48 @@ public class UserController {
 
 	/**
 	 * Updates an existing {@link UserGroup}.
-	 * @param aGroup - the {@link UserGroup} to update
+	 * @param userGroupDTO - the {@link UserGroup} to update
 	 * @return {@code true} if the group has been updated, {@code false} otherwise.
 	 */
 	@PutMapping(value = "/users/groups", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO aGroup) throws OHServiceException {
-		UserGroup group = userGroupMapper.map2Model(aGroup);
-		if (userManager.getUserGroup().stream().noneMatch(g -> g.getCode().equals(group.getCode()))) {
+	public ResponseEntity<Boolean> updateUserGroup(@Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
+		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
+
+		if (!userManager.findUserGroupByCode(userGroupDTO.getCode()).getCode().equals(group.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("User group not found."));
 		}
-		boolean isUpdated = userManager.updateUserGroup(group);
+
+		List<Permission> permissions = new ArrayList<>();
+		if (userGroupDTO.getPermissions() != null && !userGroupDTO.getPermissions().isEmpty()) {
+			permissions = userGroupDTO.getPermissions()
+					.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
+					.toList();
+		}
+
+		boolean isUpdated = userManager.updateUserGroup(group, permissions);
 		if (isUpdated) {
-			return ResponseEntity.ok(isUpdated);
+			return ResponseEntity.ok(true);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
 		}
+	}
+
+	@GetMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserGroupDTO> getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
+		UserGroup userGroup = userManager.findUserGroupByCode(code);
+		if (userGroup == null) {
+			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+		}
+
+		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
+		List<PermissionDTO> permissions = groupPermissions.stream()
+				.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
+				.toList();
+
+		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+		userGroupDTO.setPermissions(permissions);
+
+		return ResponseEntity.ok(userGroupDTO);
 	}
 
 	private UserGroup loadUserGroup(String code) throws OHServiceException {
@@ -286,7 +331,7 @@ public class UserController {
 	 * an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
-	 * @throws OHServiceException
+	 * @throws OHServiceException When error occurs
 	 */
 	@GetMapping(value = "/users/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByCurrentLoggedInUser() throws OHServiceException {
@@ -327,7 +372,7 @@ public class UserController {
 	 * found, an empty list of permissions is returned.
 	 *
 	 * @return list of permissions {@link Permission}
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to load user's permissions
 	 */
 	@GetMapping(value = "/users/permissions/username/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<LitePermissionDTO>> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
