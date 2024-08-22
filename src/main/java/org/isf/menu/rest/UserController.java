@@ -49,6 +49,7 @@ import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.utils.exception.OHDataValidationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -316,6 +317,68 @@ public class UserController {
 		userGroupDTO.setPermissions(permissions);
 
 		return ResponseEntity.ok(userGroupDTO);
+	}
+
+	/**
+	 * Assign a {@link Permission} to a {@link UserGroup}
+	 * @param userGroupCode - the {@link UserGroup}'s code
+	 * @param permissionId - the {@link Permission}'s id
+	 * @return {@code true} if the permission has been assigned to the group,
+	 * {@code false} otherwise.
+	 */
+	@PostMapping(value = "/users/groups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> assignPermission(
+			@PathVariable("group_code") String userGroupCode,
+			@PathVariable("id") int permissionId
+	) throws OHServiceException {
+		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
+		if (userGroup == null) {
+			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+		}
+
+		Permission permission = permissionManager.retrievePermissionById(permissionId);
+
+		if (permission == null || permission.getName() == null) {
+			throw new OHAPIException(new OHExceptionMessage("Permission not found."));
+		}
+
+		try{
+			groupPermissionManager.create(userGroup, permission);
+			return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		} catch (OHDataValidationException e){
+			throw new OHAPIException(new OHExceptionMessage("Failed to assign permission"));
+		}
+	}
+
+	/**
+	 * Revoke a {@link Permission} from a {@link UserGroup}
+	 * @param userGroupCode - the {@link UserGroup}'s code
+	 * @param permissionId - the {@link Permission}'s id
+	 * @return {@code true} if the permission has been revoked from the group,
+	 * {@code false} otherwise.
+	 */
+	@DeleteMapping(value = "/users/groups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Boolean> revokePermission(
+			@PathVariable("group_code") String userGroupCode,
+			@PathVariable("id") int permissionId
+	) throws OHServiceException {
+		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
+		if (userGroup == null) {
+			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+		}
+
+		Permission permission = permissionManager.retrievePermissionById(permissionId);
+
+		if (permission == null || permission.getName() == null) {
+			throw new OHAPIException(new OHExceptionMessage("Permission not found."));
+		}
+
+		try{
+			groupPermissionManager.delete(userGroup, permission);
+			return ResponseEntity.ok(true);
+		} catch (OHDataValidationException e){
+			throw new OHAPIException(new OHExceptionMessage("Failed to revoke permission"));
+		}
 	}
 
 	private UserGroup loadUserGroup(String code) throws OHServiceException {

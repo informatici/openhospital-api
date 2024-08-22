@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.TestPermission;
+import org.isf.menu.TestUserGroup;
 import org.isf.menu.data.UserGroupHelper;
 import org.isf.menu.data.UserHelper;
 import org.isf.menu.data.UserSettingHelper;
@@ -42,9 +43,15 @@ import org.isf.menu.model.UserGroup;
 import org.isf.menu.model.UserSetting;
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.manager.GroupPermissionManager;
+import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
+import org.isf.shared.exceptions.OHAPIException;
+import org.isf.utils.exception.OHDataValidationException;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,6 +64,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -95,6 +104,9 @@ public class UserControllerTest {
 
 	@MockBean
 	private UserBrowsingManager userManager;
+
+	@MockBean
+	private PermissionManager permissionManager;
 
 	@MockBean
 	private UserSettingManager userSettingManager;
@@ -601,7 +613,6 @@ public class UserControllerTest {
 		var result = mvc.perform(
 						get("/users/{userName}/settings/{configName}", userSetting.getUser(), userSetting.getConfigName())
 								.contentType(MediaType.APPLICATION_JSON)
-								.content(objectMapper.writeValueAsString(userSettingDTO))
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
@@ -702,6 +713,133 @@ public class UserControllerTest {
 					.andReturn();
 
 			LOGGER.debug("result: {}", result);
+		}
+	}
+
+	@Nested
+	@DisplayName("Assign / revoke permission")
+	class UserGroupPermissions {
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@DisplayName("Assign a permission to a user group")
+		void assignPermissionToUserGroup() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+			GroupPermission groupPermission = new GroupPermission();
+			groupPermission.setUserGroup(userGroup);
+			groupPermission.setPermission(permission);
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
+			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
+
+			var result = mvc.perform(
+							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+									.contentType(MediaType.APPLICATION_JSON)
+					)
+					.andDo(log())
+					.andExpect(status().isCreated())
+					.andExpect(content().string(containsString("true")))
+					.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@DisplayName("Assign already assigned permission to a user group")
+		void assignAlreadyAssignedPermissionToUserGroup() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+			GroupPermission groupPermission = new GroupPermission();
+			groupPermission.setUserGroup(userGroup);
+			groupPermission.setPermission(permission);
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
+			when(groupPermissionManager.create(any(), any())).thenThrow(
+					new OHDataValidationException(new OHExceptionMessage(""))
+			);
+
+			mvc.perform(
+					post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+							.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().is4xxClientError())
+			.andExpect(content().string(containsString("Failed")));
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@DisplayName("Assign non existing permission to a user group")
+		void assignNonExistingPermissionToUserGroup() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+			GroupPermission groupPermission = new GroupPermission();
+			groupPermission.setUserGroup(userGroup);
+			groupPermission.setPermission(permission);
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(null);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(null);
+			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
+
+			mvc.perform(
+							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+									.contentType(MediaType.APPLICATION_JSON)
+					)
+					.andDo(log())
+					.andExpect(status().is4xxClientError())
+					.andExpect(content().string(containsString("not found")));
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@DisplayName("Revoke a permission from a user group")
+		void revokePermissionFromUserGroup() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+			GroupPermission groupPermission = new GroupPermission();
+			groupPermission.setUserGroup(userGroup);
+			groupPermission.setPermission(permission);
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
+			doNothing().when(groupPermissionManager).delete(any(), any());
+
+			var result = mvc.perform(
+							delete("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+									.contentType(MediaType.APPLICATION_JSON)
+					)
+					.andDo(log())
+					.andExpect(status().isOk())
+					.andExpect(content().string(containsString("true")))
+					.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@DisplayName("Revoke not assigned permission to a user group")
+		void revokeNotAssignedPermissionToUserGroup() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+			GroupPermission groupPermission = new GroupPermission();
+			groupPermission.setUserGroup(userGroup);
+			groupPermission.setPermission(permission);
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(null);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(null);
+			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
+
+			mvc.perform(
+							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+									.contentType(MediaType.APPLICATION_JSON)
+					)
+					.andDo(log())
+					.andExpect(status().is4xxClientError())
+					.andExpect(content().string(containsString("not found")));
 		}
 	}
 }
