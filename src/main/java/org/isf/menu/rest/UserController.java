@@ -301,6 +301,12 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * Retrieve a {@link UserGroup} using its code
+	 * @param code UserGroup code
+	 * @return Returns the {@link UserGroup} found using the given code
+	 * @throws OHServiceException When failed to retrieve the user group
+	 */
 	@GetMapping(value = "/users/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserGroupDTO> getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(code);

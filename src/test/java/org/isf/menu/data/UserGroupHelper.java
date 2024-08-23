@@ -21,17 +21,17 @@
  */
 package org.isf.menu.data;
 
+import java.util.List;
+
+import org.isf.menu.TestUserGroup;
+import org.isf.menu.dto.UserGroupDTO;
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.isf.menu.TestUserGroup;
-import org.isf.menu.dto.UserGroupDTO;
-import org.isf.menu.model.UserGroup;
-import org.isf.utils.exception.OHException;
-
-import java.util.List;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
