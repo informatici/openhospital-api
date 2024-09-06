@@ -11,6 +11,8 @@ bin
 
 #Project related
 .env
+/deps/
+OH_API_PID
 
 ### STS ###
 .apt_generated
@@ -38,5 +40,4 @@ bin
 
 ### VScode ###
 .vscode
-/deps/
-OH_API_PID
+
