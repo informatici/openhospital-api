@@ -794,7 +794,7 @@ public class UserControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@WithMockUser(username = "admin", authorities = {"grouppermission.delete" })
 		@DisplayName("Revoke a permission from a user group")
 		void revokePermissionFromUserGroup() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
@@ -820,7 +820,7 @@ public class UserControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
 		@DisplayName("Revoke not assigned permission to a user group")
 		void revokeNotAssignedPermissionToUserGroup() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
