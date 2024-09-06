@@ -14,10 +14,11 @@ spring.pid.fail-on-write-error=true
 spring.pid.file=OH_API_PID
 
 ### Swagger-UI (info)
-api.host=localhost:API_PORT
+api.host=localhost:8080
 api.protocol=http
 springdoc.swagger-ui.tagsSorter=alpha
 springdoc.swagger-ui.doc-expansion=none
+
 
 ### Without the following overriding property the following error is generated:
 ### Caused by: org.springframework.beans.factory.support.BeanDefinitionOverrideException: Invalid bean definition with name 'org.springframework.transaction.config.internalTransactionAdvisor' defined in class path resource [org/springframework/transaction/annotation/ProxyTransactionManagementConfiguration.class]: Cannot register bean definition [Root bean: class [null]; scope=; abstract=false; lazyInit=null; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration; factoryMethodName=transactionAdvisor; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/transaction/annotation/ProxyTransactionManagementConfiguration.class]] for bean 'org.springframework.transaction.config.internalTransactionAdvisor': There is already [Root bean: class [org.springframework.transaction.interceptor.BeanFactoryTransactionAttributeSourceAdvisor]; scope=; abstract=false; lazyInit=null; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null] bound.

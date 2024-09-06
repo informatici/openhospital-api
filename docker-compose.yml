@@ -4,12 +4,13 @@ services:
     build:
       context: ./deps/openhospital-core
       dockerfile: Dockerfile-ohdb
-      args:
-         OH_DB_LANG: ${OH_DB_LANG}
     image: oh-core_database:latest
+    ports:
+     - "3306:3306"
     command: mysqld --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION" --lower_case_table_names=1
     environment:
-      MARIADB_DATABASE: ${OH_MARIADB_DATABASE}
+      MARIADB_MYSQL_LOCALHOST_USER: "true"
+      MARIADB_DATABASE: oh
       MARIADB_ROOT_PASSWORD: ${OH_MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${OH_MARIADB_USER}
       MARIADB_PASSWORD: ${OH_MARIADB_PASSWORD}
@@ -19,16 +20,17 @@ services:
       
   oh-database-init:
     image: oh-core_database:latest
-    command: sh -c "mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} ${OH_MARIADB_DATABASE} < /database-sources/create_all_demo.sql"
+    command: sh -c "mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} oh < /database-sources/create_all_demo.sql"
     depends_on:
       - database
     working_dir: /database-sources
     environment:
       MARIADB_MYSQL_LOCALHOST_USER: "true"
-      MARIADB_DATABASE: ${OH_MARIADB_DATABASE}
+      MARIADB_DATABASE: oh
       MARIADB_ROOT_PASSWORD: ${OH_MARIADB_ROOT_PASSWORD}
       MARIADB_USER: ${OH_MARIADB_USER}
       MARIADB_PASSWORD: ${OH_MARIADB_PASSWORD}
+      DEMO_LANG: en
     volumes:
       - ./deps/openhospital-core/sql:/database-sources # /docker-entrypoint-initdb.d
     networks:
@@ -48,8 +50,6 @@ services:
       - "${API_PORT}:8080"
     depends_on:
       - database
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/${OH_MARIADB_DATABASE}
     logging:
         driver: "json-file"
         options:
