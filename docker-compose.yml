@@ -19,7 +19,9 @@ services:
       
   oh-database-init:
     image: oh-core_database:latest
-    command: sh -c "mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} ${OH_MARIADB_DATABASE} < /database-sources/create_all_demo.sql"
+    command: >
+      sh -c "mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} ${OH_MARIADB_DATABASE} < /database-sources/delete_all_data.sql &&
+      mysql -v --host database -u ${OH_MARIADB_USER} -p${OH_MARIADB_PASSWORD} ${OH_MARIADB_DATABASE} < /database-sources/load_demo_data.sql"
     depends_on:
       - database
     working_dir: /database-sources
