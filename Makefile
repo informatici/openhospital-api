@@ -45,5 +45,8 @@ modify: clean deps copy
 	sed -i "s/API_HOST/${API_HOST}/g" $(OH_APPLICATION_PROPERTIES)
 	sed -i "s/API_PORT/${API_PORT}/g" $(OH_APPLICATION_PROPERTIES)
 	sed -i "s/localhost/database/g" $(OH_DATABASE_PROPERTIES)
+	sed -i "s/oh/${OH_MARIADB_DATABASE}/g" $(OH_DATABASE_PROPERTIES)
+	sed -i '0,/jdbc.username=isf/s/isf/${OH_MARIADB_USER}/' $(OH_DATABASE_PROPERTIES)
+	sed -i '0,/jdbc.password=isf123/s/isf123/${OH_MARIADB_PASSWORD}/' $(OH_DATABASE_PROPERTIES)
 	sed -i "s/LOG_DEST/logs/g" $(OH_LOG4J_PROPERTIES)
 
