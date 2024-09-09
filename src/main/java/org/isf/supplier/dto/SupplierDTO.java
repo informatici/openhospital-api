@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -52,10 +52,6 @@ public class SupplierDTO {
 	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
-	@NotNull
-	@Schema(description = "Flag record deleted, values are 'Y' OR 'N' ", example = "N")
-	private String supDeleted;
-
 	public SupplierDTO() {
 	}
 
@@ -69,7 +65,6 @@ public class SupplierDTO {
 		this.supFax = supFax;
 		this.supEmail = supEmail;
 		this.supNote = supNote;
-		this.supDeleted = "N";
 	}
 
 	public Integer getSupId() {
@@ -134,13 +129,5 @@ public class SupplierDTO {
 
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
-	}
-
-	public String getSupDeleted() {
-		return supDeleted;
-	}
-
-	public void setSupDeleted(String supDeleted) {
-		this.supDeleted = supDeleted;
 	}
 }
