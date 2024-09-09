@@ -21,8 +21,10 @@
  */
 package org.isf.menu.dto;
 
+import java.util.List;
 import jakarta.validation.constraints.NotNull;
 
+import org.isf.permissions.dto.PermissionDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserGroupDTO {
@@ -33,6 +35,9 @@ public class UserGroupDTO {
 
 	@Schema(description = "The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
 	private String desc;
+
+	@Schema(description = "List of group's permissions")
+	List<PermissionDTO> permissions;
 
 	public UserGroupDTO() {
 	}
@@ -56,5 +61,13 @@ public class UserGroupDTO {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public List<PermissionDTO> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<PermissionDTO> permissions) {
+		this.permissions = permissions;
 	}
 }
