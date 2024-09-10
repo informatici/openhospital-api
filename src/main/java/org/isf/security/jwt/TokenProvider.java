@@ -50,6 +50,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Component
 public class TokenProvider implements Serializable {
@@ -154,6 +155,9 @@ public class TokenProvider implements Serializable {
 		} catch (IllegalArgumentException e) {
 			log.error("JWT claims string is empty: {}", e.getMessage());
 			return TokenValidationResult.EMPTY_CLAIMS;
+		} catch (SignatureException e) {
+			log.error("JWT signature does not match locally computed signature: {}", e.getMessage());
+			return TokenValidationResult.INVALID_SIGNATURE;
 		}
 	}
 }

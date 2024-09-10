@@ -79,6 +79,10 @@ public class JWTFilter extends GenericFilterBean {
 				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token is malformed.");
 				return;
 
+			case INVALID_SIGNATURE:
+				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token has an invalid signature");
+				return;
+
 			case UNSUPPORTED:
 				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token is unsupported.");
 				return;
