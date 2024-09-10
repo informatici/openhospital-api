@@ -24,6 +24,7 @@ package org.isf.config;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -46,8 +47,17 @@ import io.swagger.v3.oas.models.servers.Server;
 })
 public class OpenAPIConfiguration {
 
+	@Value("${api.protocol}")
+	private String protocol;
+
+	@Value("${api.host}")
+	private String host;
+
 	@Bean
 	public OpenAPI springShopOpenAPI() {
+
+		String serverUrl = protocol + "://" + host;
+
 		return new OpenAPI().addSecurityItem(
 						new SecurityRequirement().addList("bearerAuth"))
 						.info(new Info().title("Open Hospital API Documentation")
@@ -55,7 +65,7 @@ public class OpenAPIConfiguration {
 										.version("0.1.0").contact(new Contact().name("ApiInfo.DEFAULT_CONTACT"))
 										.license(new License().name("GPL-3.0 license")
 														.url("https://github.com/informatici/openhospital-api?tab=GPL-3.0-1-ov-file#readme")))
-						.servers(List.of(new Server().url("http://localhost:8080")))
+						.servers(List.of(new Server().url(serverUrl)))
 						.components(new Components().schemas(Map.of(
 										"LocalDate", new DateSchema().name("LocalDate").type("string").format(null),
 										"LocalDateTime", new DateTimeSchema().name("LocalDateTime").type("string").format(null))));

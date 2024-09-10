@@ -62,6 +62,13 @@ For the moment, to build this project you should
 
 You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index.html
 
+ 7. enable LAN networking
+
+        # set in application.properties
+        ...
+        server.address=0.0.0.0 # or the machine server IP
+        ...
+
 ![image](https://github.com/informatici/openhospital-api/assets/2938553/ea855a4a-2a57-4b6e-aa62-f218d4937ed8)
 
 ### Using Swagger-UI
@@ -94,12 +101,17 @@ Make sure you have docker with docker-compose installed, then run the following 
 - copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
 - run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
-- (optional - demo data after set the database container) run `docker compose run --rm oh-database-init`
+- (optional - demo data after set the database container, English only) run `docker compose run --rm oh-database-init`
 - run `docker compose up backend`
 
 When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
 
-You can change the deployment branch using an .env file.
+You can change the deployment branch using the .env file.
+
+NOTE: 
+
+- API should be already available from LAN at http://your-server-ip:[API_PORT]
+- Swagger will be available at http://[API_HOST]:[API_PORT]
 
 ## How to generate openapi specs
 
@@ -118,6 +130,7 @@ To redirect the output to another file, use:
 
 	docker compose rm --stop --volumes --force
 	make clean
+	make clean-all # remove deps/ folder
 
 
 ## How to contribute
