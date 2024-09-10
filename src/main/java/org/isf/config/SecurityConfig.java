@@ -259,7 +259,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
 			.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
 			.requestMatchers("/users/me").authenticated()
-			.requestMatchers(HttpMethod.PUT, "/users/{username}").access("hasAuthority('users.update') && hasAuthority('users.read')")
+			.requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("users.update")
 			.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
 			// user setting
 			.requestMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersettings.read")

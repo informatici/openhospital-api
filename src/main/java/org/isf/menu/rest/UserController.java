@@ -151,6 +151,8 @@ public class UserController {
 
 	/**
 	 * Updates an existing {@link User}.
+	 * When the password in the payload is not empty, other field are ignored and only the password is updated,
+	 * otherwise other field are updated except the password(whether empty or not).
 	 *
 	 * @param userDTO - the {@link User} to update
 	 * @return the updated {@link UserDTO} if the user has been updated.
@@ -427,7 +429,9 @@ public class UserController {
 	}
 
 	/**
-	 * Updates the current {@link User}.
+	 * Updates the current {@link User} profile.
+	 * When the password in the payload is not empty, other field are ignored and only the password is updated,
+	 * otherwise other field are updated except the password(whether empty or not).
 	 *
 	 * @param userDTO - the {@link User} to update
 	 * @return the current {@link UserProfileDTO} if the user has been updated.
