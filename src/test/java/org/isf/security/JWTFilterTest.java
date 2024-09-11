@@ -21,6 +21,7 @@
  */
 package org.isf.security;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -120,5 +121,75 @@ public class JWTFilterTest {
 		jwtFilter.doFilter(request, response, filterChain);
 
 		assertEquals(400, response.getStatus()); // Ensure response status is 400 for invalid signature token
+	}
+
+	@Test
+	public void testDoFilter_UnsupportedToken() throws ServletException, IOException {
+		String unsupportedToken = "unsupported.token";
+		when(tokenProvider.validateToken(unsupportedToken)).thenReturn(TokenValidationResult.UNSUPPORTED);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + unsupportedToken);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertEquals(400, response.getStatus()); // Ensure response status is 400 for unsupported token
+	}
+
+	@Test
+	public void testDoFilter_EmptyClaimsToken() throws ServletException, IOException {
+		String emptyClaimsToken = "empty.claims.token";
+		when(tokenProvider.validateToken(emptyClaimsToken)).thenReturn(TokenValidationResult.EMPTY_CLAIMS);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + emptyClaimsToken);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertEquals(400, response.getStatus()); // Ensure response status is 400 for empty claims token
+	}
+
+	@Test
+	public void testDoFilter_UnexpectedResult() throws ServletException, IOException {
+		String unexpectedToken = "unexpected.token";
+		when(tokenProvider.validateToken(unexpectedToken)).thenAnswer(invocation -> {
+			// Return an unexpected result
+			return TokenValidationResult.valueOf("UNKNOWN"); // Use a valid value for testing
+		});
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + unexpectedToken);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertEquals(400, response.getStatus()); // Ensure response status is 400 for unexpected result
+		assertTrue(response.getContentAsString().contains("Unknown token validation result."));
+	}
+
+	@Test
+	public void testDoFilter_NullValidationResult() throws ServletException, IOException {
+		String tokenWithNullValidationResult = "null.validation.token";
+		when(tokenProvider.validateToken(tokenWithNullValidationResult)).thenReturn(null);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + tokenWithNullValidationResult);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertEquals(400, response.getStatus()); // Ensure response status is 400 for null validation result
+		assertTrue(response.getContentAsString().contains("Unknown token validation result."));
+	}
+
+	@Test
+	public void testDoFilter_ValidButExpiredToken() throws ServletException, IOException {
+		String validTokenButExpired = "valid.token.but.expired";
+		Authentication mockAuthentication = mock(Authentication.class);
+
+		when(tokenProvider.validateToken(validTokenButExpired)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.isTokenExpired(validTokenButExpired)).thenReturn(true); // Token is expired
+		when(tokenProvider.getAuthentication(validTokenButExpired)).thenReturn(mockAuthentication);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + validTokenButExpired);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertEquals(401, response.getStatus()); // Ensure response status is 401 for expired token
+		assertTrue(response.getContentAsString().contains("JWT token is expired."));
 	}
 }

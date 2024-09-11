@@ -60,6 +60,11 @@ public class JWTFilter extends GenericFilterBean {
 		if (StringUtils.hasText(jwt)) {
 			TokenValidationResult validationResult = this.tokenProvider.validateToken(jwt);
 
+			if (validationResult == null) {
+				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "Unknown token validation result.");
+				return;
+			}
+
 			switch (validationResult) {
 			case VALID:
 				if (!this.tokenProvider.isTokenExpired(jwt)) {
