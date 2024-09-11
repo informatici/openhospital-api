@@ -117,6 +117,7 @@ public class UserControllerTest {
 	@Nested
 	@DisplayName("Get users")
 	class GetUsers {
+
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.read" })
 		@DisplayName("Get all users")
@@ -127,11 +128,11 @@ public class UserControllerTest {
 			when(userManager.getUser()).thenReturn(users);
 
 			var result = mvc.perform(
-							get("/users").contentType(MediaType.APPLICATION_JSON))
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS))))
-					.andReturn();
+					get("/users").contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -147,11 +148,11 @@ public class UserControllerTest {
 			when(userManager.getUser(any())).thenReturn(users);
 
 			var result = mvc.perform(
-							get("/users").queryParam("group_id", groupCode).contentType(MediaType.APPLICATION_JSON))
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS))))
-					.andReturn();
+					get("/users").queryParam("group_id", groupCode).contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -166,12 +167,14 @@ public class UserControllerTest {
 
 			when(userManager.getUserByName(any())).thenReturn(user);
 
+			userDTO.setPasswd(null);
+			
 			var result = mvc.perform(
-							get("/users/{username}", username).contentType(MediaType.APPLICATION_JSON))
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))))
-					.andReturn();
+					get("/users/{username}", username).contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -187,14 +190,14 @@ public class UserControllerTest {
 		when(userManager.newUser(any())).thenReturn(user);
 
 		var result = mvc.perform(
-						post("/users")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(objectMapper.writeValueAsString(userDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+				post("/users")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(userDTO))
+			)
+			.andDo(log())
+			.andExpect(status().isCreated())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -209,17 +212,17 @@ public class UserControllerTest {
 		doNothing().when(userManager).deleteUser(any());
 
 		var result = mvc.perform(
-						delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+				delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "grouppermission.read" })
+	@WithMockUser(username = "admin", authorities = { "usergroups.read" })
 	@DisplayName("Get all user groups")
 	void getAllUserGroups() throws Exception {
 		List<UserGroup> userGroups = List.of(UserGroupHelper.generateUserGroup());
@@ -228,17 +231,17 @@ public class UserControllerTest {
 		when(userManager.getUserGroup()).thenReturn(userGroups);
 
 		var result = mvc.perform(
-						get("/users/groups").contentType(MediaType.APPLICATION_JSON))
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(UserGroupHelper.asJsonString(userGroupDTOS))))
-				.andReturn();
+				get("/users/groups").contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(UserGroupHelper.asJsonString(userGroupDTOS))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
+	@WithMockUser(username = "admin", authorities = { "usergroups.create" })
 	@DisplayName("Create user group")
 	void createUserGroup() throws Exception {
 		List<Permission> permissions = TestPermission.generatePermissions(4);
@@ -251,17 +254,17 @@ public class UserControllerTest {
 		when(userManager.newUserGroup(userGroup, permissions)).thenReturn(userGroup);
 
 		var result = mvc.perform(
-						post("/users/groups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+				post("/users/groups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
+			.andDo(log())
+			.andExpect(status().isCreated())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "grouppermission.update" })
+	@WithMockUser(username = "admin", authorities = { "usergroups.update" })
 	@DisplayName("Update user group")
 	void updateUserGroup() throws Exception {
 		List<Permission> permissions = TestPermission.generatePermissions(4);
@@ -272,23 +275,23 @@ public class UserControllerTest {
 		userGroupDTO.setPermissions(permissionDTOS);
 
 		when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
-		when(userManager.updateUserGroup(any(),any())).thenReturn(true);
+		when(userManager.updateUserGroup(any(), any())).thenReturn(true);
 
 		var result = mvc.perform(
-						put("/users/groups")
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(objectMapper.writeValueAsString(userGroupDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+				put("/users/groups")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(userGroupDTO))
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "grouppermission.read" })
+	@WithMockUser(username = "admin", authorities = { "usergroups.read" })
 	@DisplayName("Get user group")
 	void getUserGroup() throws Exception {
 		List<Permission> permissions = TestPermission.generatePermissions(4);
@@ -310,17 +313,17 @@ public class UserControllerTest {
 		when(groupPermissionManager.findUserGroupPermissions(any())).thenReturn(groupPermissions);
 
 		var result = mvc.perform(
-						get("/users/groups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userGroupDTO))))
-				.andReturn();
+				get("/users/groups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(userGroupDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
+	@WithMockUser(username = "admin", authorities = { "usergroups.delete" })
 	@DisplayName("Delete user groups")
 	void deleteUserGroup() throws Exception {
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
@@ -330,17 +333,17 @@ public class UserControllerTest {
 		doNothing().when(userManager).deleteGroup(any());
 
 		var result = mvc.perform(
-						delete("/users/groups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+				delete("/users/groups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	@WithMockUser(username = "contrib", authorities = { "users.read","usersettings.read" })
+	@WithMockUser(username = "contrib", authorities = { "users.read", "usersettings.read" })
 	@DisplayName("Get logged-in user's setting")
 	void getCurrentUserSettings() throws Exception {
 		List<UserSetting> userSettings = UserSettingHelper.generateMany(5);
@@ -349,11 +352,11 @@ public class UserControllerTest {
 		when(userSettingManager.getUserSettingByUserName(any())).thenReturn(userSettings);
 
 		var result = mvc.perform(
-						get("/users/settings").contentType(MediaType.APPLICATION_JSON))
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(UserSettingHelper.asJsonString(userSettingDTOS))))
-				.andReturn();
+				get("/users/settings").contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(UserSettingHelper.asJsonString(userSettingDTOS))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -361,6 +364,7 @@ public class UserControllerTest {
 	@Nested
 	@DisplayName("Create / update user setting")
 	class SaveUserSettings {
+
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.create", "usersettings.create" })
 		@DisplayName("Create own user setting as admin")
@@ -376,14 +380,14 @@ public class UserControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							post("/users/settings")
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isCreated())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					post("/users/settings")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isCreated())
+				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -402,22 +406,22 @@ public class UserControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							post("/users/settings")
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isCreated())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					post("/users/settings")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isCreated())
+				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.create", "usersettings.create" })
-		@DisplayName("Create user setting as admin for another user")
-		void createUserSettingAsAdminForOtherUser() throws Exception {
+		@DisplayName("Should fail to create user setting for another user")
+		void shouldFailToCreateUserSettingForOtherUser() throws Exception {
 			User user = UserHelper.generateUser();
 			UserSetting userSetting = UserSettingHelper.generate();
 			userSetting.setUser(user.getUserName());
@@ -428,14 +432,13 @@ public class UserControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							post("/users/settings")
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isCreated())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					post("/users/settings")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -455,13 +458,13 @@ public class UserControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							post("/users/settings")
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().is4xxClientError())
-					.andReturn();
+					post("/users/settings")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -482,14 +485,14 @@ public class UserControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							put("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					put("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -509,14 +512,14 @@ public class UserControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							put("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					put("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -527,7 +530,7 @@ public class UserControllerTest {
 		void updateUserSettingAsAdminForOtherUser() throws Exception {
 			User user = UserHelper.generateUser();
 			UserSetting userSetting = UserSettingHelper.generate();
-			userSetting.setUser(user.getUserName());
+			userSetting.setUser("admin");
 			userSetting.setId(1);
 			UserSettingDTO userSettingDTO = userSettingMapper.map2DTO(userSetting);
 
@@ -536,22 +539,22 @@ public class UserControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							put("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-					.andReturn();
+					put("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@WithMockUser(username = "oh user", authorities = { "users.update", "usersettings.update" })
-		@DisplayName("Update user setting for another user as non-admin user")
-		void updateUserSettingForOtherUserAsNonAdmin() throws Exception {
+		@DisplayName("Should fail to update user setting for another user as non-admin user")
+		void shouldFailToUpdateUserSettingForOtherUser() throws Exception {
 			User user = UserHelper.generateUser();
 			user.setUserName("other user");
 			UserSetting userSetting = UserSettingHelper.generate();
@@ -564,13 +567,13 @@ public class UserControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-							put("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-									.content(objectMapper.writeValueAsString(userSettingDTO))
-					)
-					.andDo(log())
-					.andExpect(status().is4xxClientError())
-					.andReturn();
+					put("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userSettingDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -582,19 +585,20 @@ public class UserControllerTest {
 	void getUserSettingById() throws Exception {
 		UserSetting userSetting = UserSettingHelper.generate();
 		userSetting.setId(1);
+		userSetting.setUser("admin");
 		UserSettingDTO userSettingDTO = userSettingMapper.map2DTO(userSetting);
 
 		when(userSettingManager.getUserSettingById(anyInt())).thenReturn(Optional.of(userSetting));
 
 		var result = mvc.perform(
-						get("/users/settings/{id}", userSetting.getId())
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(objectMapper.writeValueAsString(userSettingDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-				.andReturn();
+				get("/users/settings/{id}", userSetting.getId())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(userSettingDTO))
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -611,13 +615,13 @@ public class UserControllerTest {
 		when(userSettingManager.getUserSettingByUserNameConfigName(any(), any())).thenReturn(userSetting);
 
 		var result = mvc.perform(
-						get("/users/{userName}/settings/{configName}", userSetting.getUser(), userSetting.getConfigName())
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-				.andReturn();
+				get("/users/{userName}/settings/{configName}", userSetting.getUser(), userSetting.getConfigName())
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -625,6 +629,7 @@ public class UserControllerTest {
 	@Nested
 	@DisplayName("Delete user settings")
 	class DeleteUserSettings {
+
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.delete", "usersettings.delete" })
 		@DisplayName("Delete own user setting by id as admin")
@@ -637,13 +642,13 @@ public class UserControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-							delete("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString("true")))
-					.andReturn();
+					delete("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -660,13 +665,13 @@ public class UserControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-							delete("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString("true")))
-					.andReturn();
+					delete("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -682,13 +687,13 @@ public class UserControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-							delete("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString("true")))
-					.andReturn();
+					delete("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -705,12 +710,12 @@ public class UserControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-							delete("/users/settings/{id}", userSetting.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().is4xxClientError())
-					.andReturn();
+					delete("/users/settings/{id}", userSetting.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -719,6 +724,7 @@ public class UserControllerTest {
 	@Nested
 	@DisplayName("Assign / revoke permission")
 	class UserGroupPermissions {
+
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
 		@DisplayName("Assign a permission to a user group")
@@ -734,13 +740,13 @@ public class UserControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			var result = mvc.perform(
-							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().isCreated())
-					.andExpect(content().string(containsString("true")))
-					.andReturn();
+					post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isCreated())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -758,16 +764,16 @@ public class UserControllerTest {
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
 			when(groupPermissionManager.create(any(), any())).thenThrow(
-					new OHDataValidationException(new OHExceptionMessage(""))
+				new OHDataValidationException(new OHExceptionMessage(""))
 			);
 
 			mvc.perform(
 					post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-							.contentType(MediaType.APPLICATION_JSON)
-			)
-			.andDo(log())
-			.andExpect(status().is4xxClientError())
-			.andExpect(content().string(containsString("Failed")));
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(content().string(containsString("Failed")));
 		}
 
 		@Test
@@ -785,16 +791,16 @@ public class UserControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			mvc.perform(
-							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().is4xxClientError())
-					.andExpect(content().string(containsString("not found")));
+					post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(content().string(containsString("not found")));
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = {"grouppermission.delete" })
+		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
 		@DisplayName("Revoke a permission from a user group")
 		void revokePermissionFromUserGroup() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
@@ -808,13 +814,13 @@ public class UserControllerTest {
 			doNothing().when(groupPermissionManager).delete(any(), any());
 
 			var result = mvc.perform(
-							delete("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().isOk())
-					.andExpect(content().string(containsString("true")))
-					.andReturn();
+					delete("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString("true")))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -834,12 +840,12 @@ public class UserControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			mvc.perform(
-							post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-									.contentType(MediaType.APPLICATION_JSON)
-					)
-					.andDo(log())
-					.andExpect(status().is4xxClientError())
-					.andExpect(content().string(containsString("not found")));
+					post("/users/groups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(content().string(containsString("not found")));
 		}
 	}
 }

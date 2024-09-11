@@ -251,10 +251,15 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 			.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
 			// grouppermission
-			.requestMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
-			.requestMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("grouppermission.read")
-			.requestMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
-			.requestMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
+			.requestMatchers(HttpMethod.POST, "/users/groups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+			.requestMatchers(HttpMethod.GET, "/users/groups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
+			.requestMatchers(HttpMethod.PUT, "/users/groups/{group_code}/permissions/**").hasAuthority("grouppermission.update")
+			.requestMatchers(HttpMethod.DELETE, "/users/groups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
+			// usergroups
+			.requestMatchers(HttpMethod.POST, "/users/groups/**").hasAuthority("usergroups.create")
+			.requestMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("usergroups.read")
+			.requestMatchers(HttpMethod.PUT, "/users/groups/**").hasAuthority("usergroups.update")
+			.requestMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("usergroups.delete")
 			// user
 			.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
 			.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
