@@ -72,7 +72,6 @@ public class TokenProvider implements Serializable {
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
 		log.info("Initializing JWT key with secret: {}", secret);
-		// byte[] keyBytes = Decoders.BASE64.decode(SECRET);
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
