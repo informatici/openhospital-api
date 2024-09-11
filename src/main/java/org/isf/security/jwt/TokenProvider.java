@@ -109,6 +109,7 @@ public class TokenProvider implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 
+	//needed because jwtParser.parseClaimsJws throws an exception when token is expired
 	public Boolean isTokenExpired(String token) {
 		try {
 			final Date expiration = getExpirationDateFromToken(token);
