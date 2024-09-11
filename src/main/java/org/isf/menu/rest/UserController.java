@@ -119,7 +119,9 @@ public class UserController {
 		} else {
 			users = userManager.getUser();
 		}
-		List<UserDTO> mappedUsers = userMapper.map2DTOList(users);
+		List<UserDTO> mappedUsers = userMapper.map2DTOList(
+			users.stream().peek(user -> user.setPasswd(null)).toList()
+		);
 		if (mappedUsers.isEmpty()) {
 			LOGGER.info("No user found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedUsers);
@@ -146,6 +148,7 @@ public class UserController {
 		if (user == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."));
 		}
+		user.setPasswd(null);
 		return ResponseEntity.ok(userMapper.map2DTO(user));
 	}
 
@@ -180,7 +183,9 @@ public class UserController {
 		}
 		if (isUpdated) {
 			LOGGER.info("User {} has been updated successfully.", userName);
-			return ResponseEntity.ok(userMapper.map2DTO(userManager.getUserByName(userName)));
+			user = userManager.getUserByName(userName);
+			user.setPasswd(null);
+			return ResponseEntity.ok(userMapper.map2DTO(user));
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));
 		}
