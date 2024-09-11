@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -68,6 +69,8 @@ public class TokenProvider implements Serializable {
 
 	private long tokenValidityInMillisecondsForRememberMe;
 
+	private JwtParser jwtParser;
+
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
@@ -77,18 +80,24 @@ public class TokenProvider implements Serializable {
 
 		this.tokenValidityInMilliseconds = 1000L * 6000;
 		this.tokenValidityInMillisecondsForRememberMe = 1000L * 6000;
+
+		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
+	}
+
+	public long getTokenValidityInMillisecondsForRememberMe() {
+		return tokenValidityInMillisecondsForRememberMe;
+	}
+
+	public void setJwtParser(JwtParser jwtParser) {
+		this.jwtParser = jwtParser;
 	}
 
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
-	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parserBuilder()
-						.setSigningKey(this.key)
-						.build()
-						.parseClaimsJws(token)
-						.getBody();
+	public Claims getAllClaimsFromToken(String token) {
+		return this.jwtParser.parseClaimsJws(token).getBody();
 	}
 
 	public Date getExpirationDateFromToken(String token) {
@@ -101,8 +110,14 @@ public class TokenProvider implements Serializable {
 	}
 
 	public Boolean isTokenExpired(String token) {
-		final Date expiration = getExpirationDateFromToken(token);
-		return expiration.before(new Date());
+		try {
+			final Date expiration = getExpirationDateFromToken(token);
+			return expiration.before(new Date());
+		} catch (ExpiredJwtException e) {
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
@@ -140,7 +155,10 @@ public class TokenProvider implements Serializable {
 
 	public TokenValidationResult validateToken(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
+				throw new IllegalArgumentException("JWT claims string is empty");
+			}
 			return TokenValidationResult.VALID;
 		} catch (MalformedJwtException e) {
 			log.error("Invalid JWT token: {}", e.getMessage());
