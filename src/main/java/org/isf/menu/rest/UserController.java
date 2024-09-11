@@ -595,6 +595,11 @@ public class UserController {
 			LOGGER.info("No user settings with id {}.", id);
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 		}
+		var setting = userSetting.get();
+		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		if (!Objects.equals(currentUser, setting.getUser())) {
+			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource."), HttpStatus.FORBIDDEN);
+		}
 		return ResponseEntity.ok(userSettingMapper.map2DTO(userSetting.get()));
 	}
 
