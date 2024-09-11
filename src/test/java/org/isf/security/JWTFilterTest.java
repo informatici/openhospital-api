@@ -66,7 +66,6 @@ public class JWTFilterTest {
 
 	@Test
 	public void testDoFilter_ValidToken() throws ServletException, IOException {
-		// Mock valid token
 		String validToken = "valid.token";
 		Authentication mockAuthentication = mock(Authentication.class);
 
@@ -83,7 +82,6 @@ public class JWTFilterTest {
 
 	@Test
 	public void testDoFilter_ExpiredToken() throws ServletException, IOException {
-		// Mock expired token
 		String expiredToken = "expired.token";
 		when(tokenProvider.validateToken(expiredToken)).thenReturn(TokenValidationResult.EXPIRED);
 
@@ -96,7 +94,6 @@ public class JWTFilterTest {
 
 	@Test
 	public void testDoFilter_MalformedToken() throws ServletException, IOException {
-		// Mock malformed token
 		String malformedToken = "malformed.token";
 		when(tokenProvider.validateToken(malformedToken)).thenReturn(TokenValidationResult.MALFORMED);
 
@@ -109,9 +106,19 @@ public class JWTFilterTest {
 
 	@Test
 	public void testDoFilter_NoToken() throws ServletException, IOException {
-		// No Authorization header
+		jwtFilter.doFilter(request, response, filterChain);
+		verify(filterChain).doFilter(request, response); // Ensure the filter chain continues even without a token
+	}
+
+	@Test
+	public void testDoFilter_InvalidSignatureToken() throws ServletException, IOException {
+		String invalidSignatureToken = "eyJhbGciOiJIUzI1NiJ9.MISSING_PART.HMAC_SIGNATURE";
+		when(tokenProvider.validateToken(invalidSignatureToken)).thenReturn(TokenValidationResult.INVALID_SIGNATURE);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + invalidSignatureToken);
+
 		jwtFilter.doFilter(request, response, filterChain);
 
-		verify(filterChain).doFilter(request, response); // Ensure the filter chain continues even without a token
+		assertEquals(400, response.getStatus()); // Ensure response status is 400 for invalid signature token
 	}
 }
