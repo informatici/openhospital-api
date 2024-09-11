@@ -46,18 +46,12 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGenerateJwtToken() throws NoSuchFieldException, IllegalAccessException {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
-
-		// Use reflection to access the private key field
-		Field keyField = TokenProvider.class.getDeclaredField("key");
-		keyField.setAccessible(true);
-		Key key = (Key) keyField.get(tokenProvider);
+		Authentication authentication = createAuthentication();
+		Key key = extractKeyFromTokenProvider();
 
 		String token = tokenProvider.generateJwtToken(authentication, false);
 
-		// Validate the generated token
+		// Get Claims from token
 		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
 		// Assert the claims
@@ -67,9 +61,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Valid() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
 		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
@@ -83,17 +75,14 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Expired() throws Exception {
-		// Use reflection to get the private key from tokenProvider
-		Field keyField = TokenProvider.class.getDeclaredField("key");
-		keyField.setAccessible(true);
-		Key key = (Key) keyField.get(tokenProvider);
+		Key key = extractKeyFromTokenProvider();
 
 		// Create an expired token by setting the expiration date in the past
 		String expiredToken = Jwts.builder()
 						.setSubject("testuser")
 						.claim("auth", "ROLE_USER")
 						.signWith(key, SignatureAlgorithm.HS512)
-						.setExpiration(new Date(System.currentTimeMillis() - 1000)) // Set expiration to past
+						.setExpiration(new Date(System.currentTimeMillis() - 1000))
 						.compact();
 
 		// Validate the expired token
@@ -106,6 +95,8 @@ public class TokenProviderTest {
 	@Test
 	public void testValidateToken_Malformed() {
 		String malformedToken = "malformed.token";
+
+		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(malformedToken);
 		assertEquals(TokenValidationResult.MALFORMED, result);
 	}
@@ -113,6 +104,8 @@ public class TokenProviderTest {
 	@Test
 	public void testValidateToken_InvalidSignature() {
 		String invalidSignatureToken = "eyJhbGciOiJIUzI1NiJ9.MISSING_PART.HMAC_SIGNATURE";
+
+		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(invalidSignatureToken);
 		assertEquals(TokenValidationResult.INVALID_SIGNATURE, result);
 	}
@@ -127,6 +120,7 @@ public class TokenProviderTest {
 						.signWith(keyPair.getPrivate(), SignatureAlgorithm.RS256)
 						.compact();
 
+		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(unsupportedToken);
 
 		assertEquals(TokenValidationResult.UNSUPPORTED, result);
@@ -134,9 +128,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_EmptyClaims() throws Exception {
-		Field keyField = TokenProvider.class.getDeclaredField("key");
-		keyField.setAccessible(true);
-		Key key = (Key) keyField.get(tokenProvider);
+		Key key = extractKeyFromTokenProvider();
 
 		// Create a token with empty claims
 		String emptyClaimsToken = Jwts.builder()
@@ -145,6 +137,7 @@ public class TokenProviderTest {
 						.signWith(key, SignatureAlgorithm.HS512)
 						.compact();
 
+		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(emptyClaimsToken);
 
 		assertEquals(TokenValidationResult.EMPTY_CLAIMS, result);
@@ -152,9 +145,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGetAuthentication() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
 		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
@@ -181,16 +172,14 @@ public class TokenProviderTest {
 	@Test
 	public void testSetJwtParser() {
 		JwtParser mockJwtParser = mock(JwtParser.class);
-
 		tokenProvider.setJwtParser(mockJwtParser);
 	}
 
 	@Test
 	public void testGetUsernameFromToken() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		String username = tokenProvider.getUsernameFromToken(token);
 
@@ -199,10 +188,9 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGetAllClaimsFromToken() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		Claims claims = tokenProvider.getAllClaimsFromToken(token);
 
@@ -212,10 +200,9 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGetExpirationDateFromToken() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		Date expirationDate = tokenProvider.getExpirationDateFromToken(token);
 
@@ -225,9 +212,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGetClaimFromToken() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 
 		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
@@ -241,15 +226,10 @@ public class TokenProviderTest {
 
 	@Test
 	public void testIsTokenExpired() throws Exception {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
+		Key key = extractKeyFromTokenProvider();
 
-		Field keyField = TokenProvider.class.getDeclaredField("key");
-		keyField.setAccessible(true);
-		Key key = (Key) keyField.get(tokenProvider);
-
-		// Generate a token with a future expiration date
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 
 		// Adjust the token to be expired by manually creating an expired token
@@ -272,11 +252,10 @@ public class TokenProviderTest {
 
 	@Test
 	public void testGenerateJwtToken_WithRememberMe() {
-		// Create an Authentication object with mock authorities
-		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		Authentication authentication = createAuthentication();
 		boolean rememberMe = true;
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, rememberMe);
 		Date now = new Date();
 		Date expectedExpirationDate = new Date(now.getTime() + tokenProvider.getTokenValidityInMillisecondsForRememberMe());
@@ -294,5 +273,21 @@ public class TokenProviderTest {
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
 		keyPairGenerator.initialize(2048);
 		return keyPairGenerator.generateKeyPair();
+	}
+
+	// Helper method to create an Authentication
+	private Authentication createAuthentication() {
+		// Create an Authentication object with mock authorities
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+		return authentication;
+	}
+
+	// Helper method to extract key by reflection
+	private Key extractKeyFromTokenProvider() throws NoSuchFieldException, IllegalAccessException {
+		Field keyField = TokenProvider.class.getDeclaredField("key");
+		keyField.setAccessible(true);
+		Key key = (Key) keyField.get(tokenProvider);
+		return key;
 	}
 }

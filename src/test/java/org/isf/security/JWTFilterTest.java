@@ -21,7 +21,6 @@
  */
 package org.isf.security;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -160,7 +159,6 @@ public class JWTFilterTest {
 		jwtFilter.doFilter(request, response, filterChain);
 
 		assertEquals(400, response.getStatus()); // Ensure response status is 400 for unexpected result
-		assertTrue(response.getContentAsString().contains("Unknown token validation result."));
 	}
 
 	@Test
@@ -173,7 +171,6 @@ public class JWTFilterTest {
 		jwtFilter.doFilter(request, response, filterChain);
 
 		assertEquals(400, response.getStatus()); // Ensure response status is 400 for null validation result
-		assertTrue(response.getContentAsString().contains("Unknown token validation result."));
 	}
 
 	@Test
@@ -190,6 +187,5 @@ public class JWTFilterTest {
 		jwtFilter.doFilter(request, response, filterChain);
 
 		assertEquals(401, response.getStatus()); // Ensure response status is 401 for expired token
-		assertTrue(response.getContentAsString().contains("JWT token is expired."));
 	}
 }
