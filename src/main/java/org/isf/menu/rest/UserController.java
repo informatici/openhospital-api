@@ -447,15 +447,17 @@ public class UserController {
 		@RequestBody UserDTO userDTO) throws OHServiceException {
 		String requestUserName = userDTO.getUserName();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+		User entity = userManager.getUserByName(requestUserName);
 		LOGGER.info("Updating the user {}.", currentUser);
 		if (!requestUserName.equals(currentUser)) {
 			throw new OHAPIException(new OHExceptionMessage(String.format("You're not allowed to update %s's profile.", requestUserName)),
 				HttpStatus.FORBIDDEN);
 		}
-		if (userManager.getUserByName(requestUserName) == null) {
+		if (entity == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
 		User user = userMapper.map2Model(userDTO);
+		user.setUserGroupName(entity.getUserGroupName());
 		boolean isUpdated;
 		if (!user.getPasswd().isEmpty()) {
 			isUpdated = userManager.updatePassword(user);
