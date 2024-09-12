@@ -176,6 +176,9 @@ public class TokenProvider implements Serializable {
 		} catch (SignatureException e) {
 			LOGGER.error("JWT signature does not match locally computed signature: {}", e.getMessage());
 			return TokenValidationResult.INVALID_SIGNATURE;
+		} catch (Exception e) {
+			LOGGER.error("An unexpected error occurred while validating JWT token: {}", e.getMessage());
+			return TokenValidationResult.UNKNOWN;
 		}
 	}
 }
