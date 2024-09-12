@@ -56,7 +56,7 @@ import io.jsonwebtoken.security.SignatureException;
 @Component
 public class TokenProvider implements Serializable {
 
-	private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(TokenProvider.class);
 
 	@Autowired
 	private Environment env;
@@ -74,7 +74,7 @@ public class TokenProvider implements Serializable {
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
-		log.info("Initializing JWT key with secret: {}", secret);
+		LOGGER.info("Initializing JWT key with secret: {}", secret);
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
@@ -109,7 +109,7 @@ public class TokenProvider implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 
-	//needed because jwtParser.parseClaimsJws throws an exception when token is expired
+	// needed because jwtParser.parseClaimsJws throws an exception when token is expired
 	public Boolean isTokenExpired(String token) {
 		try {
 			final Date expiration = getExpirationDateFromToken(token);
@@ -162,19 +162,19 @@ public class TokenProvider implements Serializable {
 			}
 			return TokenValidationResult.VALID;
 		} catch (MalformedJwtException e) {
-			log.error("Invalid JWT token: {}", e.getMessage());
+			LOGGER.error("Invalid JWT token: {}", e.getMessage());
 			return TokenValidationResult.MALFORMED;
 		} catch (ExpiredJwtException e) {
-			log.error("JWT token is expired: {}", e.getMessage());
+			LOGGER.error("JWT token is expired: {}", e.getMessage());
 			return TokenValidationResult.EXPIRED;
 		} catch (UnsupportedJwtException e) {
-			log.error("JWT token is unsupported: {}", e.getMessage());
+			LOGGER.error("JWT token is unsupported: {}", e.getMessage());
 			return TokenValidationResult.UNSUPPORTED;
 		} catch (IllegalArgumentException e) {
-			log.error("JWT claims string is empty: {}", e.getMessage());
+			LOGGER.error("JWT claims string is empty: {}", e.getMessage());
 			return TokenValidationResult.EMPTY_CLAIMS;
 		} catch (SignatureException e) {
-			log.error("JWT signature does not match locally computed signature: {}", e.getMessage());
+			LOGGER.error("JWT signature does not match locally computed signature: {}", e.getMessage());
 			return TokenValidationResult.INVALID_SIGNATURE;
 		}
 	}
