@@ -21,7 +21,7 @@
  */
 package org.isf.security;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -89,7 +89,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(401, response.getStatus()); // Ensure response status is 401 for expired token
+		assertThat(response.getStatus()).isEqualTo(401); // Ensure response status is 401 for expired token
 	}
 
 	@Test
@@ -101,7 +101,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for malformed token
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for malformed token
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for invalid signature token
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for invalid signature token
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for unsupported token
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for unsupported token
 	}
 
 	@Test
@@ -143,7 +143,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for empty claims token
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for empty claims token
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for unexpected result
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for unexpected result
 	}
 
 	@Test
@@ -170,7 +170,7 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(400, response.getStatus()); // Ensure response status is 400 for null validation result
+		assertThat(response.getStatus()).isEqualTo(400); // Ensure response status is 400 for null validation result
 	}
 
 	@Test
@@ -186,6 +186,6 @@ public class JWTFilterTest {
 
 		jwtFilter.doFilter(request, response, filterChain);
 
-		assertEquals(401, response.getStatus()); // Ensure response status is 401 for expired token
+		assertThat(response.getStatus()).isEqualTo(401); // Ensure response status is 401 for expired token
 	}
 }

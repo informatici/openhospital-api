@@ -21,9 +21,7 @@
  */
 package org.isf.security;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Field;
@@ -35,6 +33,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.assertj.core.data.Offset;
 import org.isf.OpenHospitalApiApplication;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.security.jwt.TokenValidationResult;
@@ -61,7 +60,6 @@ public class TokenProviderTest {
 
 	@BeforeEach
 	public void setUp() {
-
 		tokenProvider.init();
 	}
 
@@ -76,8 +74,8 @@ public class TokenProviderTest {
 		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
 		// Assert the claims
-		assertEquals("testuser", claims.getSubject());
-		assertEquals("ROLE_USER", claims.get("auth"));
+		assertThat(claims.getSubject()).isEqualTo("testuser");
+		assertThat(claims.get("auth")).isEqualTo("ROLE_USER");
 	}
 
 	@Test
@@ -91,7 +89,7 @@ public class TokenProviderTest {
 		TokenValidationResult result = tokenProvider.validateToken(token);
 
 		// Assert that the token is valid
-		assertEquals(TokenValidationResult.VALID, result);
+		assertThat(result).isEqualTo(TokenValidationResult.VALID);
 	}
 
 	@Test
@@ -110,7 +108,7 @@ public class TokenProviderTest {
 		TokenValidationResult result = tokenProvider.validateToken(expiredToken);
 
 		// Assert that the token is expired
-		assertEquals(TokenValidationResult.EXPIRED, result);
+		assertThat(result).isEqualTo(TokenValidationResult.EXPIRED);
 	}
 
 	@Test
@@ -119,7 +117,8 @@ public class TokenProviderTest {
 
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(malformedToken);
-		assertEquals(TokenValidationResult.MALFORMED, result);
+
+		assertThat(result).isEqualTo(TokenValidationResult.MALFORMED);
 	}
 
 	@Test
@@ -128,7 +127,8 @@ public class TokenProviderTest {
 
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(invalidSignatureToken);
-		assertEquals(TokenValidationResult.INVALID_SIGNATURE, result);
+
+		assertThat(result).isEqualTo(TokenValidationResult.INVALID_SIGNATURE);
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class TokenProviderTest {
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(unsupportedToken);
 
-		assertEquals(TokenValidationResult.UNSUPPORTED, result);
+		assertThat(result).isEqualTo(TokenValidationResult.UNSUPPORTED);
 	}
 
 	@Test
@@ -161,7 +161,7 @@ public class TokenProviderTest {
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(emptyClaimsToken);
 
-		assertEquals(TokenValidationResult.EMPTY_CLAIMS, result);
+		assertThat(result).isEqualTo(TokenValidationResult.EMPTY_CLAIMS);
 	}
 
 	@Test
@@ -175,19 +175,19 @@ public class TokenProviderTest {
 		Authentication result = tokenProvider.getAuthentication(token);
 
 		// Verify that the result is of the correct type and has the expected details
-		assertTrue(result instanceof UsernamePasswordAuthenticationToken);
+		assertThat(result).isInstanceOf(UsernamePasswordAuthenticationToken.class);
 
 		UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) result;
 
 		// Check principal
-		assertEquals("testuser", ((User) authToken.getPrincipal()).getUsername());
+		assertThat(((User) authToken.getPrincipal()).getUsername()).isEqualTo("testuser");
 
 		// Check authorities
 		Collection< ? extends GrantedAuthority> resultAuthorities = authToken.getAuthorities();
-		assertTrue(resultAuthorities.contains(new SimpleGrantedAuthority("ROLE_USER")));
+		assertThat(resultAuthorities).extracting(GrantedAuthority::getAuthority).contains("ROLE_USER");
 
 		// Check credentials
-		assertEquals(token, authToken.getCredentials());
+		assertThat(authToken.getCredentials()).isEqualTo(token);
 	}
 
 	@Test
@@ -204,7 +204,7 @@ public class TokenProviderTest {
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		String username = tokenProvider.getUsernameFromToken(token);
 
-		assertEquals("testuser", username);
+		assertThat(username).isEqualTo("testuser");
 	}
 
 	@Test
@@ -215,8 +215,8 @@ public class TokenProviderTest {
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		Claims claims = tokenProvider.getAllClaimsFromToken(token);
 
-		assertNotNull(claims);
-		assertEquals("testuser", claims.getSubject());
+		assertThat(claims).isNotNull();
+		assertThat(claims.getSubject()).isEqualTo("testuser");
 	}
 
 	@Test
@@ -227,8 +227,8 @@ public class TokenProviderTest {
 		String token = tokenProvider.generateJwtToken(authentication, false);
 		Date expirationDate = tokenProvider.getExpirationDateFromToken(token);
 
-		assertNotNull(expirationDate);
-		assertTrue(expirationDate.after(new Date()));
+		assertThat(expirationDate).isNotNull();
+		assertThat(expirationDate).isAfter(new Date());
 	}
 
 	@Test
@@ -242,7 +242,7 @@ public class TokenProviderTest {
 		String subject = tokenProvider.getClaimFromToken(token, Claims::getSubject);
 
 		// Assert the claim
-		assertEquals("testuser", subject);
+		assertThat(subject).isEqualTo("testuser");
 	}
 
 	@Test
@@ -268,7 +268,7 @@ public class TokenProviderTest {
 
 		// Test if the token is expired
 		Boolean isExpired = tokenProvider.isTokenExpired(expiredToken);
-		assertTrue(isExpired);
+		assertThat(isExpired).isTrue();
 	}
 
 	@Test
@@ -286,7 +286,7 @@ public class TokenProviderTest {
 
 		// Assert
 		long allowedSkew = 1000L; // Allow for a 1-second skew
-		assertEquals(expectedExpirationDate.getTime(), actualExpirationDate.getTime(), allowedSkew);
+		assertThat(actualExpirationDate.getTime()).isCloseTo(expectedExpirationDate.getTime(), Offset.offset(allowedSkew));
 	}
 
 	// Helper method to generate RSA key pair
