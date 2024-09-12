@@ -158,7 +158,7 @@ public class TokenProvider implements Serializable {
 		try {
 			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
-				throw new IllegalArgumentException("JWT claims string is empty");
+				throw new IllegalArgumentException("JWT claims string is empty.");
 			}
 			return TokenValidationResult.VALID;
 		} catch (MalformedJwtException e) {
