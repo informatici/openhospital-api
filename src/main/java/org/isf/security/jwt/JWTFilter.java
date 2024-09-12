@@ -82,7 +82,7 @@ public class JWTFilter extends GenericFilterBean {
 				return;
 
 			case INVALID_SIGNATURE:
-				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token has an invalid signature");
+				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token has an invalid signature.");
 				return;
 
 			case UNSUPPORTED:
