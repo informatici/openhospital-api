@@ -64,17 +64,43 @@ jobs:
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
 
-      - name: Running OpenAPI Spec breaking action
+      # Step 1: Check if oh_rev.yaml differs from the committed version
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Convert to JSON and sort
+        run: |
+          yq eval -o=json openapi/oh_rev.yaml > oh_rev.json
+          yq eval -o=json openapi/oh.yaml > oh.json
+          jq --sort-keys . oh_rev.json > sorted_oh_rev.json
+          jq --sort-keys . oh.json > sorted_oh.json
+
+      - name: Compare JSON files
+        run: |
+          if diff -q sorted_oh_rev.yaml sorted_oh.yaml; then
+            echo "No changes in OpenAPI spec. Everything is up to date."
+          else
+            echo "The OpenAPI spec has changed. Please update the committed version."
+            exit 1
+          fi 
+
+      # Step 2: Check for breaking changes between committed oh.yaml and oh_rev.yaml
+      - name: Run OpenAPI Spec breaking action
         id: oasdiff
-        # run: |
-        #    tenant_id=`curl -d '{"tenant": "oh", "email": "community@open-hospital.org"}' https://register.oasdiff.com/tenants | jq -r .id`
-        #    curl -o output -X POST -F base=@openapi/oh.yaml -F revision=@openapi/oh_rev.yaml https://api.oasdiff.com/tenants/${tenant_id}/breaking-changes
-        #    cat output
         uses: oasdiff/oasdiff-action/breaking@main
         with:
-          base: openapi/oh.yaml
-          revision: openapi/oh_rev.yaml
-          #fail-on-diff: false
-      
-      #- name: show output
-      #  run: echo ${{ steps.oasdiff.outputs.breaking }}
+          base: openapi/oh.yaml # Committed version in the repository
+          revision: openapi/oh_rev.yaml # Generated version
+          # fail-on-diff: false
+
+      - name: Show breaking changes output
+        run: |
+          echo "Breaking changes output: ${{ steps.oasdiff.outputs.breaking }}"
+          if [[ "${{ steps.oasdiff.outputs.breaking }}" != "" ]]; then
+            echo "Warning: Breaking changes detected."
+          fi
