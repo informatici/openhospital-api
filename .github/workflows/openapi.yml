@@ -82,7 +82,7 @@ jobs:
 
       - name: Compare JSON files
         run: |
-          if diff -q sorted_oh_rev.json sorted_oh.json; then
+          if diff sorted_oh_rev.json sorted_oh.json; then
             echo "No changes in OpenAPI spec. Everything is up to date."
           else
             echo "The OpenAPI spec has changed. Please update the committed version."
