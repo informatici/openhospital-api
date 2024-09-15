@@ -50,9 +50,7 @@ jobs:
           cp rsc/database.properties.dist rsc/database.properties
           cp rsc/log4j2-spring.properties.dist rsc/log4j2-spring.properties
           cp rsc/settings.properties.dist rsc/settings.properties
-          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" \
-              -e "s/API_HOST/localhost/g" \ 
-              -e "s/API_PORT/8080/g" rsc/application.properties.dist > rsc/application.properties
+          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" -e "s/API_HOST/localhost/g" -e "s/API_PORT/8080/g" rsc/application.properties.dist > rsc/application.properties
           mvn install -DskipTests=true
           echo ${{ steps.extract_branch.outputs.branch }}
           
