@@ -52,6 +52,8 @@ jobs:
           cp rsc/log4j2-spring.properties.dist rsc/log4j2-spring.properties
           cp rsc/settings.properties.dist rsc/settings.properties
           sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" rsc/application.properties.dist > rsc/application.properties
+          sed -i "s/API_HOST/localhost/g" $(OH_APPLICATION_PROPERTIES)
+          sed -i "s/API_PORT/8080/g" $(OH_APPLICATION_PROPERTIES)
           mvn install -DskipTests=true
           echo ${{ steps.extract_branch.outputs.branch }}
           
