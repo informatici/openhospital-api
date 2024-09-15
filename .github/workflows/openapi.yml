@@ -80,6 +80,7 @@ jobs:
           jq --sort-keys . oh.json > sorted_oh.json
 
       - name: Compare JSON files
+        if: github.event_name == 'pull_request'
         run: |
           if diff sorted_oh_rev.json sorted_oh.json; then
             echo "No changes in OpenAPI spec. Everything is up to date."
