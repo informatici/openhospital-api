@@ -47,7 +47,6 @@ jobs:
           
       - name: Build with Maven
         run: |
-          cp rsc/application.properties.dist rsc/application.properties
           cp rsc/database.properties.dist rsc/database.properties
           cp rsc/log4j2-spring.properties.dist rsc/log4j2-spring.properties
           cp rsc/settings.properties.dist rsc/settings.properties
