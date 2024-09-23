@@ -366,60 +366,6 @@ paths:
                 $ref: '#/components/schemas/UserProfileDTO'
       security:
         - bearerAuth: [ ]
-  /users/groups:
-    get:
-      tags:
-        - Users
-      operationId: getUserGroup
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserGroupDTO'
-      security:
-        - bearerAuth: [ ]
-    put:
-      tags:
-        - Users
-      operationId: updateUserGroup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserGroupDTO'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
-    post:
-      tags:
-        - Users
-      operationId: newUserGroup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserGroupDTO'
-        required: true
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
   /suppliers:
     get:
       tags:
@@ -1388,6 +1334,70 @@ paths:
                 $ref: '#/components/schemas/HospitalDTO'
       security:
         - bearerAuth: [ ]
+  /groups/{group_code}:
+    get:
+      tags:
+        - Groups
+      operationId: getUserGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupDTO'
+      security:
+        - bearerAuth: [ ]
+    put:
+      tags:
+        - Groups
+      operationId: updateUserGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroupDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - Groups
+      operationId: deleteGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
   /examtypes/{code}:
     put:
       tags:
@@ -2140,57 +2150,6 @@ paths:
                 $ref: '#/components/schemas/UserSettingDTO'
       security:
         - bearerAuth: [ ]
-  /users/groups/{group_code}/permissions/{id}:
-    post:
-      tags:
-        - Users
-      operationId: assignPermission
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
-    delete:
-      tags:
-        - Users
-      operationId: revokePermission
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
   /therapies:
     post:
       tags:
@@ -2921,6 +2880,92 @@ paths:
                 type: boolean
       security:
         - bearerAuth: [ ]
+  /groups:
+    get:
+      tags:
+        - Groups
+      operationId: getUserGroups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserGroupDTO'
+      security:
+        - bearerAuth: [ ]
+    post:
+      tags:
+        - Groups
+      operationId: newUserGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroupDTO'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+  /groups/{group_code}/permissions/{id}:
+    post:
+      tags:
+        - Groups
+      operationId: assignPermission
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - Groups
+      operationId: revokePermission
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
   /examtypes:
     get:
       tags:
@@ -3420,45 +3465,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserSettingDTO'
-      security:
-        - bearerAuth: [ ]
-  /users/groups/{group_code}:
-    get:
-      tags:
-        - Users
-      operationId: getUserGroup_1
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserGroupDTO'
-      security:
-        - bearerAuth: [ ]
-    delete:
-      tags:
-        - Users
-      operationId: deleteGroup
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
       security:
         - bearerAuth: [ ]
   /therapies/{code_patient}:
@@ -6849,11 +6855,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -8028,168 +8034,6 @@ components:
                       type: array
                       items:
                         type: object
-                clip:
-                  type: object
-                  properties:
-                    bounds:
-                      type: object
-                      properties:
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        empty:
-                          type: boolean
-                        location:
-                          type: object
-                          properties:
-                            x:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                        size:
-                          type: object
-                          properties:
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
-                        bounds2D:
-                          type: object
-                          properties:
-                            empty:
-                              type: boolean
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            maxX:
-                              type: number
-                              format: double
-                            maxY:
-                              type: number
-                              format: double
-                            centerX:
-                              type: number
-                              format: double
-                            centerY:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                        rect:
-                          type: object
-                          properties:
-                            empty:
-                              type: boolean
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            maxX:
-                              type: number
-                              format: double
-                            maxY:
-                              type: number
-                              format: double
-                            centerX:
-                              type: number
-                              format: double
-                            centerY:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                          writeOnly: true
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
-                          type: number
-                          format: double
-                    bounds2D:
-                      type: object
-                      properties:
-                        empty:
-                          type: boolean
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
                 fontMetrics:
                   type: object
                   properties:
@@ -8402,6 +8246,12 @@ components:
                         height:
                           type: number
                           format: double
+                        "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
@@ -8418,12 +8268,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
                           type: number
                           format: double
                     rect:
@@ -8437,6 +8281,12 @@ components:
                         height:
                           type: number
                           format: double
+                        "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
@@ -8453,12 +8303,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
                           type: number
                           format: double
                       writeOnly: true
@@ -8513,6 +8357,168 @@ components:
                       type: integer
                       format: int32
                   writeOnly: true
+                clip:
+                  type: object
+                  properties:
+                    bounds:
+                      type: object
+                      properties:
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        empty:
+                          type: boolean
+                        location:
+                          type: object
+                          properties:
+                            x:
+                              type: number
+                              format: double
+                            "y":
+                              type: number
+                              format: double
+                        size:
+                          type: object
+                          properties:
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
+                        bounds2D:
+                          type: object
+                          properties:
+                            empty:
+                              type: boolean
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
+                            "y":
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            maxX:
+                              type: number
+                              format: double
+                            maxY:
+                              type: number
+                              format: double
+                            centerX:
+                              type: number
+                              format: double
+                            centerY:
+                              type: number
+                              format: double
+                        rect:
+                          type: object
+                          properties:
+                            empty:
+                              type: boolean
+                            width:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
+                            "y":
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            maxX:
+                              type: number
+                              format: double
+                            maxY:
+                              type: number
+                              format: double
+                            centerX:
+                              type: number
+                              format: double
+                            centerY:
+                              type: number
+                              format: double
+                          writeOnly: true
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        maxX:
+                          type: number
+                          format: double
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
+                          type: number
+                          format: double
+                    bounds2D:
+                      type: object
+                      properties:
+                        empty:
+                          type: boolean
+                        width:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        maxX:
+                          type: number
+                          format: double
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
+                          type: number
+                          format: double
                 clipRect:
                   type: object
                   properties:
@@ -8559,6 +8565,12 @@ components:
                         height:
                           type: number
                           format: double
+                        "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
@@ -8575,12 +8587,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
                           type: number
                           format: double
                     rect:
@@ -8594,6 +8600,12 @@ components:
                         height:
                           type: number
                           format: double
+                        "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
@@ -8610,12 +8622,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
                           type: number
                           format: double
                       writeOnly: true
