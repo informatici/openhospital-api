@@ -29,6 +29,7 @@ OH_API_PID
 *.iws
 *.iml
 *.ipr
+*.pid
 
 ### NetBeans ###
 /nbproject/private/

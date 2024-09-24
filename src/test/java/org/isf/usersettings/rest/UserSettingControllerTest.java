@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.rest;
+package org.isf.usersettings.rest;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,12 +38,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.isf.OpenHospitalApiApplication;
-import org.isf.menu.data.UserHelper;
-import org.isf.menu.data.UserSettingHelper;
-import org.isf.menu.dto.UserSettingDTO;
+import org.isf.users.data.UserHelper;
+import org.isf.usersettings.data.UserSettingHelper;
+import org.isf.usersettings.dto.UserSettingDTO;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
-import org.isf.menu.mapper.UserSettingMapper;
+import org.isf.usersettings.mapper.UserSettingMapper;
 import org.isf.menu.model.User;
 import org.isf.menu.model.UserSetting;
 import org.junit.jupiter.api.DisplayName;
@@ -63,9 +63,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
-public class SettingControllerTest {
+public class UserSettingControllerTest {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(SettingControllerTest.class);
+	private final Logger LOGGER = LoggerFactory.getLogger(UserSettingControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;
@@ -92,7 +92,7 @@ public class SettingControllerTest {
 		when(userSettingManager.getUserSettingByUserName(any())).thenReturn(userSettings);
 
 		var result = mvc.perform(
-				get("/settings").contentType(MediaType.APPLICATION_JSON))
+				get("/usersettings").contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(UserSettingHelper.asJsonString(userSettingDTOS))))
@@ -119,7 +119,7 @@ public class SettingControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					post("/settings")
+					post("/usersettings")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userSettingDTO))
 				)
@@ -146,7 +146,7 @@ public class SettingControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					post("/settings")
+					post("/usersettings")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userSettingDTO))
 				)
@@ -172,7 +172,7 @@ public class SettingControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					put("/settings/{id}", userSetting.getId())
+					put("/usersettings/{id}", userSetting.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userSettingDTO))
 				)
@@ -200,7 +200,7 @@ public class SettingControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					put("/settings/{id}", userSetting.getId())
+					put("/usersettings/{id}", userSetting.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userSettingDTO))
 				)
@@ -224,7 +224,7 @@ public class SettingControllerTest {
 		when(userSettingManager.getUserSettingByUserNameConfigName(any(), any())).thenReturn(userSetting);
 
 		var result = mvc.perform(
-				get("/settings/{configName}", userSetting.getConfigName())
+				get("/usersettings/{configName}", userSetting.getConfigName())
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(userSettingDTO))
 			)
@@ -252,7 +252,7 @@ public class SettingControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-					delete("/settings/{id}", userSetting.getId())
+					delete("/usersettings/{id}", userSetting.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
@@ -275,7 +275,7 @@ public class SettingControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-					delete("/settings/{id}", userSetting.getId())
+					delete("/usersettings/{id}", userSetting.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -19,15 +19,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.rest;
+package org.isf.usergroups.rest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.menu.dto.UserGroupDTO;
+import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.mapper.UserGroupMapper;
+import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.menu.model.UserGroup;
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.manager.GroupPermissionManager;
@@ -57,12 +57,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@RestController(value = "/groups")
-@Tag(name = "Groups")
+@RestController(value = "/usergroups")
+@Tag(name = "User Groups")
 @SecurityRequirement(name = "bearerAuth")
-public class GroupController {
+public class UserGroupController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GroupController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserGroupController.class);
 
 	@Autowired
 	private UserGroupMapper userGroupMapper;
@@ -83,7 +83,7 @@ public class GroupController {
 	 *
 	 * @return the list of {@link UserGroup}s
 	 */
-	@GetMapping(value = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usergroups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserGroupDTO> getUserGroups() throws OHServiceException {
 		LOGGER.info("Attempting to fetch the list of user groups.");
 		List<UserGroup> groups = userManager.getUserGroup();
@@ -98,7 +98,7 @@ public class GroupController {
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
-	@DeleteMapping(value = "/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		try {
 			UserGroup group = loadUserGroup(code);
@@ -116,7 +116,7 @@ public class GroupController {
 	 * @return {@code true} if the group has been inserted, {@code false} otherwise.
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/usergroups", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean newUserGroup(@Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
 		UserGroup userGroup = userGroupMapper.map2Model(userGroupDTO);
 		List<Permission> permissions = new ArrayList<>();
@@ -141,7 +141,7 @@ public class GroupController {
 	 * @param userGroupDTO - the {@link UserGroup} to update
 	 * @return {@code true} if the group has been updated, {@code false} otherwise.
 	 */
-	@PutMapping(value = "/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean updateUserGroup(@PathVariable("group_code") String code, @Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
 		userGroupDTO.setCode(code);
 		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
@@ -172,7 +172,7 @@ public class GroupController {
 	 * @return Returns the {@link UserGroup} found using the given code
 	 * @throws OHServiceException When failed to retrieve the user group
 	 */
-	@GetMapping(value = "/groups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserGroupDTO getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(code);
 		if (userGroup == null) {
@@ -199,7 +199,7 @@ public class GroupController {
 	 * {@code false} otherwise.
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/groups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/usergroups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean assignPermission(
 		@PathVariable("group_code") String userGroupCode,
 		@PathVariable("id") int permissionId
@@ -231,7 +231,7 @@ public class GroupController {
 	 * @return {@code true} if the permission has been revoked from the group,
 	 * {@code false} otherwise.
 	 */
-	@DeleteMapping(value = "/groups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/usergroups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean revokePermission(
 		@PathVariable("group_code") String userGroupCode,
 		@PathVariable("id") int permissionId

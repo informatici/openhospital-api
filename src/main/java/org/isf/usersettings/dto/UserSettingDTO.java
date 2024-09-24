@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.dto;
+package org.isf.usersettings.dto;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -34,7 +34,7 @@ public class UserSettingDTO {
 	@NotNull
 	@Schema(description = "The name of the setting", example = "dashboard", maxLength = 50)
 	private String configName;
-	
+
 	@NotNull
 	@Schema(description = "The name of the user", example = "admin")
 	private String user;
@@ -70,7 +70,7 @@ public class UserSettingDTO {
 	public String getUser() {
 		return user;
 	}
-	
+
 	public void setUser(String user) {
 		this.user = user;
 	}

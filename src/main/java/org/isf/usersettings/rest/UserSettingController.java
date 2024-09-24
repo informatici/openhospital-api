@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -19,16 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.rest;
+package org.isf.usersettings.rest;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.isf.menu.dto.UserSettingDTO;
+import org.isf.usersettings.dto.UserSettingDTO;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
-import org.isf.menu.mapper.UserSettingMapper;
+import org.isf.usersettings.mapper.UserSettingMapper;
 import org.isf.menu.model.UserSetting;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -52,12 +52,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@RestController(value = "/settings")
-@Tag(name = "Settings")
+@RestController(value = "/usersettings")
+@Tag(name = "User Settings")
 @SecurityRequirement(name = "bearerAuth")
-public class SettingController {
+public class UserSettingController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SettingController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingController.class);
 
 	@Autowired
 	private UserBrowsingManager userManager;
@@ -73,7 +73,7 @@ public class SettingController {
 	 * @return list of userSetting {@link UserSettingDTO}.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/settings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserSettingDTO> getUserSettings() throws OHServiceException {
 		LOGGER.info("Retrieve all userSettings of the current user.");
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -95,7 +95,7 @@ public class SettingController {
 	 * @throws OHServiceException
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/settings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserSettingDTO newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Create a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
@@ -128,7 +128,7 @@ public class SettingController {
 	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
 	 * @throws OHServiceException
 	 */
-	@PutMapping(value = "/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserSettingDTO updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
 		throws OHServiceException {
 		LOGGER.info("Update a UserSetting.");
@@ -166,7 +166,7 @@ public class SettingController {
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException
 	 */
-	@GetMapping(value = "/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usersettings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserSettingDTO getUserSettingByUser(@PathVariable(name = "configName") String configName) throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", currentUser, configName);
@@ -185,7 +185,7 @@ public class SettingController {
 	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
-	@DeleteMapping(value = "/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Boolean deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		final String ADMIN = "admin";

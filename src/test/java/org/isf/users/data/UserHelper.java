@@ -19,9 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.data;
+package org.isf.users.data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,8 +30,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.isf.menu.dto.UserSettingDTO;
-import org.isf.menu.model.UserSetting;
+
+import org.isf.usergroups.data.UserGroupHelper;
+import org.isf.users.dto.UserDTO;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHException;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
@@ -38,34 +43,51 @@ import org.isf.menu.model.UserSetting;
  * @author Silevester D.
  * @since 1.15
  */
-public class UserSettingHelper {
-	public static UserSetting generate() {
-		UserSetting userSetting = new UserSetting();
-		userSetting.setUser("contrib");
-		userSetting.setConfigName("test.config");
-		userSetting.setConfigValue("test config value");
+public class UserHelper {
 
-		return userSetting;
+	public static User generateUser() throws OHException {
+		User user = new User();
+		user.setUserGroupName(UserGroupHelper.generateUserGroup());
+		user.setUserName("oh user");
+		user.setDesc("oh first user");
+		user.setPasswd("very strong password");
+		return user;
 	}
 
-	public static List<UserSetting> generateMany(int nb) {
-		return IntStream.range(0, nb).mapToObj(i -> {
-			UserSetting userSetting = new UserSetting();
-			userSetting.setUser("contrib");
-			userSetting.setConfigName("test.config " + i);
-			userSetting.setConfigValue("test config " + i + " value");
+	public static List<User> generateUsers(int nbUsers) throws OHException {
+		UserGroup userGroup = UserGroupHelper.generateUserGroup();
 
-			return userSetting;
-		}).toList();
+		return IntStream.range(0, nbUsers).mapToObj(i -> {
+			User user = new User();
+			user.setUserGroupName(userGroup);
+			user.setUserName("oh user");
+			user.setDesc("oh first user");
+			user.setPasswd("very strong password");
+			return user;
+		}).collect(Collectors.toList());
 	}
 
-	public static String asJsonString(List<UserSettingDTO> userSettingDTOS) {
+	public static String asJsonString(UserDTO userDTO) {
 		try {
 			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(userSettingDTOS);
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(userDTO);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public static String asJsonString(List<UserDTO> users) {
+		try {
+			return new ObjectMapper()
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(users);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

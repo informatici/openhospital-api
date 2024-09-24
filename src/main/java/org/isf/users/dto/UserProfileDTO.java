@@ -19,16 +19,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.dto;
+package org.isf.users.dto;
 
 import java.util.List;
+
+import org.isf.usergroups.dto.UserGroupDTO;
 
 public class UserProfileDTO {
 
 	private String userName;
 
 	private List<String> permissions;
-	
+
 	private UserGroupDTO userGroup;
 
 	public String getUserName() {

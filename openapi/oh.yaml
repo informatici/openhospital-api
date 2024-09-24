@@ -202,6 +202,53 @@ paths:
                 $ref: '#/components/schemas/VaccineDTO'
       security:
         - bearerAuth: [ ]
+  /usersettings/{id}:
+    put:
+      tags:
+        - User Settings
+      operationId: updateUserSettings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSettingDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingDTO'
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - User Settings
+      operationId: deleteUserSetting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
   /users/{username}:
     get:
       tags:
@@ -299,6 +346,70 @@ paths:
                 $ref: '#/components/schemas/UserProfileDTO'
       security:
         - bearerAuth: [ ]
+  /usergroups/{group_code}:
+    get:
+      tags:
+        - User Groups
+      operationId: getUserGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGroupDTO'
+      security:
+        - bearerAuth: [ ]
+    put:
+      tags:
+        - User Groups
+      operationId: updateUserGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroupDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - User Groups
+      operationId: deleteGroup
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
   /suppliers:
     get:
       tags:
@@ -358,53 +469,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SupplierDTO'
-      security:
-        - bearerAuth: [ ]
-  /settings/{id}:
-    put:
-      tags:
-        - Settings
-      operationId: updateUserSettings
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserSettingDTO'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserSettingDTO'
-      security:
-        - bearerAuth: [ ]
-    delete:
-      tags:
-        - Settings
-      operationId: deleteUserSetting
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
       security:
         - bearerAuth: [ ]
   /pricesothers/{id}:
@@ -1314,70 +1378,6 @@ paths:
                 $ref: '#/components/schemas/HospitalDTO'
       security:
         - bearerAuth: [ ]
-  /groups/{group_code}:
-    get:
-      tags:
-        - Groups
-      operationId: getUserGroup
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserGroupDTO'
-      security:
-        - bearerAuth: [ ]
-    put:
-      tags:
-        - Groups
-      operationId: updateUserGroup
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserGroupDTO'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
-    delete:
-      tags:
-        - Groups
-      operationId: deleteGroup
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
   /examtypes/{code}:
     put:
       tags:
@@ -2054,6 +2054,41 @@ paths:
                 type: boolean
       security:
         - bearerAuth: [ ]
+  /usersettings:
+    get:
+      tags:
+        - User Settings
+      operationId: getUserSettings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSettingDTO'
+      security:
+        - bearerAuth: [ ]
+    post:
+      tags:
+        - User Settings
+      operationId: newUserSettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSettingDTO'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingDTO'
+      security:
+        - bearerAuth: [ ]
   /users:
     get:
       tags:
@@ -2089,6 +2124,92 @@ paths:
       responses:
         "201":
           description: Created
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+  /usergroups:
+    get:
+      tags:
+        - User Groups
+      operationId: getUserGroups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserGroupDTO'
+      security:
+        - bearerAuth: [ ]
+    post:
+      tags:
+        - User Groups
+      operationId: newUserGroup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserGroupDTO'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+  /usergroups/{group_code}/permissions/{id}:
+    post:
+      tags:
+        - User Groups
+      operationId: assignPermission
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - User Groups
+      operationId: revokePermission
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: OK
           content:
             application/json:
               schema:
@@ -2334,41 +2455,6 @@ paths:
             application/json:
               schema:
                 type: boolean
-      security:
-        - bearerAuth: [ ]
-  /settings:
-    get:
-      tags:
-        - Settings
-      operationId: getUserSettings
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserSettingDTO'
-      security:
-        - bearerAuth: [ ]
-    post:
-      tags:
-        - Settings
-      operationId: newUserSettings
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserSettingDTO'
-        required: true
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserSettingDTO'
       security:
         - bearerAuth: [ ]
   /pricesothers:
@@ -2860,92 +2946,6 @@ paths:
                 type: boolean
       security:
         - bearerAuth: [ ]
-  /groups:
-    get:
-      tags:
-        - Groups
-      operationId: getUserGroups
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserGroupDTO'
-      security:
-        - bearerAuth: [ ]
-    post:
-      tags:
-        - Groups
-      operationId: newUserGroup
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserGroupDTO'
-        required: true
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
-  /groups/{group_code}/permissions/{id}:
-    post:
-      tags:
-        - Groups
-      operationId: assignPermission
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
-    delete:
-      tags:
-        - Groups
-      operationId: revokePermission
-      parameters:
-        - name: group_code
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: boolean
-      security:
-        - bearerAuth: [ ]
   /examtypes:
     get:
       tags:
@@ -3400,6 +3400,26 @@ paths:
                 type: boolean
       security:
         - bearerAuth: [ ]
+  /usersettings/{configName}:
+    get:
+      tags:
+        - User Settings
+      operationId: getUserSettingByUser
+      parameters:
+        - name: configName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSettingDTO'
+      security:
+        - bearerAuth: [ ]
   /users/{username}/permissions:
     get:
       tags:
@@ -3680,26 +3700,6 @@ paths:
             application/json:
               schema:
                 type: boolean
-      security:
-        - bearerAuth: [ ]
-  /settings/{configName}:
-    get:
-      tags:
-        - Settings
-      operationId: getUserSettingByUser
-      parameters:
-        - name: configName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserSettingDTO'
       security:
         - bearerAuth: [ ]
   /reports/exams-list:
@@ -6161,9 +6161,9 @@ components:
           example: 0
         opd:
           type: boolean
-        male:
-          type: boolean
         female:
+          type: boolean
+        male:
           type: boolean
         pharmacy:
           type: boolean
@@ -6411,6 +6411,32 @@ components:
           format: int32
           example: 0
       description: Class representing a vaccine
+    UserSettingDTO:
+      required:
+        - configName
+        - configValue
+        - id
+        - user
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the setting (must be unique)
+          format: int32
+          example: 1
+        configName:
+          maxLength: 50
+          type: string
+          description: The name of the setting
+          example: dashboard
+        user:
+          type: string
+          description: The name of the user
+          example: admin
+        configValue:
+          maxLength: 65535
+          type: string
+          description: The value of the user
     PermissionDTO:
       required:
         - description
@@ -6527,32 +6553,6 @@ components:
           maxLength: 200
           type: string
           description: The supplier's notes
-    UserSettingDTO:
-      required:
-        - configName
-        - configValue
-        - id
-        - user
-      type: object
-      properties:
-        id:
-          type: integer
-          description: The id of the setting (must be unique)
-          format: int32
-          example: 1
-        configName:
-          maxLength: 50
-          type: string
-          description: The name of the setting
-          example: dashboard
-        user:
-          type: string
-          description: The name of the user
-          example: admin
-        configValue:
-          maxLength: 65535
-          type: string
-          description: The value of the user
     PricesOthersDTO:
       required:
         - code
@@ -6830,11 +6830,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -8215,18 +8215,6 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8239,10 +8227,22 @@ components:
                         centerY:
                           type: number
                           format: double
-                        x:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                     rect:
@@ -8250,18 +8250,6 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8274,19 +8262,25 @@ components:
                         centerY:
                           type: number
                           format: double
-                        x:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
+                        x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                       writeOnly: true
-                    minX:
-                      type: number
-                      format: double
-                    minY:
-                      type: number
-                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8297,6 +8291,12 @@ components:
                       type: number
                       format: double
                     centerY:
+                      type: number
+                      format: double
+                    minX:
+                      type: number
+                      format: double
+                    minY:
                       type: number
                       format: double
                 xormode:
@@ -8375,18 +8375,6 @@ components:
                           properties:
                             empty:
                               type: boolean
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8399,10 +8387,22 @@ components:
                             centerY:
                               type: number
                               format: double
-                            x:
+                            width:
+                              type: number
+                              format: double
+                            height:
                               type: number
                               format: double
                             "y":
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
                               type: number
                               format: double
                         rect:
@@ -8410,18 +8410,6 @@ components:
                           properties:
                             empty:
                               type: boolean
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8434,19 +8422,25 @@ components:
                             centerY:
                               type: number
                               format: double
-                            x:
+                            width:
+                              type: number
+                              format: double
+                            height:
                               type: number
                               format: double
                             "y":
                               type: number
                               format: double
+                            x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
                           writeOnly: true
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8459,15 +8453,27 @@ components:
                         centerY:
                           type: number
                           format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                     bounds2D:
                       type: object
                       properties:
                         empty:
                           type: boolean
-                        minX:
+                        maxX:
                           type: number
                           format: double
-                        minY:
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
                           type: number
                           format: double
                         width:
@@ -8476,22 +8482,16 @@ components:
                         height:
                           type: number
                           format: double
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
+                        "y":
                           type: number
                           format: double
                         x:
                           type: number
                           format: double
-                        "y":
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                 clipRect:
@@ -8534,18 +8534,6 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8558,10 +8546,22 @@ components:
                         centerY:
                           type: number
                           format: double
-                        x:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                     rect:
@@ -8569,18 +8569,6 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8593,19 +8581,25 @@ components:
                         centerY:
                           type: number
                           format: double
-                        x:
+                        width:
+                          type: number
+                          format: double
+                        height:
                           type: number
                           format: double
                         "y":
                           type: number
                           format: double
+                        x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                       writeOnly: true
-                    minX:
-                      type: number
-                      format: double
-                    minY:
-                      type: number
-                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8616,6 +8610,12 @@ components:
                       type: number
                       format: double
                     centerY:
+                      type: number
+                      format: double
+                    minX:
+                      type: number
+                      format: double
+                    minY:
                       type: number
                       format: double
                   deprecated: true

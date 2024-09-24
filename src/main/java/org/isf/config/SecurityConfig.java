@@ -251,15 +251,15 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 			.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
 			// grouppermission
-			.requestMatchers(HttpMethod.POST, "/groups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
-			.requestMatchers(HttpMethod.GET, "/groups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
-			.requestMatchers(HttpMethod.PUT, "/groups/{group_code}/permissions/**").hasAuthority("grouppermission.update")
-			.requestMatchers(HttpMethod.DELETE, "/groups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
+			.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+			.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
+			.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.update")
+			.requestMatchers(HttpMethod.DELETE, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
 			// usergroups
-			.requestMatchers(HttpMethod.POST, "/groups/**").hasAuthority("usergroups.create")
-			.requestMatchers(HttpMethod.GET, "/groups/**").hasAuthority("usergroups.read")
-			.requestMatchers(HttpMethod.PUT, "/groups/**").hasAuthority("usergroups.update")
-			.requestMatchers(HttpMethod.DELETE, "/groups/**").hasAuthority("usergroups.delete")
+			.requestMatchers(HttpMethod.POST, "/usergroups/**").hasAuthority("usergroups.create")
+			.requestMatchers(HttpMethod.GET, "/usergroups/**").hasAuthority("usergroups.read")
+			.requestMatchers(HttpMethod.PUT, "/usergroups/**").hasAuthority("usergroups.update")
+			.requestMatchers(HttpMethod.DELETE, "/usergroups/**").hasAuthority("usergroups.delete")
 			// user
 			.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
 			.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
@@ -267,7 +267,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("users.update")
 			.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
 			// user setting
-			.requestMatchers("/settings/**").authenticated()
+			.requestMatchers("/usersettings/**").authenticated()
 			// pregnanttreatmenttypes
 			.requestMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
 			.requestMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")

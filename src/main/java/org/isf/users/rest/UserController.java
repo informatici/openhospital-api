@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.rest;
+package org.isf.users.rest;
 
 import jakarta.validation.Valid;
 
@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.isf.menu.dto.UserDTO;
-import org.isf.menu.dto.UserProfileDTO;
+import org.isf.users.dto.UserDTO;
+import org.isf.users.dto.UserProfileDTO;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.mapper.UserGroupMapper;
-import org.isf.menu.mapper.UserMapper;
+import org.isf.usergroups.mapper.UserGroupMapper;
+import org.isf.users.mapper.UserMapper;
 import org.isf.menu.model.User;
 import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;

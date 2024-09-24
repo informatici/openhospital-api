@@ -19,10 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.data;
+package org.isf.usersettings.data;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,10 +29,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.isf.menu.dto.UserDTO;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
-import org.isf.utils.exception.OHException;
+
+import org.isf.usersettings.dto.UserSettingDTO;
+import org.isf.menu.model.UserSetting;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
@@ -41,50 +39,35 @@ import org.isf.utils.exception.OHException;
  * @author Silevester D.
  * @since 1.15
  */
-public class UserHelper {
-	public static User generateUser() throws OHException {
-		User user = new User();
-		user.setUserGroupName(UserGroupHelper.generateUserGroup());
-		user.setUserName("oh user");
-		user.setDesc("oh first user");
-		user.setPasswd("very strong password");
-		return user;
+public class UserSettingHelper {
+
+	public static UserSetting generate() {
+		UserSetting userSetting = new UserSetting();
+		userSetting.setUser("contrib");
+		userSetting.setConfigName("test.config");
+		userSetting.setConfigValue("test config value");
+
+		return userSetting;
 	}
 
-	public static List<User> generateUsers(int nbUsers) throws OHException {
-		UserGroup userGroup = UserGroupHelper.generateUserGroup();
+	public static List<UserSetting> generateMany(int nb) {
+		return IntStream.range(0, nb).mapToObj(i -> {
+			UserSetting userSetting = new UserSetting();
+			userSetting.setUser("contrib");
+			userSetting.setConfigName("test.config " + i);
+			userSetting.setConfigValue("test config " + i + " value");
 
-		return IntStream.range(0, nbUsers).mapToObj(i -> {
-			User user = new User();
-			user.setUserGroupName(userGroup);
-			user.setUserName("oh user");
-			user.setDesc("oh first user");
-			user.setPasswd("very strong password");
-			return user;
-		}).collect(Collectors.toList());
+			return userSetting;
+		}).toList();
 	}
 
-	public static String asJsonString(UserDTO userDTO) {
+	public static String asJsonString(List<UserSettingDTO> userSettingDTOS) {
 		try {
 			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(userDTO);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public static String asJsonString(List<UserDTO> users) {
-		try {
-			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(users);
+				.registerModule(new ParameterNamesModule())
+				.registerModule(new Jdk8Module())
+				.registerModule(new JavaTimeModule())
+				.writeValueAsString(userSettingDTOS);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
