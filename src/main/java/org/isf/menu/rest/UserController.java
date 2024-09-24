@@ -23,26 +23,19 @@ package org.isf.menu.rest;
 
 import jakarta.validation.Valid;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.isf.menu.dto.UserDTO;
 import org.isf.menu.dto.UserProfileDTO;
-import org.isf.menu.dto.UserSettingDTO;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.manager.UserSettingManager;
 import org.isf.menu.mapper.UserGroupMapper;
 import org.isf.menu.mapper.UserMapper;
-import org.isf.menu.mapper.UserSettingMapper;
 import org.isf.menu.model.User;
-import org.isf.menu.model.UserSetting;
 import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
-import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
@@ -82,20 +75,12 @@ public class UserController {
 	private UserGroupMapper userGroupMapper;
 
 	@Autowired
-	private PermissionMapper permissionMapper;
-
-	@Autowired
 	private UserBrowsingManager userManager;
 
 	@Autowired
 	protected PermissionManager permissionManager;
 	@Autowired
 	protected LitePermissionMapper litePermissionMapper;
-	@Autowired
-	private UserSettingManager userSettingManager;
-
-	@Autowired
-	private UserSettingMapper userSettingMapper;
 
 	/**
 	 * Returns the list of {@link User}s.
@@ -285,173 +270,6 @@ public class UserController {
 		LOGGER.info("Retrieving permissions: retrievePermissionsByUsername({}).", username);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
 		return this.litePermissionMapper.map2DTOList(domains);
-	}
-
-	/**
-	 * Retrieves all userSetting of the current user.
-	 *
-	 * @return list of userSetting {@link UserSettingDTO}.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<UserSettingDTO> getUserSettings() throws OHServiceException {
-		LOGGER.info("Retrieve all userSettings of the current user.");
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(currentUser);
-		if (userSettings == null || userSettings.isEmpty()) {
-			LOGGER.info("No settings for the current user {}.", currentUser);
-			return Collections.emptyList();
-		}
-		List<UserSettingDTO> userSettingsDTO = userSettingMapper.map2DTOList(userSettings);
-		LOGGER.info("Found {} user settings.", userSettingsDTO);
-		return userSettingsDTO;
-	}
-
-	/**
-	 * Returns a {@link UserSettingDTO} of userSetting created.
-	 *
-	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
-	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
-	 * @throws OHServiceException
-	 */
-	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/users/settings", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
-		LOGGER.info("Create a UserSetting.");
-		String requestUserName = userSettingDTO.getUser();
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (!requestUserName.equals(currentUser)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
-		}
-		if (userSettingManager.getUserSettingByUserNameConfigName(requestUserName, userSettingDTO.getConfigName()) != null) {
-			throw new OHAPIException(new OHExceptionMessage("A setting with that name already exists."));
-		}
-		if (userManager.getUserByName(requestUserName) == null) {
-			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
-		}
-		userSettingDTO.setId(0);
-		UserSetting userSetting = userSettingMapper.map2Model(userSettingDTO);
-		UserSetting created = userSettingManager.newUserSetting(userSetting);
-		if (created == null) {
-			LOGGER.info("UserSetting is not created.");
-			throw new OHAPIException(new OHExceptionMessage("UserSetting not created."));
-		}
-		LOGGER.info("UserSetting successfully created.");
-		return userSettingMapper.map2DTO(created);
-	}
-
-	/**
-	 * Updates an existing {@link UserSettingDTO}.
-	 *
-	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
-	 * @param id - id of {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
-	 * @throws OHServiceException
-	 */
-	@PutMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
-		throws OHServiceException {
-		LOGGER.info("Update a UserSetting.");
-		String requestUserName = userSettingDTO.getUser();
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (userSettingDTO.getId() == 0 || userSettingDTO.getId() != 0 && userSettingDTO.getId() != id) {
-			throw new OHAPIException(new OHExceptionMessage("Malformed request."));
-		}
-		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
-		UserSetting updated;
-		if (userSetting.isEmpty()) {
-			LOGGER.info("No user settings with id {}.", id);
-			throw new OHAPIException(new OHExceptionMessage("UserSetting doesn't exists."));
-		}
-		if (!userSetting.get().getUser().equals(requestUserName) || !userSetting.get().getUser().equals(currentUser)) {
-			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
-		}
-		if (userManager.getUserByName(requestUserName) == null) {
-			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
-		}
-		UserSetting uSetting = userSettingMapper.map2Model(userSettingDTO);
-		updated = userSettingManager.updateUserSetting(uSetting);
-		if (updated == null) {
-			LOGGER.info("UserSetting is not updated.");
-			throw new OHAPIException(new OHExceptionMessage("UserSetting not updated."));
-		}
-		LOGGER.info("UserSetting successfully updated.");
-		return userSettingMapper.map2DTO(updated);
-	}
-
-	/**
-	 * Retrieves an existing {@link UserSettingDTO} by id.
-	 *
-	 * @param id - id of userSetting {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO getUserSettingById(@PathVariable(name = "id") int id) throws OHServiceException {
-		LOGGER.info("Retrieve the userSetting By id {}.", id);
-		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
-		if (userSetting.isEmpty()) {
-			LOGGER.info("No user settings with id {}.", id);
-			throw new OHAPIException(new OHExceptionMessage("No setting found"), HttpStatus.NOT_FOUND);
-		}
-		var setting = userSetting.get();
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (!Objects.equals(currentUser, setting.getUser())) {
-			throw new OHAPIException(new OHExceptionMessage("You're not authorized to access this resource."), HttpStatus.FORBIDDEN);
-		}
-		return userSettingMapper.map2DTO(userSetting.get());
-	}
-
-	/**
-	 * Retrieves an existing {@link UserSettingDTO} by user.
-	 *
-	 * @param userName - the name of user.
-	 * @param configName - the name of the userSetting {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/users/{userName}/settings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO getUserSettingByUser(@PathVariable(name = "userName") String userName,
-		@PathVariable(name = "configName") String configName) throws OHServiceException {
-		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", userName, configName);
-		List<UserSetting> userSettings = userSettingManager.getUserSettingByUserName(userName);
-		if (userSettings == null || userSettings.isEmpty()) {
-			LOGGER.info("No user settings for the user {}.", userName);
-			throw new OHAPIException(new OHExceptionMessage("No setting found"), HttpStatus.NOT_FOUND);
-		}
-		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(userName, configName);
-		if (userSetting == null) {
-			LOGGER.info("No user settings '{}' for the user {}.", configName, userName);
-			throw new OHAPIException(new OHExceptionMessage("No setting found"), HttpStatus.NOT_FOUND);
-		}
-		return userSettingMapper.map2DTO(userSetting);
-	}
-
-	/**
-	 * Deletes a {@link UserSetting}.
-	 *
-	 * @param id - the id of the userSetting {@link UserSetting} to delete.
-	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
-	 */
-	@DeleteMapping(value = "/users/settings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
-		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
-		final String ADMIN = "admin";
-		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-		if (userSetting.isEmpty()) {
-			LOGGER.info("No user settings with id {}.", id);
-			throw new OHAPIException(new OHExceptionMessage("No setting found"), HttpStatus.NOT_FOUND);
-		}
-		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
-			try {
-				userSettingManager.deleteUserSetting(userSetting.get());
-			} catch (OHServiceException serviceException) {
-				throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
-			}
-			return true;
-		}
-		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 	}
 
 	private UserProfileDTO retrieveProfile(String currentUser) throws OHServiceException {
