@@ -25,15 +25,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.login.dto.LoginResponse;
+import org.isf.login.dto.TokenRefreshRequest;
+import org.isf.menu.dto.UserDTO;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
+import org.isf.utils.exception.OHException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.isf.menu.dto.UserDTO;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
-import org.isf.utils.exception.OHException;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
@@ -42,6 +45,7 @@ import org.isf.utils.exception.OHException;
  * @since 1.15
  */
 public class UserHelper {
+
 	public static User generateUser() throws OHException {
 		User user = new User();
 		user.setUserGroupName(UserGroupHelper.generateUserGroup());
@@ -67,10 +71,10 @@ public class UserHelper {
 	public static String asJsonString(UserDTO userDTO) {
 		try {
 			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(userDTO);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(userDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -81,14 +85,40 @@ public class UserHelper {
 	public static String asJsonString(List<UserDTO> users) {
 		try {
 			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(users);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(users);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 
+		return null;
+	}
+
+	public static String asJsonString(TokenRefreshRequest request) {
+		try {
+			return new ObjectMapper()
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(request);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String asJsonString(LoginResponse loginResponse) {
+		try {
+			return new ObjectMapper()
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(loginResponse);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

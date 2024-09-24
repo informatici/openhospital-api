@@ -22,25 +22,36 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.assertj.core.data.Offset;
 import org.isf.OpenHospitalApiApplication;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.permissions.manager.PermissionManager;
+import org.isf.permissions.model.Permission;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.security.jwt.TokenValidationResult;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,6 +68,12 @@ public class TokenProviderTest {
 
 	@Autowired
 	private TokenProvider tokenProvider;
+
+	@MockBean
+	private UserBrowsingManager userManager;
+
+	@MockBean
+	protected PermissionManager permissionManager;
 
 	@BeforeEach
 	public void setUp() {
@@ -287,6 +304,46 @@ public class TokenProviderTest {
 		// Assert
 		long allowedSkew = 1000L; // Allow for a 1-second skew
 		assertThat(actualExpirationDate.getTime()).isCloseTo(expectedExpirationDate.getTime(), Offset.offset(allowedSkew));
+	}
+
+	@Test
+	void testGetAuthenticationByUsername() throws OHServiceException, OHException {
+		Authentication authentication = createAuthentication();
+		String username = authentication.getName();
+		Collection< ? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+		// Mock the user with same values used in the helper
+		org.isf.menu.model.User user = new org.isf.menu.model.User();
+		user.setUserName(username);
+		user.setPasswd("password");
+
+		// Mock permissions with same values used in the helper
+		List<Permission> permissions = new ArrayList<Permission>();
+		Permission permission = new Permission();
+		permission.setName("ROLE_USER");
+		permissions.add(permission);
+
+		when(userManager.getUserByName(any())).thenReturn(user);
+		when(permissionManager.retrievePermissionsByUsername(any())).thenReturn(permissions);
+
+		Authentication result = tokenProvider.getAuthenticationByUsername(username);
+
+		assertThat(result).isNotNull();
+		assertThat(result.getName()).isEqualTo(username);
+		assertThat(result.getAuthorities()).isEqualTo(authorities);
+	}
+
+	@Test
+	void testGenerateRefreshToken() {
+		// Create a mock authentication
+		Authentication authentication = createAuthentication();
+
+		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+
+		assertNotNull(refreshToken);
+		assertTrue(refreshToken.length() > 0);
+		// Optionally validate the token's structure
+		// assertDoesNotThrow(() -> Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken));
 	}
 
 	// Helper method to generate RSA key pair
