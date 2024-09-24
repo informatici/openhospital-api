@@ -41,44 +41,42 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Autowired
-    protected UserBrowsingManager manager;
+	@Autowired
+	protected UserBrowsingManager manager;
 
-    @Autowired
+	@Autowired
 	protected PermissionManager permissionManager;
-    
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user;
-        try {
-            user = manager.getUserByName(username);
-        } catch (OHServiceException serviceException) {
-            LOGGER.error("User login received an unexpected OHServiceException.", serviceException);
-            throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
-        }
-        if (user == null) {
-            throw new UsernameNotFoundException(username + " was not found.");
-        }
 
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        List<Permission> permissions;
-        try {
-            permissions = permissionManager.retrievePermissionsByUsername(username);
-        } catch (OHServiceException serviceException) {
-            LOGGER.error("Retrieving permissions for user received an unexpected OHServiceException.", serviceException);
-            throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
-        }
-        for (Permission p : permissions) {
-	    authorities.add(new SimpleGrantedAuthority(p.getName()));
-        }
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user;
+		try {
+			user = manager.getUserByName(username);
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("User login received an unexpected OHServiceException.", serviceException);
+			throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
+		}
+		if (user == null) {
+			throw new UsernameNotFoundException(username + " was not found.");
+		}
 
-        org.springframework.security.core.userdetails.User userDetails =
-                new org.springframework.security.core.userdetails.User(
-                        user.getUserName(), user.getPasswd(), true, true, true, true, authorities
-                );
-        return userDetails;
-    }
+		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+		List<Permission> permissions;
+		try {
+			permissions = permissionManager.retrievePermissionsByUsername(username);
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Retrieving permissions for user received an unexpected OHServiceException.", serviceException);
+			throw new UsernameNotFoundException(username + " authentication failed.", serviceException);
+		}
+		for (Permission p : permissions) {
+			authorities.add(new SimpleGrantedAuthority(p.getName()));
+		}
+
+		org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
+						user.getUserName(), user.getPasswd(), true, true, true, true, authorities);
+		return userDetails;
+	}
 
 }
