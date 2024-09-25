@@ -21,9 +21,9 @@
  */
 package org.isf.usersettings.mapper;
 
-import org.isf.usersettings.dto.UserSettingDTO;
 import org.isf.menu.model.UserSetting;
 import org.isf.shared.GenericMapper;
+import org.isf.usersettings.dto.UserSettingDTO;
 import org.springframework.stereotype.Component;
 
 @Component

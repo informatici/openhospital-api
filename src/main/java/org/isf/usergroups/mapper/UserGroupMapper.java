@@ -21,9 +21,9 @@
  */
 package org.isf.usergroups.mapper;
 
-import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.menu.model.UserGroup;
 import org.isf.shared.GenericMapper;
+import org.isf.usergroups.dto.UserGroupDTO;
 import org.springframework.stereotype.Component;
 
 @Component
