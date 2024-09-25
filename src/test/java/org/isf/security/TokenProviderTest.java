@@ -22,10 +22,14 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
@@ -107,6 +111,25 @@ public class TokenProviderTest {
 
 		// Assert that the token is valid
 		assertThat(result).isEqualTo(TokenValidationResult.VALID);
+	}
+
+	@Test
+	void testIsTokenExpired_NotExpired() {
+		String validToken = "valid.jwt.token";
+
+		// Spy on the real TokenProvider so that the actual code is executed, except the mocked method
+		TokenProvider tokenProvider = spy(new TokenProvider());
+
+		// Mock to return a future expiration date
+		Date futureDate = new Date(System.currentTimeMillis() + 100000); // Future date
+		// when(mockedTokenProvider.getExpirationDateFromToken(validToken)).thenReturn(futureDate);
+		doReturn(futureDate).when(tokenProvider).getExpirationDateFromToken(validToken);
+
+		// Check if expired
+		Boolean isExpired = tokenProvider.isTokenExpired(validToken);
+
+		// Assert that the token is NOT expired
+		assertThat("Expected token to not be expired, but it was considered expired.", isExpired, is(false));
 	}
 
 	@Test
@@ -205,6 +228,21 @@ public class TokenProviderTest {
 
 		// Check credentials
 		assertThat(authToken.getCredentials()).isEqualTo(token);
+	}
+
+	@Test
+	public void testGetAuthentication_EmptyAuthorities() {
+		// Create an Authentication with empty authorities
+		List<GrantedAuthority> authorities = List.of();
+		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+
+		// Generate token
+		String token = tokenProvider.generateJwtToken(authentication, false);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			tokenProvider.getAuthentication(token);
+		});
+		assertThat(exception.getMessage(), containsString("JWT token does not contain authorities."));
 	}
 
 	@Test
@@ -340,10 +378,8 @@ public class TokenProviderTest {
 
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
-		assertNotNull(refreshToken);
-		assertTrue(refreshToken.length() > 0);
-		// Optionally validate the token's structure
-		// assertDoesNotThrow(() -> Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken));
+		assertThat(refreshToken).isNotNull();
+		assertThat(refreshToken.length()).isGreaterThan(0);
 	}
 
 	// Helper method to generate RSA key pair

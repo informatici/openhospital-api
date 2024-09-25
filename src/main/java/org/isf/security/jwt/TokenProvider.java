@@ -129,6 +129,7 @@ public class TokenProvider implements Serializable {
 		}
 	}
 
+	// here only for testing
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 		final String authorities = authentication.getAuthorities().stream()
 						.map(GrantedAuthority::getAuthority)
@@ -163,6 +164,10 @@ public class TokenProvider implements Serializable {
 	public Authentication getAuthentication(String token) {
 		final Claims claims = getAllClaimsFromToken(token);
 
+		/* 
+		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string
+		 * Left for security but not testable
+		 */
 		String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
 		if (authoritiesClaim.isEmpty()) {
 			LOGGER.error("JWT token does not contain any authorities");
@@ -186,6 +191,10 @@ public class TokenProvider implements Serializable {
 	public TokenValidationResult validateToken(String token) {
 		try {
 			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+			/* 
+			 * If claims.getSubject() not null for sure is not empy.
+			 * Left here for security but not testable
+			 */
 			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
 				throw new IllegalArgumentException("JWT claims string is empty.");
 			}
