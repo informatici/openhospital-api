@@ -24,18 +24,17 @@ package org.isf.usersettings.data;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.isf.menu.model.UserSetting;
+import org.isf.usersettings.dto.UserSettingDTO;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
-import org.isf.usersettings.dto.UserSettingDTO;
-import org.isf.menu.model.UserSetting;
-
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
- *
  * @author Silevester D.
  * @since 1.15
  */
@@ -64,10 +63,10 @@ public class UserSettingHelper {
 	public static String asJsonString(List<UserSettingDTO> userSettingDTOS) {
 		try {
 			return new ObjectMapper()
-				.registerModule(new ParameterNamesModule())
-				.registerModule(new Jdk8Module())
-				.registerModule(new JavaTimeModule())
-				.writeValueAsString(userSettingDTOS);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(userSettingDTOS);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
