@@ -41,7 +41,6 @@ import org.isf.login.dto.TokenRefreshRequest;
 import org.isf.menu.data.UserHelper;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
-import org.isf.menu.rest.UserControllerTest;
 import org.isf.security.CustomAuthenticationManager;
 import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.TokenProvider;
@@ -52,8 +51,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -69,8 +66,6 @@ import io.jsonwebtoken.JwtException;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 public class LoginControllerTest {
-
-	private final Logger LOGGER = LoggerFactory.getLogger(UserControllerTest.class);
 
 	private MockMvc mvc;
 
@@ -139,9 +134,6 @@ public class LoginControllerTest {
 						.andExpect(status().isOk())
 						.andExpect(content().string(expectedJson))
 						.andReturn();
-
-		LOGGER.debug("result: {}", result.getResponse().getContentAsString());
-		LOGGER.debug("result: {}", result);
 	}
 
 	// TODO testAuthenticateUser_Failure
@@ -173,9 +165,6 @@ public class LoginControllerTest {
 						.andExpect(status().isOk())
 						.andExpect(content().string(expectedJson))
 						.andReturn();
-
-		LOGGER.debug("result: {}", result.getResponse().getContentAsString());
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
