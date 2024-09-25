@@ -75,6 +75,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 
 		org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
+						/*
+						 * TODO: to pass same {@link User} information for:
+						 * 
+						 * boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked
+						 */
 						user.getUserName(), user.getPasswd(), true, true, true, true, authorities);
 		return userDetails;
 	}
