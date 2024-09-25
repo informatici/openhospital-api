@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.login.dto.TokenRefreshRequest;
 import org.isf.menu.dto.UserDTO;
@@ -116,6 +117,19 @@ public class UserHelper {
 							.registerModule(new Jdk8Module())
 							.registerModule(new JavaTimeModule())
 							.writeValueAsString(loginResponse);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String asJsonString(LoginRequest loginRequest) {
+		try {
+			return new ObjectMapper()
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(loginRequest);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

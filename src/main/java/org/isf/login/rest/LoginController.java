@@ -56,7 +56,7 @@ import io.jsonwebtoken.JwtException;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/auth")
+@RestController
 @Tag(name = "Login")
 @SecurityRequirement(name = "bearerAuth")
 public class LoginController {
@@ -78,8 +78,17 @@ public class LoginController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
-	public LoginController(TokenProvider tokenProvider) {
+	@Autowired
+	public LoginController(HttpSession httpSession,
+					SessionAuditManager sessionAuditManager,
+					TokenProvider tokenProvider,
+					CustomAuthenticationManager authenticationManager,
+					UserBrowsingManager userManager) {
+		this.httpSession = httpSession;
+		this.sessionAuditManager = sessionAuditManager;
 		this.tokenProvider = tokenProvider;
+		this.authenticationManager = authenticationManager;
+		this.userManager = userManager;
 	}
 
 	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
