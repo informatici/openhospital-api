@@ -125,7 +125,7 @@ public class LoginController {
 		try {
 			if (tokenProvider.validateToken(refreshToken) == TokenValidationResult.VALID) {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
-				Authentication authentication = tokenProvider.getAuthenticationByUsername(username); // Retrieve user details
+				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
 				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
 
 				return ResponseEntity.ok(new LoginResponse(newAccessToken, refreshToken, username));
