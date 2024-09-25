@@ -25,12 +25,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.isf.usersettings.dto.UserSettingDTO;
+import jakarta.validation.Valid;
+
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.manager.UserSettingManager;
-import org.isf.usersettings.mapper.UserSettingMapper;
 import org.isf.menu.model.UserSetting;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.usersettings.dto.UserSettingDTO;
+import org.isf.usersettings.mapper.UserSettingMapper;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -50,7 +52,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController(value = "/usersettings")
 @Tag(name = "User Settings")
@@ -68,10 +69,9 @@ public class UserSettingController {
 	private UserSettingMapper userSettingMapper;
 
 	/**
-	 * Retrieves all userSetting of the current user.
-	 *
+	 * Retrieves all userSettings of the current user.
 	 * @return list of userSetting {@link UserSettingDTO}.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When fail to retrieve userSettings
 	 */
 	@GetMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<UserSettingDTO> getUserSettings() throws OHServiceException {
@@ -89,7 +89,6 @@ public class UserSettingController {
 
 	/**
 	 * Returns a {@link UserSettingDTO} of userSetting created.
-	 *
 	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
 	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
 	 * @throws OHServiceException
@@ -122,7 +121,6 @@ public class UserSettingController {
 
 	/**
 	 * Updates an existing {@link UserSettingDTO}.
-	 *
 	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
 	 * @param id - id of {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
@@ -130,7 +128,7 @@ public class UserSettingController {
 	 */
 	@PutMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserSettingDTO updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
-		throws OHServiceException {
+					throws OHServiceException {
 		LOGGER.info("Update a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -161,7 +159,6 @@ public class UserSettingController {
 
 	/**
 	 * Retrieves an existing {@link UserSettingDTO} by user.
-	 *
 	 * @param configName - the name of the userSetting {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
 	 * @throws OHServiceException
@@ -180,7 +177,6 @@ public class UserSettingController {
 
 	/**
 	 * Deletes a {@link UserSetting}.
-	 *
 	 * @param id - the id of the userSetting {@link UserSetting} to delete.
 	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException

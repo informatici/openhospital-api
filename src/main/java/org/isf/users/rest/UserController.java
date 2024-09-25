@@ -21,29 +21,27 @@
  */
 package org.isf.users.rest;
 
-import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.isf.users.dto.UserDTO;
-import org.isf.users.dto.UserProfileDTO;
+import jakarta.validation.Valid;
+
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.usergroups.mapper.UserGroupMapper;
-import org.isf.users.mapper.UserMapper;
 import org.isf.menu.model.User;
 import org.isf.permissions.dto.LitePermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.LitePermissionMapper;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.usergroups.mapper.UserGroupMapper;
+import org.isf.users.dto.UserDTO;
+import org.isf.users.dto.UserProfileDTO;
+import org.isf.users.mapper.UserMapper;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -67,24 +65,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
-	@Autowired
-	private UserMapper userMapper;
-
-	@Autowired
-	private UserGroupMapper userGroupMapper;
-
-	@Autowired
-	private UserBrowsingManager userManager;
-
 	@Autowired
 	protected PermissionManager permissionManager;
 	@Autowired
 	protected LitePermissionMapper litePermissionMapper;
-
+	@Autowired
+	private UserMapper userMapper;
+	@Autowired
+	private UserGroupMapper userGroupMapper;
+	@Autowired
+	private UserBrowsingManager userManager;
 	/**
 	 * Returns the list of {@link User}s.
-	 *
 	 * @return the list of {@link User}s.
 	 */
 	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -97,7 +89,7 @@ public class UserController {
 			users = userManager.getUser();
 		}
 		List<UserDTO> mappedUsers = userMapper.map2DTOList(
-			users.stream().peek(user -> user.setPasswd(null)).toList()
+						users.stream().peek(user -> user.setPasswd(null)).toList()
 		);
 		LOGGER.info("Found {} user(s).", mappedUsers.size());
 		return mappedUsers;
@@ -105,7 +97,6 @@ public class UserController {
 
 	/**
 	 * Returns a {@link User}.
-	 *
 	 * @param userName - user name
 	 * @return {@link User}
 	 */
@@ -125,18 +116,16 @@ public class UserController {
 	}
 
 	/**
-	 * Updates an existing {@link User}.
-	 * When the password in the payload is not empty, other field are ignored and only the password is updated,
-	 * otherwise other field are updated except the password(whether empty or not).
-	 *
+	 * Updates an existing {@link User}. When the password in the payload is not empty, other fields are ignored and only the password is updated, otherwise
+	 * other fields are updated except the password(whether empty or not).
 	 * @param userDTO - the {@link User} to update
 	 * @return the updated {@link UserDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
 	 */
 	@PutMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDTO updateUser(
-		@PathVariable("username") String userName,
-		@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
+					@PathVariable("username") String userName,
+					@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Updating the user {}.", userName);
 		String requestUserName = userDTO.getUserName();
 		if (requestUserName != null && !userName.equals(requestUserName)) {
@@ -165,7 +154,6 @@ public class UserController {
 
 	/**
 	 * Creates a new {@link User}.
-	 *
 	 * @param userDTO - the {@link User} to insert
 	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
 	 * @throws OHServiceException When failed to create user
@@ -187,7 +175,6 @@ public class UserController {
 
 	/**
 	 * Deletes an existing {@link User}.
-	 *
 	 * @param username - the name of the {@link User} to delete
 	 * @return {@code true} if the user has been deleted, {@code false} otherwise.
 	 */
@@ -206,9 +193,7 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves profile of the current logged in user. If user not found,
-	 * an empty list of permissions is returned
-	 *
+	 * Retrieves profile of the current logged in user. If user not found, an empty list of permissions is returned
 	 * @return list of permissions {@link Permission}
 	 * @throws OHServiceException
 	 */
@@ -220,24 +205,22 @@ public class UserController {
 	}
 
 	/**
-	 * Updates the current {@link User} profile.
-	 * When the password in the payload is not empty, other field are ignored and only the password is updated,
-	 * otherwise other field are updated except the password(whether empty or not).
-	 *
+	 * Updates the current {@link User} profile. When the password in the payload is not empty, other fields are ignored and only the password is updated,
+	 * otherwise other fields are updated except the password(whether empty or not).
 	 * @param userDTO - the {@link User} to update
 	 * @return the current {@link UserProfileDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
 	 */
 	@PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserProfileDTO updateProfile(
-		@RequestBody UserDTO userDTO) throws OHServiceException {
+					@RequestBody UserDTO userDTO) throws OHServiceException {
 		String requestUserName = userDTO.getUserName();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		User entity = userManager.getUserByName(requestUserName);
 		LOGGER.info("Updating the user {}.", currentUser);
 		if (!requestUserName.equals(currentUser)) {
 			throw new OHAPIException(new OHExceptionMessage(String.format("You're not allowed to update %s's profile.", requestUserName)),
-				HttpStatus.FORBIDDEN);
+							HttpStatus.FORBIDDEN);
 		}
 		if (entity == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
@@ -259,9 +242,7 @@ public class UserController {
 	}
 
 	/**
-	 * Retrieves all permissions of the username passed as path variable. If user not
-	 * found, an empty list of permissions is returned.
-	 *
+	 * Retrieves all permissions of the username passed as path variable. If user not found, an empty list of permissions is returned.
 	 * @return list of permissions {@link Permission}
 	 * @throws OHServiceException When failed to load user's permissions
 	 */

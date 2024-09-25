@@ -38,14 +38,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.isf.OpenHospitalApiApplication;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.menu.manager.UserSettingManager;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserSetting;
 import org.isf.users.data.UserHelper;
 import org.isf.usersettings.data.UserSettingHelper;
 import org.isf.usersettings.dto.UserSettingDTO;
-import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.manager.UserSettingManager;
 import org.isf.usersettings.mapper.UserSettingMapper;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserSetting;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -92,11 +92,34 @@ public class UserSettingControllerTest {
 		when(userSettingManager.getUserSettingByUserName(any())).thenReturn(userSettings);
 
 		var result = mvc.perform(
-				get("/usersettings").contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(UserSettingHelper.asJsonString(userSettingDTOS))))
-			.andReturn();
+										get("/usersettings").contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(UserSettingHelper.asJsonString(userSettingDTOS))))
+						.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+	@Test
+	@WithMockUser(username = "admin")
+	@DisplayName("Should get user setting by setting name")
+	void shouldGetUserSettingBySettingName() throws Exception {
+		UserSetting userSetting = UserSettingHelper.generate();
+		userSetting.setId(1);
+		userSetting.setUser("admin");
+		UserSettingDTO userSettingDTO = userSettingMapper.map2DTO(userSetting);
+
+		when(userSettingManager.getUserSettingByUserNameConfigName(any(), any())).thenReturn(userSetting);
+
+		var result = mvc.perform(
+										get("/usersettings/{configName}", userSetting.getConfigName())
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(objectMapper.writeValueAsString(userSettingDTO))
+						)
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -119,14 +142,14 @@ public class UserSettingControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					post("/usersettings")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(userSettingDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-				.andReturn();
+											post("/usersettings")
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(objectMapper.writeValueAsString(userSettingDTO))
+							)
+							.andDo(log())
+							.andExpect(status().isCreated())
+							.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -146,13 +169,13 @@ public class UserSettingControllerTest {
 			when(userSettingManager.newUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					post("/usersettings")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(userSettingDTO))
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andReturn();
+											post("/usersettings")
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(objectMapper.writeValueAsString(userSettingDTO))
+							)
+							.andDo(log())
+							.andExpect(status().is4xxClientError())
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -172,14 +195,14 @@ public class UserSettingControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					put("/usersettings/{id}", userSetting.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(userSettingDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-				.andReturn();
+											put("/usersettings/{id}", userSetting.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(objectMapper.writeValueAsString(userSettingDTO))
+							)
+							.andDo(log())
+							.andExpect(status().isOk())
+							.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -200,40 +223,16 @@ public class UserSettingControllerTest {
 			when(userSettingManager.updateUserSetting(any())).thenReturn(userSetting);
 
 			var result = mvc.perform(
-					put("/usersettings/{id}", userSetting.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(userSettingDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+											put("/usersettings/{id}", userSetting.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(objectMapper.writeValueAsString(userSettingDTO))
+							)
+							.andDo(log())
+							.andExpect(status().isForbidden())
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
-	}
-
-	@Test
-	@WithMockUser(username = "admin")
-	@DisplayName("Should get user setting by setting name")
-	void shouldGetUserSettingBySettingName() throws Exception {
-		UserSetting userSetting = UserSettingHelper.generate();
-		userSetting.setId(1);
-		userSetting.setUser("admin");
-		UserSettingDTO userSettingDTO = userSettingMapper.map2DTO(userSetting);
-
-		when(userSettingManager.getUserSettingByUserNameConfigName(any(), any())).thenReturn(userSetting);
-
-		var result = mvc.perform(
-				get("/usersettings/{configName}", userSetting.getConfigName())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(userSettingDTO))
-			)
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(userSettingDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Nested
@@ -252,13 +251,13 @@ public class UserSettingControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-					delete("/usersettings/{id}", userSetting.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+											delete("/usersettings/{id}", userSetting.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().isOk())
+							.andExpect(content().string(containsString("true")))
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -275,12 +274,12 @@ public class UserSettingControllerTest {
 			doNothing().when(userSettingManager).deleteUserSetting(any());
 
 			var result = mvc.perform(
-					delete("/usersettings/{id}", userSetting.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andReturn();
+											delete("/usersettings/{id}", userSetting.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().is4xxClientError())
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}

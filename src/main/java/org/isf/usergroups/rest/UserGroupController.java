@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.isf.usergroups.dto.UserGroupDTO;
+import jakarta.validation.Valid;
+
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.menu.model.UserGroup;
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.manager.GroupPermissionManager;
@@ -36,6 +36,8 @@ import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.usergroups.dto.UserGroupDTO;
+import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.utils.exception.OHDataValidationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -55,7 +57,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController(value = "/usergroups")
 @Tag(name = "User Groups")
@@ -63,24 +64,19 @@ import jakarta.validation.Valid;
 public class UserGroupController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserGroupController.class);
-
-	@Autowired
-	private UserGroupMapper userGroupMapper;
-
-	@Autowired
-	private PermissionMapper permissionMapper;
-
-	@Autowired
-	private UserBrowsingManager userManager;
-
 	@Autowired
 	protected PermissionManager permissionManager;
 	@Autowired
 	protected GroupPermissionManager groupPermissionManager;
+	@Autowired
+	private UserGroupMapper userGroupMapper;
+	@Autowired
+	private PermissionMapper permissionMapper;
+	@Autowired
+	private UserBrowsingManager userManager;
 
 	/**
 	 * Returns the list of {@link UserGroup}s.
-	 *
 	 * @return the list of {@link UserGroup}s
 	 */
 	@GetMapping(value = "/usergroups", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,7 +90,6 @@ public class UserGroupController {
 
 	/**
 	 * Deletes a {@link UserGroup}.
-	 *
 	 * @param code - the code of the {@link UserGroup} to delete
 	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
@@ -111,25 +106,25 @@ public class UserGroupController {
 
 	/**
 	 * Creates a new {@link UserGroup} with a minimum set of rights.
-	 *
 	 * @param userGroupDTO - the {@link UserGroup} to insert
-	 * @return {@code true} if the group has been inserted, {@code false} otherwise.
+	 * @return the {@link UserGroupDTO} of new user group.
+	 * @throws OHServiceException When failed to create the user group
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping(value = "/usergroups", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean newUserGroup(@Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
+	public UserGroupDTO newUserGroup(@Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
 		UserGroup userGroup = userGroupMapper.map2Model(userGroupDTO);
 		List<Permission> permissions = new ArrayList<>();
 
 		if (userGroupDTO.getPermissions() != null && !userGroupDTO.getPermissions().isEmpty()) {
 			permissions = userGroupDTO.getPermissions()
-				.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
-				.toList();
+							.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
+							.toList();
 		}
 
 		try {
-			userManager.newUserGroup(userGroup, permissions);
-			return true;
+			var group = userManager.newUserGroup(userGroup, permissions);
+			return getUserGroup(group.getCode());
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
 		}
@@ -137,12 +132,12 @@ public class UserGroupController {
 
 	/**
 	 * Updates an existing {@link UserGroup}.
-	 *
 	 * @param userGroupDTO - the {@link UserGroup} to update
-	 * @return {@code true} if the group has been updated, {@code false} otherwise.
+	 * @return {@link  UserGroupDTO} for the updated group.
+	 * @throws OHServiceException When failed to update the user group
 	 */
 	@PutMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean updateUserGroup(@PathVariable("group_code") String code, @Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
+	public UserGroupDTO updateUserGroup(@PathVariable("group_code") String code, @Valid @RequestBody UserGroupDTO userGroupDTO) throws OHServiceException {
 		userGroupDTO.setCode(code);
 		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
 
@@ -153,13 +148,13 @@ public class UserGroupController {
 		List<Permission> permissions = new ArrayList<>();
 		if (userGroupDTO.getPermissions() != null && !userGroupDTO.getPermissions().isEmpty()) {
 			permissions = userGroupDTO.getPermissions()
-				.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
-				.toList();
+							.stream().map(permissionDTO -> permissionMapper.map2Model(permissionDTO))
+							.toList();
 		}
 
 		boolean isUpdated = userManager.updateUserGroup(group, permissions);
 		if (isUpdated) {
-			return true;
+			return getUserGroup(group.getCode());
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
 		}
@@ -167,7 +162,6 @@ public class UserGroupController {
 
 	/**
 	 * Retrieve a {@link UserGroup} using its code
-	 *
 	 * @param code UserGroup code
 	 * @return Returns the {@link UserGroup} found using the given code
 	 * @throws OHServiceException When failed to retrieve the user group
@@ -181,8 +175,8 @@ public class UserGroupController {
 
 		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
 		List<PermissionDTO> permissions = groupPermissions.stream()
-			.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
-			.toList();
+						.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
+						.toList();
 
 		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 		userGroupDTO.setPermissions(permissions);
@@ -192,17 +186,16 @@ public class UserGroupController {
 
 	/**
 	 * Assign a {@link Permission} to a {@link UserGroup}
-	 *
 	 * @param userGroupCode - the {@link UserGroup}'s code
 	 * @param permissionId - the {@link Permission}'s id
-	 * @return {@code true} if the permission has been assigned to the group,
-	 * {@code false} otherwise.
+	 * @return the id of the new group permission.
+	 * @throws OHServiceException When failed to assign the permission to the user group
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping(value = "/usergroups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean assignPermission(
-		@PathVariable("group_code") String userGroupCode,
-		@PathVariable("id") int permissionId
+	public int assignPermission(
+					@PathVariable("group_code") String userGroupCode,
+					@PathVariable("id") int permissionId
 	) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
@@ -216,8 +209,7 @@ public class UserGroupController {
 		}
 
 		try {
-			groupPermissionManager.create(userGroup, permission);
-			return true;
+			return groupPermissionManager.create(userGroup, permission).getId();
 		} catch (OHDataValidationException e) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to assign permission"));
 		}
@@ -225,16 +217,15 @@ public class UserGroupController {
 
 	/**
 	 * Revoke a {@link Permission} from a {@link UserGroup}
-	 *
 	 * @param userGroupCode - the {@link UserGroup}'s code
 	 * @param permissionId - the {@link Permission}'s id
-	 * @return {@code true} if the permission has been revoked from the group,
-	 * {@code false} otherwise.
+	 * @throws OHServiceException When failed to revoke the permission to the user group
 	 */
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usergroups/{group_code}/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean revokePermission(
-		@PathVariable("group_code") String userGroupCode,
-		@PathVariable("id") int permissionId
+	public void revokePermission(
+					@PathVariable("group_code") String userGroupCode,
+					@PathVariable("id") int permissionId
 	) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
@@ -249,7 +240,6 @@ public class UserGroupController {
 
 		try {
 			groupPermissionManager.delete(userGroup, permission);
-			return true;
 		} catch (OHDataValidationException e) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to revoke permission"));
 		}

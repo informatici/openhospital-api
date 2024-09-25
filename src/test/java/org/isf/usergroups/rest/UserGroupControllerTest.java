@@ -39,10 +39,7 @@ import java.util.List;
 import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.TestPermission;
 import org.isf.menu.TestUserGroup;
-import org.isf.usergroups.data.UserGroupHelper;
-import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.menu.model.UserGroup;
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.manager.GroupPermissionManager;
@@ -50,6 +47,9 @@ import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
+import org.isf.usergroups.data.UserGroupHelper;
+import org.isf.usergroups.dto.UserGroupDTO;
+import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.utils.exception.OHDataValidationException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.DisplayName;
@@ -104,11 +104,11 @@ public class UserGroupControllerTest {
 		when(userManager.getUserGroup()).thenReturn(userGroups);
 
 		var result = mvc.perform(
-				get("/usergroups").contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(UserGroupHelper.asJsonString(userGroupDTOS))))
-			.andReturn();
+										get("/usergroups").contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(UserGroupHelper.asJsonString(userGroupDTOS))))
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -124,14 +124,14 @@ public class UserGroupControllerTest {
 		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 		userGroupDTO.setPermissions(permissionDTOS);
 
-		when(userManager.newUserGroup(userGroup, permissions)).thenReturn(userGroup);
+		when(userManager.newUserGroup(any(), any())).thenReturn(userGroup);
+		when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 
 		var result = mvc.perform(
-				post("/usergroups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
-			.andDo(log())
-			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString("true")))
-			.andReturn();
+										post("/usergroups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
+						.andDo(log())
+						.andExpect(status().isCreated())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -151,14 +151,13 @@ public class UserGroupControllerTest {
 		when(userManager.updateUserGroup(any(), any())).thenReturn(true);
 
 		var result = mvc.perform(
-				put("/usergroups/{group_code}", userGroupDTO.getCode())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(userGroupDTO))
-			)
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("true")))
-			.andReturn();
+										put("/usergroups/{group_code}", userGroupDTO.getCode())
+														.contentType(MediaType.APPLICATION_JSON)
+														.content(objectMapper.writeValueAsString(userGroupDTO))
+						)
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -186,11 +185,11 @@ public class UserGroupControllerTest {
 		when(groupPermissionManager.findUserGroupPermissions(any())).thenReturn(groupPermissions);
 
 		var result = mvc.perform(
-				get("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(userGroupDTO))))
-			.andReturn();
+										get("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andExpect(content().string(containsString(objectMapper.writeValueAsString(userGroupDTO))))
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -206,11 +205,10 @@ public class UserGroupControllerTest {
 		doNothing().when(userManager).deleteGroup(any());
 
 		var result = mvc.perform(
-				delete("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("true")))
-			.andReturn();
+										delete("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
+						.andDo(log())
+						.andExpect(status().isOk())
+						.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -234,13 +232,12 @@ public class UserGroupControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			var result = mvc.perform(
-					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+											post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().isCreated())
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -258,16 +255,16 @@ public class UserGroupControllerTest {
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
 			when(groupPermissionManager.create(any(), any())).thenThrow(
-				new OHDataValidationException(new OHExceptionMessage(""))
+							new OHDataValidationException(new OHExceptionMessage(""))
 			);
 
 			mvc.perform(
-					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(content().string(containsString("Failed")));
+											post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().is4xxClientError())
+							.andExpect(content().string(containsString("Failed")));
 		}
 
 		@Test
@@ -285,12 +282,12 @@ public class UserGroupControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			mvc.perform(
-					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(content().string(containsString("not found")));
+											post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().is4xxClientError())
+							.andExpect(content().string(containsString("not found")));
 		}
 
 		@Test
@@ -308,13 +305,12 @@ public class UserGroupControllerTest {
 			doNothing().when(groupPermissionManager).delete(any(), any());
 
 			var result = mvc.perform(
-					delete("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
-				.andReturn();
+											delete("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().isNoContent())
+							.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -334,12 +330,12 @@ public class UserGroupControllerTest {
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
 			mvc.perform(
-					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
-						.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(content().string(containsString("not found")));
+											post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+															.contentType(MediaType.APPLICATION_JSON)
+							)
+							.andDo(log())
+							.andExpect(status().is4xxClientError())
+							.andExpect(content().string(containsString("not found")));
 		}
 	}
 }
