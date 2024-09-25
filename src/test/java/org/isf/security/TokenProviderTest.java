@@ -22,9 +22,6 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -89,6 +86,7 @@ public class TokenProviderTest {
 		Authentication authentication = createAuthentication();
 		Key key = extractKeyFromTokenProvider();
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 
 		// Get Claims from token
@@ -115,21 +113,20 @@ public class TokenProviderTest {
 
 	@Test
 	void testIsTokenExpired_NotExpired() {
-		String validToken = "valid.jwt.token";
+		String validToken = "valid.jwt.token"; // valid token it must contain two dots "."
 
 		// Spy on the real TokenProvider so that the actual code is executed, except the mocked method
 		TokenProvider tokenProvider = spy(new TokenProvider());
 
 		// Mock to return a future expiration date
-		Date futureDate = new Date(System.currentTimeMillis() + 100000); // Future date
-		// when(mockedTokenProvider.getExpirationDateFromToken(validToken)).thenReturn(futureDate);
+		Date futureDate = new Date(System.currentTimeMillis() + 100000);
 		doReturn(futureDate).when(tokenProvider).getExpirationDateFromToken(validToken);
 
 		// Check if expired
 		Boolean isExpired = tokenProvider.isTokenExpired(validToken);
 
 		// Assert that the token is NOT expired
-		assertThat("Expected token to not be expired, but it was considered expired.", isExpired, is(false));
+		assertThat(isExpired).isFalse();
 	}
 
 	@Test
@@ -153,7 +150,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Malformed() {
-		String malformedToken = "malformed.token";
+		String malformedToken = "malformed.token"; // valid token it must contain two dots "."
 
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(malformedToken);
@@ -173,7 +170,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Unsupported() throws Exception {
-		KeyPair keyPair = generateRsaKeyPair();
+		KeyPair keyPair = generateRsaKeyPair("RSA");
 
 		// Create a JWT token signed with RS256 (RSA algorithm) instead of HS512
 		String unsupportedToken = Jwts.builder()
@@ -242,7 +239,7 @@ public class TokenProviderTest {
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
 			tokenProvider.getAuthentication(token);
 		});
-		assertThat(exception.getMessage(), containsString("JWT token does not contain authorities."));
+		assertThat(exception.getMessage()).contains("JWT token does not contain authorities.");
 	}
 
 	@Test
@@ -383,8 +380,8 @@ public class TokenProviderTest {
 	}
 
 	// Helper method to generate RSA key pair
-	private KeyPair generateRsaKeyPair() throws NoSuchAlgorithmException {
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+	private KeyPair generateRsaKeyPair(String algorithm) throws NoSuchAlgorithmException {
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
 		keyPairGenerator.initialize(2048);
 		return keyPairGenerator.generateKeyPair();
 	}
@@ -397,7 +394,7 @@ public class TokenProviderTest {
 		return authentication;
 	}
 
-	// Helper method to extract key by reflection
+	// Helper method to extract key by reflection, needed to avoid getters
 	private Key extractKeyFromTokenProvider() throws NoSuchFieldException, IllegalAccessException {
 		Field keyField = TokenProvider.class.getDeclaredField("key");
 		keyField.setAccessible(true);

@@ -96,7 +96,7 @@ public class LoginController {
 		Authentication authentication = authenticationManager.authenticate(
 						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateJwtToken(authentication, false);
+		String jwt = tokenProvider.generateJwtToken(authentication, false); // use the shorter validity
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
 		String userDetails = (String) authentication.getPrincipal();

@@ -52,7 +52,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -109,6 +108,8 @@ public class LoginControllerTest {
 	void testAuthenticateUser_Success() throws Exception {
 		String username = "testUser";
 		String password = "testPassword";
+		String mockToken = "mockJwtToken";
+		String mockRefreshToken = "mockRefreshToken";
 
 		// Create a mock User object
 		User user = new User();
@@ -122,28 +123,28 @@ public class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn("mockJwtToken");
-		when(tokenProvider.generateRefreshToken(any())).thenReturn("mockRefreshToken");
+		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
+
+		// Expected LoginResponse object
+		LoginResponse loginResponse = new LoginResponse(mockToken, mockRefreshToken, username);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform the login request
 		MvcResult result = mvc.perform(
 						post("/auth/login")
 										.contentType(MediaType.APPLICATION_JSON)
 										.content(UserHelper.asJsonString(loginRequest)))
+						.andExpect(status().isOk())
+						.andExpect(content().string(expectedJson))
 						.andReturn();
 
-		// Get the actual JSON response
-		String actualJson = result.getResponse().getContentAsString();
-		System.out.println("Actual response JSON: " + actualJson); // Log the actual response
-
-		// Update the expected JSON structure
-		String expectedJson = "{\"token\":\"mockJwtToken\",\"refreshToken\":\"mockRefreshToken\",\"username\":\"" + username + "\"}";
-
-		// Assert that the actual JSON matches the expected JSON
-		JSONAssert.assertEquals(expectedJson, actualJson, false);
-
+		LOGGER.debug("result: {}", result.getResponse().getContentAsString());
+		LOGGER.debug("result: {}", result);
 	}
+
+	// TODO testAuthenticateUser_Failure
 
 	@Test
 	void testRefreshToken_Success() throws Exception {
@@ -151,6 +152,7 @@ public class LoginControllerTest {
 		String newAccessToken = "newAccessToken";
 		String username = "testUser";
 
+		// Create a mock TokenRefreshRequest object
 		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
 
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
@@ -158,7 +160,7 @@ public class LoginControllerTest {
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
 		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(newAccessToken);
 
-		// Expected LoginResponse object (you need to define this)
+		// Expected LoginResponse object
 		LoginResponse loginResponse = new LoginResponse(newAccessToken, refreshToken, username);
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
@@ -167,7 +169,7 @@ public class LoginControllerTest {
 						post("/auth/refresh-token")
 										.accept(MediaType.APPLICATION_JSON)
 										.contentType(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request))) // Serialize request to JSON
+										.content(UserHelper.asJsonString(request)))
 						.andExpect(status().isOk())
 						.andExpect(content().string(expectedJson))
 						.andReturn();
@@ -190,8 +192,8 @@ public class LoginControllerTest {
 						post("/auth/refresh-token")
 										.contentType(MediaType.APPLICATION_JSON)
 										.accept(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request))) // Serialize request to JSON
-						.andExpect(status().isBadRequest()) // Expect 400 Bad Request
+										.content(UserHelper.asJsonString(request)))
+						.andExpect(status().isBadRequest())
 						.andExpect(content().string(containsString("Invalid Refresh Token")));
 	}
 
@@ -209,8 +211,8 @@ public class LoginControllerTest {
 						post("/auth/refresh-token")
 										.contentType(MediaType.APPLICATION_JSON)
 										.accept(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request))) // Serialize request to JSON
-						.andExpect(status().isUnauthorized()) // Expect 401 Unauthorized
+										.content(UserHelper.asJsonString(request)))
+						.andExpect(status().isUnauthorized())
 						.andExpect(content().string(containsString("Refresh token expired or invalid")));
 	}
 

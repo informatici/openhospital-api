@@ -129,7 +129,6 @@ public class TokenProvider implements Serializable {
 		}
 	}
 
-	// here only for testing
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 		final String authorities = authentication.getAuthorities().stream()
 						.map(GrantedAuthority::getAuthority)
