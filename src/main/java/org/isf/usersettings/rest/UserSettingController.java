@@ -123,8 +123,8 @@ public class UserSettingController {
 	 * Updates an existing {@link UserSettingDTO}.
 	 * @param userSettingDTO - the {@link UserSettingDTO} to update.
 	 * @param id - id of {@link UserSetting} .
-	 * @return {@link UserSettingDTO} if the UserSetting has been updated , null otherwise.
-	 * @throws OHServiceException
+	 * @return {@link UserSettingDTO} if the UserSetting has been updated.
+	 * @throws OHServiceException If the update operation fails
 	 */
 	@PutMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserSettingDTO updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
@@ -178,11 +178,11 @@ public class UserSettingController {
 	/**
 	 * Deletes a {@link UserSetting}.
 	 * @param id - the id of the userSetting {@link UserSetting} to delete.
-	 * @return {@code true} if the userSetting has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException If the deletion fails
 	 */
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
+	public void deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		final String ADMIN = "admin";
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -190,14 +190,14 @@ public class UserSettingController {
 			LOGGER.info("No user settings with id {}.", id);
 			throw new OHAPIException(new OHExceptionMessage("No setting found"), HttpStatus.NOT_FOUND);
 		}
-		if (userSetting.get().getUser().equals(currentUser) || currentUser.equals(ADMIN)) {
+		if (userSetting.get().getUser().equals(currentUser)) {
 			try {
 				userSettingManager.deleteUserSetting(userSetting.get());
 			} catch (OHServiceException serviceException) {
 				throw new OHAPIException(new OHExceptionMessage("UserSetting not deleted."));
 			}
-			return true;
+		} else {
+			throw new OHAPIException(new OHExceptionMessage("Not allowed."), HttpStatus.FORBIDDEN);
 		}
-		throw new OHAPIException(new OHExceptionMessage("Not allowed."));
 	}
 }

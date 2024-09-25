@@ -21,9 +21,9 @@
  */
 package org.isf.users.dto;
 
-import org.isf.usergroups.dto.UserGroupDTO;
-
 import jakarta.validation.constraints.NotNull;
+
+import org.isf.usergroups.dto.UserGroupDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -57,31 +57,24 @@ public class UserDTO {
 	public String getUserName() {
 		return this.userName;
 	}
-
-	public UserGroupDTO getUserGroupName() {
-		return this.userGroupName;
-	}
-
-	public String getPasswd() {
-		return this.passwd;
-	}
-
-	public String getDesc() {
-		return this.desc;
-	}
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
+	public UserGroupDTO getUserGroupName() {
+		return this.userGroupName;
+	}
 	public void setUserGroupName(UserGroupDTO userGroupName) {
 		this.userGroupName = userGroupName;
 	}
-
+	public String getPasswd() {
+		return this.passwd;
+	}
 	public void setPasswd(String passwd) {
 		this.passwd = passwd;
 	}
-
+	public String getDesc() {
+		return this.desc;
+	}
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}

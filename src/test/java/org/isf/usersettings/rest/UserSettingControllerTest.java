@@ -255,8 +255,7 @@ public class UserSettingControllerTest {
 															.contentType(MediaType.APPLICATION_JSON)
 							)
 							.andDo(log())
-							.andExpect(status().isOk())
-							.andExpect(content().string(containsString("true")))
+							.andExpect(status().isNoContent())
 							.andReturn();
 
 			LOGGER.debug("result: {}", result);

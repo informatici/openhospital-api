@@ -25,21 +25,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
+import org.isf.usergroups.data.UserGroupHelper;
+import org.isf.users.dto.UserDTO;
+import org.isf.utils.exception.OHException;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
-import org.isf.usergroups.data.UserGroupHelper;
-import org.isf.users.dto.UserDTO;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
-import org.isf.utils.exception.OHException;
-
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
- *
  * @author Silevester D.
  * @since 1.15
  */
@@ -70,10 +69,10 @@ public class UserHelper {
 	public static String asJsonString(UserDTO userDTO) {
 		try {
 			return new ObjectMapper()
-				.registerModule(new ParameterNamesModule())
-				.registerModule(new Jdk8Module())
-				.registerModule(new JavaTimeModule())
-				.writeValueAsString(userDTO);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(userDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -84,10 +83,10 @@ public class UserHelper {
 	public static String asJsonString(List<UserDTO> users) {
 		try {
 			return new ObjectMapper()
-				.registerModule(new ParameterNamesModule())
-				.registerModule(new Jdk8Module())
-				.registerModule(new JavaTimeModule())
-				.writeValueAsString(users);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(users);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
