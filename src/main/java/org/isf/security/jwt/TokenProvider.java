@@ -83,11 +83,11 @@ public class TokenProvider implements Serializable {
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
-		// 15 minutes (900,000 milliseconds)
-		this.tokenValidityInMilliseconds = 1000L * 60 * 15;
+		// 30 minutes (900,000 milliseconds)
+		this.tokenValidityInMilliseconds = 1000L * 60 * 30;
 
-		// 7 days (604,800,000 milliseconds)
-		this.tokenValidityInMillisecondsForRememberMe = 1000L * 60 * 60 * 24 * 7;
+		// 3 days (604,800,000 milliseconds)
+		this.tokenValidityInMillisecondsForRememberMe = 1000L * 60 * 60 * 24 * 3;
 
 		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
 	}
@@ -163,9 +163,8 @@ public class TokenProvider implements Serializable {
 	public Authentication getAuthentication(String token) {
 		final Claims claims = getAllClaimsFromToken(token);
 
-		/* 
-		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string
-		 * Left for security but not testable
+		/*
+		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string Left for security but not testable
 		 */
 		String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
 		if (authoritiesClaim.isEmpty()) {
@@ -190,9 +189,8 @@ public class TokenProvider implements Serializable {
 	public TokenValidationResult validateToken(String token) {
 		try {
 			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-			/* 
-			 * If claims.getSubject() not null for sure is not empy.
-			 * Left here for security but not testable
+			/*
+			 * If claims.getSubject() not null for sure is not empy. Left here for security but not testable
 			 */
 			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
 				throw new IllegalArgumentException("JWT claims string is empty.");
