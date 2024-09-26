@@ -91,14 +91,13 @@ public class UserGroupController {
 	/**
 	 * Deletes a {@link UserGroup}.
 	 * @param code - the code of the {@link UserGroup} to delete
-	 * @return {@code true} if the group has been deleted, {@code false} otherwise.
 	 */
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
+	public void deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		try {
 			UserGroup group = loadUserGroup(code);
 			userManager.deleteGroup(group);
-			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
 		}

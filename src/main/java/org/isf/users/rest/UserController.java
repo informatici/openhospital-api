@@ -155,18 +155,17 @@ public class UserController {
 	/**
 	 * Creates a new {@link User}.
 	 * @param userDTO - the {@link User} to insert
-	 * @return {@code true} if the user has been inserted, {@code false} otherwise.
+	 * @return the new created user.
 	 * @throws OHServiceException When failed to create user
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
 	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
+	public UserDTO newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
 		User user = userMapper.map2Model(userDTO);
 		try {
-			userManager.newUser(user);
 			LOGGER.info("User successfully created.");
-			return true;
+			return userMapper.map2DTO(userManager.newUser(user));
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));
@@ -176,17 +175,16 @@ public class UserController {
 	/**
 	 * Deletes an existing {@link User}.
 	 * @param username - the name of the {@link User} to delete
-	 * @return {@code true} if the user has been deleted, {@code false} otherwise.
 	 */
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Boolean deleteUser(@PathVariable String username) throws OHServiceException {
+	public void deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
 		if (foundUser == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."));
 		}
 		try {
 			userManager.deleteUser(foundUser);
-			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User not deleted."));
 		}

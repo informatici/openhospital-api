@@ -100,7 +100,6 @@ public class UserControllerTest {
 						)
 						.andDo(log())
 						.andExpect(status().isCreated())
-						.andExpect(content().string(containsString("true")))
 						.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -117,8 +116,7 @@ public class UserControllerTest {
 		var result = mvc.perform(
 										delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
 						.andDo(log())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString("true")))
+						.andExpect(status().isNoContent())
 						.andReturn();
 
 		LOGGER.debug("result: {}", result);
