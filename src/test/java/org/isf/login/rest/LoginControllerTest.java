@@ -42,7 +42,6 @@ import org.isf.menu.data.UserHelper;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.security.CustomAuthenticationManager;
-import org.isf.security.UserDetailsServiceImpl;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.security.jwt.TokenValidationResult;
 import org.isf.sessionaudit.manager.SessionAuditManager;
@@ -52,14 +51,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import io.jsonwebtoken.JwtException;
@@ -83,9 +80,6 @@ public class LoginControllerTest {
 
 	@Mock
 	private UserBrowsingManager userManager;
-
-	@MockBean
-	private UserDetailsServiceImpl customUserDetailsService;
 
 	@BeforeEach
 	public void setUp() {
@@ -127,10 +121,9 @@ public class LoginControllerTest {
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform the login request
-		MvcResult result = mvc.perform(
-						post("/auth/login")
-										.contentType(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(loginRequest)))
+		mvc.perform(post("/auth/login")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(UserHelper.asJsonString(loginRequest)))
 						.andExpect(status().isOk())
 						.andExpect(content().string(expectedJson))
 						.andReturn();
@@ -143,6 +136,7 @@ public class LoginControllerTest {
 		String refreshToken = "validRefreshToken";
 		String newAccessToken = "newAccessToken";
 		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
 
 		// Create a mock TokenRefreshRequest object
 		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
@@ -151,17 +145,17 @@ public class LoginControllerTest {
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
 		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
 
 		// Expected LoginResponse object
-		LoginResponse loginResponse = new LoginResponse(newAccessToken, refreshToken, username);
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username);
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform POST request to refresh-token endpoint
-		var result = mvc.perform(
-						post("/auth/refresh-token")
-										.accept(MediaType.APPLICATION_JSON)
-										.contentType(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request)))
+		mvc.perform(post("/auth/refresh-token")
+						.accept(MediaType.APPLICATION_JSON)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(UserHelper.asJsonString(request)))
 						.andExpect(status().isOk())
 						.andExpect(content().string(expectedJson))
 						.andReturn();

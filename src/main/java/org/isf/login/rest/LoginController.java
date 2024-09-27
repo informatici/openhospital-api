@@ -120,8 +120,9 @@ public class LoginController {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
 				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
+				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
 
-				return ResponseEntity.ok(new LoginResponse(newAccessToken, refreshToken, username));
+				return ResponseEntity.ok(new LoginResponse(newAccessToken, newRefreshToken, username));
 			} else {
 				return ResponseEntity.badRequest().body("Invalid Refresh Token");
 			}
