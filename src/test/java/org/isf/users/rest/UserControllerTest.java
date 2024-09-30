@@ -21,23 +21,7 @@
  */
 package org.isf.users.rest;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
@@ -62,7 +46,17 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
@@ -84,8 +78,9 @@ public class UserControllerTest {
 
 	@MockBean
 	private PermissionManager permissionManager;
+
 	@Test
-	@WithMockUser(username = "admin", authorities = { "users.create" })
+	@WithMockUser(username = "admin", authorities = {"users.create"})
 	@DisplayName("Create user")
 	void createUser() throws Exception {
 		User user = UserHelper.generateUser();
@@ -94,18 +89,19 @@ public class UserControllerTest {
 		when(userManager.newUser(any())).thenReturn(user);
 
 		var result = mvc.perform(
-										post("/users")
-														.contentType(MediaType.APPLICATION_JSON)
-														.content(objectMapper.writeValueAsString(userDTO))
-						)
-						.andDo(log())
-						.andExpect(status().isCreated())
-						.andReturn();
+				post("/users")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(userDTO))
+			)
+			.andDo(log())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
+
 	@Test
-	@WithMockUser(username = "admin", authorities = { "users.delete" })
+	@WithMockUser(username = "admin", authorities = {"users.delete"})
 	@DisplayName("Delete user")
 	void deleteUser() throws Exception {
 		User user = UserHelper.generateUser();
@@ -114,10 +110,78 @@ public class UserControllerTest {
 		doNothing().when(userManager).deleteUser(any());
 
 		var result = mvc.perform(
-										delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().isNoContent())
-						.andReturn();
+				delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNoContent())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Nested
+	@DisplayName("Get user")
+	class GetUser {
+		@Test
+		@WithMockUser(username = "admin", authorities = {"users.read"})
+		@DisplayName("Should get user by name")
+		void shouldGetUserByName() throws Exception {
+			User user = UserHelper.generateUsers(1).get(0);
+
+			when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+
+			var result = mvc.perform(
+					get("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "user")
+		@DisplayName("Should throw forbidden error when insufficient permissions")
+		void shouldThrowForbiddenErrorWhenInsufficientPermissions() throws Exception {
+			var result = mvc.perform(
+					get("/users/user").contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "user", authorities = {"users.read"})
+		@DisplayName("Should throw not found error when user not found")
+		void shouldThrowNotFoundErrorWhenUserNotFound() throws Exception {
+			when(userManager.getUserByName(any())).thenReturn(null);
+
+			var result = mvc.perform(
+					get("/users/user").contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isNotFound())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+	}
+
+	@Test
+	@WithMockUser(username = "john")
+	@DisplayName("Should get user profile")
+	void shouldGetUserProfile() throws Exception {
+		User user = UserHelper.generateUsers(1).get(0);
+		user.setUserName("john");
+
+		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
+		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+
+		var result = mvc.perform(
+				get("/users/me").contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -127,7 +191,7 @@ public class UserControllerTest {
 	class GetUsers {
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "users.read" })
+		@WithMockUser(username = "admin", authorities = {"users.read"})
 		@DisplayName("Get all users")
 		void getAllUsers() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
@@ -136,17 +200,17 @@ public class UserControllerTest {
 			when(userManager.getUser()).thenReturn(users);
 
 			var result = mvc.perform(
-											get("/users").contentType(MediaType.APPLICATION_JSON))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
-							.andReturn();
+					get("/users").contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "users.read" })
+		@WithMockUser(username = "admin", authorities = {"users.read"})
 		@DisplayName("Get users by group code")
 		void getAllUsersByGroupCode() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
@@ -156,17 +220,17 @@ public class UserControllerTest {
 			when(userManager.getUser(any())).thenReturn(users);
 
 			var result = mvc.perform(
-											get("/users").queryParam("group_id", groupCode).contentType(MediaType.APPLICATION_JSON))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
-							.andReturn();
+					get("/users").queryParam("group_id", groupCode).contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "users.read" })
+		@WithMockUser(username = "admin", authorities = {"users.read"})
 		@DisplayName("Get user by name")
 		void getUserByName() throws Exception {
 			User user = UserHelper.generateUser();
@@ -178,11 +242,11 @@ public class UserControllerTest {
 			userDTO.setPasswd(null);
 
 			var result = mvc.perform(
-											get("/users/{username}", username).contentType(MediaType.APPLICATION_JSON))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))))
-							.andReturn();
+					get("/users/{username}", username).contentType(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))))
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -194,7 +258,7 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should update the user")
-		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
 		void shouldUpdateTheUser() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
@@ -203,63 +267,63 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to update when username in the patch doesn't match")
-		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
 		void shouldFailToUpdateWhenUsernameInThePathDoesNtMatch() throws Exception {
 			var user = new User("laboratorist", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isBadRequest())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to update user when insufficient permissions")
-		@WithMockUser(username = "admin", authorities = { "roles.read" })
+		@WithMockUser(username = "admin", authorities = {"roles.read"})
 		void shouldFailToUpdateUserWhenInsufficientPermissions() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isForbidden())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail when user to update doesn't exist")
-		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
 		void shouldFailWhenUserToUpdateIsNotFound() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
 			when(userManager.getUserByName(any())).thenReturn(null);
 
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isNotFound())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isNotFound())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should update only password")
-		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
 		void shouldUpdateOnlyPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
 
@@ -268,10 +332,10 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 
@@ -281,7 +345,7 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should update user without updating password")
-		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
 		void shouldUpdateUserWithoutUpdatingPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
@@ -290,10 +354,10 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 
@@ -325,10 +389,10 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -342,10 +406,10 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isForbidden())
-							.andReturn();
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -355,10 +419,10 @@ public class UserControllerTest {
 		void shouldFailToUpdateUserWhenNotAuthenticated() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 			var result = mvc.perform(
-											put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isUnauthorized())
-							.andReturn();
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isUnauthorized())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 		}
@@ -374,10 +438,10 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 
@@ -396,14 +460,14 @@ public class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
-											put("/users/me")
-															.contentType(MediaType.APPLICATION_JSON)
-															.content(objectMapper.writeValueAsString(userMapper.map2DTO(user)))
-															.with(user("doctor").roles("exams.read"))
-							)
-							.andDo(log())
-							.andExpect(status().isOk())
-							.andReturn();
+					put("/users/me")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userMapper.map2DTO(user)))
+						.with(user("doctor").roles("exams.read"))
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
 			LOGGER.debug("result: {}", result);
 
