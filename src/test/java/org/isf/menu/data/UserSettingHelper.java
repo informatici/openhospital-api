@@ -24,13 +24,14 @@ package org.isf.menu.data;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.isf.menu.dto.UserSettingDTO;
+import org.isf.menu.model.UserSetting;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import org.isf.menu.dto.UserSettingDTO;
-import org.isf.menu.model.UserSetting;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
