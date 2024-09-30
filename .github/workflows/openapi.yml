@@ -101,6 +101,7 @@ jobs:
       - name: Show breaking changes output
         run: |
           echo "Breaking changes output: ${{ steps.oasdiff.outputs.breaking }}"
-          if [[ "${{ steps.oasdiff.outputs.breaking }}" != "" ]]; then
+          if [[ "${{ steps.oasdiff.outputs.breaking }}" != "No breaking changes" ]]; then
             echo "Warning: Breaking changes detected."
+            exit 1
           fi
