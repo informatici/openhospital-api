@@ -19,40 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.dto;
+package org.isf.users.mapper;
 
-import java.util.List;
+import org.isf.menu.model.User;
+import org.isf.shared.GenericMapper;
+import org.isf.users.dto.UserDTO;
+import org.springframework.stereotype.Component;
 
-public class UserProfileDTO {
+@Component
+public class UserMapper extends GenericMapper<User, UserDTO> {
 
-	private String userName;
-
-	private List<String> permissions;
-	
-	private UserGroupDTO userGroup;
-
-	public String getUserName() {
-		return userName;
+	public UserMapper() {
+		super(User.class, UserDTO.class);
 	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public List<String> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(List<String> permission) {
-		this.permissions = permission;
-	}
-
-	public UserGroupDTO getUserGroup() {
-		return userGroup;
-	}
-
-	public void setUserGroup(UserGroupDTO userGroup) {
-		this.userGroup = userGroup;
-	}
-
 }

@@ -19,16 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.mapper;
+package org.isf.usersettings.mapper;
 
-import org.isf.menu.dto.UserGroupDTO;
-import org.isf.menu.model.UserGroup;
+import org.isf.menu.model.UserSetting;
 import org.isf.shared.GenericMapper;
+import org.isf.usersettings.dto.UserSettingDTO;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserGroupMapper extends GenericMapper<UserGroup, UserGroupDTO> {
-	public UserGroupMapper() {
-		super(UserGroup.class, UserGroupDTO.class);
+public class UserSettingMapper extends GenericMapper<UserSetting, UserSettingDTO> {
+
+	public UserSettingMapper() {
+		super(UserSetting.class, UserSettingDTO.class);
 	}
 }

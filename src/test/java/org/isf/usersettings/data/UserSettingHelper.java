@@ -19,13 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.data;
+package org.isf.usersettings.data;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
-import org.isf.menu.dto.UserSettingDTO;
 import org.isf.menu.model.UserSetting;
+import org.isf.usersettings.dto.UserSettingDTO;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,11 +35,11 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
- *
  * @author Silevester D.
  * @since 1.15
  */
 public class UserSettingHelper {
+
 	public static UserSetting generate() {
 		UserSetting userSetting = new UserSetting();
 		userSetting.setUser("contrib");
@@ -63,10 +63,10 @@ public class UserSettingHelper {
 	public static String asJsonString(List<UserSettingDTO> userSettingDTOS) {
 		try {
 			return new ObjectMapper()
-					.registerModule(new ParameterNamesModule())
-					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(userSettingDTOS);
+							.registerModule(new ParameterNamesModule())
+							.registerModule(new Jdk8Module())
+							.registerModule(new JavaTimeModule())
+							.writeValueAsString(userSettingDTOS);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

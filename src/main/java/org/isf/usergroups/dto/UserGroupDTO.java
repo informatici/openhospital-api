@@ -19,60 +19,57 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.dto;
+package org.isf.usergroups.dto;
+
+import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 
+import org.isf.permissions.dto.PermissionDTO;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class UserSettingDTO {
+public class UserGroupDTO {
 
 	@NotNull
-	@Schema(description = "The id of the setting (must be unique)", example = "1")
-	private int id;
+	@Schema(description = "Name of the group (must be unique)", example = "labo", maxLength = 50)
+	private String code;
 
-	@NotNull
-	@Schema(description = "The name of the setting", example = "dashboard", maxLength = 50)
-	private String configName;
-	
-	@NotNull
-	@Schema(description = "The name of the user", example = "admin")
-	private String user;
+	@Schema(description = "The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
+	private String desc;
 
-	@NotNull
-	@Schema(description = "The value of the user", maxLength = 65535)
-	private String configValue;
+	@Schema(description = "List of group's permissions")
+	List<PermissionDTO> permissions;
 
-	public int getId() {
-		return id;
+	public UserGroupDTO() {
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public UserGroupDTO(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
 	}
 
-	public String getConfigName() {
-		return configName;
+	public String getCode() {
+		return this.code;
 	}
 
-	public void setConfigName(String configName) {
-		this.configName = configName;
+	public String getDesc() {
+		return this.desc;
 	}
 
-	public String getConfigValue() {
-		return configValue;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
-	public void setConfigValue(String configValue) {
-		this.configValue = configValue;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
-	public String getUser() {
-		return user;
-	}
-	
-	public void setUser(String user) {
-		this.user = user;
+	public List<PermissionDTO> getPermissions() {
+		return permissions;
 	}
 
+	public void setPermissions(List<PermissionDTO> permissions) {
+		this.permissions = permissions;
+	}
 }
