@@ -24,12 +24,25 @@ package org.isf.users.mapper;
 import org.isf.menu.model.User;
 import org.isf.shared.GenericMapper;
 import org.isf.users.dto.UserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper extends GenericMapper<User, UserDTO> {
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public UserMapper() {
 		super(User.class, UserDTO.class);
+	}
+
+	@Override
+	public User map2Model(UserDTO dto) {
+		var user = super.map2Model(dto);
+		if (dto.getPasswd() != null && !dto.getPasswd().isEmpty()) {
+			user.setPasswd(passwordEncoder.encode(user.getPasswd()));
+		}
+		return user;
 	}
 }
