@@ -101,6 +101,7 @@ jobs:
         with:
           base: openapi/oh.yaml # destination branch oh.yaml
           revision: openapi/oh_rev.yaml # generated oh_rev.yaml
+          format: detailed
           # fail-on-diff: false
 
       - name: Show breaking changes output
