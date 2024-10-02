@@ -6144,11 +6144,11 @@ components:
           description: lock
           format: int32
           example: 0
+        female:
+          type: boolean
         opd:
           type: boolean
         male:
-          type: boolean
-        female:
           type: boolean
         pharmacy:
           type: boolean
@@ -6815,11 +6815,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -8043,10 +8043,10 @@ components:
                             height:
                               type: number
                               format: double
-                            x:
+                            "y":
                               type: number
                               format: double
-                            "y":
+                            x:
                               type: number
                               format: double
                             minX:
@@ -8078,10 +8078,10 @@ components:
                             height:
                               type: number
                               format: double
-                            x:
+                            "y":
                               type: number
                               format: double
-                            "y":
+                            x:
                               type: number
                               format: double
                             minX:
@@ -8132,10 +8132,10 @@ components:
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         minX:
@@ -8368,10 +8368,10 @@ components:
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         minX:
@@ -8403,10 +8403,10 @@ components:
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         minX:
@@ -8525,10 +8525,10 @@ components:
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         minX:
@@ -8560,10 +8560,10 @@ components:
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         minX:
@@ -8665,13 +8665,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        medical:
-          type: integer
-          format: int32
         sms:
           type: boolean
         notify:
           type: boolean
+        medical:
+          type: integer
+          format: int32
     TherapyDTO:
       type: object
       properties:
