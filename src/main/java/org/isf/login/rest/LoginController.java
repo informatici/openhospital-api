@@ -39,9 +39,9 @@ import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.sessionaudit.model.UserSession;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -112,7 +112,7 @@ public class LoginController {
 	}
 
 	@PostMapping("/auth/refresh-token")
-	public ResponseEntity< ? > refreshToken(@RequestBody TokenRefreshRequest request) {
+	public ResponseEntity<LoginResponse> refreshToken(@RequestBody TokenRefreshRequest request) throws OHAPIException {
 		String refreshToken = request.getRefreshToken();
 
 		try {
@@ -124,10 +124,10 @@ public class LoginController {
 
 				return ResponseEntity.ok(new LoginResponse(newAccessToken, newRefreshToken, username));
 			} else {
-				return ResponseEntity.badRequest().body("Invalid Refresh Token");
+				throw new OHAPIException(new OHExceptionMessage("Invalid Refresh Token"));
 			}
 		} catch (JwtException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token expired or invalid");
+			throw new OHAPIException(new OHExceptionMessage("Refresh token expired or invalid"));
 		}
 	}
 

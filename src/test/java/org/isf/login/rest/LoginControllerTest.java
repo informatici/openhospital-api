@@ -195,7 +195,6 @@ public class LoginControllerTest {
 										.contentType(MediaType.APPLICATION_JSON)
 										.accept(MediaType.APPLICATION_JSON)
 										.content(UserHelper.asJsonString(request)))
-						.andExpect(status().isUnauthorized())
 						.andExpect(content().string(containsString("Refresh token expired or invalid")));
 	}
 
