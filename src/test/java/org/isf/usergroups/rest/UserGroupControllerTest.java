@@ -132,30 +132,74 @@ public class UserGroupControllerTest {
 		LOGGER.debug("result: {}", result);
 	}
 
-	@Test
-	@WithMockUser(username = "admin", authorities = {"usergroups.update"})
+	@Nested
 	@DisplayName("Update user group")
-	void updateUserGroup() throws Exception {
-		List<Permission> permissions = TestPermission.generatePermissions(4);
-		UserGroup userGroup = UserGroupHelper.generateUserGroup();
+	class UpdateUserGroup {
+		@Test
+		@WithMockUser(username = "admin", authorities = {"usergroups.update"})
+		@DisplayName("Should update user group")
+		void shouldUpdateUserGroup() throws Exception {
+			List<Permission> permissions = TestPermission.generatePermissions(4);
+			UserGroup userGroup = UserGroupHelper.generateUserGroup();
 
-		List<PermissionDTO> permissionDTOS = permissionMapper.map2DTOList(permissions);
-		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
-		userGroupDTO.setPermissions(permissionDTOS);
+			List<PermissionDTO> permissionDTOS = permissionMapper.map2DTOList(permissions);
+			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+			userGroupDTO.setPermissions(permissionDTOS);
 
-		when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
-		when(userManager.updateUserGroup(any(), any())).thenReturn(true);
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(userManager.updateUserGroup(any(), any())).thenReturn(true);
 
-		var result = mvc.perform(
-				put("/usergroups/{group_code}", userGroupDTO.getCode())
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(userGroupDTO))
-			)
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andReturn();
+			var result = mvc.perform(
+					put("/usergroups/{group_code}", userGroupDTO.getCode())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userGroupDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
 
-		LOGGER.debug("result: {}", result);
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = {"usergroups.update"})
+		@DisplayName("Should fail to update user group when invalid payload")
+		void shouldFailUpdateUserGroupWhenInvalidPayload() throws Exception {
+			UserGroup userGroup = UserGroupHelper.generateUserGroup();
+
+			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+
+			var result = mvc.perform(
+					put("/usergroups/{group_code}", "DD")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userGroupDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin")
+		@DisplayName("Should throw forbidden error when updating user group")
+		void shouldThrowForbiddenErrorWhenUpdatingUserGroup() throws Exception {
+			UserGroup userGroup = UserGroupHelper.generateUserGroup();
+
+			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+
+			var result = mvc.perform(
+					put("/usergroups/{group_code}", userGroupDTO.getCode())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(userGroupDTO))
+				)
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
 	}
 
 	@Test
