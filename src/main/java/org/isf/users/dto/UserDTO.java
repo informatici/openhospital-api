@@ -19,55 +19,63 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.dto;
+package org.isf.users.dto;
 
-import java.util.List;
 import jakarta.validation.constraints.NotNull;
 
-import org.isf.permissions.dto.PermissionDTO;
+import org.isf.usergroups.dto.UserGroupDTO;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class UserGroupDTO {
+public class UserDTO {
 
 	@NotNull
-	@Schema(description = "Name of the group (must be unique)", example = "labo", maxLength = 50)
-	private String code;
+	@Schema(description = "The username (must be unique)", example = "John Doe", maxLength = 50)
+	private String userName;
 
-	@Schema(description = "The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
+	@NotNull
+	@Schema(description = "The user's group")
+	private UserGroupDTO userGroupName;
+
+	@NotNull
+	@Schema(description = "The user's password", example = "21@U2g423", maxLength = 50)
+	private String passwd;
+
+	@Schema(description = "The user's description", example = "Lab chief technician", maxLength = 128)
 	private String desc;
 
-	@Schema(description = "List of group's permissions")
-	List<PermissionDTO> permissions;
-
-	public UserGroupDTO() {
+	public UserDTO() {
 	}
 
-	public UserGroupDTO(String code, String desc) {
-		this.code = code;
+	public UserDTO(String userName, UserGroupDTO userGroupName, String passwd, String desc) {
+		this.userName = userName;
+		this.userGroupName = userGroupName;
+		this.passwd = passwd;
 		this.desc = desc;
 	}
 
-	public String getCode() {
-		return this.code;
+	public String getUserName() {
+		return this.userName;
 	}
-
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public UserGroupDTO getUserGroupName() {
+		return this.userGroupName;
+	}
+	public void setUserGroupName(UserGroupDTO userGroupName) {
+		this.userGroupName = userGroupName;
+	}
+	public String getPasswd() {
+		return this.passwd;
+	}
+	public void setPasswd(String passwd) {
+		this.passwd = passwd;
+	}
 	public String getDesc() {
 		return this.desc;
 	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
 	public void setDesc(String desc) {
 		this.desc = desc;
-	}
-
-	public List<PermissionDTO> getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(List<PermissionDTO> permissions) {
-		this.permissions = permissions;
 	}
 }

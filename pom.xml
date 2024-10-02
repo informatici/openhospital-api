@@ -56,11 +56,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
@@ -246,21 +241,21 @@
             <plugin>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
-                   <version>1.4</version>
-                   <executions>
-                       <execution>
-                           <phase>integration-test</phase>
-                           <goals>
-                               <goal>generate</goal>
-                           </goals>
-                       </execution>
-                   </executions>
-                   <configuration>
-                       <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
-                       <outputFileName>${springdoc.outputFileName}</outputFileName> 
-                       <outputDir>openapi/</outputDir> 
-                   </configuration>
-               </plugin>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+                    <outputFileName>${springdoc.outputFileName}</outputFileName>
+                    <outputDir>openapi/</outputDir>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
