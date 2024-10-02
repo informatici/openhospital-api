@@ -89,18 +89,25 @@ jobs:
             exit 1
           fi 
 
-      # Step 2: Check for breaking changes between committed oh.yaml and oh_rev.yaml
+      # Step 2: Check for breaking changes between destination branch oh.yaml and the generated oh_rev.yaml
+      - name: Checkout Base Branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}:base_branch
+          git checkout base_branch
+
       - name: Run OpenAPI Spec breaking action
         id: oasdiff
         uses: oasdiff/oasdiff-action/breaking@main
         with:
-          base: openapi/oh.yaml # Committed version in the repository
-          revision: openapi/oh_rev.yaml # Generated version
+          base: openapi/oh.yaml # destination branch oh.yaml
+          revision: openapi/oh_rev.yaml # generated oh_rev.yaml
+          format: detailed
           # fail-on-diff: false
 
       - name: Show breaking changes output
         run: |
           echo "Breaking changes output: ${{ steps.oasdiff.outputs.breaking }}"
-          if [[ "${{ steps.oasdiff.outputs.breaking }}" != "" ]]; then
+          if [[ "${{ steps.oasdiff.outputs.breaking }}" != "No breaking changes" ]]; then
             echo "Warning: Breaking changes detected."
+            exit 1
           fi
