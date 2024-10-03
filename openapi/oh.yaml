@@ -426,6 +426,33 @@ paths:
                   $ref: '#/components/schemas/PermissionDTO'
       security:
         - bearerAuth: [ ]
+    patch:
+      tags:
+        - User Groups
+      operationId: replaceGroupPermissions
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupPermissionsDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionDTO'
+      security:
+        - bearerAuth: [ ]
   /suppliers:
     get:
       tags:
@@ -6174,9 +6201,9 @@ components:
           example: 0
         opd:
           type: boolean
-        male:
-          type: boolean
         female:
+          type: boolean
+        male:
           type: boolean
         pharmacy:
           type: boolean
@@ -6856,11 +6883,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7871,9 +7898,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        informations:
-          type: string
         searchString:
+          type: string
+        informations:
           type: string
     PatientConsensus:
       type: object
@@ -8143,6 +8170,11 @@ components:
                     fontRenderContext:
                       type: object
                       properties:
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
                         transform:
                           type: object
                           properties:
@@ -8186,11 +8218,6 @@ components:
                           type: object
                         transformed:
                           type: boolean
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
                     maxAscent:
                       type: integer
                       format: int32
@@ -8241,6 +8268,9 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
                         width:
                           type: number
                           format: double
@@ -8250,13 +8280,10 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
+                        x:
                           type: number
                           format: double
                         "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                         maxX:
@@ -8276,6 +8303,9 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
                         width:
                           type: number
                           format: double
@@ -8285,13 +8315,10 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
+                        x:
                           type: number
                           format: double
                         "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                         maxX:
@@ -8401,6 +8428,9 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            height:
+                              type: number
+                              format: double
                             width:
                               type: number
                               format: double
@@ -8410,13 +8440,10 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
+                            x:
                               type: number
                               format: double
                             "y":
-                              type: number
-                              format: double
-                            x:
                               type: number
                               format: double
                             maxX:
@@ -8436,6 +8463,9 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            height:
+                              type: number
+                              format: double
                             width:
                               type: number
                               format: double
@@ -8445,13 +8475,10 @@ components:
                             minY:
                               type: number
                               format: double
-                            height:
+                            x:
                               type: number
                               format: double
                             "y":
-                              type: number
-                              format: double
-                            x:
                               type: number
                               format: double
                             maxX:
@@ -8490,6 +8517,9 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
                         width:
                           type: number
                           format: double
@@ -8499,13 +8529,10 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
+                        x:
                           type: number
                           format: double
                         "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                         maxX:
@@ -8560,6 +8587,9 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
                         width:
                           type: number
                           format: double
@@ -8569,13 +8599,10 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
+                        x:
                           type: number
                           format: double
                         "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                         maxX:
@@ -8595,6 +8622,9 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
                         width:
                           type: number
                           format: double
@@ -8604,13 +8634,10 @@ components:
                         minY:
                           type: number
                           format: double
-                        height:
+                        x:
                           type: number
                           format: double
                         "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                         maxX:
@@ -8709,9 +8736,9 @@ components:
         medical:
           type: integer
           format: int32
-        notify:
-          type: boolean
         sms:
+          type: boolean
+        notify:
           type: boolean
     TherapyDTO:
       type: object
