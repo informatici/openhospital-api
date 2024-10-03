@@ -398,6 +398,34 @@ paths:
           description: No Content
       security:
         - bearerAuth: [ ]
+  /usergroups/{group_code}/permissions:
+    put:
+      tags:
+        - User Groups
+      operationId: updateGroupPermissions
+      parameters:
+        - name: group_code
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupPermissionsDTO'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PermissionDTO'
+      security:
+        - bearerAuth: [ ]
   /suppliers:
     get:
       tags:
@@ -6146,9 +6174,9 @@ components:
           example: 0
         opd:
           type: boolean
-        female:
-          type: boolean
         male:
+          type: boolean
+        female:
           type: boolean
         pharmacy:
           type: boolean
@@ -6495,6 +6523,19 @@ components:
             type: string
         userGroup:
           $ref: '#/components/schemas/UserGroupDTO'
+    GroupPermissionsDTO:
+      type: object
+      properties:
+        permissions:
+          type: array
+          description: List of permissions' ids
+          example:
+            - 48
+            - 24
+          items:
+            type: integer
+            description: List of permissions' ids
+            format: int32
     SupplierDTO:
       required:
         - supId
@@ -6815,11 +6856,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7830,9 +7871,9 @@ components:
           $ref: '#/components/schemas/PatientProfilePhoto'
         patientConsensus:
           $ref: '#/components/schemas/PatientConsensus'
-        searchString:
-          type: string
         informations:
+          type: string
+        searchString:
           type: string
     PatientConsensus:
       type: object
@@ -7929,6 +7970,8 @@ components:
                         type: object
                     family:
                       type: string
+                    plain:
+                      type: boolean
                     fontName:
                       type: string
                     transform:
@@ -7992,8 +8035,6 @@ components:
                       type: array
                       items:
                         type: object
-                    plain:
-                      type: boolean
                 fontMetrics:
                   type: object
                   properties:
@@ -8014,6 +8055,8 @@ components:
                             type: object
                         family:
                           type: string
+                        plain:
+                          type: boolean
                         fontName:
                           type: string
                         transform:
@@ -8077,8 +8120,9 @@ components:
                           type: array
                           items:
                             type: object
-                        plain:
-                          type: boolean
+                    height:
+                      type: integer
+                      format: int32
                     ascent:
                       type: integer
                       format: int32
@@ -8086,9 +8130,6 @@ components:
                       type: integer
                       format: int32
                     leading:
-                      type: integer
-                      format: int32
-                    height:
                       type: integer
                       format: int32
                     maxDescent:
@@ -8200,22 +8241,22 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        width:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8235,22 +8276,22 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        width:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8360,22 +8401,22 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            width:
+                              type: number
+                              format: double
                             minX:
                               type: number
                               format: double
                             minY:
                               type: number
                               format: double
-                            width:
-                              type: number
-                              format: double
                             height:
                               type: number
                               format: double
-                            x:
+                            "y":
                               type: number
                               format: double
-                            "y":
+                            x:
                               type: number
                               format: double
                             maxX:
@@ -8395,22 +8436,22 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            width:
+                              type: number
+                              format: double
                             minX:
                               type: number
                               format: double
                             minY:
                               type: number
                               format: double
-                            width:
-                              type: number
-                              format: double
                             height:
                               type: number
                               format: double
-                            x:
+                            "y":
                               type: number
                               format: double
-                            "y":
+                            x:
                               type: number
                               format: double
                             maxX:
@@ -8449,22 +8490,22 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        width:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8519,22 +8560,22 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        width:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8554,22 +8595,22 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        width:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
-                        x:
+                        "y":
                           type: number
                           format: double
-                        "y":
+                        x:
                           type: number
                           format: double
                         maxX:

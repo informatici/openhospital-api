@@ -252,7 +252,7 @@ public class SecurityConfig {
 			// grouppermission
 			.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
 			.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
-			.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.update")
+			.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").access("hasAuthority('grouppermission.create') and hasAuthority('grouppermission.delete')")
 			.requestMatchers(HttpMethod.DELETE, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
 			// usergroups
 			.requestMatchers(HttpMethod.POST, "/usergroups/**").hasAuthority("usergroups.create")
