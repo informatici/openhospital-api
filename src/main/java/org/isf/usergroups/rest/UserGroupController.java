@@ -215,19 +215,36 @@ public class UserGroupController {
         }
     }
 
+    /**
+     * Assign or revoke permissions for the target user group.
+     * <ul>
+     *     <li>Ids corresponding to permissions already assigned to the group will be skipped.</li>
+     *     <li>User group permissions that don't have their id in the permission ids payload will be removed</li>
+     *     <li>ids that corresponding permission are not yet assigned to the groups will be assigned.</li>
+     *     <li>Permissions ids that don't exist are ignored</li>
+     * </ul>
+     *
+     * @param userGroupCode Code of the group to update
+     * @param payload       New group permissions
+     * @return List of {@link PermissionDTO} corresponding to the list of permissions assigned to the group
+     * @throws OHServiceException If the update operation fails
+     */
     @PutMapping(value = "/usergroups/{group_code}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PermissionDTO> updateGroupPermissions(
             @PathVariable("group_code") String userGroupCode,
             @RequestBody GroupPermissionsDTO payload
     ) throws OHServiceException {
+        LOGGER.info("Attempting to update user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissions());
         UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
         if (userGroup == null) {
+            LOGGER.info("Could not find user corresponding to the group code {}", userGroupCode);
             throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
         }
 
         try {
             return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissions()));
         } catch (OHDataValidationException e) {
+            LOGGER.info("Fail to update user groups permissions, reason: {}", e.getMessage());
             throw new OHAPIException(new OHExceptionMessage("Failed to update permissions"));
         }
     }
