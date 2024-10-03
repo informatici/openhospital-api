@@ -22,25 +22,37 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import org.assertj.core.data.Offset;
 import org.isf.OpenHospitalApiApplication;
+import org.isf.menu.manager.UserBrowsingManager;
+import org.isf.permissions.manager.PermissionManager;
+import org.isf.permissions.model.Permission;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.security.jwt.TokenValidationResult;
+import org.isf.utils.exception.OHException;
+import org.isf.utils.exception.OHServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -58,6 +70,12 @@ public class TokenProviderTest {
 	@Autowired
 	private TokenProvider tokenProvider;
 
+	@MockBean
+	private UserBrowsingManager userManager;
+
+	@MockBean
+	protected PermissionManager permissionManager;
+
 	@BeforeEach
 	public void setUp() {
 		tokenProvider.init();
@@ -68,6 +86,7 @@ public class TokenProviderTest {
 		Authentication authentication = createAuthentication();
 		Key key = extractKeyFromTokenProvider();
 
+		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
 
 		// Get Claims from token
@@ -93,6 +112,24 @@ public class TokenProviderTest {
 	}
 
 	@Test
+	void testIsTokenExpired_NotExpired() {
+		String validToken = "valid.jwt.token"; // valid token it must contain two dots "."
+
+		// Spy on the real TokenProvider so that the actual code is executed, except the mocked method
+		TokenProvider tokenProvider = spy(new TokenProvider());
+
+		// Mock to return a future expiration date
+		Date futureDate = new Date(System.currentTimeMillis() + 100000);
+		doReturn(futureDate).when(tokenProvider).getExpirationDateFromToken(validToken);
+
+		// Check if expired
+		Boolean isExpired = tokenProvider.isTokenExpired(validToken);
+
+		// Assert that the token is NOT expired
+		assertThat(isExpired).isFalse();
+	}
+
+	@Test
 	public void testValidateToken_Expired() throws Exception {
 		Key key = extractKeyFromTokenProvider();
 
@@ -113,7 +150,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Malformed() {
-		String malformedToken = "malformed.token";
+		String malformedToken = "malformed.token"; // valid token it must contain two dots "."
 
 		// Validate the token using tokenProvider
 		TokenValidationResult result = tokenProvider.validateToken(malformedToken);
@@ -133,7 +170,7 @@ public class TokenProviderTest {
 
 	@Test
 	public void testValidateToken_Unsupported() throws Exception {
-		KeyPair keyPair = generateRsaKeyPair();
+		KeyPair keyPair = generateRsaKeyPair("RSA");
 
 		// Create a JWT token signed with RS256 (RSA algorithm) instead of HS512
 		String unsupportedToken = Jwts.builder()
@@ -188,6 +225,21 @@ public class TokenProviderTest {
 
 		// Check credentials
 		assertThat(authToken.getCredentials()).isEqualTo(token);
+	}
+
+	@Test
+	public void testGetAuthentication_EmptyAuthorities() {
+		// Create an Authentication with empty authorities
+		List<GrantedAuthority> authorities = List.of();
+		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+
+		// Generate token
+		String token = tokenProvider.generateJwtToken(authentication, false);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			tokenProvider.getAuthentication(token);
+		});
+		assertThat(exception.getMessage()).contains("JWT token does not contain authorities.");
 	}
 
 	@Test
@@ -289,9 +341,47 @@ public class TokenProviderTest {
 		assertThat(actualExpirationDate.getTime()).isCloseTo(expectedExpirationDate.getTime(), Offset.offset(allowedSkew));
 	}
 
+	@Test
+	void testGetAuthenticationByUsername() throws OHServiceException, OHException {
+		Authentication authentication = createAuthentication();
+		String username = authentication.getName();
+		Collection< ? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+		// Mock the user with same values used in the helper
+		org.isf.menu.model.User user = new org.isf.menu.model.User();
+		user.setUserName(username);
+		user.setPasswd("password");
+
+		// Mock permissions with same values used in the helper
+		List<Permission> permissions = new ArrayList<Permission>();
+		Permission permission = new Permission();
+		permission.setName("ROLE_USER");
+		permissions.add(permission);
+
+		when(userManager.getUserByName(any())).thenReturn(user);
+		when(permissionManager.retrievePermissionsByUsername(any())).thenReturn(permissions);
+
+		Authentication result = tokenProvider.getAuthenticationByUsername(username);
+
+		assertThat(result).isNotNull();
+		assertThat(result.getName()).isEqualTo(username);
+		assertThat(result.getAuthorities()).isEqualTo(authorities);
+	}
+
+	@Test
+	void testGenerateRefreshToken() {
+		// Create a mock authentication
+		Authentication authentication = createAuthentication();
+
+		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+
+		assertThat(refreshToken).isNotNull();
+		assertThat(refreshToken.length()).isGreaterThan(0);
+	}
+
 	// Helper method to generate RSA key pair
-	private KeyPair generateRsaKeyPair() throws NoSuchAlgorithmException {
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+	private KeyPair generateRsaKeyPair(String algorithm) throws NoSuchAlgorithmException {
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
 		keyPairGenerator.initialize(2048);
 		return keyPairGenerator.generateKeyPair();
 	}
@@ -304,7 +394,7 @@ public class TokenProviderTest {
 		return authentication;
 	}
 
-	// Helper method to extract key by reflection
+	// Helper method to extract key by reflection, needed to avoid getters
 	private Key extractKeyFromTokenProvider() throws NoSuchFieldException, IllegalAccessException {
 		Field keyField = TokenProvider.class.getDeclaredField("key");
 		keyField.setAccessible(true);

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,38 +21,15 @@
  */
 package org.isf.login.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+public class TokenRefreshRequest {
 
-@Schema(description = "Class representing a Login response")
-public class LoginResponse {
-
-	@Schema(description = "Token")
-	private String token;
-
-	@Schema(description = "RefreshToken")
 	private String refreshToken;
 
-	@Schema(description = "Type of Token", example = "Bearer")
-	private String type = "Bearer";
-
-	@Schema(description = "User name", example = "admin")
-	private String username;
-
-	public LoginResponse() {
+	public TokenRefreshRequest() {
 	}
 
-	public LoginResponse(String token, String refreshToken, String username) {
-		this.token = token;
+	public TokenRefreshRequest(String refreshToken) {
 		this.refreshToken = refreshToken;
-		this.username = username;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
 	}
 
 	public String getRefreshToken() {
@@ -62,21 +39,4 @@ public class LoginResponse {
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 }
