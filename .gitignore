@@ -29,6 +29,7 @@ OH_API_PID
 *.iws
 *.iml
 *.ipr
+*.pid
 
 ### NetBeans ###
 /nbproject/private/
@@ -40,4 +41,8 @@ OH_API_PID
 
 ### VScode ###
 .vscode
+/deps/
+OH_API_PID
 
+### Git ###
+/**/.gitkeep

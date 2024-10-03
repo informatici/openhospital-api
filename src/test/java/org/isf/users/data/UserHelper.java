@@ -19,13 +19,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.menu.data;
+package org.isf.users.data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.menu.dto.UserSettingDTO;
-import org.isf.menu.model.UserSetting;
+import org.isf.menu.model.User;
+import org.isf.usergroups.data.UserGroupHelper;
+import org.isf.utils.exception.OHException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,42 +39,46 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
- *
+ * 
  * @author Silevester D.
  * @since 1.15
  */
-public class UserSettingHelper {
-	public static UserSetting generate() {
-		UserSetting userSetting = new UserSetting();
-		userSetting.setUser("contrib");
-		userSetting.setConfigName("test.config");
-		userSetting.setConfigValue("test config value");
+public class UserHelper {
 
-		return userSetting;
-	}
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserHelper.class);
 
-	public static List<UserSetting> generateMany(int nb) {
-		return IntStream.range(0, nb).mapToObj(i -> {
-			UserSetting userSetting = new UserSetting();
-			userSetting.setUser("contrib");
-			userSetting.setConfigName("test.config " + i);
-			userSetting.setConfigValue("test config " + i + " value");
-
-			return userSetting;
-		}).toList();
-	}
-
-	public static String asJsonString(List<UserSettingDTO> userSettingDTOS) {
-		try {
-			return new ObjectMapper()
+	private static final ObjectMapper objectMapper = new ObjectMapper()
 					.registerModule(new ParameterNamesModule())
 					.registerModule(new Jdk8Module())
-					.registerModule(new JavaTimeModule())
-					.writeValueAsString(userSettingDTOS);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+					.registerModule(new JavaTimeModule());
 
-		return null;
+	public static User generateUser() throws OHException {
+		User user = new User();
+		user.setUserGroupName(UserGroupHelper.generateUserGroup());
+		user.setUserName("oh user");
+		user.setDesc("oh first user");
+		user.setPasswd("very strong password");
+		return user;
+	}
+
+	public static List<User> generateUsers(int nbUsers) throws OHException {
+		return IntStream.range(0, nbUsers).mapToObj(i -> {
+			try {
+				return generateUser();
+			} catch (OHException e) {
+				LOGGER.error("Error generating user", e);
+				return null;
+			}
+		}).collect(Collectors.toList());
+	}
+
+	// TODO: to be moved in a general package?
+	public static <T> String asJsonString(T object) {
+		try {
+			return objectMapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			LOGGER.error("Error converting object to JSON", e);
+			return null;
+		}
 	}
 }
