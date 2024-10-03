@@ -28,6 +28,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
@@ -387,13 +388,53 @@ public class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.create", "grouppermission.delete" })
+		@DisplayName("Should replace user group permissions")
+		void shouldReplaceUserGroupPermissions() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(groupPermissionManager.update(any(), any(), any())).thenReturn(List.of(permission));
+
+			var result = mvc.perform(
+					patch("/usergroups/{group_code}/permissions", userGroup.getCode())
+						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(permission.getId()))))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.[0].id").value(permission.getId()))
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
+		@DisplayName("Should fail to replace user group permissions when insufficient permissions")
+		void shouldFailToReplaceUserGroupPermissionsWhenInsufficientPermissions() throws Exception {
+
+			var result = mvc.perform(
+					patch("/usergroups/{group_code}/permissions", "12")
+						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(44))))
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
 		@DisplayName("Should update user group permissions")
 		void shouldUpdateUserGroupPermissions() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
 
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
-			when(groupPermissionManager.update(any(), any())).thenReturn(List.of(permission));
+			when(groupPermissionManager.update(any(), any(), any())).thenReturn(List.of(permission));
 
 			var result = mvc.perform(
 					put("/usergroups/{group_code}/permissions", userGroup.getCode())
@@ -409,7 +450,7 @@ public class UserGroupControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
+		@WithMockUser(username = "admin")
 		@DisplayName("Should fail to update user group permissions when insufficient permissions")
 		void shouldFailToUpdateUserGroupPermissionsWhenInsufficientPermissions() throws Exception {
 
