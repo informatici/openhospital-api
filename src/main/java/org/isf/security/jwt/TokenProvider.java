@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import jakarta.annotation.PostConstruct;
 
+import org.isf.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -71,6 +73,9 @@ public class TokenProvider implements Serializable {
 
 	private JwtParser jwtParser;
 
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
+
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
@@ -78,8 +83,11 @@ public class TokenProvider implements Serializable {
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
-		this.tokenValidityInMilliseconds = 1000L * 6000;
-		this.tokenValidityInMillisecondsForRememberMe = 1000L * 6000;
+		// 30 minutes (900,000 milliseconds)
+		this.tokenValidityInMilliseconds = 1000L * 60 * 30;
+
+		// 3 days (604,800,000 milliseconds)
+		this.tokenValidityInMillisecondsForRememberMe = 1000L * 60 * 60 * 24 * 3;
 
 		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
 	}
@@ -137,13 +145,32 @@ public class TokenProvider implements Serializable {
 		return Jwts.builder()
 						.setSubject(authentication.getName())
 						.claim(AUTHORITIES_KEY, authorities)
+						.setIssuedAt(new Date())
 						.signWith(key, SignatureAlgorithm.HS512)
 						.setExpiration(validity)
 						.compact();
 	}
 
+	public String generateRefreshToken(Authentication authentication) {
+		return Jwts.builder()
+						.setSubject(authentication.getName())
+						.setIssuedAt(new Date())
+						.signWith(key, SignatureAlgorithm.HS512)
+						.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
+						.compact();
+	}
+
 	public Authentication getAuthentication(String token) {
 		final Claims claims = getAllClaimsFromToken(token);
+
+		/*
+		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string Left for security but not testable
+		 */
+		String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
+		if (authoritiesClaim.isEmpty()) {
+			LOGGER.error("JWT token does not contain any authorities");
+			throw new IllegalArgumentException("JWT token does not contain authorities.");
+		}
 
 		final Collection< ? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
 						.map(SimpleGrantedAuthority::new)
@@ -154,9 +181,17 @@ public class TokenProvider implements Serializable {
 		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
 	}
 
+	public Authentication getAuthenticationByUsername(String username) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	}
+
 	public TokenValidationResult validateToken(String token) {
 		try {
 			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+			/*
+			 * If claims.getSubject() not null for sure is not empy. Left here for security but not testable
+			 */
 			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
 				throw new IllegalArgumentException("JWT claims string is empty.");
 			}

@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
 import org.isf.usergroups.data.UserGroupHelper;
-import org.isf.users.dto.UserDTO;
 import org.isf.utils.exception.OHException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,10 +39,18 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * Helper class to generate DTOs and Entities for users endpoints test
+ * 
  * @author Silevester D.
  * @since 1.15
  */
 public class UserHelper {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserHelper.class);
+
+	private static final ObjectMapper objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
 
 	public static User generateUser() throws OHException {
 		User user = new User();
@@ -54,43 +62,23 @@ public class UserHelper {
 	}
 
 	public static List<User> generateUsers(int nbUsers) throws OHException {
-		UserGroup userGroup = UserGroupHelper.generateUserGroup();
-
 		return IntStream.range(0, nbUsers).mapToObj(i -> {
-			User user = new User();
-			user.setUserGroupName(userGroup);
-			user.setUserName("oh user");
-			user.setDesc("oh first user");
-			user.setPasswd("very strong password");
-			return user;
+			try {
+				return generateUser();
+			} catch (OHException e) {
+				LOGGER.error("Error generating user", e);
+				return null;
+			}
 		}).collect(Collectors.toList());
 	}
 
-	public static String asJsonString(UserDTO userDTO) {
+	// TODO: to be moved in a general package?
+	public static <T> String asJsonString(T object) {
 		try {
-			return new ObjectMapper()
-							.registerModule(new ParameterNamesModule())
-							.registerModule(new Jdk8Module())
-							.registerModule(new JavaTimeModule())
-							.writeValueAsString(userDTO);
+			return objectMapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			LOGGER.error("Error converting object to JSON", e);
+			return null;
 		}
-
-		return null;
-	}
-
-	public static String asJsonString(List<UserDTO> users) {
-		try {
-			return new ObjectMapper()
-							.registerModule(new ParameterNamesModule())
-							.registerModule(new Jdk8Module())
-							.registerModule(new JavaTimeModule())
-							.writeValueAsString(users);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 }
