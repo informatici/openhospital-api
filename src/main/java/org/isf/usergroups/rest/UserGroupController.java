@@ -268,7 +268,7 @@ public class UserGroupController {
 		LOGGER.info("Attempting to replace user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissions());
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
-			LOGGER.info("Could not find user corresponding to the group code {}", userGroupCode);
+			LOGGER.info("Could not find user group corresponding to the group code {}", userGroupCode);
 			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
 
