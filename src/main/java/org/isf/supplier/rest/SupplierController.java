@@ -38,12 +38,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -52,6 +55,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController(value = "/suppliers")
 @Tag(name = "Suppliers")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SupplierController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SupplierController.class);
@@ -61,85 +65,111 @@ public class SupplierController {
 
 	@Autowired
 	private SupplierMapper mapper;
-	
+
 	/**
 	 * Saves the specified {@link SupplierDTO}.
-	 * @param supplierDTO
+	 * @param supplierDTO The payload
 	 * @return {@code true} if the supplier was saved
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to save the supplier
 	 */
-	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SupplierDTO> saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public SupplierDTO saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
 		try {
 			Supplier newSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 			LOGGER.info("Supplier saved successfully.");
-			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newSupplier));
+			return mapper.map2DTO(newSupplier);
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not created.");
 			throw new OHAPIException(new OHExceptionMessage("Supplier not created."));
 		}
 	}
-	
+
 	/**
 	 * Updates the specified {@link SupplierDTO}.
-	 * @param supplierDTO
+	 * @param supplierDTO The payload
 	 * @return {@code true} if the supplier was updated
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update the supplier
 	 */
-	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SupplierDTO> updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
+	@PutMapping
+	public SupplierDTO updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		if (supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
-			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
+			throw new OHAPIException(new OHExceptionMessage("Supplier not found."), HttpStatus.NOT_FOUND);
 		}
 		LOGGER.info("Updating supplier...");
 		try {
 			Supplier updatedSupplier = manager.saveOrUpdate(mapper.map2Model(supplierDTO));
 			LOGGER.info("Supplier updated successfully.");
-			return ResponseEntity.ok(mapper.map2DTO(updatedSupplier));
+			return mapper.map2DTO(updatedSupplier);
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Supplier is not updated.");
 			throw new OHAPIException(new OHExceptionMessage("Supplier not updated."));
 		}
 	}
-	
+
 	/**
 	 * Get the suppliers.
-	 * @param excludeDeleted
+	 * @param excludeDeleted Whether to exclude deleted suppliers or not
 	 * @return the list of suppliers found
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to retrieve suppliers
 	 */
-	@GetMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping
 	public ResponseEntity<List<SupplierDTO>> getSuppliers(
-			@RequestParam(name="exclude_deleted", defaultValue="true") boolean excludeDeleted) throws OHServiceException {
+					@RequestParam(name="exclude_deleted", defaultValue="true") boolean excludeDeleted
+	) throws OHServiceException {
 		LOGGER.info("Loading suppliers...");
 		List<Supplier> suppliers = excludeDeleted? manager.getList() : manager.getAll();
 		List<SupplierDTO> mappedSuppliers = mapper.map2DTOList(suppliers);
+
 		if (mappedSuppliers.isEmpty()) {
 			LOGGER.info("No supplier found.");
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedSuppliers);
-		} else {
-			LOGGER.info("Found {} suppliers.", mappedSuppliers.size());
-			return ResponseEntity.ok(mappedSuppliers);
 		}
+
+		LOGGER.info("Found {} suppliers.", mappedSuppliers.size());
+		return ResponseEntity.ok(mappedSuppliers);
 	}
-	
+
 	/**
 	 * Get a supplier by its ID.
-	 * @param id
+	 * @param id The ID of the supplier to retrieve
 	 * @return the found supplier
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to retrieve the supplier
 	 */
-	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<SupplierDTO> getSuppliers(@PathVariable Integer id) throws OHServiceException {
+	@GetMapping(value = "/{id}")
+	public SupplierDTO getSuppliers(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
 		if (supplier == null) {
 			LOGGER.info("Supplier not found.");
-			throw new OHAPIException(new OHExceptionMessage("Supplier not found."));
-		} else {
-			LOGGER.info("Found supplier.");
-			return ResponseEntity.ok(mapper.map2DTO(supplier));
+			throw new OHAPIException(new OHExceptionMessage("Supplier not found."), HttpStatus.NOT_FOUND);
 		}
+
+		LOGGER.info("Found supplier.");
+		return mapper.map2DTO(supplier);
+	}
+
+	/**
+	 * Delete a supplier.
+	 * <p>This is a soft deletion.</p>
+	 * @param id Supplier ID
+	 * @throws OHServiceException When failed to delete the supplier
+	 */
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteSupplier(@PathVariable Integer id) throws OHServiceException {
+		LOGGER.info("Loading supplier with ID {}", id);
+		Supplier supplier = manager.getByID(id);
+		if (supplier == null) {
+			LOGGER.info("Supplier not found.");
+			throw new OHAPIException(new OHExceptionMessage("Supplier not found."), HttpStatus.NOT_FOUND);
+		}
+
+		LOGGER.info("Deleting supplier with ID {}", id);
+
+		manager.delete(supplier);
+
+		LOGGER.info("Supplier with ID {} deleted", id);
 	}
 }
