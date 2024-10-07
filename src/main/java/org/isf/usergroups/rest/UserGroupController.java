@@ -55,7 +55,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -232,7 +231,7 @@ public class UserGroupController {
 		@PathVariable("group_code") String userGroupCode,
 		@RequestBody GroupPermissionsDTO payload
 	) throws OHServiceException {
-		LOGGER.info("Attempting to update user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissions());
+		LOGGER.info("Attempting to update user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissionIds());
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
 			LOGGER.info("Could not find user corresponding to the group code {}", userGroupCode);
@@ -240,7 +239,7 @@ public class UserGroupController {
 		}
 
 		try {
-			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissions(), false));
+			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissionIds(), false));
 		} catch (OHDataValidationException e) {
 			LOGGER.info("Fail to update user groups permissions, reason: {}", e.getMessage());
 			throw new OHAPIException(new OHExceptionMessage("Failed to update permissions"));
@@ -265,7 +264,7 @@ public class UserGroupController {
 		@PathVariable("group_code") String userGroupCode,
 		@RequestBody GroupPermissionsDTO payload
 	) throws OHServiceException {
-		LOGGER.info("Attempting to replace user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissions());
+		LOGGER.info("Attempting to replace user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissionIds());
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
 			LOGGER.info("Could not find user group corresponding to the group code {}", userGroupCode);
@@ -273,7 +272,7 @@ public class UserGroupController {
 		}
 
 		try {
-			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissions(), true));
+			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissionIds(), true));
 		} catch (OHDataValidationException e) {
 			LOGGER.info("Fail to replace user groups permissions, reason: {}", e.getMessage());
 			throw new OHAPIException(new OHExceptionMessage("Failed to update permissions"));
