@@ -21,6 +21,8 @@
  */
 package org.isf.config;
 
+import java.util.List;
+
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.ApiAuditorAwareImpl;
 import org.isf.security.CustomLogoutHandler;
@@ -52,8 +54,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -252,7 +252,9 @@ public class SecurityConfig {
 			// grouppermission
 			.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
 			.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
-			.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.update")
+			.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+			.requestMatchers(HttpMethod.PATCH, "/usergroups/{group_code}/permissions/**")
+			.access("hasAuthority('grouppermission.create') and hasAuthority('grouppermission.delete')")
 			.requestMatchers(HttpMethod.DELETE, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
 			// usergroups
 			.requestMatchers(HttpMethod.POST, "/usergroups/**").hasAuthority("usergroups.create")
