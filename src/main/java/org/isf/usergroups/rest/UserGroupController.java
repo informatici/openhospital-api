@@ -21,9 +21,13 @@
  */
 package org.isf.usergroups.rest;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import jakarta.validation.Valid;
+
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.UserGroup;
 import org.isf.permissions.dto.PermissionDTO;
@@ -33,6 +37,7 @@ import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.GroupPermission;
 import org.isf.permissions.model.Permission;
 import org.isf.shared.exceptions.OHAPIException;
+import org.isf.usergroups.dto.GroupPermissionsDTO;
 import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.utils.exception.OHDataValidationException;
@@ -43,12 +48,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController(value = "/usergroups")
 @Tag(name = "User Groups")
@@ -69,7 +80,6 @@ public class UserGroupController {
 
 	/**
 	 * Returns the list of {@link UserGroup}s.
-	 *
 	 * @return the list of {@link UserGroup}s
 	 */
 	@GetMapping(value = "/usergroups", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +93,6 @@ public class UserGroupController {
 
 	/**
 	 * Deletes a {@link UserGroup}.
-	 *
 	 * @param code - the code of the {@link UserGroup} to delete
 	 */
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -99,7 +108,6 @@ public class UserGroupController {
 
 	/**
 	 * Creates a new {@link UserGroup} with a minimum set of rights.
-	 *
 	 * @param userGroupDTO - the {@link UserGroup} to insert
 	 * @return the {@link UserGroupDTO} of new user group.
 	 * @throws OHServiceException When failed to create the user group
@@ -126,7 +134,6 @@ public class UserGroupController {
 
 	/**
 	 * Updates an existing {@link UserGroup}.
-	 *
 	 * @param userGroupDTO - the {@link UserGroup} to update
 	 * @return {@link  UserGroupDTO} for the updated group.
 	 * @throws OHServiceException When failed to update the user group
@@ -139,7 +146,7 @@ public class UserGroupController {
 		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
 
 		if (!userManager.findUserGroupByCode(userGroupDTO.getCode()).getCode().equals(group.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
 
 		List<Permission> permissions = new ArrayList<>();
@@ -159,7 +166,6 @@ public class UserGroupController {
 
 	/**
 	 * Retrieve a {@link UserGroup} using its code
-	 *
 	 * @param code UserGroup code
 	 * @return Returns the {@link UserGroup} found using the given code
 	 * @throws OHServiceException When failed to retrieve the user group
@@ -168,7 +174,7 @@ public class UserGroupController {
 	public UserGroupDTO getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(code);
 		if (userGroup == null) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
 
 		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
@@ -184,9 +190,8 @@ public class UserGroupController {
 
 	/**
 	 * Assign a {@link Permission} to a {@link UserGroup}
-	 *
 	 * @param userGroupCode - the {@link UserGroup}'s code
-	 * @param permissionId  - the {@link Permission}'s id
+	 * @param permissionId - the {@link Permission}'s id
 	 * @return the id of the new group permission.
 	 * @throws OHServiceException When failed to assign the permission to the user group
 	 */
@@ -198,7 +203,7 @@ public class UserGroupController {
 	) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
 
 		Permission permission = permissionManager.retrievePermissionById(permissionId);
@@ -215,10 +220,69 @@ public class UserGroupController {
 	}
 
 	/**
+	 * Assign permissions to the target user group, ignore those already assigned.
+	 * @param userGroupCode Code of the group to update
+	 * @param payload New group permissions
+	 * @return List of {@link PermissionDTO} corresponding to the list of permissions assigned to the group
+	 * @throws OHServiceException If the update operation fails
+	 */
+	@PutMapping(value = "/usergroups/{group_code}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<PermissionDTO> updateGroupPermissions(
+		@PathVariable("group_code") String userGroupCode,
+		@RequestBody GroupPermissionsDTO payload
+	) throws OHServiceException {
+		LOGGER.info("Attempting to update user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissionIds());
+		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
+		if (userGroup == null) {
+			LOGGER.info("Could not find user corresponding to the group code {}", userGroupCode);
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissionIds(), false));
+		} catch (OHDataValidationException e) {
+			LOGGER.info("Fail to update user groups permissions, reason: {}", e.getMessage());
+			throw new OHAPIException(new OHExceptionMessage("Failed to update permissions"));
+		}
+	}
+
+	/**
+	 * Replace permissions for the target user group with the one provided in the payload.
+	 * <ul>
+	 *     <li>Ids corresponding to permissions already assigned to the group will be skipped.</li>
+	 *     <li>User group permissions that don't have their id in the permission ids payload will be removed</li>
+	 *     <li>ids that corresponding permission are not yet assigned to the groups will be assigned.</li>
+	 *     <li>Permissions ids that don't exist are ignored</li>
+	 * </ul>
+	 * @param userGroupCode Code of the group to update
+	 * @param payload New group permissions
+	 * @return List of {@link PermissionDTO} corresponding to the list of permissions assigned to the group
+	 * @throws OHServiceException If the update operation fails
+	 */
+	@PatchMapping(value = "/usergroups/{group_code}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<PermissionDTO> replaceGroupPermissions(
+		@PathVariable("group_code") String userGroupCode,
+		@RequestBody GroupPermissionsDTO payload
+	) throws OHServiceException {
+		LOGGER.info("Attempting to replace user group({}) permissions, with permissions ids, {}", userGroupCode, payload.permissionIds());
+		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
+		if (userGroup == null) {
+			LOGGER.info("Could not find user group corresponding to the group code {}", userGroupCode);
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			return permissionMapper.map2DTOList(groupPermissionManager.update(userGroup, payload.permissionIds(), true));
+		} catch (OHDataValidationException e) {
+			LOGGER.info("Fail to replace user groups permissions, reason: {}", e.getMessage());
+			throw new OHAPIException(new OHExceptionMessage("Failed to update permissions"));
+		}
+	}
+
+	/**
 	 * Revoke a {@link Permission} from a {@link UserGroup}
-	 *
 	 * @param userGroupCode - the {@link UserGroup}'s code
-	 * @param permissionId  - the {@link Permission}'s id
+	 * @param permissionId - the {@link Permission}'s id
 	 * @throws OHServiceException When failed to revoke the permission to the user group
 	 */
 	@ResponseStatus(HttpStatus.NO_CONTENT)
@@ -229,7 +293,7 @@ public class UserGroupController {
 	) throws OHServiceException {
 		UserGroup userGroup = userManager.findUserGroupByCode(userGroupCode);
 		if (userGroup == null) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
 
 		Permission permission = permissionManager.retrievePermissionById(permissionId);
