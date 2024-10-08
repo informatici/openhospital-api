@@ -88,13 +88,13 @@ public class SupplierControllerTest {
 		when(supplierBrowserManager.saveOrUpdate(any())).thenReturn(supplier);
 
 		var result = mvc.perform(post("/suppliers")
-										.content(objectMapper.writeValueAsString(supplierDTO))
-										.contentType(MediaType.APPLICATION_JSON)
-						)
-						.andDo(log())
-						.andExpect(status().isCreated())
-						.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
-						.andReturn();
+				.content(objectMapper.writeValueAsString(supplierDTO))
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isCreated())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -110,13 +110,13 @@ public class SupplierControllerTest {
 		when(supplierBrowserManager.saveOrUpdate(any())).thenReturn(supplier);
 
 		var result = mvc.perform(put("/suppliers")
-										.content(objectMapper.writeValueAsString(supplierDTO))
-										.contentType(MediaType.APPLICATION_JSON)
-						)
-						.andDo(log())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
-						.andReturn();
+				.content(objectMapper.writeValueAsString(supplierDTO))
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -131,13 +131,13 @@ public class SupplierControllerTest {
 		when(supplierBrowserManager.getAll()).thenReturn(suppliers);
 
 		var result = mvc.perform(get("/suppliers")
-										.queryParam("exclude_deleted", String.valueOf(false))
-										.contentType(MediaType.APPLICATION_JSON)
-						)
-						.andDo(log())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
-						.andReturn();
+				.queryParam("exclude_deleted", String.valueOf(false))
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -152,12 +152,12 @@ public class SupplierControllerTest {
 		when(supplierBrowserManager.getList()).thenReturn(suppliers);
 
 		var result = mvc.perform(get("/suppliers")
-										.contentType(MediaType.APPLICATION_JSON)
-						)
-						.andDo(log())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
-						.andReturn();
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -172,12 +172,12 @@ public class SupplierControllerTest {
 		when(supplierBrowserManager.getByID(anyInt())).thenReturn(supplier);
 
 		var result = mvc.perform(delete("/suppliers/{id}", 1)
-										.content(objectMapper.writeValueAsString(supplierDTO))
-										.contentType(MediaType.APPLICATION_JSON)
-						)
-						.andDo(log())
-						.andExpect(status().isNoContent())
-						.andReturn();
+				.content(objectMapper.writeValueAsString(supplierDTO))
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isNoContent())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -188,15 +188,15 @@ public class SupplierControllerTest {
 			i.getAndIncrement();
 
 			return new Supplier(
-							i.get(),
-							"Supplier " + i,
-							"supAddress " + i,
-							"supTaxCode " + i,
-							"supPhone " + i,
-							"supFax " + i,
-							"supEmail " + i,
-							"supNote " + i,
-							deleted
+				i.get(),
+				"Supplier " + i,
+				"supAddress " + i,
+				"supTaxCode " + i,
+				"supPhone " + i,
+				"supFax " + i,
+				"supEmail " + i,
+				"supNote " + i,
+				deleted
 			);
 		}).toList();
 	}
