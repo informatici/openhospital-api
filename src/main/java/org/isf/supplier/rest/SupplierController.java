@@ -55,7 +55,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController(value = "/suppliers")
 @Tag(name = "Suppliers")
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SupplierController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SupplierController.class);
@@ -72,7 +71,7 @@ public class SupplierController {
 	 * @return {@code true} if the supplier was saved
 	 * @throws OHServiceException When failed to save the supplier
 	 */
-	@PostMapping
+	@PostMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public SupplierDTO saveSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		LOGGER.info("Saving a new supplier...");
@@ -92,7 +91,7 @@ public class SupplierController {
 	 * @return {@code true} if the supplier was updated
 	 * @throws OHServiceException When failed to update the supplier
 	 */
-	@PutMapping
+	@PutMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public SupplierDTO updateSupplier(@RequestBody @Valid SupplierDTO supplierDTO) throws OHServiceException {
 		if (supplierDTO.getSupId() == null || manager.getByID(supplierDTO.getSupId()) == null) {
 			throw new OHAPIException(new OHExceptionMessage("Supplier not found."), HttpStatus.NOT_FOUND);
@@ -114,7 +113,7 @@ public class SupplierController {
 	 * @return the list of suppliers found
 	 * @throws OHServiceException When failed to retrieve suppliers
 	 */
-	@GetMapping
+	@GetMapping(value = "/suppliers", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<SupplierDTO>> getSuppliers(
 					@RequestParam(name="exclude_deleted", defaultValue="true") boolean excludeDeleted
 	) throws OHServiceException {
@@ -137,7 +136,7 @@ public class SupplierController {
 	 * @return the found supplier
 	 * @throws OHServiceException When failed to retrieve the supplier
 	 */
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public SupplierDTO getSuppliers(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Loading supplier with ID {}", id);
 		Supplier supplier = manager.getByID(id);
@@ -156,7 +155,7 @@ public class SupplierController {
 	 * @param id Supplier ID
 	 * @throws OHServiceException When failed to delete the supplier
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping(value = "/suppliers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteSupplier(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Loading supplier with ID {}", id);
