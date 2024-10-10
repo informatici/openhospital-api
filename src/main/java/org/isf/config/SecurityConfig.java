@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -249,21 +250,32 @@ public class SecurityConfig {
 										.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 										.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
 										// grouppermission
-										.requestMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
-										.requestMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("grouppermission.read")
-										.requestMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
-										.requestMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
+										.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+										.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
+										.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+										.requestMatchers(HttpMethod.PATCH, "/usergroups/{group_code}/permissions/**")
+										.access((authentication, context) -> {
+											boolean hasCreateAuthority = authentication.get().getAuthorities().stream()
+															.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("grouppermission.create"));
+											boolean hasDeleteAuthority = authentication.get().getAuthorities().stream()
+															.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("grouppermission.delete"));
+
+											return new AuthorizationDecision(hasCreateAuthority && hasDeleteAuthority);
+										})
+										.requestMatchers(HttpMethod.DELETE, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
+										// usergroups
+										.requestMatchers(HttpMethod.POST, "/usergroups/**").hasAuthority("usergroups.create")
+										.requestMatchers(HttpMethod.GET, "/usergroups/**").hasAuthority("usergroups.read")
+										.requestMatchers(HttpMethod.PUT, "/usergroups/**").hasAuthority("usergroups.update")
+										.requestMatchers(HttpMethod.DELETE, "/usergroups/**").hasAuthority("usergroups.delete")
 										// user
+										.requestMatchers("/users/me").authenticated()
 										.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
 										.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
-										.requestMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
+										.requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("users.update")
 										.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
 										// user setting
-										.requestMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersettings.read")
-										.requestMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersettings.read")
-										.requestMatchers(HttpMethod.POST, "/users/settings/**").hasAuthority("usersettings.create")
-										.requestMatchers(HttpMethod.PUT, "/users/settings/**").hasAuthority("usersettings.update")
-										.requestMatchers(HttpMethod.DELETE, "/users/settings/**").hasAuthority("usersettings.delete")
+										.requestMatchers("/usersettings/**").authenticated()
 										// pregnanttreatmenttypes
 										.requestMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
 										.requestMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")
