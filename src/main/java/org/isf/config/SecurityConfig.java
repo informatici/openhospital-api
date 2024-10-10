@@ -114,7 +114,7 @@ public class SecurityConfig {
 						.csrf(csrf -> csrf.disable()) // Disable CSRF protection
 						.authorizeHttpRequests(auth -> auth
 										.requestMatchers("/auth/login", "/auth/refresh-token").permitAll()
-
+										.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 										// admissions
 										.requestMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
 										.requestMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admissions.read")
