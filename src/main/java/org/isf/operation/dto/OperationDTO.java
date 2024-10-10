@@ -23,6 +23,7 @@ package org.isf.operation.dto;
 
 import jakarta.validation.constraints.NotNull;
 
+import org.isf.operation.enums.OperationTarget;
 import org.isf.opetype.dto.OperationTypeDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,6 +43,10 @@ public class OperationDTO {
 	private OperationTypeDTO type;
 
 	@NotNull
+	@Schema(description = "The operation context", example = "opd_admission")
+	private OperationTarget opeFor;
+
+	@NotNull
 	@Schema(description = "The operation major")
 	private Integer major;
 
@@ -59,33 +64,33 @@ public class OperationDTO {
 	public String getCode() {
 		return this.code;
 	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
-	public OperationTypeDTO getType() {
-		return this.type;
-	}
-
-	public Integer getMajor() {
-		return this.major;
-	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
+	public String getDescription() {
+		return this.description;
+	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	public OperationTypeDTO getType() {
+		return this.type;
+	}
 	public void setType(OperationTypeDTO type) {
 		this.type = type;
 	}
-
+	public Integer getMajor() {
+		return this.major;
+	}
 	public void setMajor(Integer major) {
 		this.major = major;
+	}
+
+	public OperationTarget getOpeFor() {
+		return this.opeFor;
+	}
+	public void setOpeFor(OperationTarget opeFor) {
+		this.opeFor = opeFor;
 	}
 
 }

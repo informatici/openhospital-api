@@ -6219,13 +6219,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
+        male:
           type: boolean
         female:
           type: boolean
-        male:
-          type: boolean
         pharmacy:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -6779,6 +6779,7 @@ components:
         - code
         - description
         - major
+        - opeFor
         - type
       type: object
       properties:
@@ -6792,6 +6793,14 @@ components:
           description: The operation description
         type:
           $ref: '#/components/schemas/OperationTypeDTO'
+        opeFor:
+          type: string
+          description: The operation context
+          example: opd_admission
+          enum:
+            - opd_admission
+            - admission
+            - opd
         major:
           type: integer
           description: The operation major
@@ -8306,16 +8315,16 @@ components:
                         height:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                     rect:
@@ -8341,16 +8350,16 @@ components:
                         height:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                       writeOnly: true
@@ -8466,16 +8475,16 @@ components:
                             height:
                               type: number
                               format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                             x:
                               type: number
                               format: double
                             "y":
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
                               type: number
                               format: double
                         rect:
@@ -8501,16 +8510,16 @@ components:
                             height:
                               type: number
                               format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                             x:
                               type: number
                               format: double
                             "y":
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
                               type: number
                               format: double
                           writeOnly: true
@@ -8555,16 +8564,16 @@ components:
                         height:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                 clipRect:
@@ -8625,16 +8634,16 @@ components:
                         height:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                     rect:
@@ -8660,16 +8669,16 @@ components:
                         height:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         x:
                           type: number
                           format: double
                         "y":
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                       writeOnly: true
@@ -8753,13 +8762,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        medical:
-          type: integer
-          format: int32
         sms:
           type: boolean
         notify:
           type: boolean
+        medical:
+          type: integer
+          format: int32
     TherapyDTO:
       type: object
       properties:
