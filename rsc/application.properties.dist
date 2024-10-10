@@ -14,7 +14,7 @@ spring.pid.fail-on-write-error=true
 spring.pid.file=OH_API_PID
 
 ### In production change to http://<domain>
-cors.allowed.origins=http://localhost:8080,http://localhost:3000
+cors.allowed.origins=http://API_HOST:API_PORT,http://UI_HOST:UI_PORT
 
 ### Swagger-UI (info)
 api.host=API_HOST:API_PORT
