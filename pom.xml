@@ -8,13 +8,16 @@
         <version>3.2.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
     <version>0.1.0</version>
+    <packaging>${packaging.type}</packaging>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
 
     <properties>
+        <packaging.type>jar</packaging.type>
         <oh-core.version>1.14.2-SNAPSHOT</oh-core.version>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,16 +34,9 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -308,6 +304,18 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>war</id>
+            <properties>
+                <packaging.type>war</packaging.type>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
-
 </project>

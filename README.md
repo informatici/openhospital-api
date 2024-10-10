@@ -9,6 +9,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
   * [How to build [WIP]](#how-to-build-wip)
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
+  * [How to build a war file](#how-to-build-a-war-file)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
   * [How to generate openapi specs](#how-to-generate-openapi-specs)
   * [Cleaning](#cleaning)
@@ -94,6 +95,14 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
 
  1. import postman_collection.json in your Postman installation
  
+### How to build a war file
+ 1. Start tomcat \
+   `docker run -d -p 8080:8080 -v /YOUR_FOLDER_WEBAPP:/usr/local/tomcat/webapps tomcat:11`
+ 2. Build war file \
+    `./mvnw clean install -P war` 
+ 3. Move war file to webapps tomcat folder \
+    `mv sourceRoot/target/*.war /YOUR_FOLDER_WEBAPP/`
+
 ## How to deploy backend in Docker environment
 
 Make sure you have docker with docker-compose installed, then run the following commands:
