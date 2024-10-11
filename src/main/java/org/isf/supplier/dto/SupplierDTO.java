@@ -52,6 +52,9 @@ public class SupplierDTO {
 	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public SupplierDTO() {
 	}
 
@@ -129,5 +132,13 @@ public class SupplierDTO {
 
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

@@ -43,6 +43,9 @@ public class UserSettingDTO {
 	@Schema(description = "The value of the user", maxLength = 65535)
 	private String configValue;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public int getId() {
 		return id;
 	}
@@ -75,4 +78,11 @@ public class UserSettingDTO {
 		this.user = user;
 	}
 
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 }

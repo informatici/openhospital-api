@@ -6444,6 +6444,11 @@ components:
           maxLength: 45
           type: string
           description: Service done during the visit
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
       description: Class representing a vaccine type
     VaccineTypeDTO:
       required:
@@ -6513,6 +6518,11 @@ components:
           maxLength: 65535
           type: string
           description: The value of the user
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     PermissionDTO:
       required:
       - description
@@ -6642,6 +6652,11 @@ components:
           maxLength: 200
           type: string
           description: The supplier's notes
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     PricesOthersDTO:
       required:
       - code
@@ -6663,6 +6678,11 @@ components:
           maxLength: 100
           type: string
           description: The description
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         opdInclude:
           type: boolean
         ipdInclude:
@@ -6704,6 +6724,11 @@ components:
           type: string
           description: The currency
           example: FCFA
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         hashCode:
           type: integer
           format: int32
@@ -6928,11 +6953,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7011,6 +7036,11 @@ components:
           type: string
           description: user name who create the bill
           example: admin
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         list:
           type: boolean
       description: Class representing a bill
@@ -7656,6 +7686,11 @@ components:
           - regular
           - diarrheal
           - irregular
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     BillItemsDTO:
       required:
       - itemAmount
@@ -7775,6 +7810,11 @@ components:
         from:
           type: integer
           description: The minimum value of the range
+          format: int32
+          example: 0
+        lock:
+          type: integer
+          description: Lock
           format: int32
           example: 0
         to:
@@ -8042,10 +8082,10 @@ components:
                         type: object
                     family:
                       type: string
-                    plain:
-                      type: boolean
                     fontName:
                       type: string
+                    plain:
+                      type: boolean
                     transform:
                       type: object
                       properties:
@@ -8127,10 +8167,10 @@ components:
                             type: object
                         family:
                           type: string
-                        plain:
-                          type: boolean
                         fontName:
                           type: string
+                        plain:
+                          type: boolean
                         transform:
                           type: object
                           properties:
@@ -8319,16 +8359,16 @@ components:
                         x:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
                         width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                         maxX:
@@ -8354,16 +8394,16 @@ components:
                         x:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
                         width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                         maxX:
@@ -8479,16 +8519,16 @@ components:
                             x:
                               type: number
                               format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                             height:
                               type: number
                               format: double
                             width:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
                               type: number
                               format: double
                             maxX:
@@ -8514,16 +8554,16 @@ components:
                             x:
                               type: number
                               format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                             height:
                               type: number
                               format: double
                             width:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
                               type: number
                               format: double
                             maxX:
@@ -8568,16 +8608,16 @@ components:
                         x:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
                         width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                         maxX:
@@ -8638,16 +8678,16 @@ components:
                         x:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
                         width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                         maxX:
@@ -8673,16 +8713,16 @@ components:
                         x:
                           type: number
                           format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                         height:
                           type: number
                           format: double
                         width:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
                           type: number
                           format: double
                         maxX:
@@ -8778,13 +8818,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        notify:
-          type: boolean
-        sms:
-          type: boolean
         medical:
           type: integer
           format: int32
+        sms:
+          type: boolean
+        notify:
+          type: boolean
     TherapyDTO:
       type: object
       properties:
@@ -9085,6 +9125,11 @@ components:
           description: Price
           format: double
           example: 1500
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         editable:
           type: boolean
           readOnly: true
@@ -9125,6 +9170,9 @@ components:
           type: string
         currency:
           type: string
+        lock:
+          type: integer
+          format: int32
       description: The price list
     PageInfoDTO:
       type: object
@@ -9239,6 +9287,9 @@ components:
           type: integer
           format: int32
         to:
+          type: integer
+          format: int32
+        lock:
           type: integer
           format: int32
     PageAdmissionDTO:
