@@ -9244,9 +9244,6 @@ components:
         to:
           type: integer
           format: int32
-        lock:
-          type: integer
-          format: int32
     PageAdmissionDTO:
       type: object
       properties:
