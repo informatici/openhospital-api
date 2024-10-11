@@ -6237,9 +6237,9 @@ components:
           example: 0
         opd:
           type: boolean
-        female:
-          type: boolean
         male:
+          type: boolean
+        female:
           type: boolean
         pharmacy:
           type: boolean
@@ -8042,6 +8042,10 @@ components:
                         type: object
                     family:
                       type: string
+                    plain:
+                      type: boolean
+                    fontName:
+                      type: string
                     transform:
                       type: object
                       properties:
@@ -8103,10 +8107,6 @@ components:
                       type: array
                       items:
                         type: object
-                    plain:
-                      type: boolean
-                    fontName:
-                      type: string
                 fontMetrics:
                   type: object
                   properties:
@@ -8126,6 +8126,10 @@ components:
                           additionalProperties:
                             type: object
                         family:
+                          type: string
+                        plain:
+                          type: boolean
+                        fontName:
                           type: string
                         transform:
                           type: object
@@ -8188,10 +8192,6 @@ components:
                           type: array
                           items:
                             type: object
-                        plain:
-                          type: boolean
-                        fontName:
-                          type: string
                     height:
                       type: integer
                       format: int32
@@ -8313,13 +8313,22 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        height:
-                          type: number
-                          format: double
                         "y":
                           type: number
                           format: double
                         x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        width:
                           type: number
                           format: double
                         maxX:
@@ -8332,15 +8341,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     rect:
@@ -8348,13 +8348,22 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        height:
-                          type: number
-                          format: double
                         "y":
                           type: number
                           format: double
                         x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        width:
                           type: number
                           format: double
                         maxX:
@@ -8369,16 +8378,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8389,12 +8395,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                 xormode:
@@ -8473,13 +8473,22 @@ components:
                           properties:
                             empty:
                               type: boolean
-                            height:
-                              type: number
-                              format: double
                             "y":
                               type: number
                               format: double
                             x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
+                            width:
                               type: number
                               format: double
                             maxX:
@@ -8492,15 +8501,6 @@ components:
                               type: number
                               format: double
                             centerY:
-                              type: number
-                              format: double
-                            width:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
                               type: number
                               format: double
                         rect:
@@ -8508,13 +8508,22 @@ components:
                           properties:
                             empty:
                               type: boolean
-                            height:
-                              type: number
-                              format: double
                             "y":
                               type: number
                               format: double
                             x:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            height:
+                              type: number
+                              format: double
+                            width:
                               type: number
                               format: double
                             maxX:
@@ -8529,16 +8538,13 @@ components:
                             centerY:
                               type: number
                               format: double
-                            width:
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                           writeOnly: true
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8549,12 +8555,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     bounds2D:
@@ -8562,13 +8562,22 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        height:
-                          type: number
-                          format: double
                         "y":
                           type: number
                           format: double
                         x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        width:
                           type: number
                           format: double
                         maxX:
@@ -8581,15 +8590,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                 clipRect:
@@ -8632,13 +8632,22 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        height:
-                          type: number
-                          format: double
                         "y":
                           type: number
                           format: double
                         x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        width:
                           type: number
                           format: double
                         maxX:
@@ -8651,15 +8660,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     rect:
@@ -8667,13 +8667,22 @@ components:
                       properties:
                         empty:
                           type: boolean
-                        height:
-                          type: number
-                          format: double
                         "y":
                           type: number
                           format: double
                         x:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        height:
+                          type: number
+                          format: double
+                        width:
                           type: number
                           format: double
                         maxX:
@@ -8688,16 +8697,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8708,12 +8714,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                   deprecated: true
@@ -8778,9 +8778,9 @@ components:
         smsInt:
           type: integer
           format: int32
-        sms:
-          type: boolean
         notify:
+          type: boolean
+        sms:
           type: boolean
         medical:
           type: integer
@@ -9125,9 +9125,6 @@ components:
           type: string
         currency:
           type: string
-        lock:
-          type: integer
-          format: int32
       description: The price list
     PageInfoDTO:
       type: object
