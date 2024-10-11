@@ -176,7 +176,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.DELETE, "/examtypes/**").hasAuthority("examtypes.delete")
 				// hospitals
 				.requestMatchers(HttpMethod.POST, "/hospitals/**").hasAuthority("hospitals.create")
-				// .requestMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("hospital.read") to anyone
+				.requestMatchers(HttpMethod.GET, "/hospitals/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("hospitals.update")
 				.requestMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("hospitals.delete")
 				// laboratories
