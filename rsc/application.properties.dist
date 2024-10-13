@@ -13,6 +13,9 @@ server.servlet.session.cookie.http-only=true
 spring.pid.fail-on-write-error=true
 spring.pid.file=OH_API_PID
 
+### In production change to http://<domain>
+cors.allowed.origins=http://API_HOST:API_PORT,http://UI_HOST:UI_PORT
+
 ### Swagger-UI (info)
 api.host=API_HOST:API_PORT
 api.protocol=http
