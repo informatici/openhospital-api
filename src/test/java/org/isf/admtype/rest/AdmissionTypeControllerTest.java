@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.admtype.data.AdmissionTypeDTOHelper;
 import org.isf.admtype.dto.AdmissionTypeDTO;
@@ -59,7 +60,7 @@ public class AdmissionTypeControllerTest {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
 
 	@Mock
-	protected AdmissionTypeBrowserManager admtManagerMock;
+	protected AdmissionTypeBrowserManager admissionTypeManagerMock;
 
 	protected AdmissionTypeMapper admissionTypemapper = new AdmissionTypeMapper();
 
@@ -71,9 +72,9 @@ public class AdmissionTypeControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new AdmissionTypeController(admtManagerMock, admissionTypemapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new AdmissionTypeController(admissionTypeManagerMock, admissionTypemapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -90,25 +91,23 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
-		boolean isCreated = true;
-
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
 
-		when(admtManagerMock.newAdmissionType(admissionType))
-				.thenReturn(admissionType);
+		when(admissionTypeManagerMock.newAdmissionType(admissionType))
+			.thenReturn(admissionType);
 
-		when(admtManagerMock.isCodePresent(body.getCode()))
-				.thenReturn(true);
+		when(admissionTypeManagerMock.isCodePresent(body.getCode()))
+			.thenReturn(true);
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(AdmissionTypeDTOHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(AdmissionTypeDTOHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -119,21 +118,21 @@ public class AdmissionTypeControllerTest {
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
 
-		when(admtManagerMock.isCodePresent(admissionType.getCode()))
-				.thenReturn(true);
+		when(admissionTypeManagerMock.isCodePresent(admissionType.getCode()))
+			.thenReturn(true);
 
-		when(admtManagerMock.updateAdmissionType(admissionType))
-				.thenReturn(admissionType);
+		when(admissionTypeManagerMock.updateAdmissionType(admissionType))
+			.thenReturn(admissionType);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(AdmissionTypeDTOHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(AdmissionTypeDTOHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -143,17 +142,17 @@ public class AdmissionTypeControllerTest {
 		String request = "/admissiontypes";
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		List<AdmissionType> admtFounds = new ArrayList<>();
-		admtFounds.add(admissionType);
-		when(admtManagerMock.getAdmissionType())
-				.thenReturn(admtFounds);
+		List<AdmissionType> admissionTypesFound = new ArrayList<>();
+		admissionTypesFound.add(admissionType);
+		when(admissionTypeManagerMock.getAdmissionType())
+			.thenReturn(admissionTypesFound);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -164,21 +163,21 @@ public class AdmissionTypeControllerTest {
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		String code = body.getCode();
 
-		when(admtManagerMock.isCodePresent(code))
-				.thenReturn(true);
+		when(admissionTypeManagerMock.isCodePresent(code))
+			.thenReturn(true);
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
-		ArrayList<AdmissionType> admtFounds = new ArrayList<>();
-		admtFounds.add(admissionType);
-		when(admtManagerMock.getAdmissionType())
-				.thenReturn(admtFounds);
+		ArrayList<AdmissionType> admissionTypesFound = new ArrayList<>();
+		admissionTypesFound.add(admissionType);
+		when(admissionTypeManagerMock.getAdmissionType())
+			.thenReturn(admissionTypesFound);
 
 		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
