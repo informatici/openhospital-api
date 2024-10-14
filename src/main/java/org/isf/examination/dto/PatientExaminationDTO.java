@@ -91,6 +91,9 @@ public class PatientExaminationDTO {
 	@Schema(description = "Bowel Function", example = "regular")
 	private Bowel pex_bowel_desc;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public int getPex_ID() {
 		return this.pex_ID;
 	}
@@ -225,5 +228,13 @@ public class PatientExaminationDTO {
 
 	public void setPex_note(String pex_note) {
 		this.pex_note = pex_note;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

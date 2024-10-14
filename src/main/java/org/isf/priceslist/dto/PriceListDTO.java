@@ -41,6 +41,9 @@ public class PriceListDTO {
 	@Schema(description = "The currency", example = "FCFA", maxLength = 10)
 	private String currency;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	private int hashCode;
 
 	@Schema(accessMode = AccessMode.READ_ONLY)
@@ -90,5 +93,13 @@ public class PriceListDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
