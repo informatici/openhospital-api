@@ -72,15 +72,18 @@ public class ExamController {
 	public ExamDTO newExam(@Valid @RequestBody ExamWithRowsDTO examWithRowsDTO) throws OHServiceException {
 		ExamDTO examDTO = examWithRowsDTO.exam();
 		List<String> examRows = examWithRowsDTO.rows();
-		
-		ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> examDTO.getExamtype().getCode().equals(et.getCode())).findFirst()
-			.orElse(null);
+
+		ExamType examType = examTypeBrowserManager.findByCode(examDTO.getExamtype().getCode());
 
 		if (examType == null) {
 			throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
 		}
 
-		validateExamDefaultResult(examDTO, examRows);
+		if (examDTO.getProcedure() == 1 && examDTO.getDefaultResult() != null) {
+			if ((examRows == null ? Collections.emptyList() : examRows).stream().noneMatch(row -> examDTO.getDefaultResult().equals(row))) {
+				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
+			}
+		}
 
 		Exam exam = examMapper.map2Model(examDTO);
 		exam.setExamtype(examType);
@@ -100,17 +103,20 @@ public class ExamController {
 		if (!examDTO.getCode().equals(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
 		}
-		if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
+		if (examManager.findByCode(code) == null) {
 			throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
 		}
 
-		ExamType examType = examTypeBrowserManager.getExamType().stream().filter(et -> examDTO.getExamtype().getCode().equals(et.getCode())).findFirst()
-			.orElse(null);
+		ExamType examType = examTypeBrowserManager.findByCode(examDTO.getExamtype().getCode());
 		if (examType == null) {
 			throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
 		}
 
-		validateExamDefaultResult(examDTO, examRows);
+		if (examDTO.getProcedure() == 1 && examDTO.getDefaultResult() != null) {
+			if ((examRows == null ? Collections.emptyList() : examRows).stream().noneMatch(row -> examDTO.getDefaultResult().equals(row))) {
+				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
+			}
+		}
 
 		Exam exam = examMapper.map2Model(examDTO);
 		exam.setExamtype(examType);
@@ -120,14 +126,6 @@ public class ExamController {
 		}
 
 		return examMapper.map2DTO(examUpdated);
-	}
-
-	private void validateExamDefaultResult(ExamDTO examDTO, List<String> examRows) throws OHAPIException {
-		if (examDTO.getProcedure() == 1 && examDTO.getDefaultResult() != null) {
-			if ((examRows == null ? Collections.emptyList() : examRows).stream().noneMatch(row -> examDTO.getDefaultResult() == row)) {
-				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
-			}
-		}
 	}
 
 	@GetMapping(value = "/exams/description/{description:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
