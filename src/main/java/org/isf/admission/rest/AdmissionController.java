@@ -82,7 +82,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Admissions")
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(value = "/admissions", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdmissionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionController.class);
@@ -141,7 +141,7 @@ public class AdmissionController {
 	 * @return the {@link Admission} found or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get patient admissions
 	 */
-	@GetMapping("/patient/{patientCode}")
+	@GetMapping("/admissions/patient/{patientCode}")
 	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
@@ -165,7 +165,7 @@ public class AdmissionController {
 	 *         found or message error.
 	 * @throws OHServiceException When failed to get patient current admission
 	 */
-	@GetMapping("/current")
+	@GetMapping("/admissions/current")
 	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
 		throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
@@ -191,7 +191,7 @@ public class AdmissionController {
 	 * @return the {@link List} of found {@link Patient} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get admitted patient
 	 */
-	@GetMapping("/admittedPatients")
+	@GetMapping("/admissions/admittedPatients")
 	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
 		@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
 		@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
@@ -222,7 +222,7 @@ public class AdmissionController {
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get admission
 	 */
-	@GetMapping
+	@GetMapping("/admissions")
 	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
 		@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
 		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -262,7 +262,7 @@ public class AdmissionController {
 	 * @return the {@link List} of found {@link Admission} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get admissions
 	 */
-	@GetMapping("/discharges")
+	@GetMapping("/admissions/discharges")
 	public ResponseEntity<Page<AdmissionDTO>> getDischarges(
 		@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange,
 		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
@@ -291,7 +291,7 @@ public class AdmissionController {
 	 * @return the next progressive ID.
 	 * @throws OHServiceException When failed to get the next progressive ID
 	 */
-	@GetMapping("/getNextProgressiveIdInYear")
+	@GetMapping("/admissions/getNextProgressiveIdInYear")
 	public Integer getNextYearProgressiveId(@RequestParam("wardcode") String wardCode) throws OHServiceException {
 		LOGGER.info("get the next progressive ID in the year for ward code: {}", wardCode);
 
@@ -309,7 +309,7 @@ public class AdmissionController {
 	 * @return the number of used beds.
 	 * @throws OHServiceException When failed to the number of used beds
 	 */
-	@GetMapping("/getBedsOccupationInWard")
+	@GetMapping("/admissions/getBedsOccupationInWard")
 	public Integer getUsedWardBed(@RequestParam("wardid") String wardCode) throws OHServiceException {
 		LOGGER.info("Counts the number of used bed for ward code: {}", wardCode);
 
@@ -327,7 +327,7 @@ public class AdmissionController {
 	 * @return {@code true} if the record has been set to delete.
 	 * @throws OHServiceException When failed to delete admission
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admissions/{id}")
 	public boolean deleteAdmissionType(@PathVariable("id") int id) throws OHServiceException {
 		LOGGER.info("setting admission to deleted: {}", id);
 		Admission admission = admissionManager.getAdmission(id);
@@ -347,7 +347,7 @@ public class AdmissionController {
 	 * @return {@code true} if the record has been set to discharge.
 	 * @throws OHServiceException When failed to discharge the patient
 	 */
-	@PostMapping("/discharge")
+	@PostMapping("/admissions/discharge")
 	public boolean dischargePatient(
 		@RequestParam("patientCode") int patientCode,
 		@Valid @RequestBody AdmissionDTO currentAdmissionDTO
@@ -395,7 +395,7 @@ public class AdmissionController {
 	 * @return the generated id or {@code null} for the created {@link Admission}.
 	 * @throws OHServiceException When failed to create admission
 	 */
-	@PostMapping
+	@PostMapping("/admissions")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AdmissionDTO newAdmissions(
 		@Valid @RequestBody AdmissionDTO newAdmissionDTO
@@ -559,7 +559,7 @@ public class AdmissionController {
 	 * @return {@code true} if has been updated, {@code false} otherwise.
 	 * @throws OHServiceException When failed to update admission
 	 */
-	@PutMapping
+	@PutMapping("/admissions")
 	public AdmissionDTO updateAdmissions(
 		@RequestBody AdmissionDTO updateAdmissionDTO
 	) throws OHServiceException {

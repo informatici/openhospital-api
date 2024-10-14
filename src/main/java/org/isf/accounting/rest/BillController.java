@@ -44,7 +44,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -67,32 +66,31 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Bills")
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(value = "/bills", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class BillController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BillController.class);
 
-	@Autowired
-	protected BillBrowserManager billManager;
+	private final BillBrowserManager billManager;
 
-	@Autowired
-	protected PriceListManager priceListManager;
+	private final PriceListManager priceListManager;
 
-	@Autowired
-	protected PatientBrowserManager patientManager;
+	private final PatientBrowserManager patientManager;
 
-	@Autowired
-	protected BillMapper billMapper;
+	private final BillMapper billMapper;
 
-	@Autowired
-	protected BillItemsMapper billItemsMapper;
+	private final BillItemsMapper billItemsMapper;
 
-	@Autowired
-	protected BillPaymentsMapper billPaymentsMapper;
+	private final BillPaymentsMapper billPaymentsMapper;
 
-	public BillController(BillBrowserManager billManager, PriceListManager priceListManager,
-					PatientBrowserManager patientManager, BillMapper billMapper, BillItemsMapper billItemsMapper,
-					BillPaymentsMapper billPaymentsMapper) {
+	public BillController(
+		BillBrowserManager billManager,
+		PriceListManager priceListManager,
+		PatientBrowserManager patientManager,
+		BillMapper billMapper,
+		BillItemsMapper billItemsMapper,
+		BillPaymentsMapper billPaymentsMapper
+	) {
 		this.billManager = billManager;
 		this.priceListManager = priceListManager;
 		this.patientManager = patientManager;
@@ -107,7 +105,7 @@ public class BillController {
 	 * @return {@link FullBillDTO}
 	 * @throws OHServiceException When failed to create bill
 	 */
-	@PostMapping
+	@PostMapping("/bills")
 	@ResponseStatus(HttpStatus.CREATED)
 	public FullBillDTO newBill(@RequestBody FullBillDTO newBillDto) throws OHServiceException {
 
@@ -151,12 +149,12 @@ public class BillController {
 
 	/**
 	 * Update bill with the list of billItems and the list of billPayments
-	 * 
+	 *
 	 * @param odBillDto Bill payload
 	 * @return {@link FullBillDTO}
 	 * @throws OHServiceException When failed to update bill
 	 */
-	@PutMapping("/{id}")
+	@PutMapping("/bills/{id}")
 	public FullBillDTO updateBill(@PathVariable Integer id, @RequestBody FullBillDTO odBillDto) throws OHServiceException {
 
 		LOGGER.info("updated Bill {}", odBillDto);
@@ -207,11 +205,11 @@ public class BillController {
 	 * @return a list of retrieved {@link Bill}s or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get bills
 	 */
-	@GetMapping
+	@GetMapping("/bills")
 	public ResponseEntity<List<BillDTO>> searchBills(
-					@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
-					@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
-					@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
+		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
+		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
+		@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
 
 		List<Bill> bills;
 
@@ -241,11 +239,11 @@ public class BillController {
 	 * @return the list of payments
 	 * @throws OHServiceException When failed to get bill payments
 	 */
-	@GetMapping("/payments")
+	@GetMapping("/bills/payments")
 	public ResponseEntity<List<BillPaymentsDTO>> searchBillsPayments(
-					@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
-					@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
-					@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
+		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
+		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
+		@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
 		LOGGER.info("Get Payments datefrom: {}  dateTo: {} patient: {}", dateFrom, dateTo, code);
 
 		LOGGER.info("Get getPayments datefrom: {}  dateTo: {}", dateFrom, dateTo);
@@ -272,7 +270,7 @@ public class BillController {
 	 * @return a list of {@link BillPayments} or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get bill payments
 	 */
-	@GetMapping("/payments/{bill_id}")
+	@GetMapping("/bills/payments/{bill_id}")
 	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
 
@@ -293,7 +291,7 @@ public class BillController {
 	 * @return a list of {@link BillItems} or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get bill items
 	 */
-	@GetMapping("/items/{bill_id}")
+	@GetMapping("/bills/items/{bill_id}")
 	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get Items for bill with id: {}", id);
 
@@ -309,11 +307,11 @@ public class BillController {
 
 	/**
 	 * Get the {@link Bill} with specified billID
-	 * @param id the bill Id
+	 * @param id the bill ID
 	 * @return the {@link Bill} or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get the bill
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/bills/{id}")
 	public BillDTO getBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", id);
 
@@ -334,7 +332,7 @@ public class BillController {
 	 * @return the list of {@link Bill}s
 	 * @throws OHServiceException When failed to get associated bills
 	 */
-	@GetMapping("/pending/affiliate")
+	@GetMapping("/bills/pending/affiliate")
 	public ResponseEntity<List<BillDTO>> getPendingBillsAffiliate(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
@@ -354,7 +352,7 @@ public class BillController {
 	 * @return the list of pending bills or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get patient pending bills
 	 */
-	@GetMapping("/pending")
+	@GetMapping("/bills/pending")
 	public ResponseEntity<List<BillDTO>> getPendingBills(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
@@ -377,11 +375,11 @@ public class BillController {
 	 * @return a list of retrieved {@link Bill}s or {@code null} if an error occurred.
 	 * @throws OHServiceException When error occurs
 	 */
-	@PostMapping("/search/by/item")
+	@PostMapping("/bills/search/by/item")
 	public ResponseEntity<List<BillDTO>> searchBills(
-					@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
-					@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
-					@RequestBody BillItemsDTO billItemDTO) throws OHServiceException {
+		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
+		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
+		@RequestBody BillItemsDTO billItemDTO) throws OHServiceException {
 
 		BillItems billItem = billItemsMapper.map2Model(billItemDTO);
 
@@ -404,7 +402,7 @@ public class BillController {
 	 * @return a list of  distinct {@link BillItems}.
 	 * @throws OHServiceException When error occurs
 	 */
-	@GetMapping("/items")
+	@GetMapping("/bills/items")
 	public ResponseEntity<List<BillItemsDTO>> getDistinctItems() throws OHServiceException {
 
 		LOGGER.info("get all the distinct stored BillItems");
@@ -427,7 +425,7 @@ public class BillController {
 	 * throws exception otherwise
 	 * @throws OHServiceException When failed to delete bill
 	 */
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/bills/{id}")
 	public Boolean deleteBill(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Delete bill id: {}", id);
 		Bill bill = billManager.getBill(id);
@@ -451,7 +449,7 @@ public class BillController {
 	 * @return a list of {@link Bill} associated to the passed {@link BillPayments} or {@code null} if an error occurred.
 	 * @throws OHServiceException When failed to get bills
 	 */
-	@PostMapping("/search/by/payments")
+	@PostMapping("/bills/search/by/payments")
 	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody List<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
 
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(paymentsDTO);

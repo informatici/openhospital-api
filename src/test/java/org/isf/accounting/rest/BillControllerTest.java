@@ -109,13 +109,13 @@ public class BillControllerTest extends ControllerBaseTest {
 	@Mock
 	private PatientBrowserManager patientManagerMock;
 
-	private BillMapper billMapper = new BillMapper();
+	private final BillMapper billMapper = new BillMapper();
 
-	private BillItemsMapper billItemsMapper = new BillItemsMapper();
+	private final BillItemsMapper billItemsMapper = new BillItemsMapper();
 
-	private BillPaymentsMapper billPaymentsMapper = new BillPaymentsMapper();
+	private final BillPaymentsMapper billPaymentsMapper = new BillPaymentsMapper();
 
-	private PatientMapper patientMapper = new PatientMapper();
+	private final PatientMapper patientMapper = new PatientMapper();
 
 	private MockMvc mockMvc;
 
@@ -316,7 +316,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		List<BillItems> itemsDTOSExpected = newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList());
+		List<BillItems> itemsDTOSExpected = newFullBillDTO.getBillItems().stream().map(billItemsMapper::map2Model).collect(Collectors.toList());
 
 		when(billManagerMock.getItems(id)).thenReturn(itemsDTOSExpected);
 
@@ -443,7 +443,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		BillDTO expectedBillDTO1 = billMapper.map2DTO(billList.get(0));
 		BillDTO expectedBillDTO2 = billMapper.map2DTO(billList.get(1));
 
-		List<BillDTO> billDTOS = billList.stream().map(b -> billMapper.map2DTO(b)).collect(Collectors.toList());
+		List<BillDTO> billDTOS = billList.stream().map(billMapper::map2DTO).collect(Collectors.toList());
 
 		when(billManagerMock.getPendingBills(code)).thenReturn(billList);
 
@@ -536,7 +536,7 @@ public class BillControllerTest extends ControllerBaseTest {
 		billItemsList.add(billItems1);
 		billItemsList.add(billItems2);
 
-		List<BillItemsDTO> expectedBillItemsDTOList = billItemsList.stream().map(it -> billItemsMapper.map2DTO(it)).collect(Collectors.toList());
+		List<BillItemsDTO> expectedBillItemsDTOList = billItemsList.stream().map(billItemsMapper::map2DTO).collect(Collectors.toList());
 
 		//TODO emulate distinct behavior since both billItems in List are equal
 		when(billManagerMock.getDistinctItems()).thenReturn(billItemsList);
