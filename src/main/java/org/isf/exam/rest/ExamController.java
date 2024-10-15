@@ -54,7 +54,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Exams")
-@RestController(value = "/exams")
+@RestController
 @SecurityRequirement(name = "bearerAuth")
 public class ExamController {
 
