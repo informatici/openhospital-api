@@ -97,19 +97,19 @@ public class ExamRowController {
         return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow());
     }
 
-    @GetMapping(value = "/examrows/{code:.+}")
+    @GetMapping("/examrows/{code:.+}")
     public List<ExamRowDTO> getExamRowsByCode(@PathVariable Integer code) throws OHServiceException {
         return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow(code));
     }
 
-    @GetMapping(value = "/examrows/search")
+    @GetMapping("/examrows/search")
     public List<ExamRowDTO> getExamRowsByCodeAndDescription(
         @RequestParam Integer code, @RequestParam String description
     ) throws OHServiceException {
         return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow(code, description));
     }
 
-    @DeleteMapping(value = "/examrows/{code:.+}")
+    @DeleteMapping("/examrows/{code:.+}")
     public boolean deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
@@ -128,7 +128,7 @@ public class ExamRowController {
         }
     }
 
-    @GetMapping(value = "/examrows/byExamCode/{examCode:.+}")
+    @GetMapping("/examrows/byExamCode/{examCode:.+}")
     public List<ExamRowDTO> getExamRowsByExamCode(@PathVariable String examCode) throws OHServiceException {
         return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRowByExamCode(examCode));
     }
