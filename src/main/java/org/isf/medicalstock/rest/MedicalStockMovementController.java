@@ -39,192 +39,199 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.ward.model.Ward;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/medicalstockmovements")
+@RestController
 @Tag(name = "Stock Movements")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class MedicalStockMovementController {
 
-	@Autowired
-	private MovementMapper movMapper;
+	private final MovementMapper movMapper;
 
-	@Autowired
-	private LotMapper lotMapper;
+	private final LotMapper lotMapper;
 
-	@Autowired
-	private MovBrowserManager movManager;
+	private final MovBrowserManager movManager;
 
-	@Autowired
-	private MovStockInsertingManager movInsertingManager;
+	private final MovStockInsertingManager movInsertingManager;
 
-	@Autowired
-	private MedicalBrowsingManager medicalManager;
+	private final MedicalBrowsingManager medicalManager;
+
+	public MedicalStockMovementController(
+		MovementMapper movMapper,
+		LotMapper lotMapper,
+		MovBrowserManager movManager,
+		MovStockInsertingManager movInsertingManager,
+		MedicalBrowsingManager medicalManager
+	) {
+		this.movMapper = movMapper;
+		this.lotMapper = lotMapper;
+		this.movManager = movManager;
+		this.movInsertingManager = movInsertingManager;
+		this.medicalManager = medicalManager;
+	}
 
 	/**
 	 * Insert a list of charging {@link Movement}s and related {@link Lot}s.
-	 * 
+	 *
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
 	 * 		   if {@link null}, each movement must have a different referenceNumber
-	 * @return 
-	 * @throws OHServiceException 
+	 * @return <code>true</code> if movements have been created, false or throw exception
+	 * otherwise
+	 * @throws OHServiceException when failed to create movements
 	 */
-	@PostMapping(value = "/medicalstockmovements/charge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newMultipleChargingMovements(@RequestBody List<MovementDTO> movementDTOs,
-					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
+	@PostMapping(value = "/medicalstockmovements/charge")
+	@ResponseStatus(HttpStatus.CREATED)
+	public boolean newMultipleChargingMovements(
+		@RequestBody List<MovementDTO> movementDTOs,
+		@RequestParam(name = "ref") String referenceNumber
+	) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleChargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+		return true;
 	}
 
 	/**
 	 * Insert a list of discharging {@link Movement}s.
-	 * 
+	 *
 	 * @param movementDTOs - the list of {@link Movement}s
 	 * @param referenceNumber - the reference number to be set for all movements
 	 * 		   if {@link null}, each movement must have a different referenceNumber
-	 * @return 
-	 * @throws OHServiceException 
+	 * @return <code>true</code> if movements have been created, false or throw exception
+	 * otherwise
+	 * @throws OHServiceException When failed to create discharge movements
 	 */
-	@PostMapping(value = "/medicalstockmovements/discharge", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newMultipleDischargingMovements(@RequestBody List<MovementDTO> movementDTOs,
-					@RequestParam(name = "ref", required = true) String referenceNumber) throws OHServiceException {
+	@PostMapping(value = "/medicalstockmovements/discharge")
+	@ResponseStatus(HttpStatus.CREATED)
+	public boolean newMultipleDischargingMovements(
+		@RequestBody List<MovementDTO> movementDTOs,
+		@RequestParam(name = "ref") String referenceNumber
+	) throws OHServiceException {
 		List<Movement> movements = new ArrayList<>(movMapper.map2ModelList(movementDTOs));
 		movInsertingManager.newMultipleDischargingMovements(movements, referenceNumber);
-		return ResponseEntity.status(HttpStatus.CREATED).body(true);
+
+		return true;
 	}
 
 	/**
 	 * Retrieves all the {@link Movement}s.
 	 * @return the retrieved movements.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to get movements
 	 */
-	@GetMapping(value = "/medicalstockmovements", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MovementDTO>> getMovements() throws OHServiceException {
-		List<Movement> movements = movManager.getMovements();
-		return collectResults(movements);
+	@GetMapping(value = "/medicalstockmovements")
+	public List<MovementDTO> getMovements() throws OHServiceException {
+		return movMapper.map2DTOList(movManager.getMovements());
 	}
 
 	/**
 	 * Retrieves all the movement associated to the specified {@link Ward}.
-	 * @param wardId
-	 * @param dateFrom
-	 * @param dateTo
+	 *
+	 * @param wardId Ward Code
+	 * @param dateFrom Start date
+	 * @param dateTo End date
 	 * @return the retrieved movements.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get ward movements
 	 */
-	@GetMapping(value = "/medicalstockmovements/filter/v1", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MovementDTO>> getMovements(
-					@RequestParam("ward_id") String wardId,
-					@RequestParam("from") LocalDateTime dateFrom,
-					@RequestParam("to") LocalDateTime dateTo) throws OHServiceException {
-		List<Movement> movements = movManager.getMovements(wardId, dateFrom, dateTo);
-		return collectResults(movements);
+	@GetMapping(value = "/medicalstockmovements/filter/v1")
+	public List<MovementDTO> getMovements(
+		@RequestParam("ward_id") String wardId,
+		@RequestParam("from") LocalDateTime dateFrom,
+		@RequestParam("to") LocalDateTime dateTo
+	) throws OHServiceException {
+		return movMapper.map2DTOList(movManager.getMovements(wardId, dateFrom, dateTo));
 	}
 
 	/**
 	 * Retrieves all the movement associated to the specified reference number.
-	 * @param refNo
+	 * @param refNo Reference ID
 	 * @return the retrieved movements
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get movements
 	 */
 	@GetMapping(value = "/medicalstockmovements/{ref}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MovementDTO>> getMovements(@PathVariable("ref") String refNo) throws OHServiceException {
-		List<Movement> movements = movManager.getMovementsByReference(refNo);
-		return collectResults(movements);
+	public List<MovementDTO> getMovements(@PathVariable("ref") String refNo) throws OHServiceException {
+		return movMapper.map2DTOList(movManager.getMovementsByReference(refNo));
 	}
 
 	/**
 	 * Retrieves all the {@link Movement}s with the specified criteria.
-	 * @param medicalCode
-	 * @param medicalType
-	 * @param wardId
-	 * @param movType
-	 * @param movFrom
-	 * @param movTo
-	 * @param lotPrepFrom
-	 * @param lotPrepTo
-	 * @param lotDueFrom
-	 * @param lotDueTo
+	 * @param medicalCode Medical code
+	 * @param medicalType Medical type
+	 * @param wardId Ward code
+	 * @param movType Movement type
+	 * @param movFrom Movement start date
+	 * @param movTo Movement end date
+	 * @param lotPrepFrom Lot preparation start date
+	 * @param lotPrepTo Lot preparation end date
+	 * @param lotDueFrom Lot expiration start date
+	 * @param lotDueTo Lot expiration end date
 	 * @return the retrieved movements.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get movements
 	 */
-	@GetMapping(value = "/medicalstockmovements/filter/v2", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MovementDTO>> getMovements(
-					@RequestParam(name = "med_code", required = false) Integer medicalCode,
-					@RequestParam(name = "med_type", required = false) String medicalType,
-					@RequestParam(name = "ward_id", required = false) String wardId,
-					@RequestParam(name = "mov_type", required = false) String movType,
-					@RequestParam(name = "mov_from", required = false) LocalDateTime movFrom,
-					@RequestParam(name = "mov_to", required = false) LocalDateTime movTo,
-					@RequestParam(name = "lot_prep_from", required = false) LocalDateTime lotPrepFrom,
-					@RequestParam(name = "lot_prep_to", required = false) LocalDateTime lotPrepTo,
-					@RequestParam(name = "lot_due_from", required = false) LocalDateTime lotDueFrom,
-					@RequestParam(name = "lot_due_to", required = false) LocalDateTime lotDueTo) throws OHServiceException {
-
-		List<Movement> movements = movManager.getMovements(medicalCode, medicalType, wardId, movType, movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom,
-						lotDueTo);
-		return collectResults(movements);
+	@GetMapping(value = "/medicalstockmovements/filter/v2")
+	public List<MovementDTO> getMovements(
+		@RequestParam(name = "med_code", required = false) Integer medicalCode,
+		@RequestParam(name = "med_type", required = false) String medicalType,
+		@RequestParam(name = "ward_id", required = false) String wardId,
+		@RequestParam(name = "mov_type", required = false) String movType,
+		@RequestParam(name = "mov_from", required = false) LocalDateTime movFrom,
+		@RequestParam(name = "mov_to", required = false) LocalDateTime movTo,
+		@RequestParam(name = "lot_prep_from", required = false) LocalDateTime lotPrepFrom,
+		@RequestParam(name = "lot_prep_to", required = false) LocalDateTime lotPrepTo,
+		@RequestParam(name = "lot_due_from", required = false) LocalDateTime lotDueFrom,
+		@RequestParam(name = "lot_due_to", required = false) LocalDateTime lotDueTo
+	) throws OHServiceException {
+		return movMapper.map2DTOList(
+			movManager.getMovements(
+				medicalCode, medicalType, wardId, movType, movFrom, movTo, lotPrepFrom, lotPrepTo, lotDueFrom, lotDueTo
+			)
+		);
 	}
 
 	/**
 	 * Retrieves all the {@link Lot} associated to the specified {@link Medical}, expiring first on top
-	 * @param medCode
+	 * @param medCode Medical code
 	 * @return the retrieved lots.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to
 	 */
-	@GetMapping(value = "/medicalstockmovements/lot/{med_code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<LotDTO>> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
+	@GetMapping(value = "/medicalstockmovements/lot/{med_code}")
+	public List<LotDTO> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."), HttpStatus.NOT_FOUND);
 		}
-		List<Lot> lots = movInsertingManager.getLotByMedical(med);
-		List<LotDTO> mappedLots = lotMapper.map2DTOList(lots);
-		if (mappedLots.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedLots);
-		} else {
-			return ResponseEntity.ok(mappedLots);
-		}
+		return lotMapper.map2DTOList(movInsertingManager.getLotByMedical(med));
 	}
 
 	/**
 	 * Checks if the provided quantity is under the medical limits. 
-	 * @param medCode
-	 * @param specifiedQuantity
+	 * @param medCode Medical code
+	 * @param specifiedQuantity Quantity to check
 	 * @return {@code true} if is under the limit, false otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to check quantity
 	 */
-	@GetMapping(value = "/medicalstockmovements/critical/check", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> alertCriticalQuantity(
-					@RequestParam("med_code") int medCode,
-					@RequestParam("qty") int specifiedQuantity) throws OHServiceException {
+	@GetMapping(value = "/medicalstockmovements/critical/check")
+	public boolean alertCriticalQuantity(
+		@RequestParam("med_code") int medCode,
+		@RequestParam("qty") int specifiedQuantity
+	) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
-			throw new OHAPIException(new OHExceptionMessage("Medical not found."));
+			throw new OHAPIException(new OHExceptionMessage("Medical not found."), HttpStatus.NOT_FOUND);
 		}
-		return ResponseEntity.ok(movInsertingManager.alertCriticalQuantity(med, specifiedQuantity));
-	}
 
-	private ResponseEntity<List<MovementDTO>> collectResults(List<Movement> movements) {
-		List<MovementDTO> mappedMovements = movMapper.map2DTOList(movements);
-		if (mappedMovements.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMovements);
-		} else {
-			return ResponseEntity.ok(mappedMovements);
-		}
+		return movInsertingManager.alertCriticalQuantity(med, specifiedQuantity);
 	}
 }
