@@ -38,9 +38,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
- * Helper class to generate DTOs and Entities for users endpoints test
- * @author Silevester D.
- * @since 1.15
+ * Helper class to generate DTOs and Entities for exams endpoints test
  */
 public class ExamHelper {
 
