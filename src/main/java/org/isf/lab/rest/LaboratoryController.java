@@ -117,7 +117,7 @@ public class LaboratoryController {
 	 * @return {@code true} if the record has been created,  {@code false} otherwise.
 	 * @throws OHServiceException When failed to create lab with rows
 	 */
-	@PostMapping(value = "/laboratories")
+	@PostMapping("/laboratories")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean newLaboratory(@RequestBody LabWithRowsDTO labWithRowsDTO) throws OHServiceException {
 		LOGGER.info("store exam with result");
@@ -161,7 +161,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException When failed to create lab exam
 	 * @author Arnaud
 	 */
-	@PostMapping(value = "/laboratories/examRequest")
+	@PostMapping("/laboratories/examRequest")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean newExamRequest(@RequestBody LaboratoryDTO laboratoryDTO) throws OHServiceException {
 		LOGGER.info("store exam request");
@@ -212,7 +212,7 @@ public class LaboratoryController {
 	 * @return {@code true} if the record has been created,  {@code false} otherwise.
 	 * @throws OHServiceException When failed to create lab exams
 	 */
-	@PostMapping(value = "/laboratories/insertList")
+	@PostMapping("/laboratories/insertList")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean newLaboratory2(@RequestBody List<LabWithRowsDTO> labsWithRows) throws OHServiceException {
 		LOGGER.info("store List of Exam with result");
@@ -267,7 +267,7 @@ public class LaboratoryController {
 	 * @return {@code true} if has been updated, {@code false} otherwise.
 	 * @throws OHServiceException When failed to update lab exam
 	 */
-	@PutMapping(value = "/laboratories/{code}")
+	@PutMapping("/laboratories/{code}")
 	public boolean updateLaboratory(
 		@PathVariable Integer code,
 		@RequestBody LabWithRowsDTO labWithRowsDTO
@@ -336,7 +336,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException When failed to change lab exam status
 	 * @author Arnaud
 	 */
-	@PutMapping(value = "/laboratories/examRequest/{code}")
+	@PutMapping("/laboratories/examRequest/{code}")
 	public boolean updateExamRequest(
 		@PathVariable Integer code, @RequestParam String status
 	) throws OHServiceException {
@@ -358,7 +358,7 @@ public class LaboratoryController {
 	 * @return {@code true} if the record has been set to delete, {@code false} otherwise.
 	 * @throws OHServiceException When failed to delete lab exam
 	 */
-	@DeleteMapping(value = "/laboratories/{code}")
+	@DeleteMapping("/laboratories/{code}")
 	public boolean deleteExam(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Delete Exam code: {}", code);
 		Optional<Laboratory> lab = laboratoryManager.getLaboratory(code);
@@ -388,7 +388,7 @@ public class LaboratoryController {
 	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get lab exams
 	 */
-	@GetMapping(value = "/laboratories")
+	@GetMapping("/laboratories")
 	public Page<LabWithRowsDTO> getLaboratory(
 		@RequestParam boolean oneWeek, @RequestParam int page, @RequestParam int size
 	) throws OHServiceException {
@@ -436,7 +436,7 @@ public class LaboratoryController {
 	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get patient's lab exams
 	 */
-	@GetMapping(value = "/laboratories/byPatientId/{patId}")
+	@GetMapping("/laboratories/byPatientId/{patId}")
 	public List<LabWithRowsDTO> getLaboratory(@PathVariable Integer patId) throws OHServiceException {
 		LOGGER.info("Get LabWithRows for patient Id: {}", patId);
 
@@ -484,7 +484,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException When failed to get patient exam request
 	 * @author Arnaud
 	 */
-	@GetMapping(value = "/laboratories/examRequest/patient/{patId}")
+	@GetMapping("/laboratories/examRequest/patient/{patId}")
 	public List<LaboratoryDTO> getLaboratoryExamRequest(
 		@PathVariable Integer patId
 	) throws OHServiceException {
@@ -514,7 +514,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException When failed to get exam requests
 	 * @author Arnaud
 	 */
-	@GetMapping(value = "/laboratories/examRequest")
+	@GetMapping("/laboratories/examRequest")
 	public List<LaboratoryDTO> getLaboratoryExamRequest() throws OHServiceException {
 		LOGGER.info("Get all Exam Requested");
 		List<Laboratory> labList = laboratoryManager.getLaboratory().stream()
@@ -534,7 +534,7 @@ public class LaboratoryController {
 	 *
 	 * @return the {@link List} of all material or NO_CONTENT otherwise.
 	 */
-	@GetMapping(value = "/laboratories/materials")
+	@GetMapping("/laboratories/materials")
 	public List<String> getMaterials() {
 		LOGGER.info("Get all Material");
 		return laboratoryManager.getMaterialList();
@@ -550,7 +550,7 @@ public class LaboratoryController {
 	 * @return the {@link List} of found {@link LabWithRowsDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get lab exams
 	 */
-	@GetMapping(value = "/laboratories/exams")
+	@GetMapping("/laboratories/exams")
 	public Page<LabWithRowsDTO> getLaboratoryForPrint(
 		@RequestParam(required = false, defaultValue = "") String examName,
 		@RequestParam(value = "dateFrom") String dateFrom, @RequestParam(value = "dateTo") String dateTo,
@@ -653,7 +653,7 @@ public class LaboratoryController {
 	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get lab exam
 	 */
-	@GetMapping(value = "/laboratories/{code}")
+	@GetMapping("/laboratories/{code}")
 	public LaboratoryDTO getExamById(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
 		Laboratory lab = laboratoryManager.getLaboratory(code).orElse(null);
@@ -676,7 +676,7 @@ public class LaboratoryController {
 	 * @return the {@link List} of found {@link LaboratoryRowDTO} or NO_CONTENT otherwise.
 	 * @throws OHServiceException When failed to get lab exam with row
 	 */
-	@GetMapping(value = "/laboratories/exams/{code}")
+	@GetMapping("/laboratories/exams/{code}")
 	public LabWithRowsDTO getExamWithRowsById(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get labWithRows associated to specified CODE: {}", code);
 		LabWithRowsDTO lab = new LabWithRowsDTO();
@@ -715,7 +715,7 @@ public class LaboratoryController {
 	 * @throws OHServiceException When failed to delete lab exam
 	 * @author Arnaud
 	 */
-	@DeleteMapping(value = "/laboratories/examRequest/{code}")
+	@DeleteMapping("/laboratories/examRequest/{code}")
 	public boolean deleteExamRequest(@PathVariable Integer code) throws OHServiceException {
 		LOGGER.info("Get Laboratory associated to specified CODE: {}", code);
 		Optional<Laboratory> labo = laboratoryManager.getLaboratory(code);
