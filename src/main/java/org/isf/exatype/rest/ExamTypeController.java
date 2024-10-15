@@ -64,13 +64,13 @@ public class ExamTypeController {
 		this.examTypeMapper = examTypeMapper;
 	}
 
-	@PostMapping(value = "/examtypes")
+	@PostMapping("/examtypes")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ExamTypeDTO newExamType(@RequestBody ExamTypeDTO newExamType) throws OHServiceException {
 		return examTypeMapper.map2DTO(examTypeBrowserManager.newExamType(examTypeMapper.map2Model(newExamType)));
 	}
 
-	@PutMapping(value = "/examtypes/{code:.+}")
+	@PutMapping("/examtypes/{code:.+}")
 	public ExamTypeDTO updateExamType(
 		@PathVariable String code, @RequestBody ExamTypeDTO updateExamType
 	) throws OHServiceException {
@@ -84,12 +84,12 @@ public class ExamTypeController {
 		return examTypeMapper.map2DTO(examTypeBrowserManager.updateExamType(examTypeMapper.map2Model(updateExamType)));
 	}
 
-	@GetMapping(value = "/examtypes")
+	@GetMapping("/examtypes")
 	public List<ExamTypeDTO> getExamTypes() throws OHServiceException {
 		return examTypeMapper.map2DTOList(examTypeBrowserManager.getExamType());
 	}
 
-	@DeleteMapping(value = "/examtypes/{code:.+}")
+	@DeleteMapping("/examtypes/{code:.+}")
 	public boolean deleteExamType(@PathVariable String code) throws OHServiceException {
 		LOGGER.info("Delete Exam Type Type code: {}", code);
 
