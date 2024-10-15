@@ -79,7 +79,7 @@ public class ExaminationController {
 		this.patientBrowserManager = patientBrowserManager;
 	}
 
-	@PostMapping(value = "/examinations")
+	@PostMapping("/examinations")
 	@ResponseStatus(HttpStatus.CREATED)
 	public PatientExaminationDTO newPatientExamination(
 		@RequestBody PatientExaminationDTO newPatientExamination
@@ -97,7 +97,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(examinationBrowserManager.saveOrUpdate(patientExamination));
 	}
 
-	@PutMapping(value = "/examinations/{id}")
+	@PutMapping("/examinations/{id}")
 	public PatientExaminationDTO updateExamination(
 		@PathVariable Integer id, @RequestBody PatientExaminationDTO dto
 	) throws OHServiceException {
@@ -121,7 +121,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(examinationBrowserManager.saveOrUpdate(patientExamination));
 	}
 
-	@GetMapping(value = "/examinations/defaultPatientExamination")
+	@GetMapping("/examinations/defaultPatientExamination")
 	public PatientExaminationDTO getDefaultPatientExamination(@RequestParam Integer patId) throws OHServiceException {
 		Patient patient = patientBrowserManager.getPatientById(patId);
 		if (patient == null) {
@@ -137,7 +137,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(patientExamination);
 	}
 
-	@GetMapping(value = "/examinations/fromLastPatientExamination/{id}")
+	@GetMapping("/examinations/fromLastPatientExamination/{id}")
 	public PatientExaminationDTO getFromLastPatientExamination(
 		@PathVariable Integer id
 	) throws OHServiceException {
@@ -152,7 +152,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(patientExamination);
 	}
 
-	@GetMapping(value = "/examinations/{id}")
+	@GetMapping("/examinations/{id}")
 	public PatientExaminationDTO getByID(@PathVariable Integer id) throws OHServiceException {
 		PatientExamination patientExamination = examinationBrowserManager.getByID(id);
 
@@ -163,7 +163,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(patientExamination);
 	}
 
-	@GetMapping(value = "/examinations/lastByPatientId/{patId}")
+	@GetMapping("/examinations/lastByPatientId/{patId}")
 	public PatientExaminationDTO getLastByPatientId(
 		@PathVariable Integer patId
 	) throws OHServiceException {
@@ -176,7 +176,7 @@ public class ExaminationController {
 		return patientExaminationMapper.map2DTO(patientExamination);
 	}
 
-	@GetMapping(value = "/examinations/lastNByPatId")
+	@GetMapping("/examinations/lastNByPatId")
 	public Page<PatientExaminationDTO> getLastNByPatID(
 		@RequestParam Integer limit, @RequestParam Integer patId
 	) throws OHServiceException {
@@ -196,7 +196,7 @@ public class ExaminationController {
 		return patientExaminationPageableDTO;
 	}
 
-	@GetMapping(value = "/examinations/byPatientId/{patId}")
+	@GetMapping("/examinations/byPatientId/{patId}")
 	public List<PatientExaminationDTO> getByPatientId(
 		@PathVariable Integer patId
 	) throws OHServiceException {
