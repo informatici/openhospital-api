@@ -93,7 +93,7 @@ public class MedicalStockMovementController {
 	 * otherwise
 	 * @throws OHServiceException when failed to create movements
 	 */
-	@PostMapping(value = "/medicalstockmovements/charge")
+	@PostMapping("/medicalstockmovements/charge")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean newMultipleChargingMovements(
 		@RequestBody List<MovementDTO> movementDTOs,
@@ -114,7 +114,7 @@ public class MedicalStockMovementController {
 	 * otherwise
 	 * @throws OHServiceException When failed to create discharge movements
 	 */
-	@PostMapping(value = "/medicalstockmovements/discharge")
+	@PostMapping("/medicalstockmovements/discharge")
 	@ResponseStatus(HttpStatus.CREATED)
 	public boolean newMultipleDischargingMovements(
 		@RequestBody List<MovementDTO> movementDTOs,
@@ -131,7 +131,7 @@ public class MedicalStockMovementController {
 	 * @return the retrieved movements.
 	 * @throws OHServiceException When failed to get movements
 	 */
-	@GetMapping(value = "/medicalstockmovements")
+	@GetMapping("/medicalstockmovements")
 	public List<MovementDTO> getMovements() throws OHServiceException {
 		return movMapper.map2DTOList(movManager.getMovements());
 	}
@@ -145,7 +145,7 @@ public class MedicalStockMovementController {
 	 * @return the retrieved movements.
 	 * @throws OHServiceException When failed to get ward movements
 	 */
-	@GetMapping(value = "/medicalstockmovements/filter/v1")
+	@GetMapping("/medicalstockmovements/filter/v1")
 	public List<MovementDTO> getMovements(
 		@RequestParam("ward_id") String wardId,
 		@RequestParam("from") LocalDateTime dateFrom,
@@ -160,7 +160,7 @@ public class MedicalStockMovementController {
 	 * @return the retrieved movements
 	 * @throws OHServiceException When failed to get movements
 	 */
-	@GetMapping(value = "/medicalstockmovements/{ref}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/medicalstockmovements/{ref}")
 	public List<MovementDTO> getMovements(@PathVariable("ref") String refNo) throws OHServiceException {
 		return movMapper.map2DTOList(movManager.getMovementsByReference(refNo));
 	}
@@ -180,7 +180,7 @@ public class MedicalStockMovementController {
 	 * @return the retrieved movements.
 	 * @throws OHServiceException When failed to get movements
 	 */
-	@GetMapping(value = "/medicalstockmovements/filter/v2")
+	@GetMapping("/medicalstockmovements/filter/v2")
 	public List<MovementDTO> getMovements(
 		@RequestParam(name = "med_code", required = false) Integer medicalCode,
 		@RequestParam(name = "med_type", required = false) String medicalType,
@@ -206,7 +206,7 @@ public class MedicalStockMovementController {
 	 * @return the retrieved lots.
 	 * @throws OHServiceException When failed to
 	 */
-	@GetMapping(value = "/medicalstockmovements/lot/{med_code}")
+	@GetMapping("/medicalstockmovements/lot/{med_code}")
 	public List<LotDTO> getLotByMedical(@PathVariable("med_code") int medCode) throws OHServiceException {
 		Medical med = medicalManager.getMedical(medCode);
 		if (med == null) {
@@ -222,7 +222,7 @@ public class MedicalStockMovementController {
 	 * @return {@code true} if is under the limit, false otherwise
 	 * @throws OHServiceException When failed to check quantity
 	 */
-	@GetMapping(value = "/medicalstockmovements/critical/check")
+	@GetMapping("/medicalstockmovements/critical/check")
 	public boolean alertCriticalQuantity(
 		@RequestParam("med_code") int medCode,
 		@RequestParam("qty") int specifiedQuantity
