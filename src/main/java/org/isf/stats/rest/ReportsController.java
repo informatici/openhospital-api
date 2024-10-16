@@ -58,12 +58,12 @@ public class ReportsController {
 		this.reportsManager = reportsManager;
 	}
 
-	@GetMapping(value = "/reports/exams-list")
+	@GetMapping("/reports/exams-list")
 	public ResponseEntity<byte[]> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getExamsListPdf(), request);
 	}
 
-	@GetMapping(value = "/reports/diseases-list")
+	@GetMapping("/reports/diseases-list")
 	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
 	}
