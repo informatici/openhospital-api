@@ -111,7 +111,7 @@ public class OpdController {
 	 * @return the code of {@link Opd} stored
 	 * @throws OHServiceException When failed to create OPD
 	 */
-	@PostMapping(value = "/opds")
+	@PostMapping("/opds")
 	@ResponseStatus(HttpStatus.CREATED)
 	public OpdDTO newOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		LOGGER.info("store Out patient {}", opdDTO.getCode());
@@ -142,7 +142,7 @@ public class OpdController {
 	 * @return the OpdWithOperationRowDTO stored
 	 * @throws OHServiceException When failed to create OPD
 	 */
-	@PostMapping(value = "/opds/rows")
+	@PostMapping("/opds/rows")
 	@ResponseStatus(HttpStatus.CREATED)
 	public OpdWithOperationRowDTO newOpdWithOperationRow(
 		@RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO
@@ -187,7 +187,7 @@ public class OpdController {
 	 * @return the code of updated {@link Opd}
 	 * @throws OHServiceException When failed to update OPD
 	 */
-	@PutMapping(value = "/opds/{code}")
+	@PutMapping("/opds/{code}")
 	public OpdDTO updateOpd(@PathVariable("code") int code, @RequestBody OpdDTO opdDTO) throws OHServiceException {
 		LOGGER.info("Update opds code: {}", opdDTO.getCode());
 		if (opdManager.getOpdById(code).isEmpty()) {
@@ -220,7 +220,7 @@ public class OpdController {
 	 * @return the OpdWithOperationRowDTO updated
 	 * @throws OHServiceException When failed to update OPD
 	 */
-	@PutMapping(value = "/opds/rows/{code}")
+	@PutMapping("/opds/rows/{code}")
 	public OpdWithOperationRowDTO updateOpdWithOperationRow(
 		@PathVariable("code") int code, @RequestBody OpdWithOperationRowDTO opdWithOperationRowDTO
 	) throws OHServiceException {
@@ -271,7 +271,7 @@ public class OpdController {
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException When failed to get OPD
 	 */
-	@GetMapping(value = "/opds/weekly")
+	@GetMapping("/opds/weekly")
 	public List<OpdDTO> getOpdToDayOrWeek(
 		@RequestParam(name="oneWeek", required=false) Boolean oneWeek
 	) throws OHServiceException {
@@ -288,7 +288,7 @@ public class OpdController {
 	 * @return a {@link List} of {@link Opd} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException When failed to get OPDs
 	 */
-	@GetMapping(value = "/opds/search")
+	@GetMapping("/opds/search")
 	public Page<OpdDTO> getOpdByDates(
 		@RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Schema(implementation = String.class) LocalDate dateFrom,
 		@RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @Schema(implementation = String.class) LocalDate dateTo,
@@ -350,7 +350,7 @@ public class OpdController {
 	 * @return a {@link List} of {@link OpdWithOperationRowDTO} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException When failed to get OPDs
 	 */
-	@GetMapping(value = "/opds/patient/{pcode}")
+	@GetMapping("/opds/patient/{pcode}")
 	public List<OpdWithOperationRowDTO> getOpdByPatient(@PathVariable("pcode") int pcode) throws OHServiceException {
 		LOGGER.info("Get opd associated to specified patient CODE: {}", pcode);
 
@@ -386,7 +386,7 @@ public class OpdController {
 	 * @return {@code true} if the {@link Opd} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException When failed to delete OPD
 	 */
-	@DeleteMapping(value = "/opds/{code}")
+	@DeleteMapping("/opds/{code}")
 	public boolean deleteOpd(@PathVariable("code") int code) throws OHServiceException {
 		LOGGER.info("Delete Opd code: {}", code);
 
@@ -406,7 +406,7 @@ public class OpdController {
 	 * @return the max progressive number
 	 * @throws OHServiceException When failed to get year progressive number
 	 */
-	@GetMapping(value = "/opds/ProgYear/{year}")
+	@GetMapping("/opds/ProgYear/{year}")
 	public Integer getProgressiveYear(@PathVariable("year") int year) throws OHServiceException {
 		LOGGER.info("Get progressive number within specified year");
 
@@ -418,7 +418,7 @@ public class OpdController {
 	 * @return last Opd associated with specified patient ID or {@code null}
 	 * @throws OHServiceException When failed to get last OPD
 	 */
-	@GetMapping(value = "/opds/last/{patientCode}")
+	@GetMapping("/opds/last/{patientCode}")
 	public OpdDTO getLastOpd(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get the last opp for patient code: {}", patientCode);
 		Opd lastOpd = opdManager.getLastOpd(patientCode);
@@ -435,7 +435,7 @@ public class OpdController {
 	 * @return {@code true} if the given number exists in year, {@code false} otherwise
 	 * @throws OHServiceException  When failed to check the OPD number
 	 */
-	@GetMapping(value = "/opds/check/progyear")
+	@GetMapping("/opds/check/progyear")
 	public boolean isExistOpdNum(@RequestParam("opdNum") int opdNum, @RequestParam("year") int year) throws OHServiceException {
 		LOGGER.info("check if progYear: {}  already exist for year : {}", opdNum, year);
 		return opdManager.isExistOpdNum(opdNum, year);
