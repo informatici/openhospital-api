@@ -6231,13 +6231,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
-        female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        female:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
