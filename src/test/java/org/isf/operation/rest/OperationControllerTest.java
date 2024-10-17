@@ -32,12 +32,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.opd.mapper.OpdMapper;
 import org.isf.operation.data.OperationHelper;
 import org.isf.operation.dto.OperationDTO;
 import org.isf.operation.manager.OperationBrowserManager;
+import org.isf.operation.manager.OperationRowBrowserManager;
 import org.isf.operation.mapper.OperationMapper;
+import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.operation.model.Operation;
+import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
@@ -58,11 +64,26 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OperationControllerTest {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(OperationControllerTest.class);
 
 	@Mock
 	protected OperationBrowserManager operationBrowserManagerMock;
+
+	@Mock
+	protected AdmissionBrowserManager admissionBrowserManager;
+
+	@Mock
+	protected OperationRowBrowserManager operationRowBrowserManager;
+
+	@Mock
+	protected PatientBrowserManager patientBrowserManager;
+
+	@Mock
+	protected OpdMapper opdMapper;
+
+	@Mock
+	protected OperationRowMapper operationRowMapper;
 
 	protected OperationMapper operationMapper = new OperationMapper();
 
@@ -74,9 +95,17 @@ public class OperationControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OperationController(operationBrowserManagerMock, operationMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new OperationController(
+				operationBrowserManagerMock,
+				admissionBrowserManager,
+				operationRowBrowserManager,
+				patientBrowserManager,
+				operationMapper,
+				opdMapper,
+				operationRowMapper
+			))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -91,29 +120,29 @@ public class OperationControllerTest {
 	@Test
 	public void testNewOperation_201() throws Exception {
 		String request = "/operations";
-		
+
 		Operation operation = OperationHelper.setup();
 		OperationDTO body = operationMapper.map2DTO(operation);
-        String code = body.getCode();
+		String code = body.getCode();
 
 		when(operationBrowserManagerMock.descriptionControl(body.getDescription(), body.getType().getCode()))
-				.thenReturn(false);
+			.thenReturn(false);
 
 		when(operationBrowserManagerMock.newOperation(operationMapper.map2Model(body)))
-				.thenReturn(operation);
+			.thenReturn(operation);
 
 		when(operationBrowserManagerMock.getOperationByCode(code))
-		    	.thenReturn(operation);
-		
+			.thenReturn(operation);
+
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(OperationHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OperationHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -125,22 +154,22 @@ public class OperationControllerTest {
 
 		Operation operation = OperationHelper.setup();
 		OperationDTO body = operationMapper.map2DTO(operation);
-		
+
 		when(operationBrowserManagerMock.isCodePresent(code))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		when(operationBrowserManagerMock.updateOperation(operation))
-				.thenReturn(operation);
+			.thenReturn(operation);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request, code)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(OperationHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OperationHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -154,15 +183,15 @@ public class OperationControllerTest {
 		List<OperationDTO> operationDTOs = operationMapper.map2DTOList(results);
 
 		when(operationBrowserManagerMock.getOperation())
-				.thenReturn(results);
+			.thenReturn(results);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(operationDTOs))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(operationDTOs))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -173,18 +202,18 @@ public class OperationControllerTest {
 		Operation deleteOperation = OperationHelper.setup();
 		OperationDTO body = operationMapper.map2DTO(deleteOperation);
 		String code = body.getCode();
-        
+
 		when(operationBrowserManagerMock.getOperationByCode(code))
-				.thenReturn(OperationHelper.setup());
+			.thenReturn(OperationHelper.setup());
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(isDeleted)))
-				.andReturn();
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(isDeleted)))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

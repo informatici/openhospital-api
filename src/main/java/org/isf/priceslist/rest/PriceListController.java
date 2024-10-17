@@ -22,7 +22,6 @@
 package org.isf.priceslist.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.priceslist.dto.PriceDTO;
 import org.isf.priceslist.dto.PriceListDTO;
@@ -36,55 +35,54 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/pricelists")
+@RestController
 @Tag(name = "Price Lists")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class PriceListController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PriceListController.class);
 
-	@Autowired
-	protected PriceListManager priceListManager;
-	
-	@Autowired
-	protected PriceListMapper mapper;
-	
-	@Autowired
-	protected PriceMapper priceMapper;
+	private final PriceListManager priceListManager;
 
-	public PriceListController(PriceListManager priceListManager, PriceListMapper priceListmapper) {
+	private final PriceListMapper mapper;
+
+	private final PriceMapper priceMapper;
+
+	public PriceListController(PriceListManager priceListManager, PriceListMapper priceListmapper, PriceMapper priceMapper) {
 		this.priceListManager = priceListManager;
 		this.mapper = priceListmapper;
+		this.priceMapper = priceMapper;
 	}
 
 	/**
 	 * Create a new {@link PriceList}.
-	 * @param priceListDTO
+	 * @param priceListDTO PriceList payload
 	 * @return the new {@link PriceList}.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create price list
 	 */
-	@PostMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PriceListDTO> newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
+	@PostMapping("/pricelists")
+	@ResponseStatus(HttpStatus.CREATED)
+	public PriceListDTO newPriceList(@RequestBody PriceListDTO priceListDTO) throws OHServiceException {
 		LOGGER.info("Create price list {}.", priceListDTO.getCode());
 		try {
-			PriceList createdPriceList = priceListManager.newList(mapper.map2Model(priceListDTO));
-			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(createdPriceList));
+			return mapper.map2DTO(priceListManager.newList(mapper.map2Model(priceListDTO)));
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not created."));
 		}
@@ -92,18 +90,18 @@ public class PriceListController {
 
 	/**
 	 * Updates the specified {@link PriceList}.
-	 * @param priceListDTO
+	 * @param priceListDTO Price List payload
 	 * @return the updated {@link PriceList}.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update the price list
 	 */
-	@PutMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PriceListDTO> updatePriceLists(@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO)
-			throws OHServiceException {
-		LOGGER.info("Update pricelists code: {}.", priceListDTO.getCode());
+	@PutMapping("/pricelists/{id}")
+	public PriceListDTO updatePriceLists(
+		@PathVariable Integer id, @RequestBody PriceListDTO priceListDTO
+	) throws OHServiceException {
+		LOGGER.info("Update price list code: {}.", priceListDTO.getCode());
 		PriceList priceList = mapper.map2Model(priceListDTO);
 		try {
-			PriceList updatedPriceList = priceListManager.updateList(priceList);
-			return ResponseEntity.ok(mapper.map2DTO(updatedPriceList));
+			return mapper.map2DTO(priceListManager.updateList(priceList));
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not updated."));
 		}
@@ -112,99 +110,92 @@ public class PriceListController {
 	/**
 	 * Get all the available {@link PriceList}s.
 	 * @return a {@link List} of {@link PriceList} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException WHen failed to price lists
 	 */
-	@GetMapping(value = "/pricelists", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PriceListDTO>> getPriceLists() throws OHServiceException {
+	@GetMapping("/pricelists")
+	public List<PriceListDTO> getPriceLists() throws OHServiceException {
 		LOGGER.info("Get all price lists.");
-		List<PriceList> priceLists = priceListManager.getLists();
-		List<PriceListDTO> priceListDTOs = mapper.map2DTOList(priceLists);
-		if (priceListDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
-		} else {
-			return ResponseEntity.ok(priceListDTOs);
-		}
+
+		return mapper.map2DTOList(priceListManager.getLists());
 	}
-	
+
 	/**
 	 * Get all the available {@link Price}s.
 	 * @return a {@link List} of {@link PriceList} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get prices
 	 */
-	@GetMapping(value = "/pricelists/prices", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PriceDTO>> getPrices() throws OHServiceException {
+	@GetMapping("/pricelists/prices")
+	public List<PriceDTO> getPrices() throws OHServiceException {
 		LOGGER.info("Get all prices.");
-		List<Price> prices = priceListManager.getPrices();
-		List<PriceDTO> priceListDTOs = priceMapper.map2DTOList(prices);
-		if (priceListDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(priceListDTOs);
-		} else {
-			return ResponseEntity.ok(priceListDTOs);
-		}
+
+		return priceMapper.map2DTOList(priceListManager.getPrices());
 	}
 
 	/**
 	 * Delete {@link PriceList} for specified code.
-	 * @param id
+	 * @param id Price list ID
 	 * @return {@code true} if the {@link PriceList} has been deleted.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete price list
 	 */
-	@DeleteMapping(value = "/pricelists/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePriceList(@PathVariable int id) throws OHServiceException {
+	@DeleteMapping("/pricelists/{id}")
+	public boolean deletePriceList(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete price list id: {}.", id);
 		List<PriceList> priceLists = priceListManager.getLists();
-		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
+		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).toList();
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Price list not found."), HttpStatus.NOT_FOUND);
 		}
 		try {
 			priceListManager.deleteList(priceListFounds.get(0));
-			return ResponseEntity.ok(true);
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not deleted."));
 		}
 	}
-	
+
 	/**
 	 * Duplicate specified {@link PriceList}.
 	 * @return {@code true} if the list has been duplicated.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to duplicate the price list
 	 */
-	@GetMapping(value = "/pricelists/duplicate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> copyList(@PathVariable Long id) throws OHServiceException {
+	@GetMapping("/pricelists/duplicate/{id}")
+	public boolean copyList(@PathVariable Long id) throws OHServiceException {
 		LOGGER.info("Duplicate list for price list id: {}.", id);
 		List<PriceList> priceLists = priceListManager.getLists();
-		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
+		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).toList();
 		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Price list not found."), HttpStatus.NOT_FOUND);
 		}
+
 		try {
 			priceListManager.copyList(priceListFounds.get(0));
-			return ResponseEntity.ok(true);
-		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
-		}
-	}
-	
-	/**
-	 * Duplicate {@link PriceList} multiplying by {@code factor} and rounding by {@code step}.
-	 * @return {@code true} if the list has been duplicated.
-	 * @throws OHServiceException
-	 */
-	@GetMapping(value = "/pricelists/duplicate/byfactor/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> copyByFactorAndStep(@PathVariable Long id, @RequestParam double factor, @RequestParam double step) throws OHServiceException {
-		LOGGER.info("Duplicate list for price list id: {}.", id);
-		List<PriceList> priceLists = priceListManager.getLists();
-		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).collect(Collectors.toList());
-		if (priceListFounds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-		try {
-			priceListManager.copyList(priceListFounds.get(0), factor, step);
-			return ResponseEntity.ok(true);
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
 		}
 	}
 
+	/**
+	 * Duplicate {@link PriceList} multiplying by {@code factor} and rounding by {@code step}.
+	 * @return {@code true} if the list has been duplicated.
+	 * @throws OHServiceException When failed to duplicate the price list
+	 */
+	@GetMapping("/pricelists/duplicate/byfactor/{id}")
+	public boolean copyByFactorAndStep(
+		@PathVariable Long id, @RequestParam double factor, @RequestParam double step
+	) throws OHServiceException {
+		LOGGER.info("Duplicate list for price list id: {}.", id);
+		List<PriceList> priceLists = priceListManager.getLists();
+		List<PriceList> priceListFounds = priceLists.stream().filter(pl -> pl.getId() == id).toList();
+		if (priceListFounds.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("Price list not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			priceListManager.copyList(priceListFounds.get(0), factor, step);
+			return true;
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Price list not duplicated."));
+		}
+	}
 }

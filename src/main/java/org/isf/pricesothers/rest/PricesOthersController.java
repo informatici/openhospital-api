@@ -22,7 +22,6 @@
 package org.isf.pricesothers.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.pricesothers.dto.PricesOthersDTO;
 import org.isf.pricesothers.manager.PricesOthersManager;
@@ -33,33 +32,32 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/pricesothers")
+@RestController
 @Tag(name = "Others Price")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class PricesOthersController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PricesOthersController.class);
 
-	@Autowired
-	protected PricesOthersManager pricesOthersManager;
+	private final PricesOthersManager pricesOthersManager;
 
-	@Autowired
-	protected PricesOthersMapper mapper;
+	private final PricesOthersMapper mapper;
 
 	public PricesOthersController(PricesOthersManager pricesOthersManager, PricesOthersMapper pricesOthersmapper) {
 		this.pricesOthersManager = pricesOthersManager;
@@ -68,17 +66,16 @@ public class PricesOthersController {
 
 	/**
 	 * Create a new {@link PricesOthers}.
-	 * @param pricesOthersDTO
+	 * @param pricesOthersDTO PriceOther payload
 	 * @return {@code true} if the prices others has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create price other
 	 */
-	@PostMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PricesOthersDTO> newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
+	@PostMapping("/pricesothers")
+	@ResponseStatus(HttpStatus.CREATED)
+	public PricesOthersDTO newPricesOthers(@RequestBody PricesOthersDTO pricesOthersDTO) throws OHServiceException {
 		LOGGER.info("Create prices others {}", pricesOthersDTO.getCode());
-		PricesOthers newPricesOthers;
 		try {
-			newPricesOthers = pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO));
-			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPricesOthers));
+			return mapper.map2DTO(pricesOthersManager.newOther(mapper.map2Model(pricesOthersDTO)));
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Prices Others not created."));
 		}
@@ -86,24 +83,28 @@ public class PricesOthersController {
 
 	/**
 	 * Updates the specified {@link PricesOthers}.
-	 * @param pricesOthersDTO
+	 * @param pricesOthersDTO PriceOther payload
 	 * @return {@code true} if the prices others has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update price other
 	 */
-	@PutMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PricesOthersDTO> updatePricesOthers(@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO)
-					throws OHServiceException {
-		LOGGER.info("Update pricesothers code: {}", pricesOthersDTO.getCode());
+	@PutMapping("/pricesothers/{id}")
+	public PricesOthersDTO updatePricesOthers(
+		@PathVariable Integer id, @RequestBody PricesOthersDTO pricesOthersDTO
+	) throws OHServiceException {
+		LOGGER.info("Update prices other code: {}", pricesOthersDTO.getCode());
+
 		PricesOthers pricesOthers = mapper.map2Model(pricesOthersDTO);
-		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers().stream().filter(po -> po.getId() == pricesOthersDTO.getId())
-						.collect(Collectors.toList());
+		List<PricesOthers> pricesOthersFounds = pricesOthersManager.getOthers()
+			.stream()
+			.filter(po -> po.getId() == pricesOthersDTO.getId())
+			.toList();
+
 		if (pricesOthersFounds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Other price not found."), HttpStatus.NOT_FOUND);
 		}
-		PricesOthers isUpdatedPricesOthers;
+
 		try {
-			isUpdatedPricesOthers = pricesOthersManager.updateOther(pricesOthers);
-			return ResponseEntity.ok(mapper.map2DTO(isUpdatedPricesOthers));
+			return mapper.map2DTO(pricesOthersManager.updateOther(pricesOthers));
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Prices Others not updated."));
 		}
@@ -112,40 +113,37 @@ public class PricesOthersController {
 	/**
 	 * Get all the available {@link PricesOthers}s.
 	 * @return a {@link List} of {@link PricesOthers} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get other prices
 	 */
-	@GetMapping(value = "/pricesothers", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PricesOthersDTO>> getPricesOthers() throws OHServiceException {
+	@GetMapping("/pricesothers")
+	public List<PricesOthersDTO> getPricesOthers() throws OHServiceException {
 		LOGGER.info("Get all prices others ");
-		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
-		List<PricesOthersDTO> pricesOthersDTOs = mapper.map2DTOList(pricesOthers);
-		if (pricesOthersDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pricesOthersDTOs);
-		} else {
-			return ResponseEntity.ok(pricesOthersDTOs);
-		}
+
+		return mapper.map2DTOList(pricesOthersManager.getOthers());
 	}
 
 	/**
 	 * Delete {@link PricesOthers} for specified code.
-	 * @param id
+	 * @param id Other price ID
 	 * @return {@code true} if the {@link PricesOthers} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete the other price
 	 */
-	@DeleteMapping(value = "/pricesothers/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePricesOthers(@PathVariable int id) throws OHServiceException {
+	@DeleteMapping("/pricesothers/{id}")
+	public boolean deletePricesOthers(@PathVariable int id) throws OHServiceException {
 		LOGGER.info("Delete prices others id: {}", id);
+
 		List<PricesOthers> pricesOthers = pricesOthersManager.getOthers();
-		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).collect(Collectors.toList());
+		List<PricesOthers> pricesOthersFounds = pricesOthers.stream().filter(po -> po.getId() == id).toList();
+
 		if (pricesOthersFounds.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Other price not deleted."), HttpStatus.NOT_FOUND);
 		}
+
 		try {
 			pricesOthersManager.deleteOther(pricesOthersFounds.get(0));
-			return ResponseEntity.ok(true);
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Prices Others not deleted."));
 		}
 	}
-
 }

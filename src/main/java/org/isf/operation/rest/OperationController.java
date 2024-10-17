@@ -22,7 +22,6 @@
 package org.isf.operation.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
@@ -44,86 +43,97 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/operations")
+@RestController
 @Tag(name = "Operations")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class OperationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OperationController.class);
 
-	@Autowired
-	protected OperationBrowserManager operationManager;
+	private final OperationBrowserManager operationManager;
 
-	@Autowired
-	protected AdmissionBrowserManager admissionManager;
+	private final AdmissionBrowserManager admissionManager;
 
-	@Autowired
-	protected OperationRowBrowserManager operationRowManager;
+	private final OperationRowBrowserManager operationRowManager;
 
-	@Autowired
-	protected PatientBrowserManager patientBrowserManager;
+	private final PatientBrowserManager patientBrowserManager;
 
-	@Autowired
-	protected OperationMapper mapper;
+	private final OperationMapper mapper;
 
-	@Autowired
-	protected OpdMapper opdMapper;
+	private final OpdMapper opdMapper;
 
-	@Autowired
-	protected OperationRowMapper opRowMapper;
+	private final OperationRowMapper opRowMapper;
 
-	public OperationController(OperationBrowserManager operationManager, OperationMapper operationmapper) {
+	public OperationController(
+		OperationBrowserManager operationManager,
+		AdmissionBrowserManager admissionManager,
+		OperationRowBrowserManager operationRowManager,
+		PatientBrowserManager patientBrowserManager,
+		OperationMapper mapper, OpdMapper opdMapper,
+		OperationRowMapper opRowMapper
+	) {
 		this.operationManager = operationManager;
-		this.mapper = operationmapper;
+		this.admissionManager = admissionManager;
+		this.operationRowManager = operationRowManager;
+		this.patientBrowserManager = patientBrowserManager;
+		this.mapper = mapper;
+		this.opdMapper = opdMapper;
+		this.opRowMapper = opRowMapper;
 	}
-
 	/**
 	 * Create a new {@link Operation}.
-	 * 
-	 * @param operationDTO
+	 *
+	 * @param operationDTO Operation payload
 	 * @return {@code true} if the operation has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create operation
 	 */
-	@PostMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationDTO> newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
+	@PostMapping("/operations")
+	@ResponseStatus(HttpStatus.CREATED)
+	public OperationDTO newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}.", code);
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Another operation already created with provided description and types."));
+			throw new OHAPIException(new OHExceptionMessage(
+				"Another operation already created with provided description and types."
+			));
 		}
+
 		Operation isCreatedOperation = operationManager.newOperation(mapper.map2Model(operationDTO));
 		if (isCreatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage("Operation not created."));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedOperation));
+
+		return mapper.map2DTO(isCreatedOperation);
 	}
 
 	/**
 	 * Updates the specified {@link Operation}.
-	 * 
-	 * @param operationDTO
+	 *
+	 * @param operationDTO Operation payload
 	 * @return {@code true} if the operation has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update operation
 	 */
-	@PutMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationDTO> updateOperation(@PathVariable String code, @RequestBody OperationDTO operationDTO)
-					throws OHServiceException {
+	@PutMapping("/operations/{code}")
+	public OperationDTO updateOperation(
+		@PathVariable String code, @RequestBody OperationDTO operationDTO
+	) throws OHServiceException {
 		LOGGER.info("Update operations code: {}.", operationDTO.getCode());
 		Operation operation = mapper.map2Model(operationDTO);
 		if (!operationManager.isCodePresent(code)) {
@@ -134,217 +144,205 @@ public class OperationController {
 		if (isUpdatedOperation == null) {
 			throw new OHAPIException(new OHExceptionMessage("Operation not updated."));
 		}
-		return ResponseEntity.ok(mapper.map2DTO(isUpdatedOperation));
+
+		return mapper.map2DTO(isUpdatedOperation);
 	}
 
 	/**
 	 * Get all the available {@link Operation}s.
-	 * 
+	 *
 	 * @return a {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get operations
 	 */
-	@GetMapping(value = "/operations", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationDTO>> getOperations() throws OHServiceException {
+	@GetMapping("/operations")
+	public List<OperationDTO> getOperations() throws OHServiceException {
 		LOGGER.info("Get all operations.");
-		List<Operation> operations = operationManager.getOperation();
-		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
-		if (operationDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationDTOs);
-		} else {
-			return ResponseEntity.ok(operationDTOs);
-		}
+
+		return mapper.map2DTOList(operationManager.getOperation());
 	}
 
 	/**
 	 * Get the {@link Operation} with the specified code.
-	 * 
+	 *
 	 * @return found operation
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed get the operation
 	 */
-	@GetMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<OperationDTO> getOperationByCode(@PathVariable String code) throws OHServiceException {
+	@GetMapping("/operations/{code}")
+	public OperationDTO getOperationByCode(@PathVariable String code) throws OHServiceException {
 		LOGGER.info("Get operation for provided code: {}.", code);
 		Operation operation = operationManager.getOperationByCode(code);
-		if (operation != null) {
-			return ResponseEntity.ok(mapper.map2DTO(operation));
-		} else {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+
+		if (operation == null) {
+			throw new OHAPIException(new OHExceptionMessage("Operation not found."), HttpStatus.NOT_FOUND);
 		}
+
+		return mapper.map2DTO(operation);
 	}
 
 	/**
 	 * Get all {@link Operation}s whose {@link OperationType}'s description matches specified string.
-	 * 
+	 *
 	 * @return {@link List} of {@link Operation} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed get operations
 	 */
-	@GetMapping(value = "/operations/search/type", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationDTO>> getOperationByTypeDescription(@RequestParam String typeDescription) throws OHServiceException {
+	@GetMapping("/operations/search/type")
+	public List<OperationDTO> getOperationByTypeDescription(
+		@RequestParam String typeDescription
+	) throws OHServiceException {
 		LOGGER.info("Get operations for provided type description: {}.", typeDescription);
-		List<Operation> operations = operationManager.getOperationByTypeDescription(typeDescription);
-		List<OperationDTO> operationDTOs = mapper.map2DTOList(operations);
-		if (operationDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationDTOs);
-		} else {
-			return ResponseEntity.ok(operationDTOs);
-		}
+
+		return mapper.map2DTOList(operationManager.getOperationByTypeDescription(typeDescription));
 	}
 
 	/**
 	 * Delete {@link Operation} for specified code.
-	 * 
-	 * @param code
+	 *
+	 * @param code Operation code
 	 * @return {@code true} if the {@link Operation} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete operation
 	 */
-	@DeleteMapping(value = "/operations/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteOperation(@PathVariable("code") String code) throws OHServiceException {
+	@DeleteMapping("/operations/{code}")
+	public boolean deleteOperation(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete operation code: {}.", code);
 		Operation operation = operationManager.getOperationByCode(code);
+
 		if (operation == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Operation not deleted."), HttpStatus.NOT_FOUND);
 		}
+
 		try {
 			operationManager.deleteOperation(operation);
+			return true;
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Delete Operation: {} failed.", code);
 			throw new OHAPIException(new OHExceptionMessage("Operation not deleted."));
 		}
-		return ResponseEntity.ok(true);
 	}
 
 	/**
 	 * Create a new {@link OperationRow}.
-	 * 
-	 * @param operationRowDTO
+	 *
+	 * @param operationRowDTO Operation Row payload
 	 * @return {@code true} if the operation has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to save operation row
 	 */
-	@PostMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<OperationRowDTO> newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
+	@PostMapping("/operations/rows")
+	@ResponseStatus(HttpStatus.CREATED)
+	public OperationRowDTO newOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		int code = operationRowDTO.getAdmission().getId();
 		LOGGER.info("Create operation: {}.", code);
+
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			throw new OHAPIException(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 
 		OperationRow createOpeRow = operationRowManager.newOperationRow(opRow);
-		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream()
-						.filter(op -> op.getAdmission().getId() == code)
-						.collect(Collectors.toList());
+		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission())
+			.stream()
+			.filter(op -> op.getAdmission().getId() == code)
+			.toList();
+
 		OperationRow opCreated = null;
 		if (!opRowFounds.isEmpty()) {
 			opCreated = opRowFounds.get(0);
 		}
+
 		if (createOpeRow == null || opCreated == null) {
 			throw new OHAPIException(new OHExceptionMessage("Operation row not created."));
 		}
-		OperationRowDTO opR = opRowMapper.map2DTO(opCreated);
-		return ResponseEntity.status(HttpStatus.CREATED).body(opR);
+
+		return opRowMapper.map2DTO(opCreated);
 	}
 
 	/**
 	 * Updates the specified {@link OperationRow}.
-	 * 
-	 * @param operationRowDTO
+	 *
+	 * @param operationRowDTO Operation Row payload
 	 * @return {@code true} if the operation row has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update operation row
 	 */
-	@PutMapping(value = "/operations/rows", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<Integer> updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
+	@PutMapping("/operations/rows")
+	public Integer updateOperationRow(@RequestBody OperationRowDTO operationRowDTO) throws OHServiceException {
 		LOGGER.info("Update operations row code: {}.", operationRowDTO.getId());
 		if (operationRowDTO.getAdmission() == null && operationRowDTO.getOpd() == null) {
 			throw new OHAPIException(new OHExceptionMessage("At least one field between admission and Opd is required."));
 		}
 		OperationRow opRow = opRowMapper.map2Model(operationRowDTO);
 
-		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission()).stream().filter(op -> op.getId() == opRow.getId())
-						.collect(Collectors.toList());
+		List<OperationRow> opRowFounds = operationRowManager.getOperationRowByAdmission(opRow.getAdmission())
+			.stream()
+			.filter(op -> op.getId() == opRow.getId())
+			.toList();
+
 		if (opRowFounds.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("Operation row not found."));
+			throw new OHAPIException(new OHExceptionMessage("Operation row not found."), HttpStatus.NOT_FOUND);
 		}
 		OperationRow updateOpeRow = operationRowManager.updateOperationRow(opRow);
 		if (updateOpeRow == null) {
 			throw new OHAPIException(new OHExceptionMessage("Operation not updated."));
 		}
-		return ResponseEntity.ok(opRow.getId());
+
+		return opRow.getId();
 	}
 
 	/**
 	 * Get {@link OperationRow}s for specified admission.
-	 * 
+	 *
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get operations
 	 */
-	@GetMapping(value = "/operations/rows/search/admission", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByAdmt(@RequestParam("admissionId") int id) throws OHServiceException {
+	@GetMapping("/operations/rows/search/admission")
+	public List<OperationRowDTO> getOperationRowsByAdmt(@RequestParam("admissionId") int id) throws OHServiceException {
 		LOGGER.info("Get operations row for provided admission.");
 		Admission adm = admissionManager.getAdmission(id);
-		List<OperationRow> operationRows = operationRowManager.getOperationRowByAdmission(adm);
-		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> {
-			return opRowMapper.map2DTO(operation);
-		}).collect(Collectors.toList());
-		if (operationRowDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
-		} else {
-			return ResponseEntity.ok(operationRowDTOs);
-		}
+
+		return opRowMapper.map2DTOList(operationRowManager.getOperationRowByAdmission(adm));
 	}
 
 	/**
 	 * Get {@link OperationRow}s for specified patient.
-	 * 
+	 *
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get operations
 	 */
-	@GetMapping(value = "/operations/rows/search/patient", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByPatient(@RequestParam int patientCode) throws OHServiceException {
+	@GetMapping("/operations/rows/search/patient")
+	public List<OperationRowDTO> getOperationRowsByPatient(@RequestParam int patientCode) throws OHServiceException {
 		LOGGER.info("Get operations row for provided patient.");
 		Patient patient = patientBrowserManager.getPatientById(patientCode);
-		List<OperationRow> operationRows = operationRowManager.getOperationRowByPatientCode(patient);
-		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> opRowMapper.map2DTO(operation)).collect(Collectors.toList());
-		if (operationRowDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
-		} else {
-			return ResponseEntity.ok(operationRowDTOs);
-		}
+
+		return opRowMapper.map2DTOList(operationRowManager.getOperationRowByPatientCode(patient));
 	}
 
 	/**
 	 * Get {@link OperationRow}s for specified {@link OpdDTO}.
-	 * 
+	 *
 	 * @return {@link List} of {@link OperationRow} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get operation rows
 	 */
-	@PostMapping(value = "/operations/rows/search/opd", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<OperationRowDTO>> getOperationRowsByOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
+	@PostMapping("/operations/rows/search/opd")
+	public List<OperationRowDTO> getOperationRowsByOpd(@RequestBody OpdDTO opdDTO) throws OHServiceException {
 		LOGGER.info("Get operations row for provided opd.");
-		List<OperationRow> operationRows = operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO));
-		List<OperationRowDTO> operationRowDTOs = operationRows.stream().map(operation -> opRowMapper.map2DTO(operation)).collect(Collectors.toList());
 
-		if (operationRowDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(operationRowDTOs);
-		} else {
-			return ResponseEntity.ok(operationRowDTOs);
-		}
+		return opRowMapper.map2DTOList(operationRowManager.getOperationRowByOpd(opdMapper.map2Model(opdDTO)));
 	}
 
 	/**
 	 * Delete the {@link OperationRow} with the specified code.
-	 * 
-	 * @param code
+	 *
+	 * @param code Operation Row code
 	 * @return {@code true} if the {@link OperationRow} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete operation row
 	 */
-	@DeleteMapping(value = "/operations/rows/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteOperationRow(@PathVariable int code) throws OHServiceException {
+	@DeleteMapping("/operations/rows/{code}")
+	public boolean deleteOperationRow(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Delete operation row code: {}.", code);
 		OperationRow opRow = new OperationRow();
 		opRow.setId(code);
+
 		try {
 			operationRowManager.deleteOperationRow(opRow);
-			return ResponseEntity.ok(true);
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Operation row not deleted."));
 		}

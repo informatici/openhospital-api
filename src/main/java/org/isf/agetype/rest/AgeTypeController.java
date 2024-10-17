@@ -37,7 +37,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,107 +44,114 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/agetypes")
+@RestController
 @Tag(name = "AgeTypes")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class AgeTypeController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeController.class);
 
-	@Autowired
-	private AgeTypeBrowserManager ageTypeManager;
-	
-	@Autowired
-	private AgeTypeMapper mapper;
-	
+	private final AgeTypeBrowserManager ageTypeManager;
+
+	private final AgeTypeMapper mapper;
+
 	public AgeTypeController(AgeTypeBrowserManager ageTypeManager, AgeTypeMapper ageTypeMapper) {
 		this.ageTypeManager = ageTypeManager;
 		this.mapper = ageTypeMapper;
 	}
-	
+
 	/**
 	 * Get all the age types stored
 	 * @return the list of age types found
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get age types
 	 */
-	@GetMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/agetypes")
 	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
 		LOGGER.info("Get age types");
+
 		List<AgeType> results = ageTypeManager.getAgeType();
 		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
+
 		if (!parsedResults.isEmpty()) {
 			return ResponseEntity.ok(parsedResults);
-        } else {
-        	LOGGER.info("Empty age types list");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
-        }
+		} else {
+			LOGGER.info("Empty age types list");
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
+		}
 	}
-	
+
 	/**
 	 * Update an age type
 	 * @param ageTypeDTO - the age type to be updated
 	 * @return {@link AgeTypeDTO} the updated age type
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update age type
 	 */
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
+	public AgeTypeDTO updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
 		}
+
 		LOGGER.info("Update age type");
+
 		AgeType ageType = mapper.map2Model(ageTypeDTO);
 		List<AgeType> ageTypes = new ArrayList<>();
 		ageTypes.add(ageType);
+
 		try {
 			ageTypeManager.updateAgeType(ageTypes);
-			return ResponseEntity.ok(ageTypeDTO);
+			return ageTypeDTO;
 		} catch (OHServiceException ex) {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	/**
 	 * Get the code of an age type whose ages range includes a given age
 	 * @param age - the given age
 	 * @return the code of the age type matching the given age
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get age type
 	 */
 	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		LOGGER.info("Get age type by age: {}", age);
+
 		String result = ageTypeManager.getTypeByAge(age);
 		Map<String, String> responseBody = new HashMap<>();
+
 		if (result != null){
 			responseBody.put("code", result);
 			return ResponseEntity.ok(responseBody);
-        } else {
-        	LOGGER.info("No corresponding age code for the given age");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
-        }
+		} else {
+			LOGGER.info("No corresponding age code for the given age");
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
+		}
 	}
-	
+
 	/**
 	 * Gets the {@link AgeType} from the code index.
 	 * @param index the code index.
 	 * @return the retrieved element.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to get age type
 	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
+	public AgeType getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		LOGGER.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
-		if (result != null){
-			return ResponseEntity.ok(result);
-        } else {
-        	LOGGER.info("No corresponding age code for the given index");
-        	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        }
+
+		if (result == null){
+			LOGGER.info("No corresponding age code for the given index");
+			throw new OHAPIException(new OHExceptionMessage("Age type not found with index :" + index), HttpStatus.NOT_FOUND);
+		}
+
+		return result;
 	}
-	
 }

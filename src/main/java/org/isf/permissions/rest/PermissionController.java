@@ -22,80 +22,80 @@
 package org.isf.permissions.rest;
 
 import java.util.List;
+
 import org.isf.permissions.dto.PermissionDTO;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.mapper.PermissionMapper;
 import org.isf.permissions.model.Permission;
+import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/permissions")
+@RestController
 @Tag(name = "Permissions")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class PermissionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PermissionController.class);
 
-	@Autowired
-	protected PermissionManager permissionManager;
+	private final PermissionManager permissionManager;
 
-	@Autowired
-	protected PermissionMapper permissionMapper;
+	private final PermissionMapper permissionMapper;
 
-	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PermissionDTO>> retrievePermissionsByUserGroupCode(@PathVariable("userGroupCode") String userGroupCode)
-					throws OHServiceException {
+	public PermissionController(PermissionManager permissionManager, PermissionMapper permissionMapper) {
+		this.permissionManager = permissionManager;
+		this.permissionMapper = permissionMapper;
+	}
+
+	@GetMapping(value = "/permissions/userGroupCode/{userGroupCode}")
+	public List<PermissionDTO> retrievePermissionsByUserGroupCode(
+		@PathVariable("userGroupCode") String userGroupCode
+	) throws OHServiceException {
 		LOGGER.info("Retrieving permissions: retrievePermissionsByUserGroupCode({}).", userGroupCode);
-		List<Permission> domains = permissionManager.retrievePermissionsByGroupCode(userGroupCode);
-		List<PermissionDTO> dtos = permissionMapper.map2DTOList(domains);
-		if (dtos.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dtos);
-		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
-		}
+
+		return permissionMapper.map2DTOList(permissionManager.retrievePermissionsByGroupCode(userGroupCode));
 	}
 
-	@GetMapping(value = "/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PermissionDTO>> retrieveAllPermissions() throws OHServiceException {
+	@GetMapping(value = "/permissions")
+	public List<PermissionDTO> retrieveAllPermissions() throws OHServiceException {
 		LOGGER.info("Retrieving permissions: retrieveAllPermissions().");
-		List<Permission> permissions = permissionManager.retrieveAllPermissions();
-		if (permissions == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		List<PermissionDTO> dtos = permissionMapper.map2DTOList(permissions);
-		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+
+		return permissionMapper.map2DTOList(permissionManager.retrieveAllPermissions());
 	}
 
-	@GetMapping(value = "/permissions/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
+	@GetMapping(value = "/permissions/{id}")
+	public PermissionDTO retrievePermissionById(@PathVariable("id") Integer id) throws OHServiceException {
 		LOGGER.info("Retrieving permissions: retrievePermissionById({}).", id);
 		Permission permission = permissionManager.retrievePermissionById(id);
+
 		if (permission == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Permission not created."), HttpStatus.NOT_FOUND);
 		}
-		PermissionDTO dtos = permissionMapper.map2DTO(permission);
-		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+
+		return permissionMapper.map2DTO(permission);
 	}
 
-	@GetMapping(value = "/permissions/name/{name:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<PermissionDTO> retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
+	@GetMapping(value = "/permissions/name/{name:.+}")
+	public PermissionDTO retrievePermissionByName(@PathVariable("name") String name) throws OHServiceException {
 		LOGGER.info("Retrieving permissions: retrievePermissionByName({}).", name);
 		Permission permission = permissionManager.retrievePermissionByName(name);
+
 		if (permission == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+			throw new OHAPIException(new OHExceptionMessage("Permission not created."), HttpStatus.NOT_FOUND);
 		}
-		PermissionDTO dtos = permissionMapper.map2DTO(permission);
-		return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+
+		return permissionMapper.map2DTO(permission);
 	}
 }
