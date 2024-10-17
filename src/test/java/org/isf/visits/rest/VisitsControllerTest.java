@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
@@ -122,7 +123,7 @@ public class VisitsControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(VisitHelper.asJsonString(body))
+						.content(Objects.requireNonNull(VisitHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
@@ -147,7 +148,7 @@ public class VisitsControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(VisitHelper.asJsonString(body))
+						.content(Objects.requireNonNull(VisitHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
