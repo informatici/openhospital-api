@@ -1,4 +1,7 @@
-name: OpenAPI breaking changes check
+# This workflow will build and run the application for oasdiff/oasdiff-action/breaking@main
+# For more information see: https://github.com/oasdiff/oasdiff-action
+
+name: OpenAPI breaking changes check 
 
 on: [push, pull_request]
 
