@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Determine PR source branch
-        id: vars
+        id: extract_branch
         run: echo "BRANCH_NAME=${GITHUB_HEAD_REF:-develop}" >> $GITHUB_ENV
 
       - name: Set up JDK 17
