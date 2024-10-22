@@ -1,7 +1,4 @@
-# This workflow will build and run the application for oasdiff/oasdiff-action/breaking@main
-# For more information see: https://github.com/oasdiff/oasdiff-action
-
-name: OpenAPI breaking changes check 
+name: OpenAPI breaking changes check
 
 on: [push, pull_request]
 
@@ -17,8 +14,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Checkout core
-        run: git clone --depth=50 --branch=develop https://github.com/informatici/openhospital-core.git openhospital-core
+      - name: Determine PR source branch
+        id: extract_branch
+        run: echo "BRANCH_NAME=${GITHUB_HEAD_REF:-develop}" >> $GITHUB_ENV
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,6 +25,14 @@ jobs:
           java-version: 17
           java-package: jdk
 
+      - name: Checkout core
+        run: |
+          git clone --depth=50 https://github.com/informatici/openhospital-core.git openhospital-core
+          cd openhospital-core
+          git fetch origin ${{ env.BRANCH_NAME }} || git fetch origin develop
+          git checkout ${{ env.BRANCH_NAME }} || git checkout develop
+          cd ..
+      
       - name: Install core
         run: cd openhospital-core && mvn install -DskipTests=true && cd ..
 
@@ -34,17 +40,6 @@ jobs:
         id: jwt
         run: echo "token=7DlyD1SHR5pCa4HGgTLWSYm8YQ7oRL1wpPbxyjWyHU44vUrqrooRu3lHVFSXWChesc" >> $GITHUB_OUTPUT
 
-      - name: Store branch name
-        id: extract_branch
-        run: |
-          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            echo "branch=$(echo ${GITHUB_REF##*/})" >> $GITHUB_OUTPUT
-          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            echo "branch=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_OUTPUT
-          else
-            echo "branch=INVALID_EVENT_BRANCH_UNKNOWN" >> $GITHUB_OUTPUT
-          fi
-          
       - name: Build with Maven
         run: |
           cp rsc/database.properties.dist rsc/database.properties
@@ -52,13 +47,13 @@ jobs:
           cp rsc/settings.properties.dist rsc/settings.properties
           sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" -e "s/API_HOST/localhost/g" -e "s/API_PORT/8080/g" rsc/application.properties.dist > rsc/application.properties
           mvn install -DskipTests=true
-          echo ${{ steps.extract_branch.outputs.branch }}
           
       - name: Run API
         run: |
           cd target
           java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.launch.JarLauncher &
           sleep 60
+          cd ..
           
       - name: Generate OpenAPI yaml
         run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
