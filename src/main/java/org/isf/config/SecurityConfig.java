@@ -155,9 +155,11 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.PUT, "/deliverytypes/**").hasAuthority("deliverytypes.update")
 			.requestMatchers(HttpMethod.DELETE, "/deliverytypes/**").hasAuthority("deliverytypes.delete")
 			// exams
-			.requestMatchers(HttpMethod.POST, "/exams/**").hasAuthority("exams.create")
+			.requestMatchers(HttpMethod.POST, "/exams/**")
+			.access("hasAuthority('exams.create') and hasAuthority('examrows.create')")
 			.requestMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("exams.read")
-			.requestMatchers(HttpMethod.PUT, "/exams/**").hasAuthority("exams.update")
+			.requestMatchers(HttpMethod.PUT, "/exams/**")
+			.access("hasAuthority('exams.update') and hasAuthority('examrows.create') and hasAuthority('examrows.delete')")
 			.requestMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("exams.delete")
 			// examrows
 			.requestMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("examrows.create")
