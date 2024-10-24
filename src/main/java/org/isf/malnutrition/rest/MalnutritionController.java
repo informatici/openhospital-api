@@ -36,7 +36,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,119 +45,131 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/malnutritions")
+@RestController
 @Tag(name = "Malnutritions")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class MalnutritionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MalnutritionController.class);
 
-	@Autowired
-	private MalnutritionMapper mapper;
-	
-	@Autowired
-	private MalnutritionManager manager;
-	
+	private final MalnutritionMapper mapper;
+
+	private final MalnutritionManager manager;
+
+	public MalnutritionController(MalnutritionMapper mapper, MalnutritionManager manager) {
+		this.mapper = mapper;
+		this.manager = manager;
+	}
+
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
 	 * @param malnutritionDTO the malnutrition to store.
 	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the malnutrition has been stored
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to store the malnutrition
 	 */
-	@PostMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MalnutritionDTO> newMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException{
+	@PostMapping(value = "/malnutritions")
+	@ResponseStatus(HttpStatus.CREATED)
+	public MalnutritionDTO newMalnutrition(
+		@RequestBody @Valid MalnutritionDTO malnutritionDTO
+	) throws OHServiceException{
 		LOGGER.info("Creating a new malnutrition ...");
 		Malnutrition isCreatedMalnutrition = manager.newMalnutrition(mapper.map2Model(malnutritionDTO));
 		if (isCreatedMalnutrition == null) {
 			LOGGER.info("Malnutrition is not created!");
-            throw new OHAPIException(new OHExceptionMessage("Malnutrition not created."));
-        }
+			throw new OHAPIException(new OHExceptionMessage("Malnutrition not created."));
+		}
 		LOGGER.info("Malnutrition successfully created!");
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedMalnutrition));
+
+		return mapper.map2DTO(isCreatedMalnutrition);
 	}
-	
+
 	/**
 	 * Retrieves all the {@link Malnutrition} associated to the given admission id.
 	 * @param admissionID the admission id to use as filter.
 	 * @return all the retrieved malnutrition.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to get malnutrition
 	 */
-	@GetMapping(value = "/malnutritions/{id_admission}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<MalnutritionDTO>> getMalnutrition(@PathVariable("id_admission") String admissionID) throws OHServiceException{
+	@GetMapping(value = "/malnutritions/{id_admission}")
+	public List<MalnutritionDTO> getMalnutrition(
+		@PathVariable("id_admission") String admissionID
+	) throws OHServiceException{
 		LOGGER.info("Looking for malnutrition controls. Admission ID is {}", admissionID);
+
 		List<Malnutrition> malnutritions = manager.getMalnutrition(admissionID);
 		if (malnutritions == null) {
 			throw new OHAPIException(new OHExceptionMessage("Error while retrieving malnutrition controls."));
 		}
-		List<MalnutritionDTO> mappedMalnutritions = mapper.map2DTOList(malnutritions);
-		if (mappedMalnutritions.isEmpty()) {
-			LOGGER.info("No malnutrition control found");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(mappedMalnutritions);
-		} else {
-			LOGGER.info("Found {} malnutrition controls", mappedMalnutritions.size());
-			return ResponseEntity.ok(mappedMalnutritions);
-		}
+
+		return mapper.map2DTOList(malnutritions);
 	}
-	
+
 	/**
 	 * Returns the last {@link Malnutrition} entry for specified patient ID.
 	 * @param patientID - the patient ID
 	 * @return the last {@link Malnutrition} for specified patient ID.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to get last malnutrition
 	 */
-	@GetMapping(value = "/malnutritions/last/{id_patient}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MalnutritionDTO> getLastMalnutrition(@PathVariable("id_patient") int patientID) throws OHServiceException {
+	@GetMapping(value = "/malnutritions/last/{id_patient}")
+	public MalnutritionDTO getLastMalnutrition(
+		@PathVariable("id_patient") int patientID
+	) throws OHServiceException {
 		Malnutrition foundMalnutrition = manager.getLastMalnutrition(patientID);
 		if (foundMalnutrition == null) {
-            throw new OHAPIException(new OHExceptionMessage("No malnutrition found."));
-		} else {
-			return ResponseEntity.ok(mapper.map2DTO(foundMalnutrition));
+			throw new OHAPIException(new OHExceptionMessage("No malnutrition found."));
 		}
+
+		return mapper.map2DTO(foundMalnutrition);
 	}
-	
+
 	/**
 	 * Updates the specified {@link Malnutrition}.
 	 * @param malnutritionDTO the {@link Malnutrition} to update
 	 * @return the updated {@link Malnutrition}
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update malnutrition
 	 */
-	@PutMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<MalnutritionDTO> updateMalnutrition(@RequestBody @Valid MalnutritionDTO malnutritionDTO) throws OHServiceException {
-		Malnutrition updatedMalnutrition = manager.updateMalnutrition(mapper.map2Model(malnutritionDTO));
-		return ResponseEntity.ok(mapper.map2DTO(updatedMalnutrition));
+	@PutMapping(value = "/malnutritions")
+	public MalnutritionDTO updateMalnutrition(
+		@RequestBody @Valid MalnutritionDTO malnutritionDTO
+	) throws OHServiceException {
+		return mapper.map2DTO(manager.updateMalnutrition(mapper.map2Model(malnutritionDTO)));
 	}
-	
+
 	/**
 	 * Deletes a given {@link Malnutrition}.
 	 * @param code - the code of malnutrition to delete.
 	 * @return {@code true} if the malnutrition has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException 
+	 * @throws OHServiceException When failed to delete malnutrition
 	 */
-	@DeleteMapping(value = "/malnutritions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteMalnutrition(@RequestParam int code) throws OHServiceException{
-		Malnutrition  malNutri = manager.getMalnutrition(code);
-		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malNutri.getAdmission().getId()));
+	@DeleteMapping(value = "/malnutritions")
+	public boolean deleteMalnutrition(@RequestParam int code) throws OHServiceException{
+		Malnutrition  malnutrition = manager.getMalnutrition(code);
+		List<Malnutrition> malnutritions = manager.getMalnutrition(String.valueOf(malnutrition.getAdmission().getId()));
 		List<Malnutrition> matchedMalnutritions = new ArrayList<>();
 		if (malnutritions != null) {
 			matchedMalnutritions = malnutritions
-					.stream()
-					.filter(malnutrition -> malnutrition.getCode() == code)
-					.collect(Collectors.toList());
+				.stream()
+				.filter(item -> item.getCode() == code)
+				.collect(Collectors.toList());
 		}
+
 		if (matchedMalnutritions.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("Malnutrition control not found."));
 		}
+
 		try {
 			manager.deleteMalnutrition(matchedMalnutritions.get(0));
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Malnutrition not deleted."));
 		}
-		return ResponseEntity.ok(true);
 	}
 }

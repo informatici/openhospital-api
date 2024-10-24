@@ -43,77 +43,88 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/admissiontypes")
+@RestController()
 @Tag(name = "AdmissionTypes")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdmissionTypeController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeController.class);
 
-	@Autowired
-	protected AdmissionTypeBrowserManager admtManager;
+	private final AdmissionTypeBrowserManager admissionTypeManager;
 
-	@Autowired
-	protected AdmissionTypeMapper mapper;
+	private final AdmissionTypeMapper mapper;
 
-	public AdmissionTypeController(AdmissionTypeBrowserManager admtManager, AdmissionTypeMapper admissionTypemapper) {
-		this.admtManager = admtManager;
+	public AdmissionTypeController(
+		AdmissionTypeBrowserManager admissionTypeBrowserManager, AdmissionTypeMapper admissionTypemapper
+	) {
+		this.admissionTypeManager = admissionTypeBrowserManager;
 		this.mapper = admissionTypemapper;
 	}
 
 	/**
 	 * Create a new {@link AdmissionType}
 	 * 
-	 * @param admissionTypeDTO
+	 * @param admissionTypeDTO Admission Type payload
 	 * @return {@code true} if the admission type has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create admission type
 	 */
-	@PostMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AdmissionTypeDTO> newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
+	@PostMapping(value = "/admissiontypes")
+	@ResponseStatus(HttpStatus.CREATED)
+	public AdmissionTypeDTO newAdmissionType(@RequestBody AdmissionTypeDTO admissionTypeDTO) throws OHServiceException {
 		String code = admissionTypeDTO.getCode();
+
 		LOGGER.info("Create Admission Type {}", code);
-		AdmissionType newAdmissionType = admtManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
-		if (!admtManager.isCodePresent(code)) {
+
+		AdmissionType newAdmissionType = admissionTypeManager.newAdmissionType(mapper.map2Model(admissionTypeDTO));
+		if (!admissionTypeManager.isCodePresent(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type is not created."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newAdmissionType));
+
+		return mapper.map2DTO(newAdmissionType);
 	}
 
 	/**
 	 * Updates the specified {@link AdmissionType}.
 	 * 
-	 * @param admissionTypeDTO
+	 * @param admissionTypeDTO Admission Type payload
 	 * @return {@code true} if the admission type has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update the admission type
 	 */
-	@PutMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AdmissionTypeDTO> updateAdmissionTypes(@RequestBody AdmissionTypeDTO admissionTypeDTO)
-					throws OHServiceException {
-		LOGGER.info("Update admissiontypes code: {}", admissionTypeDTO.getCode());
-		AdmissionType admt = mapper.map2Model(admissionTypeDTO);
-		if (!admtManager.isCodePresent(admt.getCode())) {
+	@PutMapping(value = "/admissiontypes")
+	public AdmissionTypeDTO updateAdmissionTypes(
+		@RequestBody AdmissionTypeDTO admissionTypeDTO
+	) throws OHServiceException {
+		LOGGER.info("Update admission types code: {}", admissionTypeDTO.getCode());
+
+		AdmissionType admissionType = mapper.map2Model(admissionTypeDTO);
+		if (!admissionTypeManager.isCodePresent(admissionType.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("Admission Type not found."));
 		}
-		AdmissionType updatedAdmissionType = admtManager.updateAdmissionType(admt);
-		return ResponseEntity.ok(mapper.map2DTO(updatedAdmissionType));
+
+		return mapper.map2DTO(admissionTypeManager.updateAdmissionType(admissionType));
 	}
 
 	/**
 	 * Get all the available {@link AdmissionType}s.
 	 * 
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get admission types
 	 */
-	@GetMapping(value = "/admissiontypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/admissiontypes")
 	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
 		LOGGER.info("Get all Admission Types ");
-		List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
+
+		List<AdmissionType> admissionTypes = admissionTypeManager.getAdmissionType();
 		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
+
 		if (admissionTypeDTOs.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
 		} else {
@@ -124,29 +135,30 @@ public class AdmissionTypeController {
 	/**
 	 * Delete {@link AdmissionType} for specified code.
 	 * 
-	 * @param code
+	 * @param code Admission Type Code
 	 * @return {@code true} if the {@link AdmissionType} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete admission type
 	 */
 	@DeleteMapping(value = "/admissiontypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
+	public boolean deleteAdmissionType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Admission Type code: {}", code);
-		if (admtManager.isCodePresent(code)) {
-			List<AdmissionType> admissionTypes = admtManager.getAdmissionType();
-			List<AdmissionType> admtFounds = admissionTypes.stream().filter(ad -> ad.getCode().equals(code))
-							.collect(Collectors.toList());
-			if (!admtFounds.isEmpty()) {
-				try {
-					admtManager.deleteAdmissionType(admtFounds.get(0));
-				} catch (OHServiceException serviceException) {
-					LOGGER.error("Delete Admission: {} failed.", code);
-					throw new OHAPIException(new OHExceptionMessage("Admission not deleted."));
-				}
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-		return ResponseEntity.ok(true);
-	}
 
+		if (!admissionTypeManager.isCodePresent(code)) {
+			throw new OHAPIException(new OHExceptionMessage("Admission type not found with ID :" + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<AdmissionType> admissionTypes = admissionTypeManager.getAdmissionType();
+		List<AdmissionType> admissionTypesFound = admissionTypes.stream().filter(ad -> ad.getCode().equals(code)).toList();
+
+		if (!admissionTypesFound.isEmpty()) {
+			try {
+				admissionTypeManager.deleteAdmissionType(admissionTypesFound.get(0));
+			} catch (OHServiceException serviceException) {
+				LOGGER.error("Delete Admission: {} failed.", code);
+				throw new OHAPIException(new OHExceptionMessage("Admission not deleted."));
+			}
+		}
+
+		return true;
+	}
 }

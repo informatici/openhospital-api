@@ -42,6 +42,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -108,13 +109,13 @@ public class BillControllerTest extends ControllerBaseTest {
 	@Mock
 	private PatientBrowserManager patientManagerMock;
 
-	private BillMapper billMapper = new BillMapper();
+	private final BillMapper billMapper = new BillMapper();
 
-	private BillItemsMapper billItemsMapper = new BillItemsMapper();
+	private final BillItemsMapper billItemsMapper = new BillItemsMapper();
 
-	private BillPaymentsMapper billPaymentsMapper = new BillPaymentsMapper();
+	private final BillPaymentsMapper billPaymentsMapper = new BillPaymentsMapper();
 
-	private PatientMapper patientMapper = new PatientMapper();
+	private final PatientMapper patientMapper = new PatientMapper();
 
 	private MockMvc mockMvc;
 
@@ -124,9 +125,9 @@ public class BillControllerTest extends ControllerBaseTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
@@ -150,13 +151,13 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills";
 
 		MvcResult result = this.mockMvc
-				.perform(post(request).content(new byte[] { 'a', 'b', 'c' }))
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isUnsupportedMediaType())
-				// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
-				.andExpect(content().string(containsString("Unsupported Media Type")))
-				.andReturn();
+			.perform(post(request).content(new byte[] { 'a', 'b', 'c' }))
+			.andDo(log())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isUnsupportedMediaType())
+			// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+			.andExpect(content().string(containsString("Unsupported Media Type")))
+			.andReturn();
 
 		Optional<HttpMediaTypeNotSupportedException> exception = Optional.ofNullable((HttpMediaTypeNotSupportedException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
@@ -171,17 +172,17 @@ public class BillControllerTest extends ControllerBaseTest {
 		String empty_body = "";
 
 		MvcResult result = this.mockMvc
-				.perform(
-						post(request)
-								.content(empty_body.getBytes())
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest())
-				// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
-				.andExpect(content().string(containsString("Failed to read request")))
-				.andReturn();
+			.perform(
+				post(request)
+					.content(empty_body.getBytes())
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isBadRequest())
+			// TODO .andExpect(content().string(anyOf(nullValue(), equalTo(""))))
+			.andExpect(content().string(containsString("Failed to read request")))
+			.andReturn();
 
 		Optional<HttpMessageNotReadableException> exception = Optional.ofNullable((HttpMessageNotReadableException) result.getResolvedException());
 		LOGGER.debug("exception: {}", exception);
@@ -203,16 +204,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(patientManagerMock.getPatientById(anyInt())).thenReturn(null);
 
 		MvcResult result = this.mockMvc
-				.perform(
-						post(request)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient not found.")))
-				.andReturn();
+			.perform(
+				post(request)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(FullBillDTOHelper.asJsonString(newFullBillDTO)))
+			)
+			.andDo(log())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+			.andExpect(content().string(containsString("Patient not found.")))
+			.andReturn();
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
@@ -236,16 +237,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 
 		MvcResult result = this.mockMvc
-				.perform(
-						put(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
-				)
-				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
-				.andExpect(content().string(containsString("Patient not found.")))
-				.andReturn();
+			.perform(
+				put(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(FullBillDTOHelper.asJsonString(newFullBillDTO)))
+			)
+			.andDo(log())
+			.andExpect(status().is4xxClientError())
+			.andExpect(status().isBadRequest()) //TODO Create OHCreateAPIException
+			.andExpect(content().string(containsString("Patient not found.")))
+			.andReturn();
 
 		//TODO Create OHCreateAPIException
 		Optional<OHAPIException> oHAPIException = Optional.ofNullable((OHAPIException) result.getResolvedException());
@@ -293,18 +294,18 @@ public class BillControllerTest extends ControllerBaseTest {
 		//TODO  check eq(bill) case
 		//when(billManagerMock.updateBill(bill, billItemsArrayList, billPaymentsList))
 		when(billManagerMock.updateBill(any(Bill.class), eq(billItemsList), eq(billPaymentsList)))
-				.thenReturn(bill);
+			.thenReturn(bill);
 
 		this.mockMvc
-				.perform(
-						put(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(FullBillDTOHelper.asJsonString(newFullBillDTO))
-				)
-				.andDo(log())
-				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
-				.andReturn();
+			.perform(
+				put(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(FullBillDTOHelper.asJsonString(newFullBillDTO)))
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(FullBillDTOHelper.asJsonString(newFullBillDTO))))
+			.andReturn();
 	}
 
 	@Test
@@ -315,20 +316,19 @@ public class BillControllerTest extends ControllerBaseTest {
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		newFullBillDTO.getBill().setId(id);
 
-		List<BillItems> itemsDTOSExpected = new ArrayList<>(
-				newFullBillDTO.getBillItems().stream().map(it -> billItemsMapper.map2Model(it)).collect(Collectors.toList()));
+		List<BillItems> itemsDTOSExpected = newFullBillDTO.getBillItems().stream().map(billItemsMapper::map2Model).collect(Collectors.toList());
 
 		when(billManagerMock.getItems(id)).thenReturn(itemsDTOSExpected);
 
 		this.mockMvc
-				.perform(
-						get(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillHelper.getObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
-				.andReturn();
+			.perform(
+				get(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillHelper.getObjectMapper().writeValueAsString(newFullBillDTO.getBillItems()))))
+			.andReturn();
 	}
 
 	@Test
@@ -337,12 +337,12 @@ public class BillControllerTest extends ControllerBaseTest {
 		String request = "/bills/items/{bill_id}";
 
 		this.mockMvc
-				.perform(
-						get(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isNoContent());
+			.perform(
+				get(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isNoContent());
 	}
 
 	@Test
@@ -356,14 +356,14 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 
 		this.mockMvc
-				.perform(
-						get(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
-				.andReturn();
+			.perform(
+				get(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
+			.andReturn();
 	}
 
 	@Test
@@ -376,13 +376,13 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBill(id)).thenReturn(bill);
 
 		this.mockMvc
-				.perform(
-						delete(request, id)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")));
+			.perform(
+				delete(request, id)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")));
 	}
 
 	@Test
@@ -397,15 +397,15 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getPendingBillsAffiliate(code)).thenReturn(billList);
 
 		this.mockMvc
-				.perform(
-						get(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
-				.andReturn();
+			.perform(
+				get(request, code)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
+			.andReturn();
 	}
 
 	@Test
@@ -422,16 +422,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBills(billsPaymentsList)).thenReturn(billList);
 
 		this.mockMvc
-				.perform(
-						post(request)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(BillPaymentsDTOHelper.asJsonString(billsPaymentsDTOList))
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
-				.andReturn();
+			.perform(
+				post(request)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(BillPaymentsDTOHelper.asJsonString(billsPaymentsDTOList)))
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
+			.andReturn();
 	}
 
 	@Test
@@ -443,26 +443,26 @@ public class BillControllerTest extends ControllerBaseTest {
 		BillDTO expectedBillDTO1 = billMapper.map2DTO(billList.get(0));
 		BillDTO expectedBillDTO2 = billMapper.map2DTO(billList.get(1));
 
-		List<BillDTO> billDTOS = billList.stream().map(b -> billMapper.map2DTO(b)).collect(Collectors.toList());
+		List<BillDTO> billDTOS = billList.stream().map(billMapper::map2DTO).collect(Collectors.toList());
 
 		when(billManagerMock.getPendingBills(code)).thenReturn(billList);
 
 		this.mockMvc
-				.perform(
-						get(request, code)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
-				.andExpect(content().string(containsString(BillDTOHelper.asJsonString(billDTOS))))
-				.andReturn();
+			.perform(
+				get(request, code)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO1))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(expectedBillDTO2))))
+			.andExpect(content().string(containsString(BillDTOHelper.asJsonString(billDTOS))))
+			.andReturn();
 	}
 
 	@Test
 	public void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK()
-			throws Exception {
+		throws Exception {
 		String request = "/bills/search/by/item?datefrom={dateFrom}&dateto={dateTo}";
 		String dateFrom = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
 		String dateTo = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
@@ -481,16 +481,16 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(billItem))).thenReturn(billList);
 
 		this.mockMvc
-				.perform(
-						post(request, dateFrom, dateTo)
-								.contentType(MediaType.APPLICATION_JSON)
-								.content(BillItemsDTOHelper.asJsonString(billItemsDTO))
-				)
-				.andDo(log())
-				.andDo(print())
-				.andExpect(status().isOk())
-				// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
-				.andReturn();
+			.perform(
+				post(request, dateFrom, dateTo)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(BillItemsDTOHelper.asJsonString(billItemsDTO)))
+			)
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
+			.andReturn();
 	}
 
 	@Test
@@ -512,15 +512,15 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getBills(any(LocalDateTime.class), any(LocalDateTime.class), eq(patient))).thenReturn(billList);
 
 		this.mockMvc
-				.perform(
-						get(request, dateFrom, dateTo, patientCode)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andDo(print())
-				.andExpect(status().isOk())
-				// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
-				.andReturn();
+			.perform(
+				get(request, dateFrom, dateTo, patientCode)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andDo(print())
+			.andExpect(status().isOk())
+			// TODO 1 .andExpect(content().string(containsString(BillDTOHelper.asJsonString(BillDTOHelper.setup(id)))))
+			.andReturn();
 	}
 
 	@Test
@@ -536,20 +536,20 @@ public class BillControllerTest extends ControllerBaseTest {
 		billItemsList.add(billItems1);
 		billItemsList.add(billItems2);
 
-		List<BillItemsDTO> expectedBillItemsDTOList = billItemsList.stream().map(it -> billItemsMapper.map2DTO(it)).collect(Collectors.toList());
+		List<BillItemsDTO> expectedBillItemsDTOList = billItemsList.stream().map(billItemsMapper::map2DTO).collect(Collectors.toList());
 
 		//TODO emulate distinct behavior since both billItems in List are equal
 		when(billManagerMock.getDistinctItems()).thenReturn(billItemsList);
 
 		this.mockMvc
-				.perform(
-						get(request)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillItemsDTOHelper.asJsonString(expectedBillItemsDTOList))))
-				.andReturn();
+			.perform(
+				get(request)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillItemsDTOHelper.asJsonString(expectedBillItemsDTOList))))
+			.andReturn();
 	}
 
 	@Test
@@ -563,14 +563,14 @@ public class BillControllerTest extends ControllerBaseTest {
 		when(billManagerMock.getPayments(billId)).thenReturn(BillPaymentsDTOHelper.toModelList(billPaymentsDTOList, billPaymentsMapper));
 
 		this.mockMvc
-				.perform(
-						get(request, billId)
-								.contentType(MediaType.APPLICATION_JSON)
-				)
-				.andDo(log())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
-				.andReturn();
+			.perform(
+				get(request, billId)
+					.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(BillPaymentsDTOHelper.asJsonString(billPaymentsDTOList))))
+			.andReturn();
 	}
 
 }

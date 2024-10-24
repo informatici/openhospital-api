@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
@@ -171,7 +172,7 @@ public class WardControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(WardHelper.asJsonString(body))
+						.content(Objects.requireNonNull(WardHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
@@ -194,7 +195,7 @@ public class WardControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(put(request)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(WardHelper.asJsonString(body))
+						.content(Objects.requireNonNull(WardHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
