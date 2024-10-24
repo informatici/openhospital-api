@@ -94,7 +94,7 @@ public class AgeTypeController {
 	 * @return {@link AgeTypeDTO} the updated age type
 	 * @throws OHServiceException When failed to update age type
 	 */
-	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(value = "/agetypes")
 	public AgeTypeDTO updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
 		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
@@ -120,7 +120,7 @@ public class AgeTypeController {
 	 * @return the code of the age type matching the given age
 	 * @throws OHServiceException When failed to get age type
 	 */
-	@GetMapping(value = "/agetypes/code", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/agetypes/code")
 	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		LOGGER.info("Get age type by age: {}", age);
 
@@ -142,8 +142,8 @@ public class AgeTypeController {
 	 * @return the retrieved element.
 	 * @throws OHServiceException When failed to get age type
 	 */
-	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public AgeType getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
+	@GetMapping(value = "/agetypes/{index}")
+	public AgeTypeDTO getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		LOGGER.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
 
@@ -152,6 +152,6 @@ public class AgeTypeController {
 			throw new OHAPIException(new OHExceptionMessage("Age type not found with index :" + index), HttpStatus.NOT_FOUND);
 		}
 
-		return result;
+		return mapper.map2DTO(result);
 	}
 }
