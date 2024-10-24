@@ -21,22 +21,24 @@
  */
 package org.isf.exam.rest;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.validation.Valid;
 
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exam.dto.ExamDTO;
+import org.isf.exam.dto.ExamWithRowsDTO;
 import org.isf.exam.mapper.ExamMapper;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.model.ExamType;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,93 +58,108 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExamController {
 
-    private final ExamBrowsingManager examManager;
+	private final ExamBrowsingManager examManager;
 
-    private final ExamTypeBrowserManager examTypeBrowserManager;
+	private final ExamTypeBrowserManager examTypeBrowserManager;
 
-    private final ExamMapper examMapper;
+	private final ExamMapper examMapper;
 
-    public ExamController(ExamBrowsingManager examManager, ExamTypeBrowserManager examTypeBrowserManager, ExamMapper examMapper) {
-        this.examManager = examManager;
-        this.examMapper = examMapper;
-        this.examTypeBrowserManager = examTypeBrowserManager;
-    }
+	public ExamController(
+		ExamBrowsingManager examManager,
+		ExamTypeBrowserManager examTypeBrowserManager,
+		ExamMapper examMapper
+	) {
+		this.examManager = examManager;
+		this.examTypeBrowserManager = examTypeBrowserManager;
+		this.examMapper = examMapper;
+	}
 
-    @PostMapping("/exams")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ExamDTO newExam(@RequestBody ExamDTO newExam) throws OHServiceException {
-        ExamType examType = examTypeBrowserManager.getExamType()
-            .stream()
-            .filter(et -> newExam.getExamtype().getCode().equals(et.getCode()))
-            .findFirst().orElse(null);
+	@PostMapping(value = "/exams")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ExamDTO newExam(@Valid @RequestBody ExamWithRowsDTO examWithRowsDTO) throws OHServiceException {
+		ExamDTO examDTO = examWithRowsDTO.exam();
+		List<String> examRows = examWithRowsDTO.rows();
 
-        if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam type not found."), HttpStatus.NOT_FOUND);
-        }
+		ExamType examType = examTypeBrowserManager.findByCode(examDTO.getExamtype().getCode());
 
-        Exam exam = examMapper.map2Model(newExam);
-        exam.setExamtype(examType);
-        try {
-            return examMapper.map2DTO(examManager.newExam(exam));
-        } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not created."));
-        }
-    }
+		if (examType == null) {
+			throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
+		}
 
-    @PutMapping("/exams/{code:.+}")
-    public ExamDTO updateExams(
-        @PathVariable String code, @RequestBody ExamDTO updateExam
-    ) throws OHServiceException {
+		if (examDTO.getProcedure() == 1 && examDTO.getDefaultResult() != null) {
+			if ((examRows == null ? Collections.emptyList() : examRows).stream()
+				.noneMatch(row -> examDTO.getDefaultResult().equals(row))) {
+				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
+			}
+		}
 
-        if (!updateExam.getCode().equals(code)) {
-            throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
-        }
-        if (examManager.getExams().stream().noneMatch(e -> e.getCode().equals(code))) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
-        }
+		Exam exam = examMapper.map2Model(examDTO);
+		exam.setExamtype(examType);
+		try {
+			exam = examManager.create(exam, examRows);
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Exam not created."));
+		}
+		return examMapper.map2DTO(exam);
+	}
 
-        ExamType examType = examTypeBrowserManager.getExamType()
-            .stream()
-            .filter(et -> updateExam.getExamtype().getCode().equals(et.getCode()))
-            .findFirst().orElse(null);
+	@PutMapping(value = "/exams/{code:.+}")
+	public ExamDTO updateExam(
+		@PathVariable String code, @Valid @RequestBody ExamWithRowsDTO examWithRowsDTO
+	) throws OHServiceException {
+		ExamDTO examDTO = examWithRowsDTO.exam();
+		List<String> examRows = examWithRowsDTO.rows();
 
-        if (examType == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam type not found."), HttpStatus.NOT_FOUND);
-        }
+		if (!examDTO.getCode().equals(code)) {
+			throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
+		}
+		if (examManager.findByCode(code) == null) {
+			throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
+		}
 
-        Exam exam = examMapper.map2Model(updateExam);
-        exam.setExamtype(examType);
-        exam.setLock(updateExam.getLock());
-        Exam examUpdated = examManager.updateExam(exam);
-        if (examUpdated == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not updated."));
-        }
+		ExamType examType = examTypeBrowserManager.findByCode(examDTO.getExamtype().getCode());
+		if (examType == null) {
+			throw new OHAPIException(new OHExceptionMessage("Exam type not found."));
+		}
 
-        return examMapper.map2DTO(examUpdated);
-    }
+		if (examDTO.getProcedure() == 1 && examDTO.getDefaultResult() != null) {
+			if ((examRows == null ? Collections.emptyList() : examRows).stream()
+				.noneMatch(row -> examDTO.getDefaultResult().equals(row))) {
+				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
+			}
+		}
 
-    @GetMapping("/exams/description/{description:.+}")
-    public List<ExamDTO> getExams(@PathVariable String description) throws OHServiceException {
-       return examMapper.map2DTOList(examManager.getExams(description));
-    }
+		Exam exam = examMapper.map2Model(examDTO);
+		exam.setExamtype(examType);
+		Exam examUpdated = examManager.update(exam, examRows);
+		if (examUpdated == null) {
+			throw new OHAPIException(new OHExceptionMessage("Exam not updated."));
+		}
 
-    @GetMapping("/exams")
-    public List<ExamDTO> getExams() throws OHServiceException {
-        return examMapper.map2DTOList(examManager.getExams());
-    }
+		return examMapper.map2DTO(examUpdated);
+	}
 
-    @DeleteMapping("/exams/{code:.+}")
-    public boolean deleteExam(@PathVariable String code) throws OHServiceException {
-        Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
-        if (exam.isEmpty()) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
-        }
+	@GetMapping(value = "/exams/description/{description:.+}")
+	public List<ExamDTO> getExams(@PathVariable String description) throws OHServiceException {
+		return examMapper.map2DTOList(examManager.getExams(description));
+	}
 
-        try {
-            examManager.deleteExam(exam.get());
-            return true;
-        } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not deleted."));
-        }
-    }
+	@GetMapping(value = "/exams")
+	public List<ExamDTO> getExams() throws OHServiceException {
+		return examMapper.map2DTOList(examManager.getExams());
+	}
+
+	@DeleteMapping(value = "/exams/{code:.+}")
+	public boolean deleteExam(@PathVariable String code) throws OHServiceException {
+		Optional<Exam> exam = examManager.getExams().stream().filter(e -> e.getCode().equals(code)).findFirst();
+		if (exam.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+		}
+		try {
+			examManager.deleteExam(exam.get());
+			return true;
+		} catch (OHServiceException serviceException) {
+			throw new OHAPIException(new OHExceptionMessage("Exam not deleted."));
+		}
+	}
 }
