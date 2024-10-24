@@ -26,7 +26,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WardDTO'
+                  $ref: "#/components/schemas/WardDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -37,7 +37,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WardDTO'
+              $ref: "#/components/schemas/WardDTO"
         required: true
       responses:
         "200":
@@ -45,7 +45,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WardDTO'
+                $ref: "#/components/schemas/WardDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -56,7 +56,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WardDTO'
+              $ref: "#/components/schemas/WardDTO"
         required: true
       responses:
         "200":
@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WardDTO'
+                $ref: "#/components/schemas/WardDTO"
       security:
         - bearerAuth: [ ]
   /visits/{visitID}:
@@ -83,7 +83,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VisitDTO'
+              $ref: "#/components/schemas/VisitDTO"
         required: true
       responses:
         "200":
@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VisitDTO'
+                $ref: "#/components/schemas/VisitDTO"
       security:
         - bearerAuth: [ ]
   /vaccinetypes:
@@ -107,7 +107,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VaccineTypeDTO'
+                  $ref: "#/components/schemas/VaccineTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -118,7 +118,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VaccineTypeDTO'
+              $ref: "#/components/schemas/VaccineTypeDTO"
         required: true
       responses:
         "200":
@@ -126,7 +126,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VaccineTypeDTO'
+                $ref: "#/components/schemas/VaccineTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -137,7 +137,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VaccineTypeDTO'
+              $ref: "#/components/schemas/VaccineTypeDTO"
         required: true
       responses:
         "200":
@@ -145,7 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VaccineTypeDTO'
+                $ref: "#/components/schemas/VaccineTypeDTO"
       security:
         - bearerAuth: [ ]
   /vaccines:
@@ -161,7 +161,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VaccineDTO'
+                  $ref: "#/components/schemas/VaccineDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -172,7 +172,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VaccineDTO'
+              $ref: "#/components/schemas/VaccineDTO"
         required: true
       responses:
         "200":
@@ -180,7 +180,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VaccineDTO'
+                $ref: "#/components/schemas/VaccineDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -191,7 +191,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VaccineDTO'
+              $ref: "#/components/schemas/VaccineDTO"
         required: true
       responses:
         "200":
@@ -199,7 +199,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VaccineDTO'
+                $ref: "#/components/schemas/VaccineDTO"
       security:
         - bearerAuth: [ ]
   /usersettings/{id}:
@@ -218,7 +218,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserSettingDTO'
+              $ref: "#/components/schemas/UserSettingDTO"
         required: true
       responses:
         "200":
@@ -226,7 +226,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSettingDTO'
+                $ref: "#/components/schemas/UserSettingDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -262,7 +262,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: "#/components/schemas/UserDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -279,7 +279,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: "#/components/schemas/UserDTO"
         required: true
       responses:
         "200":
@@ -287,7 +287,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: "#/components/schemas/UserDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -316,7 +316,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfileDTO'
+                $ref: "#/components/schemas/UserProfileDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -327,7 +327,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: "#/components/schemas/UserDTO"
         required: true
       responses:
         "200":
@@ -335,7 +335,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserProfileDTO'
+                $ref: "#/components/schemas/UserProfileDTO"
       security:
         - bearerAuth: [ ]
   /usergroups/{group_code}:
@@ -355,7 +355,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserGroupDTO'
+                $ref: "#/components/schemas/UserGroupDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -372,7 +372,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserGroupDTO'
+              $ref: "#/components/schemas/UserGroupDTO"
         required: true
       responses:
         "200":
@@ -380,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserGroupDTO'
+                $ref: "#/components/schemas/UserGroupDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -413,7 +413,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupPermissionsDTO'
+              $ref: "#/components/schemas/GroupPermissionsDTO"
         required: true
       responses:
         "200":
@@ -423,7 +423,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PermissionDTO'
+                  $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
     patch:
@@ -440,7 +440,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupPermissionsDTO'
+              $ref: "#/components/schemas/GroupPermissionsDTO"
         required: true
       responses:
         "200":
@@ -450,7 +450,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PermissionDTO'
+                  $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /suppliers:
@@ -473,7 +473,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SupplierDTO'
+                  $ref: "#/components/schemas/SupplierDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -484,7 +484,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SupplierDTO'
+              $ref: "#/components/schemas/SupplierDTO"
         required: true
       responses:
         "200":
@@ -492,7 +492,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupplierDTO'
+                $ref: "#/components/schemas/SupplierDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -503,15 +503,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SupplierDTO'
+              $ref: "#/components/schemas/SupplierDTO"
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupplierDTO'
+                $ref: "#/components/schemas/SupplierDTO"
       security:
         - bearerAuth: [ ]
   /pricesothers/{id}:
@@ -530,7 +530,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PricesOthersDTO'
+              $ref: "#/components/schemas/PricesOthersDTO"
         required: true
       responses:
         "200":
@@ -538,7 +538,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PricesOthersDTO'
+                $ref: "#/components/schemas/PricesOthersDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -577,7 +577,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PriceListDTO'
+              $ref: "#/components/schemas/PriceListDTO"
         required: true
       responses:
         "200":
@@ -585,7 +585,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PriceListDTO'
+                $ref: "#/components/schemas/PriceListDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -623,7 +623,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+              $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
         required: true
       responses:
         "200":
@@ -631,7 +631,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+                $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -669,7 +669,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientVaccineDTO'
+              $ref: "#/components/schemas/PatientVaccineDTO"
         required: true
       responses:
         "200":
@@ -677,7 +677,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientVaccineDTO'
+                $ref: "#/components/schemas/PatientVaccineDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -718,7 +718,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientDTO'
+                $ref: "#/components/schemas/PatientDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -736,7 +736,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientDTO'
+              $ref: "#/components/schemas/PatientDTO"
         required: true
       responses:
         "200":
@@ -744,7 +744,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientDTO'
+                $ref: "#/components/schemas/PatientDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -785,7 +785,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientConsensusDTO'
+                $ref: "#/components/schemas/PatientConsensusDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -803,7 +803,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientConsensusDTO'
+              $ref: "#/components/schemas/PatientConsensusDTO"
         required: true
       responses:
         "200":
@@ -811,7 +811,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientConsensusDTO'
+                $ref: "#/components/schemas/PatientConsensusDTO"
       security:
         - bearerAuth: [ ]
   /operationtypes/{code}:
@@ -829,7 +829,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationTypeDTO'
+              $ref: "#/components/schemas/OperationTypeDTO"
         required: true
       responses:
         "200":
@@ -837,7 +837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationTypeDTO'
+                $ref: "#/components/schemas/OperationTypeDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -876,7 +876,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationDTO'
+                $ref: "#/components/schemas/OperationDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -893,7 +893,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationDTO'
+              $ref: "#/components/schemas/OperationDTO"
         required: true
       responses:
         "200":
@@ -901,7 +901,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationDTO'
+                $ref: "#/components/schemas/OperationDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -932,7 +932,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationRowDTO'
+              $ref: "#/components/schemas/OperationRowDTO"
         required: true
       responses:
         "200":
@@ -952,7 +952,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationRowDTO'
+              $ref: "#/components/schemas/OperationRowDTO"
         required: true
       responses:
         "200":
@@ -960,7 +960,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationRowDTO'
+                $ref: "#/components/schemas/OperationRowDTO"
       security:
         - bearerAuth: [ ]
   /opds/{code}:
@@ -979,7 +979,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpdDTO'
+              $ref: "#/components/schemas/OpdDTO"
         required: true
       responses:
         "200":
@@ -987,7 +987,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OpdDTO'
+                $ref: "#/components/schemas/OpdDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -1026,7 +1026,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpdWithOperationRowDTO'
+              $ref: "#/components/schemas/OpdWithOperationRowDTO"
         required: true
       responses:
         "200":
@@ -1034,7 +1034,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OpdWithOperationRowDTO'
+                $ref: "#/components/schemas/OpdWithOperationRowDTO"
       security:
         - bearerAuth: [ ]
   /medstockmovementtypes:
@@ -1050,7 +1050,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementTypeDTO'
+                  $ref: "#/components/schemas/MovementTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1061,7 +1061,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovementTypeDTO'
+              $ref: "#/components/schemas/MovementTypeDTO"
         required: true
       responses:
         "200":
@@ -1069,7 +1069,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovementTypeDTO'
+                $ref: "#/components/schemas/MovementTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1080,7 +1080,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovementTypeDTO'
+              $ref: "#/components/schemas/MovementTypeDTO"
         required: true
       responses:
         "200":
@@ -1088,7 +1088,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovementTypeDTO'
+                $ref: "#/components/schemas/MovementTypeDTO"
       security:
         - bearerAuth: [ ]
   /medicaltypes:
@@ -1104,7 +1104,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MedicalTypeDTO'
+                  $ref: "#/components/schemas/MedicalTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1115,7 +1115,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MedicalTypeDTO'
+              $ref: "#/components/schemas/MedicalTypeDTO"
         required: true
       responses:
         "200":
@@ -1123,7 +1123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicalTypeDTO'
+                $ref: "#/components/schemas/MedicalTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1134,7 +1134,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MedicalTypeDTO'
+              $ref: "#/components/schemas/MedicalTypeDTO"
         required: true
       responses:
         "200":
@@ -1142,7 +1142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicalTypeDTO'
+                $ref: "#/components/schemas/MedicalTypeDTO"
       security:
         - bearerAuth: [ ]
   /medicals:
@@ -1168,7 +1168,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MedicalDTO'
+                  $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1186,7 +1186,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MedicalDTO'
+              $ref: "#/components/schemas/MedicalDTO"
         required: true
       responses:
         "200":
@@ -1194,7 +1194,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicalDTO'
+                $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1212,7 +1212,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MedicalDTO'
+              $ref: "#/components/schemas/MedicalDTO"
         required: true
       responses:
         "200":
@@ -1220,7 +1220,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicalDTO'
+                $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
   /malnutritions:
@@ -1232,7 +1232,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MalnutritionDTO'
+              $ref: "#/components/schemas/MalnutritionDTO"
         required: true
       responses:
         "200":
@@ -1240,7 +1240,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MalnutritionDTO'
+                $ref: "#/components/schemas/MalnutritionDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1251,7 +1251,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MalnutritionDTO'
+              $ref: "#/components/schemas/MalnutritionDTO"
         required: true
       responses:
         "200":
@@ -1259,7 +1259,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MalnutritionDTO'
+                $ref: "#/components/schemas/MalnutritionDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -1300,7 +1300,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LaboratoryDTO'
+                $ref: "#/components/schemas/LaboratoryDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1318,7 +1318,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LabWithRowsDTO'
+              $ref: "#/components/schemas/LabWithRowsDTO"
         required: true
       responses:
         "200":
@@ -1410,7 +1410,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HospitalDTO'
+              $ref: "#/components/schemas/HospitalDTO"
         required: true
       responses:
         "200":
@@ -1418,7 +1418,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HospitalDTO'
+                $ref: "#/components/schemas/HospitalDTO"
       security:
         - bearerAuth: [ ]
   /examtypes/{code}:
@@ -1436,7 +1436,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExamTypeDTO'
+              $ref: "#/components/schemas/ExamTypeDTO"
         required: true
       responses:
         "200":
@@ -1444,7 +1444,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExamTypeDTO'
+                $ref: "#/components/schemas/ExamTypeDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -1470,7 +1470,7 @@ paths:
     put:
       tags:
         - Exams
-      operationId: updateExams
+      operationId: updateExam
       parameters:
         - name: code
           in: path
@@ -1481,7 +1481,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExamDTO'
+              $ref: "#/components/schemas/ExamWithRowsDTO"
         required: true
       responses:
         "200":
@@ -1489,7 +1489,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExamDTO'
+                $ref: "#/components/schemas/ExamDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -1529,7 +1529,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientExaminationDTO'
+                $ref: "#/components/schemas/PatientExaminationDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1547,7 +1547,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientExaminationDTO'
+              $ref: "#/components/schemas/PatientExaminationDTO"
         required: true
       responses:
         "200":
@@ -1571,7 +1571,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseTypeDTO'
+                  $ref: "#/components/schemas/DiseaseTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1582,7 +1582,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiseaseTypeDTO'
+              $ref: "#/components/schemas/DiseaseTypeDTO"
         required: true
       responses:
         "200":
@@ -1590,7 +1590,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiseaseTypeDTO'
+                $ref: "#/components/schemas/DiseaseTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1601,7 +1601,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiseaseTypeDTO'
+              $ref: "#/components/schemas/DiseaseTypeDTO"
         required: true
       responses:
         "200":
@@ -1609,7 +1609,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiseaseTypeDTO'
+                $ref: "#/components/schemas/DiseaseTypeDTO"
       security:
         - bearerAuth: [ ]
   /diseases:
@@ -1621,7 +1621,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiseaseDTO'
+              $ref: "#/components/schemas/DiseaseDTO"
         required: true
       responses:
         "200":
@@ -1629,7 +1629,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiseaseDTO'
+                $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1640,7 +1640,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DiseaseDTO'
+              $ref: "#/components/schemas/DiseaseDTO"
         required: true
       responses:
         "200":
@@ -1648,7 +1648,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiseaseDTO'
+                $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /dischargetypes:
@@ -1664,7 +1664,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DischargeTypeDTO'
+                  $ref: "#/components/schemas/DischargeTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1675,7 +1675,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DischargeTypeDTO'
+              $ref: "#/components/schemas/DischargeTypeDTO"
         required: true
       responses:
         "200":
@@ -1683,7 +1683,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DischargeTypeDTO'
+                $ref: "#/components/schemas/DischargeTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1694,7 +1694,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DischargeTypeDTO'
+              $ref: "#/components/schemas/DischargeTypeDTO"
         required: true
       responses:
         "200":
@@ -1702,7 +1702,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DischargeTypeDTO'
+                $ref: "#/components/schemas/DischargeTypeDTO"
       security:
         - bearerAuth: [ ]
   /deliverytypes:
@@ -1718,7 +1718,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DeliveryTypeDTO'
+                  $ref: "#/components/schemas/DeliveryTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1729,7 +1729,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryTypeDTO'
+              $ref: "#/components/schemas/DeliveryTypeDTO"
         required: true
       responses:
         "200":
@@ -1737,7 +1737,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeliveryTypeDTO'
+                $ref: "#/components/schemas/DeliveryTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1748,7 +1748,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryTypeDTO'
+              $ref: "#/components/schemas/DeliveryTypeDTO"
         required: true
       responses:
         "200":
@@ -1756,7 +1756,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeliveryTypeDTO'
+                $ref: "#/components/schemas/DeliveryTypeDTO"
       security:
         - bearerAuth: [ ]
   /deliveryresulttypes:
@@ -1772,7 +1772,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DeliveryResultTypeDTO'
+                  $ref: "#/components/schemas/DeliveryResultTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1783,7 +1783,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryResultTypeDTO'
+              $ref: "#/components/schemas/DeliveryResultTypeDTO"
         required: true
       responses:
         "200":
@@ -1791,7 +1791,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeliveryResultTypeDTO'
+                $ref: "#/components/schemas/DeliveryResultTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1802,7 +1802,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryResultTypeDTO'
+              $ref: "#/components/schemas/DeliveryResultTypeDTO"
         required: true
       responses:
         "200":
@@ -1810,7 +1810,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeliveryResultTypeDTO'
+                $ref: "#/components/schemas/DeliveryResultTypeDTO"
       security:
         - bearerAuth: [ ]
   /bills/{id}:
@@ -1831,7 +1831,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BillDTO'
+                $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1849,7 +1849,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FullBillDTO'
+              $ref: "#/components/schemas/FullBillDTO"
         required: true
       responses:
         "200":
@@ -1857,7 +1857,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullBillDTO'
+                $ref: "#/components/schemas/FullBillDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -1893,7 +1893,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AgeTypeDTO'
+                  $ref: "#/components/schemas/AgeTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1904,7 +1904,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgeTypeDTO'
+              $ref: "#/components/schemas/AgeTypeDTO"
         required: true
       responses:
         "200":
@@ -1912,7 +1912,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AgeTypeDTO'
+                $ref: "#/components/schemas/AgeTypeDTO"
       security:
         - bearerAuth: [ ]
   /admissiontypes:
@@ -1928,7 +1928,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AdmissionTypeDTO'
+                  $ref: "#/components/schemas/AdmissionTypeDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -1939,7 +1939,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdmissionTypeDTO'
+              $ref: "#/components/schemas/AdmissionTypeDTO"
         required: true
       responses:
         "200":
@@ -1947,7 +1947,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdmissionTypeDTO'
+                $ref: "#/components/schemas/AdmissionTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -1958,7 +1958,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdmissionTypeDTO'
+              $ref: "#/components/schemas/AdmissionTypeDTO"
         required: true
       responses:
         "200":
@@ -1966,7 +1966,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdmissionTypeDTO'
+                $ref: "#/components/schemas/AdmissionTypeDTO"
       security:
         - bearerAuth: [ ]
   /admissions:
@@ -2010,7 +2010,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageAdmissionDTO'
+                $ref: "#/components/schemas/PageAdmissionDTO"
       security:
         - bearerAuth: [ ]
     put:
@@ -2021,7 +2021,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdmissionDTO'
+              $ref: "#/components/schemas/AdmissionDTO"
         required: true
       responses:
         "400":
@@ -2031,7 +2031,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdmissionDTO'
+                $ref: "#/components/schemas/AdmissionDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2042,7 +2042,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdmissionDTO'
+              $ref: "#/components/schemas/AdmissionDTO"
         required: true
       responses:
         "400":
@@ -2052,7 +2052,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdmissionDTO'
+                $ref: "#/components/schemas/AdmissionDTO"
       security:
         - bearerAuth: [ ]
   /visits:
@@ -2064,7 +2064,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VisitDTO'
+              $ref: "#/components/schemas/VisitDTO"
         required: true
       responses:
         "200":
@@ -2072,7 +2072,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VisitDTO'
+                $ref: "#/components/schemas/VisitDTO"
       security:
         - bearerAuth: [ ]
   /visits/insertList:
@@ -2086,7 +2086,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/VisitDTO'
+                $ref: "#/components/schemas/VisitDTO"
         required: true
       responses:
         "200":
@@ -2110,7 +2110,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserSettingDTO'
+                  $ref: "#/components/schemas/UserSettingDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2121,7 +2121,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserSettingDTO'
+              $ref: "#/components/schemas/UserSettingDTO"
         required: true
       responses:
         "201":
@@ -2129,7 +2129,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSettingDTO'
+                $ref: "#/components/schemas/UserSettingDTO"
       security:
         - bearerAuth: [ ]
   /users:
@@ -2151,7 +2151,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserDTO'
+                  $ref: "#/components/schemas/UserDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2162,7 +2162,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: "#/components/schemas/UserDTO"
         required: true
       responses:
         "201":
@@ -2170,7 +2170,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: "#/components/schemas/UserDTO"
       security:
         - bearerAuth: [ ]
   /usergroups:
@@ -2186,7 +2186,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserGroupDTO'
+                  $ref: "#/components/schemas/UserGroupDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2197,7 +2197,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserGroupDTO'
+              $ref: "#/components/schemas/UserGroupDTO"
         required: true
       responses:
         "201":
@@ -2205,7 +2205,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserGroupDTO'
+                $ref: "#/components/schemas/UserGroupDTO"
       security:
         - bearerAuth: [ ]
   /usergroups/{group_code}/permissions/{id}:
@@ -2265,7 +2265,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TherapyRowDTO'
+              $ref: "#/components/schemas/TherapyRowDTO"
         required: true
       responses:
         "200":
@@ -2273,7 +2273,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TherapyRowDTO'
+                $ref: "#/components/schemas/TherapyRowDTO"
       security:
         - bearerAuth: [ ]
   /therapies/replace:
@@ -2287,7 +2287,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TherapyRowDTO'
+                $ref: "#/components/schemas/TherapyRowDTO"
         required: true
       responses:
         "200":
@@ -2295,7 +2295,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TherapyRow'
+                $ref: "#/components/schemas/TherapyRow"
       security:
         - bearerAuth: [ ]
   /therapies/meds-out-of-stock:
@@ -2309,7 +2309,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TherapyDTO'
+                $ref: "#/components/schemas/TherapyDTO"
         required: true
       responses:
         "200":
@@ -2319,7 +2319,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MedicalDTO'
+                  $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
   /therapies/from-rows:
@@ -2333,7 +2333,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/TherapyRowDTO'
+                $ref: "#/components/schemas/TherapyRowDTO"
         required: true
       responses:
         "200":
@@ -2343,7 +2343,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TherapyDTO'
+                  $ref: "#/components/schemas/TherapyDTO"
       security:
         - bearerAuth: [ ]
   /therapies/from-row:
@@ -2355,7 +2355,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TherapyRowDTO'
+              $ref: "#/components/schemas/TherapyRowDTO"
         required: true
       responses:
         "200":
@@ -2363,7 +2363,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TherapyDTO'
+                $ref: "#/components/schemas/TherapyDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/discharge:
@@ -2383,7 +2383,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MovementDTO'
+                $ref: "#/components/schemas/MovementDTO"
         required: true
       responses:
         "200":
@@ -2411,7 +2411,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MovementDTO'
+                $ref: "#/components/schemas/MovementDTO"
         required: true
       responses:
         "200":
@@ -2446,7 +2446,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SmsDTO'
+                  $ref: "#/components/schemas/SmsDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2464,7 +2464,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SmsDTO'
+              $ref: "#/components/schemas/SmsDTO"
         required: true
       responses:
         "200":
@@ -2486,7 +2486,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/SmsDTO'
+                $ref: "#/components/schemas/SmsDTO"
         required: true
       responses:
         "200":
@@ -2510,7 +2510,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PricesOthersDTO'
+                  $ref: "#/components/schemas/PricesOthersDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2521,7 +2521,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PricesOthersDTO'
+              $ref: "#/components/schemas/PricesOthersDTO"
         required: true
       responses:
         "200":
@@ -2529,7 +2529,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PricesOthersDTO'
+                $ref: "#/components/schemas/PricesOthersDTO"
       security:
         - bearerAuth: [ ]
   /pricelists:
@@ -2545,7 +2545,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PriceListDTO'
+                  $ref: "#/components/schemas/PriceListDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2556,7 +2556,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PriceListDTO'
+              $ref: "#/components/schemas/PriceListDTO"
         required: true
       responses:
         "200":
@@ -2564,7 +2564,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PriceListDTO'
+                $ref: "#/components/schemas/PriceListDTO"
       security:
         - bearerAuth: [ ]
   /pregnanttreatmenttypes:
@@ -2580,7 +2580,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+                  $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2591,7 +2591,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+              $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
         required: true
       responses:
         "200":
@@ -2599,7 +2599,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+                $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
       security:
         - bearerAuth: [ ]
   /patientvaccines:
@@ -2611,7 +2611,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientVaccineDTO'
+              $ref: "#/components/schemas/PatientVaccineDTO"
         required: true
       responses:
         "200":
@@ -2619,7 +2619,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientVaccineDTO'
+                $ref: "#/components/schemas/PatientVaccineDTO"
       security:
         - bearerAuth: [ ]
   /patients:
@@ -2648,7 +2648,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagePatientDTO'
+                $ref: "#/components/schemas/PagePatientDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2659,7 +2659,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientDTO'
+              $ref: "#/components/schemas/PatientDTO"
         required: true
       responses:
         "200":
@@ -2667,7 +2667,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientDTO'
+                $ref: "#/components/schemas/PatientDTO"
       security:
         - bearerAuth: [ ]
   /operationtypes:
@@ -2683,7 +2683,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationTypeDTO'
+                  $ref: "#/components/schemas/OperationTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2694,7 +2694,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationTypeDTO'
+              $ref: "#/components/schemas/OperationTypeDTO"
         required: true
       responses:
         "200":
@@ -2702,7 +2702,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationTypeDTO'
+                $ref: "#/components/schemas/OperationTypeDTO"
       security:
         - bearerAuth: [ ]
   /operations:
@@ -2718,7 +2718,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationDTO'
+                  $ref: "#/components/schemas/OperationDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2729,7 +2729,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OperationDTO'
+              $ref: "#/components/schemas/OperationDTO"
         required: true
       responses:
         "200":
@@ -2737,7 +2737,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OperationDTO'
+                $ref: "#/components/schemas/OperationDTO"
       security:
         - bearerAuth: [ ]
   /operations/rows/search/opd:
@@ -2749,7 +2749,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpdDTO'
+              $ref: "#/components/schemas/OpdDTO"
         required: true
       responses:
         "200":
@@ -2759,7 +2759,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationRowDTO'
+                  $ref: "#/components/schemas/OperationRowDTO"
       security:
         - bearerAuth: [ ]
   /opds:
@@ -2771,7 +2771,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpdDTO'
+              $ref: "#/components/schemas/OpdDTO"
         required: true
       responses:
         "200":
@@ -2779,7 +2779,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OpdDTO'
+                $ref: "#/components/schemas/OpdDTO"
       security:
         - bearerAuth: [ ]
   /opds/rows:
@@ -2791,7 +2791,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OpdWithOperationRowDTO'
+              $ref: "#/components/schemas/OpdWithOperationRowDTO"
         required: true
       responses:
         "200":
@@ -2799,7 +2799,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OpdWithOperationRowDTO'
+                $ref: "#/components/schemas/OpdWithOperationRowDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockward/movements:
@@ -2811,7 +2811,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/MovementWardDTO'
+              $ref: "#/components/schemas/MovementWardDTO"
         required: true
       responses:
         "200":
@@ -2839,7 +2839,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MovementDTO'
+                $ref: "#/components/schemas/MovementDTO"
         required: true
       responses:
         "200":
@@ -2867,7 +2867,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/MovementDTO'
+                $ref: "#/components/schemas/MovementDTO"
         required: true
       responses:
         "200":
@@ -2907,7 +2907,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageLabWithRowsDTO'
+                $ref: "#/components/schemas/PageLabWithRowsDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2918,7 +2918,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LabWithRowsDTO'
+              $ref: "#/components/schemas/LabWithRowsDTO"
         required: true
       responses:
         "200":
@@ -2940,7 +2940,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/LabWithRowsDTO'
+                $ref: "#/components/schemas/LabWithRowsDTO"
         required: true
       responses:
         "200":
@@ -2964,7 +2964,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LaboratoryDTO'
+                  $ref: "#/components/schemas/LaboratoryDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -2975,7 +2975,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LaboratoryDTO'
+              $ref: "#/components/schemas/LaboratoryDTO"
         required: true
       responses:
         "200":
@@ -2999,7 +2999,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamTypeDTO'
+                  $ref: "#/components/schemas/ExamTypeDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -3010,7 +3010,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExamTypeDTO'
+              $ref: "#/components/schemas/ExamTypeDTO"
         required: true
       responses:
         "200":
@@ -3018,7 +3018,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExamTypeDTO'
+                $ref: "#/components/schemas/ExamTypeDTO"
       security:
         - bearerAuth: [ ]
   /exams:
@@ -3034,7 +3034,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamDTO'
+                  $ref: "#/components/schemas/ExamDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -3045,15 +3045,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExamDTO'
+              $ref: "#/components/schemas/ExamWithRowsDTO"
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExamDTO'
+                $ref: "#/components/schemas/ExamDTO"
       security:
         - bearerAuth: [ ]
   /examrows:
@@ -3069,7 +3069,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamRowDTO'
+                  $ref: "#/components/schemas/ExamRowDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -3080,7 +3080,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExamRowDTO'
+              $ref: "#/components/schemas/ExamRowDTO"
         required: true
       responses:
         "200":
@@ -3088,7 +3088,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExamRowDTO'
+                $ref: "#/components/schemas/ExamRowDTO"
       security:
         - bearerAuth: [ ]
   /examinations:
@@ -3100,7 +3100,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatientExaminationDTO'
+              $ref: "#/components/schemas/PatientExaminationDTO"
         required: true
       responses:
         "200":
@@ -3141,7 +3141,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillDTO'
+                  $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
     post:
@@ -3152,7 +3152,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FullBillDTO'
+              $ref: "#/components/schemas/FullBillDTO"
         required: true
       responses:
         "200":
@@ -3160,7 +3160,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FullBillDTO'
+                $ref: "#/components/schemas/FullBillDTO"
       security:
         - bearerAuth: [ ]
   /bills/search/by/payments:
@@ -3174,7 +3174,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/BillPaymentsDTO'
+                $ref: "#/components/schemas/BillPaymentsDTO"
         required: true
       responses:
         "200":
@@ -3184,7 +3184,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillDTO'
+                  $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
   /bills/search/by/item:
@@ -3207,7 +3207,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BillItemsDTO'
+              $ref: "#/components/schemas/BillItemsDTO"
         required: true
       responses:
         "200":
@@ -3217,7 +3217,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillDTO'
+                  $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
   /auth/refresh-token:
@@ -3229,7 +3229,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRefreshRequest'
+              $ref: "#/components/schemas/TokenRefreshRequest"
         required: true
       responses:
         "200":
@@ -3237,7 +3237,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/LoginResponse'
+                $ref: "#/components/schemas/LoginResponse"
       security:
         - bearerAuth: [ ]
   /auth/logout:
@@ -3258,7 +3258,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoginRequest'
+              $ref: "#/components/schemas/LoginRequest"
         required: true
       responses:
         "200":
@@ -3266,7 +3266,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponse'
+                $ref: "#/components/schemas/LoginResponse"
       security:
         - bearerAuth: [ ]
   /admissions/discharge:
@@ -3285,7 +3285,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AdmissionDTO'
+              $ref: "#/components/schemas/AdmissionDTO"
         required: true
       responses:
         "400":
@@ -3311,7 +3311,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WardDTO'
+                  $ref: "#/components/schemas/WardDTO"
       security:
         - bearerAuth: [ ]
   /wards/occupation/{code}:
@@ -3395,7 +3395,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VisitDTO'
+                  $ref: "#/components/schemas/VisitDTO"
       security:
         - bearerAuth: [ ]
   /vaccinetypes/check/{code}:
@@ -3437,7 +3437,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VaccineDTO'
+                  $ref: "#/components/schemas/VaccineDTO"
       security:
         - bearerAuth: [ ]
   /vaccines/check/{code}:
@@ -3477,7 +3477,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSettingDTO'
+                $ref: "#/components/schemas/UserSettingDTO"
       security:
         - bearerAuth: [ ]
   /users/{username}/permissions:
@@ -3499,7 +3499,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PermissionDTO'
+                  $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /therapies/{code_patient}:
@@ -3522,7 +3522,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TherapyRowDTO'
+                  $ref: "#/components/schemas/TherapyRowDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -3563,7 +3563,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SupplierDTO'
+                $ref: "#/components/schemas/SupplierDTO"
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - Suppliers
+      operationId: deleteSupplier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "204":
+          description: No Content
       security:
         - bearerAuth: [ ]
   /stockmovements:
@@ -3579,7 +3595,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/{ref}:
@@ -3601,7 +3617,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/lot/{med_code}:
@@ -3624,7 +3640,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LotDTO'
+                  $ref: "#/components/schemas/LotDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/filter/v2:
@@ -3698,7 +3714,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/filter/v1:
@@ -3732,7 +3748,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /stockmovements/critical/check:
@@ -3809,7 +3825,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PriceDTO'
+                  $ref: "#/components/schemas/PriceDTO"
       security:
         - bearerAuth: [ ]
   /pricelists/duplicate/{id}:
@@ -3879,7 +3895,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PermissionDTO'
+                  $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /permissions/{id}:
@@ -3900,7 +3916,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionDTO'
+                $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /permissions/userGroupCode/{userGroupCode}:
@@ -3922,7 +3938,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PermissionDTO'
+                  $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /permissions/name/{name}:
@@ -3942,7 +3958,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PermissionDTO'
+                $ref: "#/components/schemas/PermissionDTO"
       security:
         - bearerAuth: [ ]
   /patientvaccines/week:
@@ -3964,7 +3980,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PatientVaccineDTO'
+                  $ref: "#/components/schemas/PatientVaccineDTO"
       security:
         - bearerAuth: [ ]
   /patientvaccines/progyear/{year}:
@@ -4042,7 +4058,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PatientVaccineDTO'
+                  $ref: "#/components/schemas/PatientVaccineDTO"
       security:
         - bearerAuth: [ ]
   /patients/search:
@@ -4083,7 +4099,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PatientDTO'
+                  $ref: "#/components/schemas/PatientDTO"
       security:
         - bearerAuth: [ ]
   /patients/nextcode:
@@ -4162,7 +4178,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientDTO'
+                $ref: "#/components/schemas/PatientDTO"
       security:
         - bearerAuth: [ ]
   /operations/search/type:
@@ -4184,7 +4200,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationDTO'
+                  $ref: "#/components/schemas/OperationDTO"
       security:
         - bearerAuth: [ ]
   /operations/rows/search/patient:
@@ -4207,7 +4223,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationRowDTO'
+                  $ref: "#/components/schemas/OperationRowDTO"
       security:
         - bearerAuth: [ ]
   /operations/rows/search/admission:
@@ -4230,7 +4246,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OperationRowDTO'
+                  $ref: "#/components/schemas/OperationRowDTO"
       security:
         - bearerAuth: [ ]
   /opds/weekly:
@@ -4252,7 +4268,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OpdDTO'
+                  $ref: "#/components/schemas/OpdDTO"
       security:
         - bearerAuth: [ ]
   /opds/search:
@@ -4345,7 +4361,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageOpdDTO'
+                $ref: "#/components/schemas/PageOpdDTO"
       security:
         - bearerAuth: [ ]
   /opds/patient/{pcode}:
@@ -4368,7 +4384,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/OpdWithOperationRowDTO'
+                  $ref: "#/components/schemas/OpdWithOperationRowDTO"
       security:
         - bearerAuth: [ ]
   /opds/last/{patientCode}:
@@ -4389,7 +4405,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OpdDTO'
+                $ref: "#/components/schemas/OpdDTO"
       security:
         - bearerAuth: [ ]
   /opds/check/progyear:
@@ -4458,7 +4474,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MovementTypeDTO'
+                $ref: "#/components/schemas/MovementTypeDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -4539,7 +4555,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MedicalWardDTO'
+                  $ref: "#/components/schemas/MedicalWardDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockward/movements/{ward_code}:
@@ -4573,7 +4589,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementWardDTO'
+                  $ref: "#/components/schemas/MovementWardDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockward/movements/to/{target_ward_code}:
@@ -4607,7 +4623,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementWardDTO'
+                  $ref: "#/components/schemas/MovementWardDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockward/current/{ward_code}:
@@ -4650,7 +4666,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockmovements/{ref}:
@@ -4672,7 +4688,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockmovements/lot/{med_code}:
@@ -4695,7 +4711,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LotDTO'
+                  $ref: "#/components/schemas/LotDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockmovements/filter/v2:
@@ -4769,7 +4785,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockmovements/filter/v1:
@@ -4803,7 +4819,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MovementDTO'
+                  $ref: "#/components/schemas/MovementDTO"
       security:
         - bearerAuth: [ ]
   /medicalstockmovements/critical/check:
@@ -4851,7 +4867,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MedicalDTO'
+                $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -4910,7 +4926,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MedicalDTO'
+                  $ref: "#/components/schemas/MedicalDTO"
       security:
         - bearerAuth: [ ]
   /malnutritions/{id_admission}:
@@ -4932,7 +4948,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MalnutritionDTO'
+                  $ref: "#/components/schemas/MalnutritionDTO"
       security:
         - bearerAuth: [ ]
   /malnutritions/last/{id_patient}:
@@ -4953,7 +4969,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MalnutritionDTO'
+                $ref: "#/components/schemas/MalnutritionDTO"
       security:
         - bearerAuth: [ ]
   /laboratories/materials:
@@ -5033,7 +5049,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageLabWithRowsDTO'
+                $ref: "#/components/schemas/PageLabWithRowsDTO"
       security:
         - bearerAuth: [ ]
   /laboratories/exams/{code}:
@@ -5054,7 +5070,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LabWithRowsDTO'
+                $ref: "#/components/schemas/LabWithRowsDTO"
       security:
         - bearerAuth: [ ]
   /laboratories/examRequest/patient/{patId}:
@@ -5077,7 +5093,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LaboratoryDTO'
+                  $ref: "#/components/schemas/LaboratoryDTO"
       security:
         - bearerAuth: [ ]
   /laboratories/byPatientId/{patId}:
@@ -5100,7 +5116,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/LabWithRowsDTO'
+                  $ref: "#/components/schemas/LabWithRowsDTO"
       security:
         - bearerAuth: [ ]
   /hospitals:
@@ -5114,7 +5130,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/HospitalDTO'
+                $ref: "#/components/schemas/HospitalDTO"
       security:
         - bearerAuth: [ ]
   /hospitals/currencyCode:
@@ -5150,7 +5166,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamDTO'
+                  $ref: "#/components/schemas/ExamDTO"
       security:
         - bearerAuth: [ ]
   /examrows/{code}:
@@ -5173,7 +5189,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamRowDTO'
+                  $ref: "#/components/schemas/ExamRowDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -5221,7 +5237,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamRowDTO'
+                  $ref: "#/components/schemas/ExamRowDTO"
       security:
         - bearerAuth: [ ]
   /examrows/byExamCode/{examCode}:
@@ -5243,7 +5259,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExamRowDTO'
+                  $ref: "#/components/schemas/ExamRowDTO"
       security:
         - bearerAuth: [ ]
   /examinations/lastNByPatId:
@@ -5270,7 +5286,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagePatientExaminationDTO'
+                $ref: "#/components/schemas/PagePatientExaminationDTO"
       security:
         - bearerAuth: [ ]
   /examinations/lastByPatientId/{patId}:
@@ -5291,7 +5307,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientExaminationDTO'
+                $ref: "#/components/schemas/PatientExaminationDTO"
       security:
         - bearerAuth: [ ]
   /examinations/fromLastPatientExamination/{id}:
@@ -5312,7 +5328,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientExaminationDTO'
+                $ref: "#/components/schemas/PatientExaminationDTO"
       security:
         - bearerAuth: [ ]
   /examinations/defaultPatientExamination:
@@ -5333,7 +5349,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientExaminationDTO'
+                $ref: "#/components/schemas/PatientExaminationDTO"
       security:
         - bearerAuth: [ ]
   /examinations/byPatientId/{patId}:
@@ -5356,7 +5372,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PatientExaminationDTO'
+                  $ref: "#/components/schemas/PatientExaminationDTO"
       security:
         - bearerAuth: [ ]
   /diseases/{code}:
@@ -5376,7 +5392,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DiseaseDTO'
+                $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
     delete:
@@ -5413,7 +5429,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/opd/{typecode}:
@@ -5435,7 +5451,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/ipd/out:
@@ -5451,7 +5467,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/ipd/out/{typecode}:
@@ -5473,7 +5489,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/ipd/in:
@@ -5489,7 +5505,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/ipd/in/{typecode}:
@@ -5511,7 +5527,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/both:
@@ -5527,7 +5543,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/both/{typecode}:
@@ -5549,7 +5565,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /diseases/all:
@@ -5565,7 +5581,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DiseaseDTO'
+                  $ref: "#/components/schemas/DiseaseDTO"
       security:
         - bearerAuth: [ ]
   /bills/pending:
@@ -5588,7 +5604,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillDTO'
+                  $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
   /bills/pending/affiliate:
@@ -5611,7 +5627,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillDTO'
+                  $ref: "#/components/schemas/BillDTO"
       security:
         - bearerAuth: [ ]
   /bills/payments:
@@ -5644,7 +5660,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillPaymentsDTO'
+                  $ref: "#/components/schemas/BillPaymentsDTO"
       security:
         - bearerAuth: [ ]
   /bills/payments/{bill_id}:
@@ -5667,7 +5683,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillPaymentsDTO'
+                  $ref: "#/components/schemas/BillPaymentsDTO"
       security:
         - bearerAuth: [ ]
   /bills/items:
@@ -5683,7 +5699,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillItemsDTO'
+                  $ref: "#/components/schemas/BillItemsDTO"
       security:
         - bearerAuth: [ ]
   /bills/items/{bill_id}:
@@ -5706,7 +5722,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BillItemsDTO'
+                  $ref: "#/components/schemas/BillItemsDTO"
       security:
         - bearerAuth: [ ]
   /agetypes/{index}:
@@ -5727,7 +5743,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AgeType'
+                $ref: "#/components/schemas/AgeType"
       security:
         - bearerAuth: [ ]
   /agetypes/code:
@@ -5775,7 +5791,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AdmissionDTO'
+                  $ref: "#/components/schemas/AdmissionDTO"
       security:
         - bearerAuth: [ ]
   /admissions/getNextProgressiveIdInYear:
@@ -5859,7 +5875,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PageAdmissionDTO'
+                $ref: "#/components/schemas/PageAdmissionDTO"
       security:
         - bearerAuth: [ ]
   /admissions/current:
@@ -5882,7 +5898,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdmissionDTO'
+                $ref: "#/components/schemas/AdmissionDTO"
       security:
         - bearerAuth: [ ]
   /admissions/admittedPatients:
@@ -5921,7 +5937,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/AdmittedPatientDTO'
+                  $ref: "#/components/schemas/AdmittedPatientDTO"
       security:
         - bearerAuth: [ ]
   /wards/{code}:
@@ -6219,13 +6235,13 @@ components:
           description: lock
           format: int32
           example: 0
+        opd:
+          type: boolean
         male:
           type: boolean
         female:
           type: boolean
         pharmacy:
-          type: boolean
-        opd:
           type: boolean
     PatientDTO:
       required:
@@ -6406,7 +6422,7 @@ components:
           description: The visit's ID
           format: int32
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         date:
           type: string
           description: Date of the visit
@@ -6419,7 +6435,7 @@ components:
           type: boolean
           description: Sms of the visit
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         duration:
           type: integer
           description: Duration of the visit
@@ -6464,7 +6480,7 @@ components:
           description: Description of the vaccine
           example: BCG
         vaccineType:
-          $ref: '#/components/schemas/VaccineTypeDTO'
+          $ref: "#/components/schemas/VaccineTypeDTO"
         lock:
           type: integer
           description: Lock
@@ -6527,7 +6543,7 @@ components:
           description: The username (must be unique)
           example: John Doe
         userGroupName:
-          $ref: '#/components/schemas/UserGroupDTO'
+          $ref: "#/components/schemas/UserGroupDTO"
         passwd:
           maxLength: 50
           type: string
@@ -6557,7 +6573,7 @@ components:
           type: array
           description: List of group's permissions
           items:
-            $ref: '#/components/schemas/PermissionDTO'
+            $ref: "#/components/schemas/PermissionDTO"
       description: The user's group
     UserProfileDTO:
       type: object
@@ -6569,7 +6585,7 @@ components:
           items:
             type: string
         userGroup:
-          $ref: '#/components/schemas/UserGroupDTO'
+          $ref: "#/components/schemas/UserGroupDTO"
     GroupPermissionsDTO:
       type: object
       properties:
@@ -6732,9 +6748,9 @@ components:
           type: string
           description: The vaccine date
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         vaccine:
-          $ref: '#/components/schemas/VaccineDTO'
+          $ref: "#/components/schemas/VaccineDTO"
         lock:
           type: integer
           description: Lock
@@ -6792,7 +6808,7 @@ components:
           type: string
           description: The operation description
         type:
-          $ref: '#/components/schemas/OperationTypeDTO'
+          $ref: "#/components/schemas/OperationTypeDTO"
         opeFor:
           type: string
           description: The operation context
@@ -6833,24 +6849,24 @@ components:
           description: Type of admission
           example: "N"
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         admDate:
           type: string
           description: Admission date
         admType:
-          $ref: '#/components/schemas/AdmissionTypeDTO'
+          $ref: "#/components/schemas/AdmissionTypeDTO"
         diseaseIn:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         diseaseOut1:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         diseaseOut2:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         diseaseOut3:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         operation:
-          $ref: '#/components/schemas/OperationDTO'
+          $ref: "#/components/schemas/OperationDTO"
         opDate:
           type: string
           description: Operation date
@@ -6862,7 +6878,7 @@ components:
           type: string
           description: Discharge date
         disType:
-          $ref: '#/components/schemas/DischargeTypeDTO'
+          $ref: "#/components/schemas/DischargeTypeDTO"
         note:
           maxLength: 65535
           type: string
@@ -6875,14 +6891,14 @@ components:
           type: string
           description: Visit date
         pregTreatmentType:
-          $ref: '#/components/schemas/PregnantTreatmentTypeDTO'
+          $ref: "#/components/schemas/PregnantTreatmentTypeDTO"
         deliveryDate:
           type: string
           description: Delivery date
         deliveryType:
-          $ref: '#/components/schemas/DeliveryTypeDTO'
+          $ref: "#/components/schemas/DeliveryTypeDTO"
         deliveryResult:
-          $ref: '#/components/schemas/DeliveryResultTypeDTO'
+          $ref: "#/components/schemas/DeliveryResultTypeDTO"
         weight:
           type: number
           description: Weight
@@ -6912,11 +6928,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -6951,7 +6967,7 @@ components:
           type: integer
           format: int32
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         listId:
           type: integer
           format: int32
@@ -7066,7 +7082,7 @@ components:
           type: string
           description: Disease description
         diseaseType:
-          $ref: '#/components/schemas/DiseaseTypeDTO'
+          $ref: "#/components/schemas/DiseaseTypeDTO"
         opdInclude:
           type: boolean
           description: Indicates whether the disease is an OPD disease
@@ -7156,11 +7172,11 @@ components:
           format: int32
           example: 18
         disease:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         disease2:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         disease3:
-          $ref: '#/components/schemas/DiseaseDTO'
+          $ref: "#/components/schemas/DiseaseDTO"
         newPatient:
           type: string
           description: New(N) or Reattendance(R) patient
@@ -7201,7 +7217,7 @@ components:
           type: string
           description: Prescription
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
       description: The opd
     OperationRowDTO:
       required:
@@ -7215,7 +7231,7 @@ components:
           type: integer
           format: int32
         operation:
-          $ref: '#/components/schemas/OperationDTO'
+          $ref: "#/components/schemas/OperationDTO"
         prescriber:
           maxLength: 150
           type: string
@@ -7232,11 +7248,11 @@ components:
           type: string
           description: The remark of the operation
         admission:
-          $ref: '#/components/schemas/AdmissionDTO'
+          $ref: "#/components/schemas/AdmissionDTO"
         opd:
-          $ref: '#/components/schemas/OpdDTO'
+          $ref: "#/components/schemas/OpdDTO"
         bill:
-          $ref: '#/components/schemas/BillDTO'
+          $ref: "#/components/schemas/BillDTO"
         transUnit:
           type: number
           description: The transunit
@@ -7249,11 +7265,11 @@ components:
       type: object
       properties:
         opdDTO:
-          $ref: '#/components/schemas/OpdDTO'
+          $ref: "#/components/schemas/OpdDTO"
         operationRows:
           type: array
           items:
-            $ref: '#/components/schemas/OperationRowDTO'
+            $ref: "#/components/schemas/OperationRowDTO"
     MovementTypeDTO:
       required:
         - code
@@ -7305,7 +7321,7 @@ components:
           description: The product code
           example: PARA
         type:
-          $ref: '#/components/schemas/MedicalTypeDTO'
+          $ref: "#/components/schemas/MedicalTypeDTO"
         description:
           maxLength: 100
           type: string
@@ -7363,7 +7379,7 @@ components:
           description: The date of the next malnutrition control
           example: 1979-05-01T11:20:33
         admission:
-          $ref: '#/components/schemas/AdmissionDTO'
+          $ref: "#/components/schemas/AdmissionDTO"
         height:
           type: number
           description: The height of the patient
@@ -7403,7 +7419,7 @@ components:
           description: Exam Default Result
           example: '>=12 (NORMAL)'
         examtype:
-          $ref: '#/components/schemas/ExamTypeDTO'
+          $ref: "#/components/schemas/ExamTypeDTO"
         lock:
           type: integer
           description: Lock
@@ -7427,7 +7443,7 @@ components:
       type: object
       properties:
         laboratoryDTO:
-          $ref: '#/components/schemas/LaboratoryDTO'
+          $ref: "#/components/schemas/LaboratoryDTO"
         laboratoryRowList:
           type: array
           items:
@@ -7444,7 +7460,7 @@ components:
           description: Laboratory Material
           example: Blood
         exam:
-          $ref: '#/components/schemas/ExamDTO'
+          $ref: "#/components/schemas/ExamDTO"
         registrationDate:
           type: string
           description: Laboratory Registration Date
@@ -7544,6 +7560,23 @@ components:
           description: Lock
           format: int32
           example: 0
+    ExamWithRowsDTO:
+      required:
+        - exam
+      type: object
+      properties:
+        exam:
+          $ref: "#/components/schemas/ExamDTO"
+        rows:
+          type: array
+          description: Possible result for the exam(only for exams with procedure
+            1 and 2)
+          example: "['>=12 (NORMAL)', 'IRREGULAR']"
+          items:
+            type: string
+            description: Possible result for the exam(only for exams with procedure
+              1 and 2)
+            example: "['>=12 (NORMAL)', 'IRREGULAR']"
     PatientExaminationDTO:
       required:
         - patientCode
@@ -7731,17 +7764,17 @@ components:
       type: object
       properties:
         bill:
-          $ref: '#/components/schemas/BillDTO'
+          $ref: "#/components/schemas/BillDTO"
         billItems:
           type: array
           description: List of bill items elements
           items:
-            $ref: '#/components/schemas/BillItemsDTO'
+            $ref: "#/components/schemas/BillItemsDTO"
         billPayments:
           type: array
           description: List of bill payments elements
           items:
-            $ref: '#/components/schemas/BillPaymentsDTO'
+            $ref: "#/components/schemas/BillPaymentsDTO"
     AgeTypeDTO:
       required:
         - description
@@ -7787,7 +7820,7 @@ components:
           format: int32
           example: 1
         patID:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         startDate:
           type: string
           description: The start date of therapy
@@ -7924,12 +7957,12 @@ components:
           type: integer
           format: int32
         patientProfilePhoto:
-          $ref: '#/components/schemas/PatientProfilePhoto'
+          $ref: "#/components/schemas/PatientProfilePhoto"
         patientConsensus:
-          $ref: '#/components/schemas/PatientConsensus'
-        informations:
-          type: string
+          $ref: "#/components/schemas/PatientConsensus"
         searchString:
+          type: string
+        informations:
           type: string
     PatientConsensus:
       type: object
@@ -7955,12 +7988,12 @@ components:
         serviceFlag:
           type: boolean
         patient:
-          $ref: '#/components/schemas/Patient'
+          $ref: "#/components/schemas/Patient"
     PatientProfilePhoto:
       type: object
       properties:
         patient:
-          $ref: '#/components/schemas/Patient'
+          $ref: "#/components/schemas/Patient"
         photo:
           type: array
           items:
@@ -8026,6 +8059,8 @@ components:
                         type: object
                     family:
                       type: string
+                    plain:
+                      type: boolean
                     fontName:
                       type: string
                     transform:
@@ -8089,8 +8124,6 @@ components:
                       type: array
                       items:
                         type: object
-                    plain:
-                      type: boolean
                 fontMetrics:
                   type: object
                   properties:
@@ -8111,6 +8144,8 @@ components:
                             type: object
                         family:
                           type: string
+                        plain:
+                          type: boolean
                         fontName:
                           type: string
                         transform:
@@ -8174,8 +8209,9 @@ components:
                           type: array
                           items:
                             type: object
-                        plain:
-                          type: boolean
+                    height:
+                      type: integer
+                      format: int32
                     ascent:
                       type: integer
                       format: int32
@@ -8254,9 +8290,6 @@ components:
                     maxAdvance:
                       type: integer
                       format: int32
-                    height:
-                      type: integer
-                      format: int32
                 clipBounds:
                   type: object
                   properties:
@@ -8297,6 +8330,24 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        width:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8307,24 +8358,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     rect:
@@ -8332,6 +8365,24 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        width:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8344,25 +8395,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8373,12 +8412,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                 xormode:
@@ -8457,6 +8490,24 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            height:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            width:
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
+                            "y":
+                              type: number
+                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8467,24 +8518,6 @@ components:
                               type: number
                               format: double
                             centerY:
-                              type: number
-                              format: double
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
                               type: number
                               format: double
                         rect:
@@ -8492,6 +8525,24 @@ components:
                           properties:
                             empty:
                               type: boolean
+                            height:
+                              type: number
+                              format: double
+                            minX:
+                              type: number
+                              format: double
+                            minY:
+                              type: number
+                              format: double
+                            width:
+                              type: number
+                              format: double
+                            x:
+                              type: number
+                              format: double
+                            "y":
+                              type: number
+                              format: double
                             maxX:
                               type: number
                               format: double
@@ -8504,25 +8555,13 @@ components:
                             centerY:
                               type: number
                               format: double
-                            width:
-                              type: number
-                              format: double
-                            height:
-                              type: number
-                              format: double
-                            x:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                            minX:
-                              type: number
-                              format: double
-                            minY:
-                              type: number
-                              format: double
                           writeOnly: true
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8533,6 +8572,14 @@ components:
                           type: number
                           format: double
                         centerY:
+                          type: number
+                          format: double
+                    bounds2D:
+                      type: object
+                      properties:
+                        empty:
+                          type: boolean
+                        height:
                           type: number
                           format: double
                         minX:
@@ -8541,27 +8588,7 @@ components:
                         minY:
                           type: number
                           format: double
-                    bounds2D:
-                      type: object
-                      properties:
-                        empty:
-                          type: boolean
-                        maxX:
-                          type: number
-                          format: double
-                        maxY:
-                          type: number
-                          format: double
-                        centerX:
-                          type: number
-                          format: double
-                        centerY:
-                          type: number
-                          format: double
                         width:
-                          type: number
-                          format: double
-                        height:
                           type: number
                           format: double
                         x:
@@ -8570,10 +8597,16 @@ components:
                         "y":
                           type: number
                           format: double
-                        minX:
+                        maxX:
                           type: number
                           format: double
-                        minY:
+                        maxY:
+                          type: number
+                          format: double
+                        centerX:
+                          type: number
+                          format: double
+                        centerY:
                           type: number
                           format: double
                 clipRect:
@@ -8616,6 +8649,24 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        width:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8626,24 +8677,6 @@ components:
                           type: number
                           format: double
                         centerY:
-                          type: number
-                          format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
                           type: number
                           format: double
                     rect:
@@ -8651,6 +8684,24 @@ components:
                       properties:
                         empty:
                           type: boolean
+                        height:
+                          type: number
+                          format: double
+                        minX:
+                          type: number
+                          format: double
+                        minY:
+                          type: number
+                          format: double
+                        width:
+                          type: number
+                          format: double
+                        x:
+                          type: number
+                          format: double
+                        "y":
+                          type: number
+                          format: double
                         maxX:
                           type: number
                           format: double
@@ -8663,25 +8714,13 @@ components:
                         centerY:
                           type: number
                           format: double
-                        width:
-                          type: number
-                          format: double
-                        height:
-                          type: number
-                          format: double
-                        x:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        minX:
-                          type: number
-                          format: double
-                        minY:
-                          type: number
-                          format: double
                       writeOnly: true
+                    minX:
+                      type: number
+                      format: double
+                    minY:
+                      type: number
+                      format: double
                     maxX:
                       type: number
                       format: double
@@ -8692,12 +8731,6 @@ components:
                       type: number
                       format: double
                     centerY:
-                      type: number
-                      format: double
-                    minX:
-                      type: number
-                      format: double
-                    minY:
                       type: number
                       format: double
                   deprecated: true
@@ -8732,7 +8765,7 @@ components:
           type: integer
           format: int32
         patient:
-          $ref: '#/components/schemas/Patient'
+          $ref: "#/components/schemas/Patient"
         startDate:
           type: string
           format: date-time
@@ -8762,13 +8795,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        sms:
-          type: boolean
-        notify:
-          type: boolean
         medical:
           type: integer
           format: int32
+        notify:
+          type: boolean
+        sms:
+          type: boolean
     TherapyDTO:
       type: object
       properties:
@@ -8793,7 +8826,7 @@ components:
             description: The dates of the therapy
             format: date-time
         medical:
-          $ref: '#/components/schemas/MedicalDTO'
+          $ref: "#/components/schemas/MedicalDTO"
         qty:
           type: number
           description: The quantity of the medical
@@ -8862,13 +8895,13 @@ components:
           format: int32
           example: 1
         medical:
-          $ref: '#/components/schemas/MedicalDTO'
+          $ref: "#/components/schemas/MedicalDTO"
         type:
-          $ref: '#/components/schemas/MovementTypeDTO'
+          $ref: "#/components/schemas/MovementTypeDTO"
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         lot:
-          $ref: '#/components/schemas/LotDTO'
+          $ref: "#/components/schemas/LotDTO"
         date:
           type: string
           description: The movement date
@@ -8879,7 +8912,7 @@ components:
           format: int32
           example: 50
         supplier:
-          $ref: '#/components/schemas/SupplierDTO'
+          $ref: "#/components/schemas/SupplierDTO"
         refNo:
           type: string
           description: The movement reference
@@ -8950,14 +8983,14 @@ components:
           format: int32
           example: 1
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         date:
           type: string
           description: The movement ward's date
           format: date
           example: 2020-06-07
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         age:
           type: integer
           description: The patient's age in case the movement is associated to a patient
@@ -8974,7 +9007,7 @@ components:
           description: The description of the movement
           example: stock transfer from pharmacy to laboratory
         medical:
-          $ref: '#/components/schemas/MedicalDTO'
+          $ref: "#/components/schemas/MedicalDTO"
         quantity:
           type: number
           description: The quantity of the medical concerned by the movement
@@ -8985,9 +9018,9 @@ components:
           description: The measure's unit of the medical concerned by the movement
           example: pct
         wardTo:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         wardFrom:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
     ExamRowDTO:
       type: object
       properties:
@@ -9001,7 +9034,7 @@ components:
           description: Exam Row Code
           example: NEGATIVE
         exam:
-          $ref: '#/components/schemas/ExamDTO'
+          $ref: "#/components/schemas/ExamDTO"
     TokenRefreshRequest:
       type: object
       properties:
@@ -9052,7 +9085,7 @@ components:
           type: integer
           format: int32
         list:
-          $ref: '#/components/schemas/PriceList'
+          $ref: "#/components/schemas/PriceList"
         group:
           type: string
           description: The group
@@ -9138,23 +9171,23 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/PatientDTO'
+            $ref: "#/components/schemas/PatientDTO"
         pageInfo:
-          $ref: '#/components/schemas/PageInfoDTO'
+          $ref: "#/components/schemas/PageInfoDTO"
     PageOpdDTO:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/OpdDTO'
+            $ref: "#/components/schemas/OpdDTO"
         pageInfo:
-          $ref: '#/components/schemas/PageInfoDTO'
+          $ref: "#/components/schemas/PageInfoDTO"
     MedicalWardDTO:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/MedicalWardIdDTO'
+          $ref: "#/components/schemas/MedicalWardIdDTO"
         in_quantity:
           type: number
           description: The in-quantity
@@ -9172,9 +9205,9 @@ components:
       type: object
       properties:
         ward:
-          $ref: '#/components/schemas/WardDTO'
+          $ref: "#/components/schemas/WardDTO"
         medical:
-          $ref: '#/components/schemas/MedicalDTO'
+          $ref: "#/components/schemas/MedicalDTO"
       description: The medical ward's id
       example: 1
     PageLabWithRowsDTO:
@@ -9183,18 +9216,18 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/LabWithRowsDTO'
+            $ref: "#/components/schemas/LabWithRowsDTO"
         pageInfo:
-          $ref: '#/components/schemas/PageInfoDTO'
+          $ref: "#/components/schemas/PageInfoDTO"
     PagePatientExaminationDTO:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/PatientExaminationDTO'
+            $ref: "#/components/schemas/PatientExaminationDTO"
         pageInfo:
-          $ref: '#/components/schemas/PageInfoDTO'
+          $ref: "#/components/schemas/PageInfoDTO"
     AgeType:
       required:
         - description
@@ -9231,16 +9264,16 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/AdmissionDTO'
+            $ref: "#/components/schemas/AdmissionDTO"
         pageInfo:
-          $ref: '#/components/schemas/PageInfoDTO'
+          $ref: "#/components/schemas/PageInfoDTO"
     AdmittedPatientDTO:
       type: object
       properties:
         patient:
-          $ref: '#/components/schemas/PatientDTO'
+          $ref: "#/components/schemas/PatientDTO"
         admission:
-          $ref: '#/components/schemas/AdmissionDTO'
+          $ref: "#/components/schemas/AdmissionDTO"
   securitySchemes:
     bearerAuth:
       type: http

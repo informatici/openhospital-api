@@ -157,7 +157,16 @@ public class SecurityConfig {
 				// exams
 				.requestMatchers(HttpMethod.POST, "/exams/**").hasAuthority("exams.create")
 				.requestMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("exams.read")
-				.requestMatchers(HttpMethod.PUT, "/exams/**").hasAuthority("exams.update")
+				.requestMatchers(HttpMethod.PUT, "/exams/**")
+				.access((authentication, context) -> {
+					boolean hasCreateAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("exams.create"));
+					boolean hasUpdateAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("exams.update"));
+					boolean hasDeleteAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("examrows.create"));
+					return new AuthorizationDecision(hasCreateAuthority && hasUpdateAuthority && hasDeleteAuthority);
+				})
 				.requestMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("exams.delete")
 				// examrows
 				.requestMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("examrows.create")
