@@ -137,11 +137,11 @@ public class AgeTypeController {
 	 * @throws OHServiceException 
 	 */
 	@GetMapping(value = "/agetypes/{index}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<AgeType> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
+	public ResponseEntity<AgeTypeDTO> getAgeTypeByIndex(@PathVariable int index) throws OHServiceException {
 		LOGGER.info("Get age type by index: {}", index);
 		AgeType result = ageTypeManager.getTypeByCode(index);
 		if (result != null){
-			return ResponseEntity.ok(result);
+			return ResponseEntity.ok(mapper.map2DTO(result));
         } else {
         	LOGGER.info("No corresponding age code for the given index");
         	return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
