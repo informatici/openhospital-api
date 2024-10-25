@@ -342,7 +342,7 @@ public class BillControllerTest extends ControllerBaseTest {
 					.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isNoContent());
+			.andExpect(status().isOk());
 	}
 
 	@Test

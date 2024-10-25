@@ -167,7 +167,9 @@ public class AgeTypeControllerTest {
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageType))))
+			.andExpect(content().string(containsString(
+				AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeMapper.map2DTO(ageType))
+			)))
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
