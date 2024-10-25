@@ -326,6 +326,10 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("wards.read")
 			.requestMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("wards.update")
 			.requestMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
+			// Settings
+			.requestMatchers(HttpMethod.GET, "/settings/**").hasAnyAuthority("settings.read")
+			.requestMatchers(HttpMethod.PUT, "/settings/**").hasAuthority("settings.update")
+			.requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("settings.update")
 
 			// .requestMatchers("/auth-needed/**").authenticated()
 			// .requestMatchers("/noauth-public/**").permitAll()
