@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,8 +97,7 @@ public class MedStockMovementTypeController {
 	 * Save the specified {@link MovementType}.
 	 *
 	 * @param medicalDsrStockMovementType the medical stock movement type to save.
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if
-	 * the medical stock movement type has been saved.
+	 * @return the created movement type
 	 * @throws OHServiceException When failed to create movement type
 	 */
 	@PostMapping(value = "/medstockmovementtypes")
@@ -119,8 +117,7 @@ public class MedStockMovementTypeController {
 	 * Updates the specified {@link MovementType}.
 	 *
 	 * @param medicalDsrStockMovementTypeDTO the medical stock movement type to update.
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical
-	 * stock movement type has been updated.
+	 * @return the updated movement type
 	 * @throws OHServiceException When failed to update movement type
 	 */
 	@PutMapping(value = "/medstockmovementtypes")

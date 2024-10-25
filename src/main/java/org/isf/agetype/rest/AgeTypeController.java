@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -70,22 +69,15 @@ public class AgeTypeController {
 
 	/**
 	 * Get all the age types stored
+	 *
 	 * @return the list of age types found
 	 * @throws OHServiceException When failed to get age types
 	 */
 	@GetMapping(value = "/agetypes")
-	public ResponseEntity<List<AgeTypeDTO>> getAllAgeTypes() throws OHServiceException {
+	public List<AgeTypeDTO> getAllAgeTypes() throws OHServiceException {
 		LOGGER.info("Get age types");
 
-		List<AgeType> results = ageTypeManager.getAgeType();
-		List<AgeTypeDTO> parsedResults = mapper.map2DTOList(results);
-
-		if (!parsedResults.isEmpty()) {
-			return ResponseEntity.ok(parsedResults);
-		} else {
-			LOGGER.info("Empty age types list");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(parsedResults);
-		}
+		return mapper.map2DTOList(ageTypeManager.getAgeType());
 	}
 
 	/**
@@ -121,7 +113,7 @@ public class AgeTypeController {
 	 * @throws OHServiceException When failed to get age type
 	 */
 	@GetMapping(value = "/agetypes/code")
-	public ResponseEntity<Map<String, String>> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
+	public Map<String, String> getAgeTypeCodeByAge(@RequestParam("age") int age) throws OHServiceException {
 		LOGGER.info("Get age type by age: {}", age);
 
 		String result = ageTypeManager.getTypeByAge(age);
@@ -129,11 +121,11 @@ public class AgeTypeController {
 
 		if (result != null){
 			responseBody.put("code", result);
-			return ResponseEntity.ok(responseBody);
 		} else {
 			LOGGER.info("No corresponding age code for the given age");
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
 		}
+
+		return responseBody;
 	}
 
 	/**

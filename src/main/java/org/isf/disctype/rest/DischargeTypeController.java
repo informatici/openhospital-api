@@ -22,7 +22,6 @@
 package org.isf.disctype.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.disctype.dto.DischargeTypeDTO;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
@@ -33,10 +32,8 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +66,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Create a new {@link DischargeType}
-	 * 
+	 *
 	 * @param dischargeTypeDTO Discharge Type payload
 	 * @return {@code true} if the {@link DischargeType} has been stored, {@code false} otherwise.
 	 * @throws OHServiceException When failed to create discharge type
@@ -90,7 +87,7 @@ public class DischargeTypeController {
 
 	/**
 	 * Update the specified {@link DischargeType}
-	 * 
+	 *
 	 * @param dischargeTypeDTO Discharge type payload
 	 * @return {@code true} if the {@link DischargeType} has been updated, {@code false} otherwise.
 	 * @throws OHServiceException When failed to update discharge type
@@ -116,25 +113,20 @@ public class DischargeTypeController {
 
 	/**
 	 * Get all the available {@link DischargeType}s
-	 * 
+	 *
 	 * @return a {@link List} of {@link DischargeType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException When failed to get discharge types
 	 */
 	@GetMapping(value = "/dischargetypes")
-	public ResponseEntity<List<DischargeTypeDTO>> getDischargeTypes() throws OHServiceException {
+	public List<DischargeTypeDTO> getDischargeTypes() throws OHServiceException {
 		LOGGER.info("Get all discharge types ");
 
-		List<DischargeType> dischargeTypes = discTypeManager.getDischargeType();
-		if (dischargeTypes.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(List.of());
-		}
-
-		return ResponseEntity.ok(mapper.map2DTOList(dischargeTypes));
+		return mapper.map2DTOList(discTypeManager.getDischargeType());
 	}
 
 	/**
 	 * Delete {@link DischargeType} for the specified code.
-	 * 
+	 *
 	 * @param code Discharge type code
 	 * @return {@code true} if the {@link DischargeType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException When failed to delete discharge type

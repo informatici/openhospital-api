@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,7 +72,7 @@ public class MalnutritionController {
 	/**
 	 * Stores a new {@link Malnutrition}. The malnutrition object is updated with the generated id.
 	 * @param malnutritionDTO the malnutrition to store.
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the malnutrition has been stored
+	 * @return the malnutrition that has been stored
 	 * @throws OHServiceException When failed to store the malnutrition
 	 */
 	@PostMapping(value = "/malnutritions")

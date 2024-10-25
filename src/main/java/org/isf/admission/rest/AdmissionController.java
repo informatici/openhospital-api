@@ -23,7 +23,6 @@ package org.isf.admission.rest;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -33,7 +32,6 @@ import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.mapper.AdmissionMapper;
 import org.isf.admission.mapper.AdmittedPatientMapper;
 import org.isf.admission.model.Admission;
-import org.isf.admission.model.AdmittedPatient;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
 import org.isf.disctype.model.DischargeType;
@@ -59,7 +57,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -142,19 +139,14 @@ public class AdmissionController {
 	 * @throws OHServiceException When failed to get patient admissions
 	 */
 	@GetMapping("/admissions/patient/{patientCode}")
-	public ResponseEntity<List<AdmissionDTO>> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
+	public List<AdmissionDTO> getAdmissions(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient id: {}", patientCode);
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found with ID :" + patientCode), HttpStatus.NOT_FOUND);
 		}
 
-		List<Admission> listAdmissions = admissionManager.getAdmissions(patient);
-		if (listAdmissions == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(List.of());
-		}
-
-		return ResponseEntity.ok(listAdmissions.stream().map(admissionMapper::map2DTO).collect(Collectors.toList()));
+		return admissionMapper.map2DTOList(admissionManager.getAdmissions(patient));
 	}
 
 	/**
@@ -166,20 +158,15 @@ public class AdmissionController {
 	 * @throws OHServiceException When failed to get patient current admission
 	 */
 	@GetMapping("/admissions/current")
-	public ResponseEntity<AdmissionDTO> getCurrentAdmission(@RequestParam("patientCode") int patientCode)
-		throws OHServiceException {
+	public AdmissionDTO getCurrentAdmission(@RequestParam("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("Get admission by patient code: {}", patientCode);
 
 		Patient patient = patientManager.getPatientById(patientCode);
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found with ID :" + patientCode), HttpStatus.NOT_FOUND);
 		}
-		Admission admission = admissionManager.getCurrentAdmission(patient);
-		if (admission == null) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
 
-		return ResponseEntity.ok(admissionMapper.map2DTO(admission));
+		return admissionMapper.map2DTO(admissionManager.getCurrentAdmission(patient));
 	}
 
 	/**
@@ -192,11 +179,11 @@ public class AdmissionController {
 	 * @throws OHServiceException When failed to get admitted patient
 	 */
 	@GetMapping("/admissions/admittedPatients")
-	public ResponseEntity<List<AdmittedPatientDTO>> getAdmittedPatients(
+	public List<AdmittedPatientDTO> getAdmittedPatients(
 		@RequestParam(name = "searchterms", defaultValue = "", required = false) String searchTerms,
 		@RequestParam(name = "admissionrange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
-		@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange)
-		throws OHServiceException {
+		@RequestParam(name = "dischargerange", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange
+	) throws OHServiceException {
 		LOGGER.info("Get admitted patients search terms: {}", searchTerms);
 
 		if (admissionRange != null && admissionRange.length == 2) {
@@ -207,12 +194,7 @@ public class AdmissionController {
 			LOGGER.debug("Get admissions that end between {} and {}", dischargeRange[0], dischargeRange[1]);
 		}
 
-		List<AdmittedPatient> admittedPatients = admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms);
-		if (admittedPatients.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(List.of());
-		}
-
-		return ResponseEntity.ok(admittedMapper.map2DTOList(admittedPatients));
+		return admittedMapper.map2DTOList(admissionManager.getAdmittedPatients(admissionRange, dischargeRange, searchTerms));
 	}
 
 	/**
@@ -223,12 +205,12 @@ public class AdmissionController {
 	 * @throws OHServiceException When failed to get admission
 	 */
 	@GetMapping("/admissions")
-	public ResponseEntity<Page<AdmissionDTO>> getAdmissions(
+	public Page<AdmissionDTO> getAdmissions(
 		@RequestParam(name = "admissionrange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] admissionRange,
 		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 		@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size,
-		@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged)
-		throws OHServiceException {
+		@RequestParam(value = "paged", required = false, defaultValue = "false") boolean paged
+	) throws OHServiceException {
 		LOGGER.debug("Get admissions started between {} and {}", admissionRange[0], admissionRange[1]);
 
 		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
@@ -247,12 +229,9 @@ public class AdmissionController {
 			admissionsDTO = admissionMapper.map2DTOList(admissions);
 		}
 
-		if (admissionsDTO.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-
 		admissionsPageableDTO.setData(admissionsDTO);
-		return ResponseEntity.ok(admissionsPageableDTO);
+
+		return admissionsPageableDTO;
 	}
 
 	/**
@@ -263,7 +242,7 @@ public class AdmissionController {
 	 * @throws OHServiceException When failed to get admissions
 	 */
 	@GetMapping("/admissions/discharges")
-	public ResponseEntity<Page<AdmissionDTO>> getDischarges(
+	public Page<AdmissionDTO> getDischarges(
 		@RequestParam(name = "dischargerange") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @ArraySchema(schema = @Schema(implementation = String.class)) LocalDateTime[] dischargeRange,
 		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
 		@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size
@@ -272,16 +251,12 @@ public class AdmissionController {
 
 		PagedResponse<Admission> admissionsPageable = admissionManager.getDischargesPageable(dischargeRange[0], dischargeRange[1], page, size);
 
-		if (admissionsPageable.getData().isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-
 		Page<AdmissionDTO> admissionsPageableDTO = new Page<>();
 		List<AdmissionDTO> admissionsDTO = admissionMapper.map2DTOList(admissionsPageable.getData());
 		admissionsPageableDTO.setData(admissionsDTO);
 		admissionsPageableDTO.setPageInfo(admissionMapper.setParameterPageInfo(admissionsPageable.getPageInfo()));
 
-		return ResponseEntity.ok(admissionsPageableDTO);
+		return admissionsPageableDTO;
 	}
 
 	/**

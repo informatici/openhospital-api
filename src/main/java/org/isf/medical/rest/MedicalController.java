@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -157,7 +156,7 @@ public class MedicalController {
 	 * Saves the specified {@link Medical}.
 	 * @param medicalDTO - the medical to save
 	 * @param ignoreSimilar - if {@code true}, it ignore the warning "similarsFoundWarning"
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the medical was created
+	 * @return The created medical
 	 * @throws OHServiceException When failed to save the medical
 	 */
 	@PostMapping(value = "/medicals")
@@ -180,7 +179,7 @@ public class MedicalController {
 	 * Updates the specified {@link Medical}.
 	 * @param medicalDTO - the medical to update
 	 * @param ignoreSimilar - if {@code true}, it ignore the warning "similarsFoundWarning"
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical was updated
+	 * @return The updated medical
 	 * @throws OHServiceException When failed to update medical
 	 */
 	@PutMapping(value = "/medicals")

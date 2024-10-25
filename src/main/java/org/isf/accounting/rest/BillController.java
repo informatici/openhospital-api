@@ -47,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -206,7 +205,7 @@ public class BillController {
 	 * @throws OHServiceException When failed to get bills
 	 */
 	@GetMapping("/bills")
-	public ResponseEntity<List<BillDTO>> searchBills(
+	public List<BillDTO> searchBills(
 		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
 		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
 		@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
@@ -223,12 +222,7 @@ public class BillController {
 			bills = billManager.getBills(dateFrom, dateTo, pat);
 		}
 
-		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
-
-		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
-		}
-		return ResponseEntity.ok(billDTOS);
+		return billMapper.map2DTOList(bills);
 	}
 
 	/**
@@ -240,7 +234,7 @@ public class BillController {
 	 * @throws OHServiceException When failed to get bill payments
 	 */
 	@GetMapping("/bills/payments")
-	public ResponseEntity<List<BillPaymentsDTO>> searchBillsPayments(
+	public List<BillPaymentsDTO> searchBillsPayments(
 		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
 		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
 		@RequestParam(value = "patient_code", required = false, defaultValue = "") Integer code) throws OHServiceException {
@@ -256,12 +250,7 @@ public class BillController {
 			payments = billManager.getPayments(dateFrom, dateTo, pat);
 		}
 
-		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(payments);
-
-		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(paymentsDTOS);
+		return billPaymentsMapper.map2DTOList(payments);
 	}
 
 	/**
@@ -271,18 +260,10 @@ public class BillController {
 	 * @throws OHServiceException When failed to get bill payments
 	 */
 	@GetMapping("/bills/payments/{bill_id}")
-	public ResponseEntity<List<BillPaymentsDTO>> getPaymentsByBillId(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
+	public List<BillPaymentsDTO> getPaymentsByBillId(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get getPayments for bill with id: {}", id);
 
-		List<BillPayments> billPayments = billManager.getPayments(id);
-
-		List<BillPaymentsDTO> paymentsDTOS = billPaymentsMapper.map2DTOList(billPayments);
-
-		if (paymentsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-
-		return ResponseEntity.ok(paymentsDTOS);
+		return billPaymentsMapper.map2DTOList(billManager.getPayments(id));
 	}
 
 	/**
@@ -292,17 +273,10 @@ public class BillController {
 	 * @throws OHServiceException When failed to get bill items
 	 */
 	@GetMapping("/bills/items/{bill_id}")
-	public ResponseEntity<List<BillItemsDTO>> getItems(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
+	public List<BillItemsDTO> getItems(@PathVariable(value = "bill_id") Integer id) throws OHServiceException {
 		LOGGER.info("Get Items for bill with id: {}", id);
 
-		List<BillItems> items = billManager.getItems(id);
-
-		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
-
-		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(itemsDTOS);
+		return billItemsMapper.map2DTOList(billManager.getItems(id));
 	}
 
 	/**
@@ -333,17 +307,10 @@ public class BillController {
 	 * @throws OHServiceException When failed to get associated bills
 	 */
 	@GetMapping("/bills/pending/affiliate")
-	public ResponseEntity<List<BillDTO>> getPendingBillsAffiliate(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
+	public List<BillDTO> getPendingBillsAffiliate(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
-		List<Bill> bills = billManager.getPendingBillsAffiliate(code);
-
-		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
-
-		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-		return ResponseEntity.ok(billDTOS);
+		return billMapper.map2DTOList(billManager.getPendingBillsAffiliate(code));
 	}
 
 	/**
@@ -353,18 +320,10 @@ public class BillController {
 	 * @throws OHServiceException When failed to get patient pending bills
 	 */
 	@GetMapping("/bills/pending")
-	public ResponseEntity<List<BillDTO>> getPendingBills(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
+	public List<BillDTO> getPendingBills(@RequestParam(value = "patient_code") Integer code) throws OHServiceException {
 		LOGGER.info("Get bill with id: {}", code);
 
-		List<Bill> bills = billManager.getPendingBills(code);
-
-		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
-
-		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
-		}
-
-		return ResponseEntity.ok(billDTOS);
+		return billMapper.map2DTOList(billManager.getPendingBills(code));
 	}
 
 	/**
@@ -376,24 +335,15 @@ public class BillController {
 	 * @throws OHServiceException When error occurs
 	 */
 	@PostMapping("/bills/search/by/item")
-	public ResponseEntity<List<BillDTO>> searchBills(
+	public List<BillDTO> searchBills(
 		@RequestParam(value = "datefrom") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateFrom,
 		@RequestParam(value = "dateto") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") @Schema(implementation = String.class) LocalDateTime dateTo,
 		@RequestBody BillItemsDTO billItemDTO) throws OHServiceException {
-
 		BillItems billItem = billItemsMapper.map2Model(billItemDTO);
 
 		LOGGER.info("Get Bills dateFrom: {}  dateTo: {}  Bill ITEM ID: {}", dateFrom, dateTo, billItem.getId());
 
-		List<Bill> bills = billManager.getBills(dateFrom, dateTo, billItem);
-
-		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
-
-		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		}
-
-		return ResponseEntity.ok(billDTOS);
+		return billMapper.map2DTOList(billManager.getBills(dateFrom, dateTo, billItem));
 	}
 
 	/**
@@ -403,19 +353,10 @@ public class BillController {
 	 * @throws OHServiceException When error occurs
 	 */
 	@GetMapping("/bills/items")
-	public ResponseEntity<List<BillItemsDTO>> getDistinctItems() throws OHServiceException {
-
+	public List<BillItemsDTO> getDistinctItems() throws OHServiceException {
 		LOGGER.info("get all the distinct stored BillItems");
 
-		List<BillItems> items = billManager.getDistinctItems(); // TODO: verify if it's correct
-
-		List<BillItemsDTO> itemsDTOS = billItemsMapper.map2DTOList(items);
-
-		if (itemsDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(itemsDTOS);
-		}
-
-		return ResponseEntity.ok(itemsDTOS);
+		return billItemsMapper.map2DTOList(billManager.getDistinctItems()); // TODO: verify if it's correct
 	}
 
 	/**
@@ -450,18 +391,11 @@ public class BillController {
 	 * @throws OHServiceException When failed to get bills
 	 */
 	@PostMapping("/bills/search/by/payments")
-	public ResponseEntity<List<BillDTO>> searchBillsByPayments(@RequestBody List<BillPaymentsDTO> paymentsDTO) throws OHServiceException {
-
+	public List<BillDTO> searchBillsByPayments(
+		@RequestBody List<BillPaymentsDTO> paymentsDTO
+	) throws OHServiceException {
 		List<BillPayments> billPayments = billPaymentsMapper.map2ModelList(paymentsDTO);
 
-		List<Bill> bills = billManager.getBills(billPayments);
-
-		List<BillDTO> billDTOS = billMapper.map2DTOList(bills);
-
-		if (billDTOS.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(billDTOS);
-		}
-
-		return ResponseEntity.ok(billDTOS);
+		return billMapper.map2DTOList(billManager.getBills(billPayments));
 	}
 }

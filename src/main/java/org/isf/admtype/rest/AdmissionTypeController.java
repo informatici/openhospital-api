@@ -22,7 +22,6 @@
 package org.isf.admtype.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.manager.AdmissionTypeBrowserManager;
@@ -33,10 +32,8 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,7 +68,7 @@ public class AdmissionTypeController {
 
 	/**
 	 * Create a new {@link AdmissionType}
-	 * 
+	 *
 	 * @param admissionTypeDTO Admission Type payload
 	 * @return {@code true} if the admission type has been stored, {@code false} otherwise.
 	 * @throws OHServiceException When failed to create admission type
@@ -93,7 +90,7 @@ public class AdmissionTypeController {
 
 	/**
 	 * Updates the specified {@link AdmissionType}.
-	 * 
+	 *
 	 * @param admissionTypeDTO Admission Type payload
 	 * @return {@code true} if the admission type has been updated, {@code false} otherwise.
 	 * @throws OHServiceException When failed to update the admission type
@@ -114,27 +111,20 @@ public class AdmissionTypeController {
 
 	/**
 	 * Get all the available {@link AdmissionType}s.
-	 * 
+	 *
 	 * @return a {@link List} of {@link AdmissionType} or NO_CONTENT if there is no data found.
 	 * @throws OHServiceException When failed to get admission types
 	 */
 	@GetMapping(value = "/admissiontypes")
-	public ResponseEntity<List<AdmissionTypeDTO>> getAdmissionTypes() throws OHServiceException {
+	public List<AdmissionTypeDTO> getAdmissionTypes() throws OHServiceException {
 		LOGGER.info("Get all Admission Types ");
 
-		List<AdmissionType> admissionTypes = admissionTypeManager.getAdmissionType();
-		List<AdmissionTypeDTO> admissionTypeDTOs = mapper.map2DTOList(admissionTypes);
-
-		if (admissionTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(admissionTypeDTOs);
-		} else {
-			return ResponseEntity.ok(admissionTypeDTOs);
-		}
+		return mapper.map2DTOList(admissionTypeManager.getAdmissionType());
 	}
 
 	/**
 	 * Delete {@link AdmissionType} for specified code.
-	 * 
+	 *
 	 * @param code Admission Type Code
 	 * @return {@code true} if the {@link AdmissionType} has been deleted, {@code false} otherwise.
 	 * @throws OHServiceException When failed to delete admission type

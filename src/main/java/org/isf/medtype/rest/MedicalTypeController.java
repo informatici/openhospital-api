@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,7 +82,7 @@ public class MedicalTypeController {
 	/**
 	 * Saves the specified medical type.
 	 * @param medicalTypeDTO the medical type to save.
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.CREATED} if the medical type has been saved.
+	 * @return The created medical type
 	 * @throws OHServiceException When failed to create medical type
 	 */
 	@PostMapping(value = "/medicaltypes")
@@ -103,7 +102,7 @@ public class MedicalTypeController {
 	/**
 	 * Updates the specified medical type.
 	 * @param medicalTypeDTO the medical type to update.
-	 * @return {@link ResponseEntity} with status {@code HttpStatus.OK} if the medical type has been updated.
+	 * @return The updated medical type
 	 * @throws OHServiceException When failed to update medical type
 	 */
 	@PutMapping(value = "/medicaltypes")
