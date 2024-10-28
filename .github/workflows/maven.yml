@@ -32,9 +32,6 @@ jobs:
         run: |
           git clone --depth=1 --no-single-branch https://github.com/${{ env.FORK_REPO }}.git openhospital-core
           pushd openhospital-core
-          git remote -v  # Debug remote names
-          git fetch origin
-          git branch -a  # Debug list all branches
           git checkout -B ${{ env.BRANCH_NAME }} origin/${{ env.BRANCH_NAME }} || git checkout develop
           popd
         
