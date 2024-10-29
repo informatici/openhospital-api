@@ -78,6 +78,9 @@ public class BillDTO {
 	@Schema(description = "user name who create the bill", example = "admin")
 	private String user;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public Integer getId() {
 		return this.id;
 	}
@@ -180,5 +183,13 @@ public class BillDTO {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
