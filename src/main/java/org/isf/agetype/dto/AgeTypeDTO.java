@@ -39,6 +39,9 @@ public class AgeTypeDTO {
 	@Schema(description = "The minimum value of the range", example = "0")
 	private int from;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	@NotNull
 	@Schema(description = "The maximum value of the range", example = "0")
 	private int to;
@@ -73,5 +76,13 @@ public class AgeTypeDTO {
 
 	public void setTo(int to) {
 		this.to = to;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
