@@ -59,6 +59,9 @@ public class VisitDTO {
 	@Schema(description = "Service done during the visit", maxLength = 45)
 	private String service;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	// @ApiModelProperty(hidden=true)
 	public int getVisitID() {
 		return visitID;
@@ -124,6 +127,13 @@ public class VisitDTO {
 		this.sms = sms;
 	}
 
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 	@Override
 	public String toString() {
 		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms

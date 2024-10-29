@@ -6232,12 +6232,13 @@ components:
           format: int32
           example: 0
         female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
         opd:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -6440,6 +6441,11 @@ components:
           maxLength: 45
           type: string
           description: Service done during the visit
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
       description: Class representing a vaccine type
     VaccineTypeDTO:
       required:
@@ -6509,6 +6515,11 @@ components:
           maxLength: 65535
           type: string
           description: The value of the user
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     PermissionDTO:
       required:
       - description
@@ -6638,6 +6649,11 @@ components:
           maxLength: 200
           type: string
           description: The supplier's notes
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     PricesOthersDTO:
       required:
       - code
@@ -6659,6 +6675,11 @@ components:
           maxLength: 100
           type: string
           description: The description
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         opdInclude:
           type: boolean
         ipdInclude:
@@ -6700,6 +6721,11 @@ components:
           type: string
           description: The currency
           example: FCFA
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         hashCode:
           type: integer
           format: int32
@@ -7007,6 +7033,11 @@ components:
           type: string
           description: user name who create the bill
           example: admin
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         list:
           type: boolean
       description: Class representing a bill
@@ -7669,6 +7700,11 @@ components:
           - regular
           - diarrheal
           - irregular
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     BillItemsDTO:
       required:
       - itemAmount
@@ -7788,6 +7824,11 @@ components:
         from:
           type: integer
           description: The minimum value of the range
+          format: int32
+          example: 0
+        lock:
+          type: integer
+          description: Lock
           format: int32
           example: 0
         to:
@@ -8166,6 +8207,11 @@ components:
           description: Price
           format: double
           example: 1500
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
         editable:
           type: boolean
           readOnly: true

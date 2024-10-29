@@ -40,6 +40,9 @@ public class PricesOthersDTO {
 	@Schema(description = "The description", maxLength = 100)
 	private String description;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	@NotNull
 	private boolean opdInclude;
 
@@ -126,5 +129,13 @@ public class PricesOthersDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

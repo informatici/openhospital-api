@@ -53,6 +53,9 @@ public class PriceDTO {
 	@Schema(description = "Price", example = "1500")
 	private Double price;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	private boolean editable;
 
 	private int hashCode;
@@ -126,5 +129,13 @@ public class PriceDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
