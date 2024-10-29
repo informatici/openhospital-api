@@ -6235,9 +6235,9 @@ components:
           type: boolean
         female:
           type: boolean
-        opd:
-          type: boolean
         pharmacy:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -6949,11 +6949,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
