@@ -6231,13 +6231,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
-        pharmacy:
+        male:
           type: boolean
         female:
           type: boolean
-        male:
+        opd:
+          type: boolean
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -8189,7 +8189,7 @@ components:
           type: integer
           format: int32
         list:
-          $ref: "#/components/schemas/PriceList"
+          $ref: "#/components/schemas/PriceListDTO"
         group:
           type: string
           description: The group
@@ -8219,39 +8219,6 @@ components:
           format: int32
           readOnly: true
       description: Class representing a prices
-    PriceList:
-      required:
-      - code
-      - currency
-      - description
-      - name
-      type: object
-      properties:
-        createdBy:
-          type: string
-        createdDate:
-          type: string
-          format: date-time
-        lastModifiedBy:
-          type: string
-        lastModifiedDate:
-          type: string
-          format: date-time
-        active:
-          type: integer
-          format: int32
-        id:
-          type: integer
-          format: int32
-        code:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        currency:
-          type: string
-      description: The price list
     PageInfoDTO:
       type: object
       properties:
