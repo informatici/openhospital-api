@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.agetype.data.AgeTypeHelper;
 import org.isf.agetype.dto.AgeTypeDTO;
@@ -61,7 +62,7 @@ public class AgeTypeControllerTest {
 	@Mock
 	private AgeTypeBrowserManager ageTypeManagerMock;
 
-	private AgeTypeMapper ageTypeMapper = new AgeTypeMapper();
+	private final AgeTypeMapper ageTypeMapper = new AgeTypeMapper();
 
 	private MockMvc mockMvc;
 
@@ -120,7 +121,7 @@ public class AgeTypeControllerTest {
 		MvcResult result = this.mockMvc
 				.perform(put(request)
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(AgeTypeHelper.asJsonString(body))
+						.content(Objects.requireNonNull(AgeTypeHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
@@ -157,6 +158,7 @@ public class AgeTypeControllerTest {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
+		AgeTypeDTO ageTypeDTO = ageTypeMapper.map2DTO(ageType);
 
 		when(ageTypeManagerMock.getTypeByCode(index))
 				.thenReturn(ageType);
@@ -166,7 +168,7 @@ public class AgeTypeControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageType))))
+				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO))))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);

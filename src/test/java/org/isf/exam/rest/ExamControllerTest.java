@@ -144,7 +144,7 @@ public class ExamControllerTest {
 
 		@Test
 		@DisplayName("Should update an exam with associated examrows")
-		@WithMockUser(username = "admin", authorities = { "exams.update", "examrows.create", "examrows.delete" })
+		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
 		void shouldUpdateExamWithRows() throws Exception {
 			ExamWithRowsDTO payload = ExamHelper.generateExamWithRowsDTO();
 			Exam exam = examMapper.map2Model(payload.exam());
@@ -166,7 +166,7 @@ public class ExamControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update exam procedure 1 with rows when default result doesn't match")
-		@WithMockUser(username = "admin", authorities = { "exams.update", "examrows.create", "examrows.delete" })
+		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
 		void shouldFailToUpdateExamWithInvalidDefaultResult() throws Exception {
 			ExamDTO examDTO = ExamHelper.generateExam();
 			examDTO.setDefaultResult("IRES");
@@ -189,7 +189,7 @@ public class ExamControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update exam code in body doesn't match")
-		@WithMockUser(username = "admin", authorities = { "exams.update", "examrows.create", "examrows.delete" })
+		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
 		void shouldFailToUpdateExamWhenCodeInBodyDoesntMatch() throws Exception {
 			var result = mvc.perform(
 					put("/exams/{code}", "DD").contentType(MediaType.APPLICATION_JSON)
@@ -203,7 +203,7 @@ public class ExamControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update exam when user doesn't have required permissions")
-		@WithMockUser(username = "admin", authorities = { "examrows.create", "examrows.delete" })
+		@WithMockUser(username = "admin", authorities = { "exams.create", "examrows.create", "examrows.delete" })
 		void shouldFailToUpdateExamWhenInsufficientPermissions() throws Exception {
 			var result = mvc.perform(
 					put("/exams/hd").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(ExamHelper.generateExamWithRowsDTO())))
