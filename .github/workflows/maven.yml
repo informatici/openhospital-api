@@ -37,7 +37,7 @@ jobs:
           # Determine FORK_REPO with fallback logic
           if [[ -n "${GITHUB_HEAD_REPOSITORY}" ]]; then
             echo "FORK_REPO=${GITHUB_HEAD_REPOSITORY}" >> $GITHUB_ENV
-          elif curl -s --head https://github.com/${GITHUB_ACTOR}/openhospital-core/tree/${{ env.BRANCH_NAME }} | grep "HTTP/[12].* 2[0-9][0-9]" > /dev/null; then
+          elif curl -s -o /dev/null -w "%{http_code}" "https://github.com/${GITHUB_ACTOR}/tree/$BRANCH_NAME" | grep -q "200"; then
             echo "FORK_REPO=${GITHUB_ACTOR}/openhospital-core" >> $GITHUB_ENV
           else
             echo "FORK_REPO=informatici/openhospital-core" >> $GITHUB_ENV
