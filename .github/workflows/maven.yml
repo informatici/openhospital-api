@@ -27,22 +27,20 @@ jobs:
       - name: Determine PR source branch and fork repository
         id: vars
         run: |
-          # Get branch name from either pull_request or push context
+          # Set BRANCH_NAME based on event type
           if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            # Get branch and fork repo for PR events
             echo "BRANCH_NAME=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
-            echo "FORK_REPO=${GITHUB_HEAD_REPOSITORY:-informatici/openhospital-core}" >> $GITHUB_ENV
-          elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
-            # Get branch name for push events
+          else
             echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          fi
 
-            # Default FORK_REPO to main repository, with option to fallback if the fork exists
-            OWNER=${GITHUB_ACTOR}
-            if curl -s -o /dev/null -w "%{http_code}" "https://api.github.com/repos/${OWNER}/openhospital-core/branches/${GITHUB_REF##*/}" | grep -q "200"; then
-              echo "FORK_REPO=${OWNER}/openhospital-core" >> $GITHUB_ENV
-            else
-              echo "FORK_REPO=informatici/openhospital-core" >> $GITHUB_ENV
-            fi
+          # Determine FORK_REPO with fallback logic
+          if [[ -n "${GITHUB_HEAD_REPOSITORY}" ]]; then
+            echo "FORK_REPO=${GITHUB_HEAD_REPOSITORY}" >> $GITHUB_ENV
+          elif curl -s --head https://github.com/${GITHUB_ACTOR}/openhospital-core | grep "200 OK" > /dev/null; then
+            echo "FORK_REPO=${GITHUB_ACTOR}/openhospital-core" >> $GITHUB_ENV
+          else
+            echo "FORK_REPO=informatici/openhospital-core" >> $GITHUB_ENV
           fi
 
       - name: Log variables
