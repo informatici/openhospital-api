@@ -30,14 +30,15 @@ jobs:
           # Set default FORK_REPO and BRANCH_NAME values.
           BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF##*/}}"
           FORK_REPO="${GITHUB_HEAD_REPOSITORY:-${GITHUB_ACTOR}/openhospital-core}"
-          CHECK_BRANCH_URL="https://github.com/${GITHUB_ACTOR}/tree/$BRANCH_NAME"
+          CHECK_BRANCH_URL="https://github.com/${GITHUB_ACTOR}/openhospital-core/tree/$BRANCH_NAME"
+          echo "Checking branch existence with: curl -s -o /dev/null -w \"%{http_code}\" $CHECK_BRANCH_URL"
           
           # Determine FORK_REPO with fallback logic
           if [[ -n "${GITHUB_HEAD_REPOSITORY}" ]]; then
             echo "Using ${GITHUB_HEAD_REPOSITORY}."
             FORK_REPO=${GITHUB_HEAD_REPOSITORY}
           elif curl -s -o /dev/null -w "%{http_code}" $CHECK_BRANCH_URL | grep -q "200"; then
-            echo "Checking branch existence with: curl -s -o /dev/null -w \"%{http_code}\" $CHECK_BRANCH_URL"
+            echo "Using ${GITHUB_ACTOR}/openhospital-core"
             FORK_REPO=${GITHUB_ACTOR}/openhospital-core
           else
             echo "Using informatici/openhospital-core."
