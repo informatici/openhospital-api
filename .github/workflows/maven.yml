@@ -69,4 +69,4 @@ jobs:
           popd
 
       - name: Build with Maven
-        run: mvn install -DskipTests=true
+        run: mvn install
