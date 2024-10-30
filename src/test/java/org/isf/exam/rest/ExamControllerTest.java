@@ -203,7 +203,7 @@ public class ExamControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update exam when user doesn't have required permissions")
-		@WithMockUser(username = "admin", authorities = { "examrows.create", "examrows.delete" })
+		@WithMockUser(username = "admin", authorities = { "exams.create", "examrows.create", "examrows.delete" })
 		void shouldFailToUpdateExamWhenInsufficientPermissions() throws Exception {
 			var result = mvc.perform(
 					put("/exams/hd").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(ExamHelper.generateExamWithRowsDTO())))
