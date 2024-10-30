@@ -158,6 +158,7 @@ public class AgeTypeControllerTest {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
+		AgeTypeDTO ageTypeDTO = ageTypeMapper.map2DTO(ageType);
 
 		when(ageTypeManagerMock.getTypeByCode(index))
 			.thenReturn(ageType);
@@ -167,9 +168,7 @@ public class AgeTypeControllerTest {
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(
-				AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeMapper.map2DTO(ageType))
-			)))
+			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO))))
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
