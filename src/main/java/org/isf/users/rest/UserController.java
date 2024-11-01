@@ -176,7 +176,7 @@ public class UserController {
 	public void deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username);
 		if (foundUser == null) {
-			throw new OHAPIException(new OHExceptionMessage("User not found."));
+			throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 		}
 		try {
 			try {
