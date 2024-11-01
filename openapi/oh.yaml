@@ -1904,7 +1904,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AgeTypeDTO"
+              type: array
+              items:
+                $ref: "#/components/schemas/AgeTypeDTO"
         required: true
       responses:
         "200":
@@ -1912,7 +1914,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgeTypeDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgeTypeDTO"
       security:
       - bearerAuth: []
   /admissiontypes:
@@ -6235,13 +6239,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
+        pharmacy:
           type: boolean
         male:
           type: boolean
         female:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -6953,11 +6957,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -8000,9 +8004,9 @@ components:
           $ref: "#/components/schemas/PatientProfilePhoto"
         patientConsensus:
           $ref: "#/components/schemas/PatientConsensus"
-        informations:
-          type: string
         searchString:
+          type: string
+        informations:
           type: string
     PatientConsensus:
       type: object
@@ -8082,6 +8086,254 @@ components:
                     transparency:
                       type: integer
                       format: int32
+                font:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    style:
+                      type: integer
+                      format: int32
+                    size:
+                      type: integer
+                      format: int32
+                    attributes:
+                      type: object
+                      additionalProperties:
+                        type: object
+                    family:
+                      type: string
+                    plain:
+                      type: boolean
+                    fontName:
+                      type: string
+                    transform:
+                      type: object
+                      properties:
+                        scaleX:
+                          type: number
+                          format: double
+                        shearY:
+                          type: number
+                          format: double
+                        shearX:
+                          type: number
+                          format: double
+                        scaleY:
+                          type: number
+                          format: double
+                        translateX:
+                          type: number
+                          format: double
+                        translateY:
+                          type: number
+                          format: double
+                        type:
+                          type: integer
+                          format: int32
+                        identity:
+                          type: boolean
+                        determinant:
+                          type: number
+                          format: double
+                        toRotation:
+                          type: number
+                          format: double
+                          writeOnly: true
+                        toQuadrantRotation:
+                          type: integer
+                          format: int32
+                          writeOnly: true
+                    bold:
+                      type: boolean
+                    italic:
+                      type: boolean
+                    numGlyphs:
+                      type: integer
+                      format: int32
+                    missingGlyphCode:
+                      type: integer
+                      format: int32
+                    italicAngle:
+                      type: number
+                      format: float
+                    transformed:
+                      type: boolean
+                    psname:
+                      type: string
+                    size2D:
+                      type: number
+                      format: float
+                    availableAttributes:
+                      type: array
+                      items:
+                        type: object
+                fontMetrics:
+                  type: object
+                  properties:
+                    font:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        style:
+                          type: integer
+                          format: int32
+                        size:
+                          type: integer
+                          format: int32
+                        attributes:
+                          type: object
+                          additionalProperties:
+                            type: object
+                        family:
+                          type: string
+                        plain:
+                          type: boolean
+                        fontName:
+                          type: string
+                        transform:
+                          type: object
+                          properties:
+                            scaleX:
+                              type: number
+                              format: double
+                            shearY:
+                              type: number
+                              format: double
+                            shearX:
+                              type: number
+                              format: double
+                            scaleY:
+                              type: number
+                              format: double
+                            translateX:
+                              type: number
+                              format: double
+                            translateY:
+                              type: number
+                              format: double
+                            type:
+                              type: integer
+                              format: int32
+                            identity:
+                              type: boolean
+                            determinant:
+                              type: number
+                              format: double
+                            toRotation:
+                              type: number
+                              format: double
+                              writeOnly: true
+                            toQuadrantRotation:
+                              type: integer
+                              format: int32
+                              writeOnly: true
+                        bold:
+                          type: boolean
+                        italic:
+                          type: boolean
+                        numGlyphs:
+                          type: integer
+                          format: int32
+                        missingGlyphCode:
+                          type: integer
+                          format: int32
+                        italicAngle:
+                          type: number
+                          format: float
+                        transformed:
+                          type: boolean
+                        psname:
+                          type: string
+                        size2D:
+                          type: number
+                          format: float
+                        availableAttributes:
+                          type: array
+                          items:
+                            type: object
+                    ascent:
+                      type: integer
+                      format: int32
+                    descent:
+                      type: integer
+                      format: int32
+                    leading:
+                      type: integer
+                      format: int32
+                    maxDescent:
+                      type: integer
+                      format: int32
+                    widths:
+                      type: array
+                      items:
+                        type: integer
+                        format: int32
+                    fontRenderContext:
+                      type: object
+                      properties:
+                        antiAliased:
+                          type: boolean
+                        transformType:
+                          type: integer
+                          format: int32
+                        transform:
+                          type: object
+                          properties:
+                            scaleX:
+                              type: number
+                              format: double
+                            shearY:
+                              type: number
+                              format: double
+                            shearX:
+                              type: number
+                              format: double
+                            scaleY:
+                              type: number
+                              format: double
+                            translateX:
+                              type: number
+                              format: double
+                            translateY:
+                              type: number
+                              format: double
+                            type:
+                              type: integer
+                              format: int32
+                            identity:
+                              type: boolean
+                            determinant:
+                              type: number
+                              format: double
+                            toRotation:
+                              type: number
+                              format: double
+                              writeOnly: true
+                            toQuadrantRotation:
+                              type: integer
+                              format: int32
+                              writeOnly: true
+                        antiAliasingHint:
+                          type: object
+                        fractionalMetricsHint:
+                          type: object
+                        transformed:
+                          type: boolean
+                    maxAscent:
+                      type: integer
+                      format: int32
+                    maxDecent:
+                      type: integer
+                      format: int32
+                      deprecated: true
+                    maxAdvance:
+                      type: integer
+                      format: int32
+                    height:
+                      type: integer
+                      format: int32
                 clipBounds:
                   type: object
                   properties:
@@ -8125,7 +8377,10 @@ components:
                         width:
                           type: number
                           format: double
-                        height:
+                        "y":
+                          type: number
+                          format: double
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8140,16 +8395,13 @@ components:
                         centerY:
                           type: number
                           format: double
+                        height:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                     rect:
@@ -8160,7 +8412,10 @@ components:
                         width:
                           type: number
                           format: double
-                        height:
+                        "y":
+                          type: number
+                          format: double
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8175,16 +8430,13 @@ components:
                         centerY:
                           type: number
                           format: double
+                        height:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                       writeOnly: true
@@ -8239,88 +8491,6 @@ components:
                       type: integer
                       format: int32
                   writeOnly: true
-                font:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    style:
-                      type: integer
-                      format: int32
-                    size:
-                      type: integer
-                      format: int32
-                    attributes:
-                      type: object
-                      additionalProperties:
-                        type: object
-                    family:
-                      type: string
-                    plain:
-                      type: boolean
-                    transform:
-                      type: object
-                      properties:
-                        scaleX:
-                          type: number
-                          format: double
-                        shearY:
-                          type: number
-                          format: double
-                        shearX:
-                          type: number
-                          format: double
-                        scaleY:
-                          type: number
-                          format: double
-                        translateX:
-                          type: number
-                          format: double
-                        translateY:
-                          type: number
-                          format: double
-                        type:
-                          type: integer
-                          format: int32
-                        identity:
-                          type: boolean
-                        toRotation:
-                          type: number
-                          format: double
-                          writeOnly: true
-                        toQuadrantRotation:
-                          type: integer
-                          format: int32
-                          writeOnly: true
-                        determinant:
-                          type: number
-                          format: double
-                    fontName:
-                      type: string
-                    bold:
-                      type: boolean
-                    italic:
-                      type: boolean
-                    numGlyphs:
-                      type: integer
-                      format: int32
-                    missingGlyphCode:
-                      type: integer
-                      format: int32
-                    italicAngle:
-                      type: number
-                      format: float
-                    transformed:
-                      type: boolean
-                    psname:
-                      type: string
-                    size2D:
-                      type: number
-                      format: float
-                    availableAttributes:
-                      type: array
-                      items:
-                        type: object
                 clip:
                   type: object
                   properties:
@@ -8367,7 +8537,10 @@ components:
                             width:
                               type: number
                               format: double
-                            height:
+                            "y":
+                              type: number
+                              format: double
+                            x:
                               type: number
                               format: double
                             maxX:
@@ -8382,16 +8555,13 @@ components:
                             centerY:
                               type: number
                               format: double
+                            height:
+                              type: number
+                              format: double
                             minX:
                               type: number
                               format: double
                             minY:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                            x:
                               type: number
                               format: double
                         rect:
@@ -8402,7 +8572,10 @@ components:
                             width:
                               type: number
                               format: double
-                            height:
+                            "y":
+                              type: number
+                              format: double
+                            x:
                               type: number
                               format: double
                             maxX:
@@ -8417,16 +8590,13 @@ components:
                             centerY:
                               type: number
                               format: double
+                            height:
+                              type: number
+                              format: double
                             minX:
                               type: number
                               format: double
                             minY:
-                              type: number
-                              format: double
-                            "y":
-                              type: number
-                              format: double
-                            x:
                               type: number
                               format: double
                           writeOnly: true
@@ -8456,7 +8626,10 @@ components:
                         width:
                           type: number
                           format: double
-                        height:
+                        "y":
+                          type: number
+                          format: double
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8471,16 +8644,13 @@ components:
                         centerY:
                           type: number
                           format: double
+                        height:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                 clipRect:
@@ -8526,7 +8696,10 @@ components:
                         width:
                           type: number
                           format: double
-                        height:
+                        "y":
+                          type: number
+                          format: double
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8541,16 +8714,13 @@ components:
                         centerY:
                           type: number
                           format: double
+                        height:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                     rect:
@@ -8561,7 +8731,10 @@ components:
                         width:
                           type: number
                           format: double
-                        height:
+                        "y":
+                          type: number
+                          format: double
+                        x:
                           type: number
                           format: double
                         maxX:
@@ -8576,16 +8749,13 @@ components:
                         centerY:
                           type: number
                           format: double
+                        height:
+                          type: number
+                          format: double
                         minX:
                           type: number
                           format: double
                         minY:
-                          type: number
-                          format: double
-                        "y":
-                          type: number
-                          format: double
-                        x:
                           type: number
                           format: double
                       writeOnly: true
@@ -8608,172 +8778,6 @@ components:
                       type: number
                       format: double
                   deprecated: true
-                fontMetrics:
-                  type: object
-                  properties:
-                    font:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                        style:
-                          type: integer
-                          format: int32
-                        size:
-                          type: integer
-                          format: int32
-                        attributes:
-                          type: object
-                          additionalProperties:
-                            type: object
-                        family:
-                          type: string
-                        plain:
-                          type: boolean
-                        transform:
-                          type: object
-                          properties:
-                            scaleX:
-                              type: number
-                              format: double
-                            shearY:
-                              type: number
-                              format: double
-                            shearX:
-                              type: number
-                              format: double
-                            scaleY:
-                              type: number
-                              format: double
-                            translateX:
-                              type: number
-                              format: double
-                            translateY:
-                              type: number
-                              format: double
-                            type:
-                              type: integer
-                              format: int32
-                            identity:
-                              type: boolean
-                            toRotation:
-                              type: number
-                              format: double
-                              writeOnly: true
-                            toQuadrantRotation:
-                              type: integer
-                              format: int32
-                              writeOnly: true
-                            determinant:
-                              type: number
-                              format: double
-                        fontName:
-                          type: string
-                        bold:
-                          type: boolean
-                        italic:
-                          type: boolean
-                        numGlyphs:
-                          type: integer
-                          format: int32
-                        missingGlyphCode:
-                          type: integer
-                          format: int32
-                        italicAngle:
-                          type: number
-                          format: float
-                        transformed:
-                          type: boolean
-                        psname:
-                          type: string
-                        size2D:
-                          type: number
-                          format: float
-                        availableAttributes:
-                          type: array
-                          items:
-                            type: object
-                    height:
-                      type: integer
-                      format: int32
-                    ascent:
-                      type: integer
-                      format: int32
-                    descent:
-                      type: integer
-                      format: int32
-                    leading:
-                      type: integer
-                      format: int32
-                    maxDescent:
-                      type: integer
-                      format: int32
-                    widths:
-                      type: array
-                      items:
-                        type: integer
-                        format: int32
-                    fontRenderContext:
-                      type: object
-                      properties:
-                        antiAliased:
-                          type: boolean
-                        transformType:
-                          type: integer
-                          format: int32
-                        transform:
-                          type: object
-                          properties:
-                            scaleX:
-                              type: number
-                              format: double
-                            shearY:
-                              type: number
-                              format: double
-                            shearX:
-                              type: number
-                              format: double
-                            scaleY:
-                              type: number
-                              format: double
-                            translateX:
-                              type: number
-                              format: double
-                            translateY:
-                              type: number
-                              format: double
-                            type:
-                              type: integer
-                              format: int32
-                            identity:
-                              type: boolean
-                            toRotation:
-                              type: number
-                              format: double
-                              writeOnly: true
-                            toQuadrantRotation:
-                              type: integer
-                              format: int32
-                              writeOnly: true
-                            determinant:
-                              type: number
-                              format: double
-                        antiAliasingHint:
-                          type: object
-                        fractionalMetricsHint:
-                          type: object
-                        transformed:
-                          type: boolean
-                    maxAscent:
-                      type: integer
-                      format: int32
-                    maxDecent:
-                      type: integer
-                      format: int32
-                      deprecated: true
-                    maxAdvance:
-                      type: integer
-                      format: int32
     TherapyRow:
       required:
       - endDate
@@ -8835,13 +8839,13 @@ components:
         smsInt:
           type: integer
           format: int32
-        medical:
-          type: integer
-          format: int32
         notify:
           type: boolean
         sms:
           type: boolean
+        medical:
+          type: integer
+          format: int32
     TherapyDTO:
       type: object
       properties:

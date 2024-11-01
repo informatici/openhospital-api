@@ -89,24 +89,37 @@ public class AgeTypeController {
 	
 	/**
 	 * Update an age type
-	 * @param ageTypeDTO - the age type to be updated
+	 * @param ageTypeDTOs - the list of age types to be updated
 	 * @return {@link AgeTypeDTO} the updated age type
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update age type
 	 */
 	@PutMapping(value = "/agetypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<AgeTypeDTO> updateAgeType(@Valid @RequestBody AgeTypeDTO ageTypeDTO) throws OHServiceException {
-		if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("The age type is not valid."));
-		}
-		LOGGER.info("Update age type");
-		AgeType ageType = mapper.map2Model(ageTypeDTO);
-		List<AgeType> ageTypes = new ArrayList<>();
-		ageTypes.add(ageType);
+	public List<AgeTypeDTO> updateAgeType(@Valid @RequestBody List<AgeTypeDTO> ageTypeDTOs) throws OHServiceException {
+
+		ageTypeDTOs.forEach(ageTypeDTO -> {
+			try {
+				if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty() || ageTypeManager.getTypeByCode(ageTypeDTO.getCode()) == null) {
+					try {
+						throw new OHAPIException(new OHExceptionMessage("The age type with code "+ageTypeDTO.getCode()+" is not valid."));
+					} catch (OHAPIException e) {
+						throw new RuntimeException(e);
+					}
+				}
+			} catch (OHServiceException e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		LOGGER.info("Updating age types");
+		List<AgeType> ageTypes = mapper.map2ModelList(ageTypeDTOs);
+
 		try {
-			ageTypeManager.updateAgeType(ageTypes);
-			return ResponseEntity.ok(ageTypeDTO);
+			return mapper.map2DTOList(ageTypeManager.updateAgeType(ageTypes));
 		} catch (OHServiceException ex) {
-			throw new OHAPIException(new OHExceptionMessage("The age type is not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new OHAPIException(
+				new OHExceptionMessage("Unable to update age types. Please check that you've correctly set values"),
+				HttpStatus.INTERNAL_SERVER_ERROR
+			);
 		}
 	}
 	
