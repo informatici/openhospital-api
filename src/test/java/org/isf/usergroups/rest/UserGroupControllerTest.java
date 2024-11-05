@@ -179,7 +179,7 @@ public class UserGroupControllerTest {
 		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 
 		when(userManager.getUserGroup()).thenReturn(List.of(userGroup));
-		when(userManager.deleteGroup(any())).thenReturn(userGroup);
+		doNothing().when(userManager).deleteGroup(any());
 
 		var result = mvc.perform(
 				delete("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))

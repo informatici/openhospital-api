@@ -108,7 +108,7 @@ public class UserControllerTest {
 		User user = UserHelper.generateUser();
 
 		when(userManager.getUserByName(any())).thenReturn(user);
-		when(userManager.deleteUser(any())).thenReturn(user);
+		doNothing().when(userManager).deleteUser(any());
 
 		var result = mvc.perform(
 				delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
