@@ -31,8 +31,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 public class UserGroupDTO {
 
-	@Schema(description = "List of group's permissions")
-	List<PermissionDTO> permissions;
 	@NotNull
 	@Schema(description = "Name of the group (must be unique)", example = "labo", maxLength = 50)
 	private String code;
@@ -40,6 +38,9 @@ public class UserGroupDTO {
 	private String desc;
 	@Schema(description = "Whether the group has been soft deleted or not", example = "false")
 	private boolean deleted;
+
+	@Schema(description = "List of group's permissions")
+	private List<PermissionDTO> permissions;
 
 	public UserGroupDTO() {
 	}
@@ -78,6 +79,7 @@ public class UserGroupDTO {
 	public boolean isDeleted() {
 		return deleted;
 	}
+
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}

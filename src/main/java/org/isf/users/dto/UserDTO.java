@@ -89,6 +89,7 @@ public class UserDTO {
 	public boolean isDeleted() {
 		return deleted;
 	}
+	
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
