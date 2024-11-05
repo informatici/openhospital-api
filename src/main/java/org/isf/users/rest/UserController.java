@@ -131,17 +131,16 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."), HttpStatus.NOT_FOUND);
 		}
 		User user = userMapper.map2Model(userDTO);
-		boolean isUpdated;
+		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
-			isUpdated = userManager.updatePassword(user);
+			updatedUser = userManager.updatePassword(user);
 		} else {
-			isUpdated = userManager.updateUser(user);
+			updatedUser = userManager.updateUser(user);
 		}
-		if (isUpdated) {
+		if (updatedUser != null) {
 			LOGGER.info("User {} has been updated successfully.", userName);
-			user = userManager.getUserByName(userName);
-			user.setPasswd(null);
-			return userMapper.map2DTO(user);
+			updatedUser.setPasswd(null);
+			return userMapper.map2DTO(updatedUser);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));
 		}
@@ -226,13 +225,13 @@ public class UserController {
 		}
 		User user = userMapper.map2Model(userDTO);
 		user.setUserGroupName(entity.getUserGroupName());
-		boolean isUpdated;
+		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
-			isUpdated = userManager.updatePassword(user);
+			updatedUser = userManager.updatePassword(user);
 		} else {
-			isUpdated = userManager.updateUser(user);
+			updatedUser = userManager.updateUser(user);
 		}
-		if (isUpdated) {
+		if (updatedUser != null) {
 			LOGGER.info("User {} has been successfully updated.", currentUser);
 			return retrieveProfile(currentUser);
 		} else {

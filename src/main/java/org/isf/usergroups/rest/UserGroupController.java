@@ -156,8 +156,8 @@ public class UserGroupController {
 				.toList();
 		}
 
-		boolean isUpdated = userManager.updateUserGroup(group, permissions);
-		if (isUpdated) {
+		UserGroup updatedUserGroup = userManager.updateUserGroup(group, permissions);
+		if (updatedUserGroup != null) {
 			return getUserGroup(group.getCode());
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
