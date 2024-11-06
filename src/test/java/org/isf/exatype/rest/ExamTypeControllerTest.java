@@ -41,11 +41,8 @@ import org.isf.OpenHospitalApiApplication;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.mapper.ExamTypeMapper;
 import org.isf.exatype.model.ExamType;
-import org.isf.supplier.rest.SupplierControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,8 +60,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
 public class ExamTypeControllerTest {
-	private final Logger LOGGER = LoggerFactory.getLogger(SupplierControllerTest.class);
-
 	@Autowired
 	private MockMvc mvc;
 
@@ -86,15 +81,13 @@ public class ExamTypeControllerTest {
 
 		when(manager.getExamType()).thenReturn(examTypes);
 
-		var result = mvc.perform(get("/examtypes")
+		mvc.perform(get("/examtypes")
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTOs))))
 			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -106,7 +99,7 @@ public class ExamTypeControllerTest {
 
 		when(manager.newExamType(any())).thenReturn(examType);
 
-		var result = mvc.perform(post("/examtypes")
+		mvc.perform(post("/examtypes")
 				.content(objectMapper.writeValueAsString(examTypeDTO))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -114,8 +107,6 @@ public class ExamTypeControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))))
 			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -128,7 +119,7 @@ public class ExamTypeControllerTest {
 		when(manager.isCodePresent(anyString())).thenReturn(true);
 		when(manager.updateExamType(any())).thenReturn(examType);
 
-		var result = mvc.perform(put("/examtypes/{id}", examType.getCode())
+		mvc.perform(put("/examtypes/{id}", examType.getCode())
 				.content(objectMapper.writeValueAsString(examTypeDTO))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
@@ -136,8 +127,6 @@ public class ExamTypeControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))))
 			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
@@ -150,15 +139,13 @@ public class ExamTypeControllerTest {
 		when(manager.getExamType()).thenReturn(examTypes);
 		doNothing().when(manager).deleteExamType(any());
 
-		var result = mvc.perform(delete("/examtypes/{id}", examTypes.get(0).getCode())
+		mvc.perform(delete("/examtypes/{id}", examTypes.get(0).getCode())
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(true))))
 			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	private List<ExamType> generateExamTypes(int size) {
