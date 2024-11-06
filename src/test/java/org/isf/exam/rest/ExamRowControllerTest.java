@@ -224,9 +224,6 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.delete"})
 	@DisplayName("Should failed to delete exam row with wrong code")
 	void testDeleteExamRowWithWrongCode() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRow = generateExamRows(exam, 1).get(0);
-
 		when(manager.getExamRow(anyInt())).thenReturn(List.of());
 		doNothing().when(manager).deleteExamRow(any());
 
