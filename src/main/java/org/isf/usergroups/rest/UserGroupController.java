@@ -99,7 +99,7 @@ public class UserGroupController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		UserGroup group = loadUserGroup(code);
+		UserGroup group = userManager.findUserGroupByCode(code, true);
 		try {
 			userManager.deleteGroup(group);
 		} catch (OHDataIntegrityViolationException ex) {
@@ -149,8 +149,15 @@ public class UserGroupController {
 		}
 		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
 
-		if (!userManager.findUserGroupByCode(userGroupDTO.getCode()).getCode().equals(group.getCode())) {
+		UserGroup oldUserGroup = userManager.findUserGroupByCode(group.getCode(), true);
+
+		if (oldUserGroup == null) {
 			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
+		}
+
+		if (oldUserGroup.isDeleted() && !group.isDeleted()) {
+			userManager.updateUserGroup(group);
+			return getUserGroup(group.getCode());
 		}
 
 		List<Permission> permissions = new ArrayList<>();
@@ -311,13 +318,5 @@ public class UserGroupController {
 		} catch (OHDataValidationException e) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to revoke permission"));
 		}
-	}
-
-	private UserGroup loadUserGroup(String code) throws OHServiceException {
-		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).collect(Collectors.toList());
-		if (group.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."));
-		}
-		return group.get(0);
 	}
 }

@@ -127,7 +127,7 @@ public class UserController {
 		if (requestUserName != null && !userName.equals(requestUserName)) {
 			throw new OHAPIException(new OHExceptionMessage("Invalid request payload"));
 		}
-		if (userManager.getUserByName(userName) == null) {
+		if (!userManager.isUserNamePresent(userName)) {
 			LOGGER.info("User with name '{}' has not been found.", userName);
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."), HttpStatus.NOT_FOUND);
 		}
@@ -174,7 +174,7 @@ public class UserController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteUser(@PathVariable String username) throws OHServiceException {
-		User foundUser = userManager.getUserByName(username);
+		User foundUser = userManager.getUserByName(username, true);
 		if (foundUser == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 		}
