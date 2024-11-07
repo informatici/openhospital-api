@@ -40,6 +40,7 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.usergroups.dto.GroupPermissionsDTO;
 import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.usergroups.mapper.UserGroupMapper;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHDataValidationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -98,9 +99,12 @@ public class UserGroupController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
+		UserGroup group = loadUserGroup(code);
 		try {
-			UserGroup group = loadUserGroup(code);
 			userManager.deleteGroup(group);
+		} catch (OHDataIntegrityViolationException ex) {
+			group.setDeleted(true);
+			userManager.updateUserGroup(group);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
 		}

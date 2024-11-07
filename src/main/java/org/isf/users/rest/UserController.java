@@ -37,6 +37,7 @@ import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.users.dto.UserDTO;
 import org.isf.users.dto.UserProfileDTO;
 import org.isf.users.mapper.UserMapper;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -178,14 +179,12 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 		}
 		try {
-			try {
-				userManager.deleteUser(foundUser);
-			} catch (OHServiceException ex) {
-				foundUser.setDeleted(true);
-				userManager.deleteUser(foundUser);
-			}
-		} catch (OHServiceException serviceException) {
-			serviceException.printStackTrace();
+			userManager.deleteUser(foundUser);
+		} catch (OHDataIntegrityViolationException ex) {
+			foundUser.setDeleted(true);
+			userManager.updateUser(foundUser);
+		} catch (OHServiceException ex) {
+			ex.printStackTrace();
 			throw new OHAPIException(new OHExceptionMessage("User not deleted."));
 		}
 	}
