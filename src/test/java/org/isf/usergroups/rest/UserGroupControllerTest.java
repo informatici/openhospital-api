@@ -205,6 +205,7 @@ public class UserGroupControllerTest {
 			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 			userGroupDTO.setPermissions(permissionDTOS);
 
+			when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(userManager.updateUserGroup(any(), any())).thenReturn(userGroup);
 

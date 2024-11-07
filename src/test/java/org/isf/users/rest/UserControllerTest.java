@@ -21,7 +21,23 @@
  */
 package org.isf.users.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.manager.UserBrowsingManager;
@@ -47,17 +63,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
@@ -107,13 +113,31 @@ public class UserControllerTest {
 	void deleteUser() throws Exception {
 		User user = UserHelper.generateUser();
 
-		when(userManager.getUserByName(any())).thenReturn(user);
+		when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 		doNothing().when(userManager).deleteUser(any());
 
 		var result = mvc.perform(
 				delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNoContent())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+	@Test
+	@WithMockUser(username = "john")
+	@DisplayName("Should get user profile")
+	void shouldGetUserProfile() throws Exception {
+		User user = UserHelper.generateUsers(1).get(0);
+		user.setUserName("john");
+
+		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
+		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+
+		var result = mvc.perform(
+				get("/users/me").contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -167,25 +191,6 @@ public class UserControllerTest {
 
 			LOGGER.debug("result: {}", result);
 		}
-	}
-
-	@Test
-	@WithMockUser(username = "john")
-	@DisplayName("Should get user profile")
-	void shouldGetUserProfile() throws Exception {
-		User user = UserHelper.generateUsers(1).get(0);
-		user.setUserName("john");
-
-		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
-		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
-
-		var result = mvc.perform(
-				get("/users/me").contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
 	}
 
 	@Nested
@@ -266,7 +271,7 @@ public class UserControllerTest {
 
 			when(userManager.updateUser(any())).thenReturn(user);
 			when(userManager.updatePassword(any())).thenReturn(user);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -331,7 +336,7 @@ public class UserControllerTest {
 
 			when(userManager.updateUser(any())).thenReturn(user);
 			when(userManager.updatePassword(any())).thenReturn(user);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -353,7 +358,7 @@ public class UserControllerTest {
 
 			when(userManager.updateUser(any())).thenReturn(user);
 			when(userManager.updatePassword(any())).thenReturn(user);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
