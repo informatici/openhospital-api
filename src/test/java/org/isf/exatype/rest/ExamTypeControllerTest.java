@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.isf.OpenHospitalApiApplication;
+import org.isf.exatype.dto.ExamTypeDTO;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.mapper.ExamTypeMapper;
 import org.isf.exatype.model.ExamType;
@@ -76,8 +77,8 @@ public class ExamTypeControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examtypes.read"})
 	@DisplayName("Get all exam types")
 	void testGetAll() throws Exception {
-		var examTypes = generateExamTypes(5);
-		var examTypeDTOs = mapper.map2DTOList(examTypes);
+		List<ExamType> examTypes = generateExamTypes(5);
+		List<ExamTypeDTO> examTypeDTOs = mapper.map2DTOList(examTypes);
 
 		when(manager.getExamType()).thenReturn(examTypes);
 
@@ -94,8 +95,8 @@ public class ExamTypeControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examtypes.create"})
 	@DisplayName("Add new exam type")
 	void testNewExamType() throws Exception {
-		var examType = generateExamTypes(1).get(0);
-		var examTypeDTO = mapper.map2DTO(examType);
+		ExamType examType = generateExamTypes(1).get(0);
+		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
 
 		when(manager.newExamType(any())).thenReturn(examType);
 
@@ -113,8 +114,8 @@ public class ExamTypeControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examtypes.update"})
 	@DisplayName("Update exam type")
 	void testUpdateExamType() throws Exception {
-		var examType = generateExamTypes(1).get(0);
-		var examTypeDTO = mapper.map2DTO(examType);
+		ExamType examType = generateExamTypes(1).get(0);
+		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
 
 		when(manager.isCodePresent(anyString())).thenReturn(true);
 		when(manager.updateExamType(any())).thenReturn(examType);
@@ -133,7 +134,7 @@ public class ExamTypeControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examtypes.delete"})
 	@DisplayName("Delete exam type")
 	void testDelete() throws Exception {
-		var examTypes = generateExamTypes(1);
+		List<ExamType> examTypes = generateExamTypes(1);
 
 		when(manager.isCodePresent(anyString())).thenReturn(true);
 		when(manager.getExamType()).thenReturn(examTypes);

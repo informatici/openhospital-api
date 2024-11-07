@@ -36,10 +36,13 @@ import java.util.List;
 
 import org.isf.OpenHospitalApiApplication;
 import org.isf.examination.TestPatientExamination;
+import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
+import org.isf.examination.model.PatientExamination;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.model.Patient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +81,9 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should get patient examination using ID")
 	void testGetPatientExaminationById() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 
 		when(manager.getByID(anyInt())).thenReturn(patientExamination);
 
@@ -109,9 +112,9 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should get patient default examination")
 	void testGetDefaultPatientExamination() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(manager.getDefaultPatientExamination(any())).thenReturn(patientExamination);
@@ -129,8 +132,8 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should failed to get patient default examination with wrong patient ID")
 	void testGetDefaultPatientExaminationWithWrongPatientID() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(null);
 		when(manager.getDefaultPatientExamination(any())).thenReturn(patientExamination);
@@ -147,9 +150,9 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should get patient default examination")
 	void testGetFromLastPatientExamination() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(manager.getFromLastPatientExamination(any())).thenReturn(patientExamination);
@@ -167,9 +170,9 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should get last examination by patient ID")
 	void testGetLastByPatientId() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 
 		when(manager.getLastByPatID(anyInt())).thenReturn(patientExamination);
 
@@ -185,9 +188,9 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
 	@DisplayName("Should get examination by patient ID")
 	void testGetByPatientId() throws Exception {
-		var patient = PatientHelper.setup();
-		var patientExamination = new TestPatientExamination().setup(patient, false);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 
 		when(manager.getByPatID(anyInt())).thenReturn(List.of(patientExamination));
 
@@ -203,11 +206,11 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.create"})
 	@DisplayName("Should add patient examination")
 	void testNewExamination() throws Exception {
-		var patient = PatientHelper.setup();
+		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
-		var patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		patientExamination.setPex_sat(100.0);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 		patientExaminationDTO.setPatientCode(patient.getCode());
 
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
@@ -226,12 +229,12 @@ public class ExaminationControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examinations.update"})
 	@DisplayName("Should update patient examination")
 	void testUpdateExamination() throws Exception {
-		var patient = PatientHelper.setup();
+		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
-		var patientExamination = new TestPatientExamination().setup(patient, false);
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		patientExamination.setPex_ID(1);
 		patientExamination.setPex_sat(100.0);
-		var patientExaminationDTO = mapper.map2DTO(patientExamination);
+		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 		patientExaminationDTO.setPatientCode(patient.getCode());
 
 		when(manager.getByID(anyInt())).thenReturn(patientExamination);

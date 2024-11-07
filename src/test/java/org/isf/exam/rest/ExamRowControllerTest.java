@@ -44,6 +44,7 @@ import org.isf.exa.manager.ExamRowBrowsingManager;
 import org.isf.exa.model.Exam;
 import org.isf.exa.model.ExamRow;
 import org.isf.exam.data.ExamHelper;
+import org.isf.exam.dto.ExamRowDTO;
 import org.isf.exam.mapper.ExamMapper;
 import org.isf.exam.mapper.ExamRowMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -87,9 +88,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
 	@DisplayName("Should get all exam rows")
 	void testGetAll() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRows = generateExamRows(exam, 5);
-		var examRowDTOS = mapper.map2DTOList(examRows);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		List<ExamRow> examRows = generateExamRows(exam, 5);
+		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
 
 		when(manager.getExamRow()).thenReturn(examRows);
 
@@ -106,9 +107,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
 	@DisplayName("Should return exam rows when is performed")
 	void testSearchExamRows() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRows = generateExamRows(exam, 5);
-		var examRowDTOS = mapper.map2DTOList(examRows);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		List<ExamRow> examRows = generateExamRows(exam, 5);
+		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
 
 		when(manager.getExamRow(anyInt(), anyString())).thenReturn(examRows);
 
@@ -127,9 +128,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
 	@DisplayName("Should get exam rows using the code")
 	void testGetExamRowsByCode() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRows = generateExamRows(exam, 4);
-		var examRowDTOS = mapper.map2DTOList(examRows);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		List<ExamRow> examRows = generateExamRows(exam, 4);
+		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
 
 		when(manager.getExamRow(anyInt())).thenReturn(examRows);
 
@@ -146,9 +147,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
 	@DisplayName("Should get all exam rows related to the given exam code")
 	void testGetExamRowsByExamCode() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRows = generateExamRows(exam, 4);
-		var examRowDTOS = mapper.map2DTOList(examRows);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		List<ExamRow> examRows = generateExamRows(exam, 4);
+		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
 
 		when(manager.getExamRowByExamCode(anyString())).thenReturn(examRows);
 
@@ -165,9 +166,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.create"})
 	@DisplayName("Should add a new exam row")
 	void testAddExamRow() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRow = generateExamRows(exam, 1).get(0);
-		var examRowDTO = mapper.map2DTO(examRow);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		ExamRow examRow = generateExamRows(exam, 1).get(0);
+		ExamRowDTO examRowDTO = mapper.map2DTO(examRow);
 
 		when(examManager.getExams()).thenReturn(List.of(exam));
 		when(manager.newExamRow(any())).thenReturn(examRow);
@@ -186,9 +187,9 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.create"})
 	@DisplayName("Should failed to add new exam row with wrong exam code")
 	void testAddExamRowWithWrongExam() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRow = generateExamRows(exam, 1).get(0);
-		var examRowDTO = mapper.map2DTO(examRow);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		ExamRow examRow = generateExamRows(exam, 1).get(0);
+		ExamRowDTO examRowDTO = mapper.map2DTO(examRow);
 
 		exam.setCode("SOME CODE");
 		when(examManager.getExams()).thenReturn(List.of(exam));
@@ -206,8 +207,8 @@ public class ExamRowControllerTest {
 	@WithMockUser(username = "admin", authorities = {"examrows.delete"})
 	@DisplayName("Should delete exam row")
 	void testDeleteExamRow() throws Exception {
-		var exam = examMapper.map2Model(ExamHelper.generateExam());
-		var examRow = generateExamRows(exam, 1).get(0);
+		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
+		ExamRow examRow = generateExamRows(exam, 1).get(0);
 
 		when(manager.getExamRow(anyInt())).thenReturn(List.of(examRow));
 		doNothing().when(manager).deleteExamRow(any());
@@ -237,7 +238,7 @@ public class ExamRowControllerTest {
 	private List<ExamRow> generateExamRows(Exam exam, int size) {
 		return IntStream.range(0, size)
 			.mapToObj(i -> {
-				var examRow = new ExamRow(exam, "Exam row " + i);
+				ExamRow examRow = new ExamRow(exam, "Exam row " + i);
 				examRow.setCode(i);
 				return examRow;
 			})
