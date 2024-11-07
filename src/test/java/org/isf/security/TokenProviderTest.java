@@ -90,7 +90,7 @@ public class TokenProviderTest {
 		String token = tokenProvider.generateJwtToken(authentication, false);
 
 		// Get Claims from token
-		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+		Claims claims = Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
 
 		// Assert the claims
 		assertThat(claims.getSubject()).isEqualTo("testuser");
@@ -309,7 +309,7 @@ public class TokenProviderTest {
 		Date now = new Date();
 		Date expiredDate = new Date(now.getTime() - 1000); // 1 second in the past
 		String expiredToken = Jwts.builder()
-						.setClaims(Jwts.parserBuilder()
+						.setClaims(Jwts.parser()
 										.setSigningKey(key)
 										.build()
 										.parseClaimsJws(token)
@@ -353,7 +353,7 @@ public class TokenProviderTest {
 		user.setPasswd("password");
 
 		// Mock permissions with same values used in the helper
-		List<Permission> permissions = new ArrayList<Permission>();
+		List<Permission> permissions = new ArrayList<>();
 		Permission permission = new Permission();
 		permission.setName("ROLE_USER");
 		permissions.add(permission);
