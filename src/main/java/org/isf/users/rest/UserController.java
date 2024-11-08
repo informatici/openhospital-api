@@ -103,7 +103,7 @@ public class UserController {
 	 */
 	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserDTO getUserByName(@PathVariable("username") String userName) throws OHServiceException {
-		User user = userManager.getUserByName(userName);
+		User user = userManager.getUserByName(userName, true);
 		if (user == null) {
 			throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 		}

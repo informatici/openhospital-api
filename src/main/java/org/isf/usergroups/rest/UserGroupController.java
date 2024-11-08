@@ -182,7 +182,7 @@ public class UserGroupController {
 	 */
 	@GetMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserGroupDTO getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		return loadUserGroupDTO(code, false);
+		return loadUserGroupDTO(code, true);
 	}
 
 	/**
