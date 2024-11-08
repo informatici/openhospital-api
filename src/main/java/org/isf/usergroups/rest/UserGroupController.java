@@ -24,7 +24,6 @@ package org.isf.usergroups.rest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -130,7 +129,7 @@ public class UserGroupController {
 
 		try {
 			var group = userManager.newUserGroup(userGroup, permissions);
-			return getUserGroup(group.getCode());
+			return loadUserGroupDTO(group.getCode(), true);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
 		}
@@ -157,7 +156,7 @@ public class UserGroupController {
 
 		if (oldUserGroup.isDeleted() && !group.isDeleted()) {
 			userManager.updateUserGroup(group);
-			return getUserGroup(group.getCode());
+			return loadUserGroupDTO(group.getCode(), true);
 		}
 
 		List<Permission> permissions = new ArrayList<>();
@@ -169,7 +168,7 @@ public class UserGroupController {
 
 		UserGroup updatedUserGroup = userManager.updateUserGroup(group, permissions);
 		if (updatedUserGroup != null) {
-			return getUserGroup(group.getCode());
+			return loadUserGroupDTO(group.getCode(), true);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
 		}
@@ -183,20 +182,7 @@ public class UserGroupController {
 	 */
 	@GetMapping(value = "/usergroups/{group_code}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public UserGroupDTO getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		UserGroup userGroup = userManager.findUserGroupByCode(code);
-		if (userGroup == null) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
-		}
-
-		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
-		List<PermissionDTO> permissions = groupPermissions.stream()
-			.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
-			.toList();
-
-		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
-		userGroupDTO.setPermissions(permissions);
-
-		return userGroupDTO;
+		return loadUserGroupDTO(code, false);
 	}
 
 	/**
@@ -318,5 +304,22 @@ public class UserGroupController {
 		} catch (OHDataValidationException e) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to revoke permission"));
 		}
+	}
+
+	public UserGroupDTO loadUserGroupDTO(String code, boolean withTrashed) throws OHServiceException {
+		UserGroup userGroup = userManager.findUserGroupByCode(code, withTrashed);
+		if (userGroup == null) {
+			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
+		}
+
+		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
+		List<PermissionDTO> permissions = groupPermissions.stream()
+			.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
+			.toList();
+
+		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+		userGroupDTO.setPermissions(permissions);
+
+		return userGroupDTO;
 	}
 }
