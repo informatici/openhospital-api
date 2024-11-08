@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -46,6 +47,7 @@ import org.isf.security.jwt.TokenValidationResult;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.users.data.UserHelper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -81,16 +83,25 @@ public class LoginControllerTest {
 	@Mock
 	private UserBrowsingManager userManager;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
 	public void setUp() {
-		MockitoAnnotations.openMocks(this);
+		closeable = MockitoAnnotations.openMocks(this);
 
-		LoginController loginController = new LoginController(httpSession, sessionAuditManager, tokenProvider, authenticationManager, userManager);
+		LoginController loginController = new LoginController(
+			httpSession, sessionAuditManager, tokenProvider, authenticationManager, userManager
+		);
 
 		this.mvc = MockMvcBuilders
-						.standaloneSetup(loginController)
-						.setControllerAdvice(new OHResponseEntityExceptionHandler())
-						.build();
+			.standaloneSetup(loginController)
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
+	}
+
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
 	}
 
 	@Test
@@ -122,11 +133,11 @@ public class LoginControllerTest {
 
 		// Perform the login request
 		mvc.perform(post("/auth/login")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(UserHelper.asJsonString(loginRequest)))
-						.andExpect(status().isOk())
-						.andExpect(content().string(expectedJson))
-						.andReturn();
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
 	}
 
 	// TODO testAuthenticateUser_Failure
@@ -153,12 +164,12 @@ public class LoginControllerTest {
 
 		// Perform POST request to refresh-token endpoint
 		mvc.perform(post("/auth/refresh-token")
-						.accept(MediaType.APPLICATION_JSON)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(UserHelper.asJsonString(request)))
-						.andExpect(status().isOk())
-						.andExpect(content().string(expectedJson))
-						.andReturn();
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
 	}
 
 	@Test
@@ -172,12 +183,12 @@ public class LoginControllerTest {
 
 		// Perform POST request to refresh-token endpoint
 		mvc.perform(
-						post("/auth/refresh-token")
-										.contentType(MediaType.APPLICATION_JSON)
-										.accept(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request)))
-						.andExpect(status().isBadRequest())
-						.andExpect(content().string(containsString("Invalid Refresh Token")));
+				post("/auth/refresh-token")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isBadRequest())
+			.andExpect(content().string(containsString("Invalid Refresh Token")));
 	}
 
 	@Test
@@ -191,11 +202,11 @@ public class LoginControllerTest {
 
 		// Perform POST request to refresh-token endpoint
 		mvc.perform(
-						post("/auth/refresh-token")
-										.contentType(MediaType.APPLICATION_JSON)
-										.accept(MediaType.APPLICATION_JSON)
-										.content(UserHelper.asJsonString(request)))
-						.andExpect(content().string(containsString("Refresh token expired or invalid")));
+				post("/auth/refresh-token")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(content().string(containsString("Refresh token expired or invalid")));
 	}
 
 }

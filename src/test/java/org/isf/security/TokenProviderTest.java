@@ -353,7 +353,7 @@ public class TokenProviderTest {
 		user.setPasswd("password");
 
 		// Mock permissions with same values used in the helper
-		List<Permission> permissions = new ArrayList<Permission>();
+		List<Permission> permissions = new ArrayList<>();
 		Permission permission = new Permission();
 		permission.setName("ROLE_USER");
 		permissions.add(permission);
