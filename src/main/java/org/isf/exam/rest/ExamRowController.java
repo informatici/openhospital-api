@@ -32,15 +32,14 @@ import org.isf.exam.mapper.ExamRowMapper;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,32 +47,38 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/examrows")
+@RestController
 @Tag(name = "Exam Rows")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class ExamRowController {
 
-    @Autowired
-    protected ExamBrowsingManager examManager;
+    private final ExamBrowsingManager examManager;
 
-    @Autowired
-    protected ExamRowBrowsingManager examRowBrowsingManager;
+    private final ExamRowBrowsingManager examRowBrowsingManager;
 
-    @Autowired
-    private ExamRowMapper examRowMapper;
+    private final ExamRowMapper examRowMapper;
 
-    public ExamRowController(ExamBrowsingManager examManager, ExamRowBrowsingManager examRowBrowsingManager, ExamRowMapper examRowMapper) {
+    public ExamRowController(
+        ExamBrowsingManager examManager,
+        ExamRowBrowsingManager examRowBrowsingManager,
+        ExamRowMapper examRowMapper
+    ) {
         this.examManager = examManager;
         this.examRowBrowsingManager = examRowBrowsingManager;
         this.examRowMapper = examRowMapper;
     }
 
-    @PostMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ExamRowDTO> newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
-        Exam exam = examManager.getExams().stream().filter(e -> examRowDTO.getExam().getCode().equals(e.getCode())).findFirst().orElse(null);
+    @PostMapping("/examrows")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ExamRowDTO newExamRow(@RequestBody ExamRowDTO examRowDTO) throws OHServiceException {
+        Exam exam = examManager.getExams()
+            .stream()
+            .filter(e -> examRowDTO.getExam().getCode().equals(e.getCode()))
+            .findFirst().orElse(null);
 
         if (exam == null) {
-            throw new OHAPIException(new OHExceptionMessage("Exam not found."));
+            throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
         }
 
         ExamRow examRow = examRowMapper.map2Model(examRowDTO);
@@ -83,72 +88,48 @@ public class ExamRowController {
         if (isCreatedExamRow == null) {
             throw new OHAPIException(new OHExceptionMessage("ExamRow not created."));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(examRowMapper.map2DTO(isCreatedExamRow));
+
+        return examRowMapper.map2DTO(isCreatedExamRow);
     }
 
-    @GetMapping(value = "/examrows", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ExamRowDTO>> getExamRows() throws OHServiceException {
-        List<ExamRow> examRows = examRowBrowsingManager.getExamRow();
-
-        if (examRows == null || examRows.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(examRowMapper.map2DTOList(examRows));
-        }
+    @GetMapping("/examrows")
+    public List<ExamRowDTO> getExamRows() throws OHServiceException {
+        return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow());
     }
 
-    @GetMapping(value = "/examrows/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ExamRowDTO>> getExamRowsByCode(@PathVariable Integer code) throws OHServiceException {
-        List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
-
-        if (examRows == null || examRows.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(examRowMapper.map2DTOList(examRows));
-        }
+    @GetMapping("/examrows/{code:.+}")
+    public List<ExamRowDTO> getExamRowsByCode(@PathVariable Integer code) throws OHServiceException {
+        return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow(code));
     }
 
-    @GetMapping(value = "/examrows/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ExamRowDTO>> getExamRowsByCodeAndDescription(@RequestParam Integer code, @RequestParam String description) throws OHServiceException {
-        List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code, description);
-
-        if (examRows == null || examRows.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(examRowMapper.map2DTOList(examRows));
-        }
+    @GetMapping("/examrows/search")
+    public List<ExamRowDTO> getExamRowsByCodeAndDescription(
+        @RequestParam Integer code, @RequestParam String description
+    ) throws OHServiceException {
+        return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRow(code, description));
     }
 
-    @DeleteMapping(value = "/examrows/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Boolean> deleteExam(@PathVariable Integer code) throws OHServiceException {
+    @DeleteMapping("/examrows/{code:.+}")
+    public boolean deleteExam(@PathVariable Integer code) throws OHServiceException {
         List<ExamRow> examRows = examRowBrowsingManager.getExamRow(code);
         if (examRows == null || examRows.isEmpty()) {
-            throw new OHAPIException(new OHExceptionMessage("ExamRows not found."));
+            throw new OHAPIException(new OHExceptionMessage("ExamRows not found."), HttpStatus.NOT_FOUND);
         }
+
         if (examRows.size() > 1) {
             throw new OHAPIException(new OHExceptionMessage("Found multiple ExamRows."));
         }
+
         try {
             examRowBrowsingManager.deleteExamRow(examRows.get(0));
+            return true;
         } catch (OHServiceException serviceException) {
-            throw new OHAPIException(new OHExceptionMessage("ExamRow not deleted."));
+            throw new OHAPIException(new OHExceptionMessage("ExamRow not deleted."),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok(true);
     }
 
-    @GetMapping(value = "/examrows/byExamCode/{examCode:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<ExamRowDTO>> getExamRowsByExamCode(@PathVariable String examCode) throws OHServiceException {
-        List<ExamRow> examRows = examRowBrowsingManager.getExamRowByExamCode(examCode);
-
-        if (examRows == null || examRows.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(examRowMapper.map2DTOList(examRows));
-        }
+    @GetMapping("/examrows/byExamCode/{examCode:.+}")
+    public List<ExamRowDTO> getExamRowsByExamCode(@PathVariable String examCode) throws OHServiceException {
+        return examRowMapper.map2DTOList(examRowBrowsingManager.getExamRowByExamCode(examCode));
     }
 }

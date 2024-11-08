@@ -22,7 +22,6 @@
 package org.isf.dlvrtype.rest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.isf.dlvrtype.dto.DeliveryTypeDTO;
 import org.isf.dlvrtype.manager.DeliveryTypeBrowserManager;
@@ -33,129 +32,120 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/deliverytype")
+@RestController
 @Tag(name = "Delivery Type")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class DeliveryTypeController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryTypeController.class);
 
-	@Autowired
-	protected DeliveryTypeBrowserManager dlvrtypeManager;
+	private final DeliveryTypeBrowserManager deliveryTypeManager;
 
-	@Autowired
-	protected DeliveryTypeMapper deliveryTypeMapper;
+	private final DeliveryTypeMapper deliveryTypeMapper;
 
-	public DeliveryTypeController(DeliveryTypeBrowserManager dlvrtypeManager, DeliveryTypeMapper deliveryTypeMapper) {
-		this.dlvrtypeManager = dlvrtypeManager;
+	public DeliveryTypeController(DeliveryTypeBrowserManager deliveryTypeManager, DeliveryTypeMapper deliveryTypeMapper) {
+		this.deliveryTypeManager = deliveryTypeManager;
 		this.deliveryTypeMapper = deliveryTypeMapper;
 	}
 
 	/**
 	 * Create a new {@link DeliveryType}.
-	 * 
-	 * @param dlvrTypeDTO
+	 *
+	 * @param deliveryTypeDTO Delivery Type payload
 	 * @return {@code true} if the {@link DeliveryType} has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create delivery type
 	 */
-	@PostMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DeliveryTypeDTO> newDeliveryType(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
-		String code = dlvrTypeDTO.getCode();
-		LOGGER.info("Create Delivery Type {}", code);
-		dlvrtypeManager.newDeliveryType(deliveryTypeMapper.map2Model(dlvrTypeDTO));
-		DeliveryType dlvrTypeCreated = null;
-		List<DeliveryType> dlvrTypeFounds = dlvrtypeManager.getDeliveryType().stream().filter(ad -> ad.getCode().equals(code))
-						.collect(Collectors.toList());
-		if (!dlvrTypeFounds.isEmpty()) {
-			dlvrTypeCreated = dlvrTypeFounds.get(0);
+	@PostMapping(value = "/deliverytypes")
+	@ResponseStatus(HttpStatus.CREATED)
+	public DeliveryTypeDTO newDeliveryType(@RequestBody DeliveryTypeDTO deliveryTypeDTO) throws OHServiceException {
+		LOGGER.info("Create Delivery Type {}", deliveryTypeDTO.getCode());
+
+		DeliveryType deliveryType = deliveryTypeManager.newDeliveryType(deliveryTypeMapper.map2Model(deliveryTypeDTO));
+
+		if (deliveryType == null) {
+			throw new OHAPIException(new OHExceptionMessage("Failed to create delivery type"));
 		}
-		if (dlvrTypeCreated == null) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Type not created."));
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(deliveryTypeMapper.map2DTO(dlvrTypeCreated));
+
+		return deliveryTypeMapper.map2DTO(deliveryType);
 	}
 
 	/**
 	 * Update the specified {@link DeliveryType}.
-	 * 
-	 * @param dlvrTypeDTO
+	 *
+	 * @param deliveryTypeDTO Delivery type payload
 	 * @return {@code true} if the {@link DeliveryType} has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update delivery type
 	 */
-	@PutMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<DeliveryTypeDTO> updateDeliveryTypes(@RequestBody DeliveryTypeDTO dlvrTypeDTO) throws OHServiceException {
-		LOGGER.info("Update Delivery Type code: {}", dlvrTypeDTO.getCode());
-		DeliveryType dlvrType = deliveryTypeMapper.map2Model(dlvrTypeDTO);
-		if (!dlvrtypeManager.isCodePresent(dlvrType.getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("Delivery Type not found."));
+	@PutMapping(value = "/deliverytypes")
+	public DeliveryTypeDTO updateDeliveryTypes(
+		@RequestBody DeliveryTypeDTO deliveryTypeDTO
+	) throws OHServiceException {
+		LOGGER.info("Update Delivery Type code: {}", deliveryTypeDTO.getCode());
+		if (!deliveryTypeManager.isCodePresent(deliveryTypeDTO.getCode())) {
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type not found."), HttpStatus.NOT_FOUND);
 		}
+
 		try {
-			dlvrtypeManager.updateDeliveryType(dlvrType);
+			return deliveryTypeMapper.map2DTO(
+				deliveryTypeManager.updateDeliveryType(deliveryTypeMapper.map2Model(deliveryTypeDTO))
+			);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Delivery Type is not updated."));
 		}
-		return ResponseEntity.ok(deliveryTypeMapper.map2DTO(dlvrType));
 	}
 
 	/**
 	 * Get all the available {@link DeliveryType}.
-	 * 
+	 *
 	 * @return a {@link List} of {@link DeliveryType} or NO_CONTENT if there is no data found.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get delivery results
 	 */
-	@GetMapping(value = "/deliverytypes", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<DeliveryTypeDTO>> getDeliveryTypes() throws OHServiceException {
+	@GetMapping(value = "/deliverytypes")
+	public List<DeliveryTypeDTO> getDeliveryTypes() throws OHServiceException {
 		LOGGER.info("Get all Delivery Types");
-		List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
-		List<DeliveryTypeDTO> dlvrTypeDTOs = deliveryTypeMapper.map2DTOList(dlvrTypes);
-		if (dlvrTypeDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(dlvrTypeDTOs);
-		} else {
-			return ResponseEntity.ok(dlvrTypeDTOs);
-		}
+		return deliveryTypeMapper.map2DTOList(deliveryTypeManager.getDeliveryType());
 	}
 
 	/**
 	 * Delete {@link DeliveryType} for specified code.
-	 * 
-	 * @param code
+	 *
+	 * @param code Delivery result code
 	 * @return {@code true} if the {@link DeliveryType} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete delivery type
 	 */
-	@DeleteMapping(value = "/deliverytypes/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
+	@DeleteMapping(value = "/deliverytypes/{code}")
+	public boolean deleteDeliveryType(@PathVariable("code") String code) throws OHServiceException {
 		LOGGER.info("Delete Delivery Type code: {}", code);
-		if (dlvrtypeManager.isCodePresent(code)) {
-			List<DeliveryType> dlvrTypes = dlvrtypeManager.getDeliveryType();
-			List<DeliveryType> dlvrTypeFounds = dlvrTypes.stream().filter(ad -> ad.getCode().equals(code))
-							.collect(Collectors.toList());
-			if (!dlvrTypeFounds.isEmpty()) {
-				try {
-					dlvrtypeManager.deleteDeliveryType(dlvrTypeFounds.get(0));
-				} catch (OHServiceException serviceException) {
-					LOGGER.error("Delete Delivery Type: {} failed.", code);
-					throw new OHAPIException(new OHExceptionMessage("Delivery Type not deleted."));
-				}
-			}
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-		return ResponseEntity.ok(true);
-	}
 
+		List<DeliveryType> deliveryTypes = deliveryTypeManager.getDeliveryType();
+		List<DeliveryType> deliveryTypeFounds = deliveryTypes.stream().filter(ad -> ad.getCode().equals(code)).toList();
+
+		if (deliveryTypeFounds.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			deliveryTypeManager.deleteDeliveryType(deliveryTypeFounds.get(0));
+			return true;
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Delete Delivery Type: {} failed.", code);
+			throw new OHAPIException(new OHExceptionMessage("Delivery Type not deleted."));
+		}
+	}
 }

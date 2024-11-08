@@ -153,7 +153,7 @@ public class UserControllerTest {
 		void shouldGetUserByName() throws Exception {
 			User user = UserHelper.generateUsers(1).get(0);
 
-			when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+			when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 
 			var result = mvc.perform(
 					get("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
@@ -244,7 +244,7 @@ public class UserControllerTest {
 			UserDTO userDTO = userMapper.map2DTO(user);
 			String username = "admin";
 
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.getUserByName(username, true)).thenReturn(user);
 
 			userDTO.setPasswd(null);
 

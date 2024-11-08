@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.dto.DiseaseDTO;
@@ -62,7 +63,7 @@ public class DiseaseControllerTest {
 	@Mock
 	private DiseaseBrowserManager diseaseBrowserManagerMock;
 
-	private DiseaseMapper diseaseMapper = new DiseaseMapper();
+	private final DiseaseMapper diseaseMapper = new DiseaseMapper();
 
 	private MockMvc mockMvc;
 
@@ -72,9 +73,9 @@ public class DiseaseControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new DiseaseController(diseaseBrowserManagerMock, diseaseMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new DiseaseController(diseaseBrowserManagerMock, diseaseMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -92,14 +93,14 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -112,15 +113,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, typeCode))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -131,15 +132,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -152,15 +153,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, typeCode))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -172,15 +173,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -193,15 +194,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, typeCode))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -212,15 +213,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDisease())
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -233,15 +234,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDisease(typeCode))
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, typeCode))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 
@@ -253,15 +254,15 @@ public class DiseaseControllerTest {
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseBrowserManagerMock.getDiseaseAll())
-				.thenReturn(diseases);
+			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTOList(diseases)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -274,15 +275,15 @@ public class DiseaseControllerTest {
 
 		Disease disease = DiseaseHelper.setup();
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
-				.thenReturn(disease);
+			.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, code))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
-				.andReturn();
+			.perform(get(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DiseaseHelper.getObjectMapper().writeValueAsString(diseaseMapper.map2DTO(disease)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -295,23 +296,23 @@ public class DiseaseControllerTest {
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
 		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
-				.thenReturn(false);
+			.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
-				.thenReturn(false);
+			.thenReturn(false);
 
 		when(diseaseBrowserManagerMock.newDisease(disease))
-				.thenReturn(disease);
+			.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DiseaseHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -324,20 +325,20 @@ public class DiseaseControllerTest {
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
 		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		when(diseaseBrowserManagerMock.updateDisease(disease))
-				.thenReturn(disease);
+			.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DiseaseHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -352,19 +353,19 @@ public class DiseaseControllerTest {
 		DiseaseDTO body = diseaseMapper.map2DTO(disease);
 
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
-				.thenReturn(disease);
+			.thenReturn(disease);
 
 		MvcResult result = this.mockMvc
-				.perform(delete(request, code)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DiseaseHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("true")))
+			.perform(delete(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")))
 
-				.andReturn();
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

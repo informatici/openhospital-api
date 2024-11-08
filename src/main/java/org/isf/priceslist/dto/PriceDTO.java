@@ -23,8 +23,6 @@ package org.isf.priceslist.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-import org.isf.priceslist.model.PriceList;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
 
@@ -35,7 +33,7 @@ public class PriceDTO {
 
 	@NotNull
 	@Schema(description = "The price list")
-	private PriceList list;
+	private PriceListDTO list;
 
 	@NotNull
 	@Schema(description = "The group")
@@ -79,7 +77,7 @@ public class PriceDTO {
 		return this.id;
 	}
 
-	public PriceList getList() {
+	public PriceListDTO getList() {
 		return this.list;
 	}
 
@@ -103,7 +101,7 @@ public class PriceDTO {
 		this.id = id;
 	}
 
-	public void setList(PriceList list) {
+	public void setList(PriceListDTO list) {
 		this.list = list;
 	}
 

@@ -33,33 +33,32 @@ import org.isf.vaccine.mapper.VaccineMapper;
 import org.isf.vaccine.model.Vaccine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/vaccines")
+@RestController
 @Tag(name = "Vaccines")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class VaccineController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VaccineController.class);
 
-    @Autowired
-    protected VaccineBrowserManager vaccineManager;
-    
-    @Autowired
-    protected VaccineMapper mapper;
+    private final VaccineBrowserManager vaccineManager;
+
+    private final VaccineMapper mapper;
 
     public VaccineController(VaccineBrowserManager vaccineManager, VaccineMapper vaccineMapper) {
         this.vaccineManager = vaccineManager;
@@ -69,78 +68,66 @@ public class VaccineController {
     /**
      * Get all the vaccines.
      *
-     * @return NO_CONTENT if there aren't any vaccines, {@code List<VaccineDTO>} otherwise.
-     * @throws OHServiceException
+     * @return List of vaccines.
+     * @throws OHServiceException When failed to get vaccine
      */
-    @GetMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<VaccineDTO>> getVaccines() throws OHServiceException {
+    @GetMapping("/vaccines")
+    public List<VaccineDTO> getVaccines() throws OHServiceException {
         LOGGER.info("Get vaccines");
-        List<Vaccine> vaccines = vaccineManager.getVaccine();
-        List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
-        } else {
-            return ResponseEntity.ok(listVaccines);
-        }
+
+        return mapper.map2DTOList(vaccineManager.getVaccine());
     }
 
     /**
      * Get all the vaccines related to a vaccineType code.
      *
      * @param vaccineTypeCode of the vaccine
-     * @return NO_CONTENT if there aren't vaccines related to the code, {@code List<VaccineDTO>} otherwise.
-     * @throws OHServiceException
+     * @return The list of vaccines related to the supplied vaccine type code
+     * @throws OHServiceException When failed to get vaccines
      */
-    @GetMapping(value = "/vaccines/type-code/{vaccineTypeCode}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<VaccineDTO>> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
+    @GetMapping("/vaccines/type-code/{vaccineTypeCode}")
+    public List<VaccineDTO> getVaccinesByVaccineTypeCode(@PathVariable String vaccineTypeCode) throws OHServiceException {
         LOGGER.info("Get vaccine by code: {}", vaccineTypeCode);
-        List<Vaccine> vaccines = vaccineManager.getVaccine(vaccineTypeCode);
-        List<VaccineDTO> listVaccines = mapper.map2DTOList(vaccines);
-        if (listVaccines.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(listVaccines);
-        } else {
-            return ResponseEntity.ok(listVaccines);
-        }
+
+        return mapper.map2DTOList(vaccineManager.getVaccine(vaccineTypeCode));
     }
 
     /**
      * Create a new vaccine.
      *
-     * @param newVaccine
+     * @param newVaccine Vaccine payload
      * @return an error message if there is a problem, ok otherwise.
-     * @throws OHServiceException
+     * @throws OHServiceException When failed to create the vaccine
      */
-    @PostMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VaccineDTO> newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
+    @PostMapping("/vaccines")
+    @ResponseStatus(HttpStatus.CREATED)
+    public VaccineDTO newVaccine(@RequestBody VaccineDTO newVaccine) throws OHServiceException {
         LOGGER.info("Create vaccine: {}", newVaccine);
-        Vaccine isCreatedVaccine;
         try {
-             isCreatedVaccine = vaccineManager.newVaccine(mapper.map2Model(newVaccine));
+            return mapper.map2DTO(vaccineManager.newVaccine(mapper.map2Model(newVaccine)));
         } catch (OHDataIntegrityViolationException e) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine type already present."));
         } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine not created."));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(isCreatedVaccine));
     }
 
     /**
      * Update a vaccine.
      *
-     * @param updateVaccine
+     * @param updateVaccine Vaccine payload
      * @return an error message if there are some problems, ok otherwise.
-     * @throws OHServiceException
+     * @throws OHServiceException When failed to update vaccine
      */
-    @PutMapping(value = "/vaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<VaccineDTO> updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
+    @PutMapping("/vaccines")
+    public VaccineDTO updateVaccine(@RequestBody VaccineDTO updateVaccine) throws OHServiceException {
         LOGGER.info("Update vaccine: {}", updateVaccine);
-        Vaccine updatedVaccine;
+
         try {
-            updatedVaccine = vaccineManager.updateVaccine(mapper.map2Model(updateVaccine));
+            return mapper.map2DTO(vaccineManager.updateVaccine(mapper.map2Model(updateVaccine)));
         } catch (OHServiceException serviceException) {
             throw new OHAPIException(new OHExceptionMessage("Vaccine not updated."));
         }
-        return ResponseEntity.ok(mapper.map2DTO(updatedVaccine));
     }
 
     /**
@@ -148,34 +135,35 @@ public class VaccineController {
      *
      * @param code of the vaccine to delete
      * @return an error message if there are some problems, ok otherwise.
-     * @throws OHServiceException
+     * @throws OHServiceException When failed to delete vaccine
      */
-    @DeleteMapping(value = "/vaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
+    @DeleteMapping("/vaccines/{code}")
+    public boolean deleteVaccine(@PathVariable("code") String code) throws OHServiceException {
         LOGGER.info("Delete vaccine code: {}", code);
         Vaccine vaccine = vaccineManager.findVaccine(code);
-        if (vaccine != null) {
-           try {
-               vaccineManager.deleteVaccine(vaccine);
-           } catch (OHServiceException serviceException) {
-                throw new OHAPIException(new OHExceptionMessage("Vaccine not deleted."));
-           }
-           return ResponseEntity.ok(true);
+        if (vaccine == null) {
+            throw new OHAPIException(new OHExceptionMessage("Vaccine not found."), HttpStatus.NOT_FOUND);
         }
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+        try {
+            vaccineManager.deleteVaccine(vaccine);
+            return true;
+        } catch (OHServiceException serviceException) {
+            throw new OHAPIException(new OHExceptionMessage("Vaccine not deleted."));
+        }
     }
-    
+
     /**
      * Check if the code is already used by other vaccine.
      *
-     * @param code
+     * @param code Vaccine code
      * @return {@code true} if it is already used, {@code false} otherwise.
-     * @throws OHServiceException
+     * @throws OHServiceException When failed to check vaccine code
      */
-    @GetMapping(value = "/vaccines/check/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Boolean> checkVaccineCode(@PathVariable String code) throws OHServiceException {
-	    LOGGER.info("Check vaccine code: {}", code);
-        boolean check = vaccineManager.isCodePresent(code);
-        return ResponseEntity.ok(check);
+    @GetMapping("/vaccines/check/{code}")
+    public boolean checkVaccineCode(@PathVariable String code) throws OHServiceException {
+        LOGGER.info("Check vaccine code: {}", code);
+
+        return vaccineManager.isCodePresent(code);
     }
 }

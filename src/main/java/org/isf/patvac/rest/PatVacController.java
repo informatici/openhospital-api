@@ -33,54 +33,52 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/patientvaccines")
+@RestController
 @Tag(name = "Patient Vaccines")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class PatVacController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PatVacController.class);
 
-	@Autowired
-	protected PatVacManager patVacManager;
-	
-	@Autowired
-	protected PatVacMapper mapper;
+	private final PatVacManager patVacManager;
 
-	public PatVacController(PatVacManager patVacManager, PatVacMapper patientVaccinemapper) {
+	private final PatVacMapper mapper;
+
+	public PatVacController(PatVacManager patVacManager, PatVacMapper patientVaccineMapper) {
 		this.patVacManager = patVacManager;
-		this.mapper = patientVaccinemapper;
+		this.mapper = patientVaccineMapper;
 	}
 
 	/**
 	 * Create a new {@link PatientVaccine}.
-	 * @param patientVaccineDTO
+	 * @param patientVaccineDTO Patient Vaccine DTO
 	 * @return {@code true} if the operation type has been stored, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create patient vaccine
 	 */
-	@PostMapping(value = "/patientvaccines", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientVaccineDTO> newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
-		int code = patientVaccineDTO.getCode();
-		LOGGER.info("Create patient vaccine {}", code);
-		PatientVaccine newPatientVaccine;
+	@PostMapping("/patientvaccines")
+	@ResponseStatus(HttpStatus.CREATED)
+	public PatientVaccineDTO newPatientVaccine(@RequestBody PatientVaccineDTO patientVaccineDTO) throws OHServiceException {
+		LOGGER.info("Create patient vaccine {}", patientVaccineDTO.getCode());
+
 		try {
-			newPatientVaccine = patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO));
-			return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(newPatientVaccine));
+			return mapper.map2DTO(patVacManager.newPatientVaccine(mapper.map2Model(patientVaccineDTO)));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Patient vaccine not created.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not created."));
@@ -89,20 +87,19 @@ public class PatVacController {
 
 	/**
 	 * Updates the specified {@link PatientVaccine}.
-	 * @param patientVaccineDTO
+	 * @param patientVaccineDTO Patient Vaccine payload
 	 * @return {@code true} if the operation type has been updated, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update patient vaccine
 	 */
-	@PutMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<PatientVaccineDTO> updatePatientVaccinet(@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO)
-			throws OHServiceException {
+	@PutMapping("/patientvaccines/{code}")
+	public PatientVaccineDTO updatePatientVaccinet(
+		@PathVariable Integer code, @RequestBody PatientVaccineDTO patientVaccineDTO
+	) throws OHServiceException {
 		LOGGER.info("Update patientvaccines code: {}", patientVaccineDTO.getCode());
 		PatientVaccine patvac = mapper.map2Model(patientVaccineDTO);
 		patvac.setLock(patientVaccineDTO.getLock());
-		PatientVaccine updatedPatientVaccine;
 		try {
-			updatedPatientVaccine = patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO));
-			return ResponseEntity.ok(mapper.map2DTO(updatedPatientVaccine));
+			return mapper.map2DTO(patVacManager.updatePatientVaccine(mapper.map2Model(patientVaccineDTO)));
 		} catch (OHServiceException serviceException) {
 			LOGGER.error("Patient vaccine not updated.");
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not updated."));
@@ -112,71 +109,70 @@ public class PatVacController {
 	/**
 	 * Get all the {@link PatientVaccine}s for today or in the last week.
 	 * @return the list of {@link PatientVaccine}s
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get patient vaccines
 	 */
-	@GetMapping(value = "/patientvaccines/week", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccines(@RequestParam(required=false) Boolean oneWeek) throws OHServiceException {
+	@GetMapping("/patientvaccines/week")
+	public List<PatientVaccineDTO> getPatientVaccines(
+		@RequestParam(required=false) Boolean oneWeek
+	) throws OHServiceException {
 		LOGGER.info("Get the all patient vaccine of to day or one week");
 		if (oneWeek == null) {
 			oneWeek = false;
 		}
-		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(oneWeek);
-		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
-		} else {
-			return ResponseEntity.ok(patientVaccineDTOs);
-		}
+
+		return mapper.map2DTOList(patVacManager.getPatientVaccine(oneWeek));
 	}
-	
+
 	/**
 	 * Get all {@link PatientVaccine}s within {@code dateFrom} and {@code dateTo}.
 	 * @return the list of {@link PatientVaccine}s
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get patient vaccines
 	 */
-	@GetMapping(value = "/patientvaccines/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<PatientVaccineDTO>> getPatientVaccinesByDatesRanges(@RequestParam String vaccineTypeCode, @RequestParam String vaccineCode, 
-			@RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo, @RequestParam char sex, @RequestParam int ageFrom, @RequestParam int ageTo) throws OHServiceException {
+	@GetMapping("/patientvaccines/filter")
+	public List<PatientVaccineDTO> getPatientVaccinesByDatesRanges(
+		@RequestParam String vaccineTypeCode,
+		@RequestParam String vaccineCode,
+		@RequestParam LocalDate dateFrom,
+		@RequestParam LocalDate dateTo,
+		@RequestParam char sex,
+		@RequestParam int ageFrom,
+		@RequestParam int ageTo
+	) throws OHServiceException {
 		LOGGER.info("filter patient vaccine by dates ranges");
 
-		List<PatientVaccine> patientVaccines = patVacManager.getPatientVaccine(vaccineTypeCode, vaccineCode, dateFrom.atStartOfDay(), dateTo.atStartOfDay(), sex, ageFrom, ageTo);
-		List<PatientVaccineDTO> patientVaccineDTOs = mapper.map2DTOList(patientVaccines);
-		if (patientVaccineDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(patientVaccineDTOs);
-		} else {
-			return ResponseEntity.ok(patientVaccineDTOs);
-		}
+		return mapper.map2DTOList(patVacManager.getPatientVaccine(
+			vaccineTypeCode, vaccineCode, dateFrom.atStartOfDay(), dateTo.atStartOfDay(), sex, ageFrom, ageTo
+		));
 	}
-	
+
 	/**
 	 * Get the maximum progressive number within specified year or within current year if {@code 0}.
 	 * @return {@code int} - the progressive number in the year
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get the progressive number
 	 */
-	@GetMapping(value = "/patientvaccines/progyear/{year}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Integer> getProgYear(@PathVariable int year) throws OHServiceException {
+	@GetMapping("/patientvaccines/progyear/{year}")
+	public Integer getProgYear(@PathVariable int year) throws OHServiceException {
 		LOGGER.info("Get progressive number within specified year");
-		int yProg = patVacManager.getProgYear(year);
-		return ResponseEntity.ok(yProg);
+
+		return patVacManager.getProgYear(year);
 	}
 
 	/**
 	 * Delete {@link PatientVaccine} for specified code.
-	 * @param code
+	 * @param code Patient vaccine code
 	 * @return {@code true} if the {@link PatientVaccine} has been deleted, {@code false} otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete patient vaccine
 	 */
-	@DeleteMapping(value = "/patientvaccines/{code}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deletePatientVaccine(@PathVariable int code) throws OHServiceException {
+	@DeleteMapping("/patientvaccines/{code}")
+	public boolean deletePatientVaccine(@PathVariable int code) throws OHServiceException {
 		LOGGER.info("Delete patient vaccine code: {}", code);
 		PatientVaccine patVac = new PatientVaccine();
 		patVac.setCode(code);
 		try {
 			patVacManager.deletePatientVaccine(patVac);
-			return ResponseEntity.ok(true);
+			return true;
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patient vaccine not deleted."));
 		}
 	}
-
 }

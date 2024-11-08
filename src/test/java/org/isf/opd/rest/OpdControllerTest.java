@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.isf.distype.manager.DiseaseTypeBrowserManager;
+import java.util.Objects;
+
 import org.isf.opd.data.OpdHelper;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -75,9 +76,6 @@ public class OpdControllerTest {
 	@Mock
 	protected WardBrowserManager wardBrowserManager;
 
-	@Mock
-	protected DiseaseTypeBrowserManager diseaseTypeBrowserManagerMock;
-
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
@@ -86,10 +84,10 @@ public class OpdControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-						.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock,
-										opRowMapper, wardBrowserManager, diseaseTypeBrowserManagerMock))
-						.setControllerAdvice(new OHResponseEntityExceptionHandler())
-						.build();
+			.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock,
+				opRowMapper, wardBrowserManager))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -118,13 +116,13 @@ public class OpdControllerTest {
 		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body))).thenReturn(opd);
 
 		MvcResult result = this.mockMvc
-						.perform(post(request)
-										.contentType(MediaType.APPLICATION_JSON)
-										.content(OpdHelper.asJsonString(body)))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isCreated())
-						.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OpdHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

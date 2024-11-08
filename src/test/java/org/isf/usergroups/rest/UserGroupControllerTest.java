@@ -128,7 +128,7 @@ public class UserGroupControllerTest {
 		userGroupDTO.setPermissions(permissionDTOS);
 
 		when(userManager.newUserGroup(any(), any())).thenReturn(userGroup);
-		when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 
 		var result = mvc.perform(
 				post("/usergroups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
@@ -158,7 +158,7 @@ public class UserGroupControllerTest {
 		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 		userGroupDTO.setPermissions(permissionDTOS);
 
-		when(userManager.findUserGroupByCode(userGroup.getCode())).thenReturn(userGroup);
+		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 		when(groupPermissionManager.findUserGroupPermissions(any())).thenReturn(groupPermissions);
 
 		var result = mvc.perform(
@@ -176,7 +176,6 @@ public class UserGroupControllerTest {
 	@DisplayName("Delete user groups")
 	void deleteUserGroup() throws Exception {
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
-		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 
 		when(userManager.getUserGroup()).thenReturn(List.of(userGroup));
 		doNothing().when(userManager).deleteGroup(any());

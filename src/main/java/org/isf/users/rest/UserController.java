@@ -42,7 +42,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,6 +51,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,29 +59,46 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/users")
+@RestController
 @Tag(name = "Users")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-	@Autowired
-	protected PermissionManager permissionManager;
-	@Autowired
-	protected PermissionMapper permissionMapper;
-	@Autowired
-	private UserMapper userMapper;
-	@Autowired
-	private UserGroupMapper userGroupMapper;
-	@Autowired
-	private UserBrowsingManager userManager;
+
+	private final PermissionManager permissionManager;
+
+	private final PermissionMapper permissionMapper;
+
+	private final UserMapper userMapper;
+
+	private final UserGroupMapper userGroupMapper;
+
+	private final UserBrowsingManager userManager;
+
+	public UserController(
+		PermissionManager permissionManager,
+		PermissionMapper permissionMapper,
+		UserMapper userMapper,
+		UserGroupMapper userGroupMapper,
+		UserBrowsingManager userManager
+	) {
+		this.permissionManager = permissionManager;
+		this.permissionMapper = permissionMapper;
+		this.userMapper = userMapper;
+		this.userGroupMapper = userGroupMapper;
+		this.userManager = userManager;
+	}
 
 	/**
 	 * Returns the list of {@link User}s.
 	 * @return the list of {@link User}s.
 	 */
-	@GetMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<UserDTO> getUser(@RequestParam(name = "group_id", required = false) String groupID) throws OHServiceException {
+	@GetMapping("/users")
+	public List<UserDTO> getUser(
+		@RequestParam(name = "group_id", required = false) String groupID
+	) throws OHServiceException {
 		LOGGER.info("Fetching the list of users.");
 		List<User> users;
 		if (groupID != null) {
@@ -98,10 +115,10 @@ public class UserController {
 
 	/**
 	 * Returns a {@link User}.
-	 * @param userName - user name
+	 * @param userName - username
 	 * @return {@link User}
 	 */
-	@GetMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/users/{username}")
 	public UserDTO getUserByName(@PathVariable("username") String userName) throws OHServiceException {
 		User user = userManager.getUserByName(userName, true);
 		if (user == null) {
@@ -118,7 +135,7 @@ public class UserController {
 	 * @return the updated {@link UserDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
 	 */
-	@PutMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping("/users/{username}")
 	public UserDTO updateUser(
 		@PathVariable("username") String userName,
 		@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
@@ -154,7 +171,7 @@ public class UserController {
 	 * @throws OHServiceException When failed to create user
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping("/users")
 	public UserDTO newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
 		User user = userMapper.map2Model(userDTO);
@@ -172,7 +189,7 @@ public class UserController {
 	 * @param username - the name of the {@link User} to delete
 	 */
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@DeleteMapping(value = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping("/users/{username}")
 	public void deleteUser(@PathVariable String username) throws OHServiceException {
 		User foundUser = userManager.getUserByName(username, true);
 		if (foundUser == null) {
@@ -192,9 +209,9 @@ public class UserController {
 	/**
 	 * Retrieves profile of the current logged in user. If user not found, an empty list of permissions is returned
 	 * @return list of permissions {@link Permission}
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get logged in user
 	 */
-	@GetMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/users/me")
 	public UserProfileDTO retrieveProfileByCurrentLoggedInUser() throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		LOGGER.info("Retrieving profile: retrieveProfileByCurrentLoggedInUser({}).", currentUser);
@@ -208,9 +225,8 @@ public class UserController {
 	 * @return the current {@link UserProfileDTO} if the user has been updated.
 	 * @throws OHServiceException throws if the update fails
 	 */
-	@PutMapping(value = "/users/me", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserProfileDTO updateProfile(
-		@RequestBody UserDTO userDTO) throws OHServiceException {
+	@PutMapping("/users/me")
+	public UserProfileDTO updateProfile(@RequestBody UserDTO userDTO) throws OHServiceException {
 		String requestUserName = userDTO.getUserName();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		User entity = userManager.getUserByName(requestUserName);
@@ -243,8 +259,10 @@ public class UserController {
 	 * @return list of permissions {@link Permission}
 	 * @throws OHServiceException When failed to load user's permissions
 	 */
-	@GetMapping(value = "/users/{username}/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<PermissionDTO> retrievePermissionsByUsername(@PathVariable("username") String username) throws OHServiceException {
+	@GetMapping("/users/{username}/permissions")
+	public List<PermissionDTO> retrievePermissionsByUsername(
+		@PathVariable("username") String username
+	) throws OHServiceException {
 		LOGGER.info("Retrieving permissions: retrievePermissionsByUsername({}).", username);
 		List<Permission> domains = this.permissionManager.retrievePermissionsByUsername(username);
 		return this.permissionMapper.map2DTOList(domains);

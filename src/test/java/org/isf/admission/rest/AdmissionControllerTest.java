@@ -34,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.admission.data.AdmissionHelper;
 import org.isf.admission.dto.AdmissionDTO;
@@ -46,7 +47,6 @@ import org.isf.admtype.data.AdmissionTypeDTOHelper;
 import org.isf.admtype.model.AdmissionType;
 import org.isf.disctype.data.DischargeTypeHelper;
 import org.isf.disctype.manager.DischargeTypeBrowserManager;
-import org.isf.disctype.mapper.DischargeTypeMapper;
 import org.isf.disctype.model.DischargeType;
 import org.isf.disease.data.DiseaseHelper;
 import org.isf.disease.manager.DiseaseBrowserManager;
@@ -103,22 +103,20 @@ public class AdmissionControllerTest {
 	private OperationBrowserManager operationManagerMock;
 
 	@Mock
-	private PregnantTreatmentTypeBrowserManager pregTraitTypeManagerMock;
+	private PregnantTreatmentTypeBrowserManager pregnancyTreatmentTypeManagerMock;
 
 	@Mock
-	private DeliveryTypeBrowserManager dlvrTypeManagerMock;
+	private DeliveryTypeBrowserManager deliveryTypeManager;
 
 	@Mock
-	private DeliveryResultTypeBrowserManager dlvrrestTypeManagerMock;
+	private DeliveryResultTypeBrowserManager deliveryResultTypeManagerMock;
 
 	@Mock
 	private DischargeTypeBrowserManager dischargeTypeManagerMock;
 
-	private AdmissionMapper admissionMapper;
+	private final AdmissionMapper admissionMapper;
 
-	private AdmittedPatientMapper admittedMapper;
-
-	private DischargeTypeMapper dischargeMapper;
+	private final AdmittedPatientMapper admittedMapper;
 
 	private MockMvc mockMvc;
 
@@ -127,19 +125,20 @@ public class AdmissionControllerTest {
 	public AdmissionControllerTest() {
 		admittedMapper = new AdmittedPatientMapper();
 		admissionMapper = new AdmissionMapper();
-		dischargeMapper = new DischargeTypeMapper();
 	}
 
 	@BeforeEach
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-						.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
-										diseaseManagerMock, operationManagerMock, pregTraitTypeManagerMock,
-										dlvrTypeManagerMock, dlvrrestTypeManagerMock, admissionMapper,
-										admittedMapper, dischargeTypeManagerMock, dischargeMapper))
-						.setControllerAdvice(new OHResponseEntityExceptionHandler())
-						.build();
+			.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
+				diseaseManagerMock, pregnancyTreatmentTypeManagerMock,
+				deliveryTypeManager, deliveryResultTypeManagerMock, admissionMapper,
+				admittedMapper, dischargeTypeManagerMock)
+			)
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
+
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -153,29 +152,6 @@ public class AdmissionControllerTest {
 		closeable.close();
 	}
 
-//	@Test
-//	public void testGetAdmissions_200() throws Exception {
-//		String request = "/admissions/{id}";
-//		int id = 1;
-//
-//		Admission admission = AdmissionHelper.setup();
-//		when(admissionManagerMock.getAdmission(id))
-//				.thenReturn(admission);
-//
-//		MvcResult result = this.mockMvc
-//				.perform(
-//						get(request, id)
-//						.contentType(MediaType.APPLICATION_JSON)
-//				)
-//				.andDo(log())
-//				.andExpect(status().is2xxSuccessful())
-//				.andExpect(status().isOk())
-//				.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
-//				.andReturn();
-//
-//		LOGGER.debug("result: {}", result);
-//	}
-
 	@Test
 	public void testGetCurrentAdmission_200() throws Exception {
 		String request = "/admissions/current";
@@ -183,21 +159,21 @@ public class AdmissionControllerTest {
 
 		Patient patient = PatientHelper.setup();
 		when(patientManagerMock.getPatientById(patientCode))
-						.thenReturn(patient);
+			.thenReturn(patient);
 
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getCurrentAdmission(patient))
-						.thenReturn(admission);
+			.thenReturn(admission);
 
 		MvcResult result = this.mockMvc
-						.perform(get(request)
-										.param("patientCode", patientCode.toString())
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
-						.andReturn();
+			.perform(get(request)
+				.param("patientCode", patientCode.toString())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTO(admission)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -208,16 +184,16 @@ public class AdmissionControllerTest {
 		List<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
 		when(admissionManagerMock.getAdmittedPatients(any(), any(), any(String.class)))
-						.thenReturn(admittedPatients);
+			.thenReturn(admittedPatients);
 
 		MvcResult result = this.mockMvc
-						.perform(get(request)
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
-						.andReturn();
+			.perform(get(request)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -229,15 +205,15 @@ public class AdmissionControllerTest {
 
 		String searchTerms = "";
 		when(admissionManagerMock.getAdmittedPatients(any(), any(), any(String.class)))
-						.thenReturn(admittedPatients);
+			.thenReturn(admittedPatients);
 		MvcResult result = this.mockMvc
-						.perform(get(request, searchTerms)
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
-						.andReturn();
+			.perform(get(request, searchTerms)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -249,16 +225,16 @@ public class AdmissionControllerTest {
 
 		String searchTerms = "";
 		when(admissionManagerMock.getAdmittedPatients(any(), any(), any(String.class)))
-						.thenReturn(admittedPatients);
+			.thenReturn(admittedPatients);
 
 		MvcResult result = this.mockMvc
-						.perform(get(request, searchTerms, null, null)
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
-						.andReturn();
+			.perform(get(request, searchTerms, null, null)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(admittedMapper.map2DTOList(admittedPatients)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -270,46 +246,46 @@ public class AdmissionControllerTest {
 
 		Patient patient = PatientHelper.setup();
 		when(patientManagerMock.getPatientById(patientCode))
-						.thenReturn(patient);
+			.thenReturn(patient);
 
 		List<Admission> listAdmissions = AdmissionHelper.setupAdmissionList(2);
 		when(admissionManagerMock.getAdmissions(patient))
-						.thenReturn(listAdmissions);
+			.thenReturn(listAdmissions);
 
 		MvcResult result = this.mockMvc
-						.perform(get(request, patientCode)
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTOList(listAdmissions)))))
-						.andReturn();
+			.perform(get(request, patientCode)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(AdmissionHelper.asJsonString(admissionMapper.map2DTOList(listAdmissions)))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetNextYProg_200() throws Exception {
+	public void testGetNextYProgressiveId_200() throws Exception {
 		String request = "/admissions/getNextProgressiveIdInYear";
 		String wardCode = "1";
 
 		when(wardManagerMock.isCodePresent(wardCode))
-						.thenReturn(true);
+			.thenReturn(true);
 
-		Integer nextYProg = 1;
+		Integer nextYProgressiveId = 1;
 		when(admissionManagerMock.getNextYProg(wardCode))
-						.thenReturn(nextYProg);
+			.thenReturn(nextYProgressiveId);
 
 		MvcResult result = this.mockMvc
-						.perform(
-										get(request)
-														.param("wardcode", wardCode)
-														.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(nextYProg.toString())))
-						.andReturn();
+			.perform(
+				get(request)
+					.param("wardcode", wardCode)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(nextYProgressiveId.toString())))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -320,20 +296,20 @@ public class AdmissionControllerTest {
 		String wardCode = "1";
 
 		when(wardManagerMock.isCodePresent(wardCode))
-						.thenReturn(true);
+			.thenReturn(true);
 
 		Integer bed = 1012;
 		when(admissionManagerMock.getUsedWardBed(wardCode))
-						.thenReturn(bed);
+			.thenReturn(bed);
 
 		MvcResult result = this.mockMvc
-						.perform(get(request, wardCode)
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString(bed.toString())))
-						.andReturn();
+			.perform(get(request, wardCode)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(bed.toString())))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -345,16 +321,16 @@ public class AdmissionControllerTest {
 
 		Admission admission = AdmissionHelper.setup();
 		when(admissionManagerMock.getAdmission(id))
-						.thenReturn(admission);
+			.thenReturn(admission);
 
 		this.mockMvc
-						.perform(
-										delete(request, id)
-														.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().isOk())
-						.andExpect(content().string(containsString("true")))
-						.andReturn();
+			.perform(
+				delete(request, id)
+					.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")))
+			.andReturn();
 	}
 
 	@Test
@@ -386,14 +362,14 @@ public class AdmissionControllerTest {
 
 		AdmissionDTO admissionDTO = admissionMapper.map2DTO(admission);
 		this.mockMvc
-						.perform(
-										post(request)
-														.param("patientCode", patientCode.toString())
-														.contentType(MediaType.APPLICATION_JSON)
-														.content(AdmissionHelper.asJsonString(admissionDTO)))
-						.andDo(log())
-						.andExpect(status().isOk())
-						.andReturn();
+			.perform(
+				post(request)
+					.param("patientCode", patientCode.toString())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(AdmissionHelper.asJsonString(admissionDTO))))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andReturn();
 	}
 
 	@Test
@@ -408,41 +384,41 @@ public class AdmissionControllerTest {
 		Admission newAdmission = admissionMapper.map2Model(body);
 
 		when(admissionManagerMock.newAdmissionReturnKey(newAdmission))
-						.thenReturn(id);
+			.thenReturn(id);
 
 		List<Ward> wardList = WardHelper.setupWardList(2);
 		when(wardManagerMock.getWards())
-						.thenReturn(wardList);
+			.thenReturn(wardList);
 
 		List<AdmissionType> admissionTypeList = AdmissionTypeDTOHelper.setupAdmissionTypeList(3);
 		when(admissionManagerMock.getAdmissionType())
-						.thenReturn(admissionTypeList);
+			.thenReturn(admissionTypeList);
 
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
-						.thenReturn(patient);
+			.thenReturn(patient);
 
 		List<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseManagerMock.getDiseaseAll())
-						.thenReturn(diseaseList);
+			.thenReturn(diseaseList);
 
 		List<Operation> operationsList = OperationHelper.setupOperationList(3);
 		when(operationManagerMock.getOperation())
-						.thenReturn(operationsList);
+			.thenReturn(operationsList);
 
 		List<DischargeType> disTypes = DischargeTypeHelper.setupDischargeTypeList(3);
 		when(admissionManagerMock.getDischargeType())
-						.thenReturn(disTypes);
+			.thenReturn(disTypes);
 
 		MvcResult result = this.mockMvc
-						.perform(post(request)
-										.contentType(MediaType.APPLICATION_JSON)
-										.content(AdmissionHelper.asJsonString(body)))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isCreated())
-						.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(AdmissionHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -459,51 +435,51 @@ public class AdmissionControllerTest {
 		Admission update = admissionMapper.map2Model(body);
 
 		when(admissionManagerMock.getAdmission(body.getId()))
-						.thenReturn(old);
+			.thenReturn(old);
 
 		List<Ward> wardList = WardHelper.setupWardList(2);
 		when(wardManagerMock.getWards())
-						.thenReturn(wardList);
+			.thenReturn(wardList);
 
 		List<AdmissionType> admissionTypeList = AdmissionTypeDTOHelper.setupAdmissionTypeList(3);
 		when(admissionManagerMock.getAdmissionType())
-						.thenReturn(admissionTypeList);
+			.thenReturn(admissionTypeList);
 
 		Patient patient = PatientHelper.setup();
 		patient.setCode(code);
 		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
-						.thenReturn(patient);
+			.thenReturn(patient);
 
 		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
-						.thenReturn(patient);
+			.thenReturn(patient);
 
 		List<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);
 		when(diseaseManagerMock.getDiseaseAll())
-						.thenReturn(diseaseList);
+			.thenReturn(diseaseList);
 
 		List<Operation> operationsList = OperationHelper.setupOperationList(3);
 		when(operationManagerMock.getOperation())
-						.thenReturn(operationsList);
+			.thenReturn(operationsList);
 
 		List<DischargeType> disTypes = DischargeTypeHelper.setupDischargeTypeList(3);
 		when(admissionManagerMock.getDischargeType())
-						.thenReturn(disTypes);
+			.thenReturn(disTypes);
 
-		List<PregnantTreatmentType> pregTTypes = PregnantTreatmentTypeHelper.setupPregnantTreatmentTypeList(3);
-		when(pregTraitTypeManagerMock.getPregnantTreatmentType())
-						.thenReturn(pregTTypes);
+		List<PregnantTreatmentType> pregnancyTreatmentTypes = PregnantTreatmentTypeHelper.setupPregnantTreatmentTypeList(3);
+		when(pregnancyTreatmentTypeManagerMock.getPregnantTreatmentType())
+			.thenReturn(pregnancyTreatmentTypes);
 
 		when(admissionManagerMock.updateAdmission(update))
-						.thenReturn(update);
+			.thenReturn(update);
 
 		MvcResult result = this.mockMvc
-						.perform(put(request)
-										.contentType(MediaType.APPLICATION_JSON)
-										.content(AdmissionHelper.asJsonString(body)))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andReturn();
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(AdmissionHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
