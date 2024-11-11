@@ -59,7 +59,7 @@ public class SettingDTO {
 	@Schema(description="The value of the setting", example = "FALSE")
 	private String value;
 
-	@Schema(name="Description", maxLength = 500)
+	@Schema(description="Description", maxLength = 500)
 	private String description;
 
 	@Schema(description="Whether the app needs restart after the setting has been modified", example = "true")
