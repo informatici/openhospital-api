@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.disctype.data.DischargeTypeHelper;
 import org.isf.disctype.dto.DischargeTypeDTO;
@@ -73,9 +74,9 @@ public class DischargeTypeControllerTest {
 	public void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new DischargeTypeController(discTypeManagerMock, dischargeTypeMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new DischargeTypeController(discTypeManagerMock, dischargeTypeMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -95,46 +96,46 @@ public class DischargeTypeControllerTest {
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(dischargeType);
 
 		when(discTypeManagerMock.newDischargeType(dischargeTypeMapper.map2Model(body)))
-				.thenReturn(dischargeType);
+			.thenReturn(dischargeType);
 
 		when(discTypeManagerMock.isCodePresent(dischargeType.getCode()))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DischargeTypeHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DischargeTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testUpdateDischargeTypet_200() throws Exception {
+	public void testUpdateDischargeType_200() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
 		DischargeType dischargeType = DischargeTypeHelper.setup(code);
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(dischargeType);
 
 		when(discTypeManagerMock.isCodePresent(body.getCode()))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
-				.thenReturn(dischargeType);
+			.thenReturn(dischargeType);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DischargeTypeHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DischargeTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -144,20 +145,20 @@ public class DischargeTypeControllerTest {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		List<DischargeType> dischTypes = new ArrayList<>();
-		dischTypes.add(dischargeType);
+		List<DischargeType> dischargeTypes = new ArrayList<>();
+		dischargeTypes.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
-				.thenReturn(dischTypes);
+			.thenReturn(dischargeTypes);
 
-		List<DischargeTypeDTO> expectedDischTypeDTOs = dischargeTypeMapper.map2DTOList(dischTypes);
+		List<DischargeTypeDTO> expectedDischargeTypeDTOs = dischargeTypeMapper.map2DTOList(dischargeTypes);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DischargeTypeHelper.getObjectMapper().writeValueAsString(expectedDischTypeDTOs))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DischargeTypeHelper.getObjectMapper().writeValueAsString(expectedDischargeTypeDTOs))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
@@ -169,22 +170,22 @@ public class DischargeTypeControllerTest {
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
 
 		when(discTypeManagerMock.isCodePresent(body.getCode()))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
-		List<DischargeType> dischTypeFounds = new ArrayList<>();
-		dischTypeFounds.add(dischargeType);
+		List<DischargeType> dischargeTypeFounds = new ArrayList<>();
+		dischargeTypeFounds.add(dischargeType);
 		when(discTypeManagerMock.getDischargeType())
-				.thenReturn(dischTypeFounds);
+			.thenReturn(dischargeTypeFounds);
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(isDeleted)))
-				.andReturn();
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(isDeleted)))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

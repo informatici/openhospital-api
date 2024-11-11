@@ -43,12 +43,12 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.jsonwebtoken.JwtException;
@@ -58,25 +58,28 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Login")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController {
 
-	private HttpSession httpSession;
+	private final HttpSession httpSession;
 
-	private SessionAuditManager sessionAuditManager;
+	private final SessionAuditManager sessionAuditManager;
 
-	private TokenProvider tokenProvider;
+	private final TokenProvider tokenProvider;
 
-	private CustomAuthenticationManager authenticationManager;
+	private final CustomAuthenticationManager authenticationManager;
 
-	private UserBrowsingManager userManager;
+	private final UserBrowsingManager userManager;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
-	public LoginController(HttpSession httpSession,
-					SessionAuditManager sessionAuditManager,
-					TokenProvider tokenProvider,
-					CustomAuthenticationManager authenticationManager,
-					UserBrowsingManager userManager) {
+	public LoginController(
+		HttpSession httpSession,
+		SessionAuditManager sessionAuditManager,
+		TokenProvider tokenProvider,
+		CustomAuthenticationManager authenticationManager,
+		UserBrowsingManager userManager
+	) {
 		this.httpSession = httpSession;
 		this.sessionAuditManager = sessionAuditManager;
 		this.tokenProvider = tokenProvider;
@@ -84,10 +87,12 @@ public class LoginController {
 		this.userManager = userManager;
 	}
 
-	@PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<LoginResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws OHAPIException {
+	@PostMapping(value = "/auth/login")
+	public LoginResponse authenticateUser(
+		@Valid @RequestBody LoginRequest loginRequest
+	) {
 		Authentication authentication = authenticationManager.authenticate(
-						new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+			new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateJwtToken(authentication, false); // use the shorter validity
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);
@@ -103,16 +108,16 @@ public class LoginController {
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
-							sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
+				sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
 
-		return ResponseEntity.ok(new LoginResponse(jwt, refreshToken, userDetails));
+		return new LoginResponse(jwt, refreshToken, userDetails);
 	}
 
 	@PostMapping("/auth/refresh-token")
-	public ResponseEntity<LoginResponse> refreshToken(@RequestBody TokenRefreshRequest request) throws OHAPIException {
+	public LoginResponse refreshToken(@RequestBody TokenRefreshRequest request) throws OHAPIException {
 		String refreshToken = request.getRefreshToken();
 
 		try {
@@ -122,7 +127,7 @@ public class LoginController {
 				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
 				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
 
-				return ResponseEntity.ok(new LoginResponse(newAccessToken, newRefreshToken, username));
+				return new LoginResponse(newAccessToken, newRefreshToken, username);
 			} else {
 				throw new OHAPIException(new OHExceptionMessage("Invalid Refresh Token"));
 			}
@@ -130,5 +135,4 @@ public class LoginController {
 			throw new OHAPIException(new OHExceptionMessage("Refresh token expired or invalid"));
 		}
 	}
-
 }

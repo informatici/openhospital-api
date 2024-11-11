@@ -37,7 +37,6 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,33 +46,43 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/usersettings")
+@RestController
 @Tag(name = "User Settings")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserSettingController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserSettingController.class);
 
-	@Autowired
-	private UserBrowsingManager userManager;
-	@Autowired
-	private UserSettingManager userSettingManager;
+	private final UserBrowsingManager userManager;
 
-	@Autowired
-	private UserSettingMapper userSettingMapper;
+	private final UserSettingManager userSettingManager;
+
+	private final UserSettingMapper userSettingMapper;
+
+	public UserSettingController(
+		UserBrowsingManager userManager,
+		UserSettingManager userSettingManager,
+		UserSettingMapper userSettingMapper
+	) {
+		this.userManager = userManager;
+		this.userSettingManager = userSettingManager;
+		this.userSettingMapper = userSettingMapper;
+	}
 
 	/**
 	 * Retrieves all userSettings of the current user.
 	 * @return list of userSetting {@link UserSettingDTO}.
 	 * @throws OHServiceException When fail to retrieve userSettings
 	 */
-	@GetMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/usersettings")
 	public List<UserSettingDTO> getUserSettings() throws OHServiceException {
 		LOGGER.info("Retrieve all userSettings of the current user.");
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -91,10 +100,10 @@ public class UserSettingController {
 	 * Returns a {@link UserSettingDTO} of userSetting created.
 	 * @param userSettingDTO -  the {@link UserSettingDTO} to insert.
 	 * @return {@link UserSettingDTO} if the userSetting has been created, null otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create user setting
 	 */
 	@ResponseStatus(HttpStatus.CREATED)
-	@PostMapping(value = "/usersettings", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "/usersettings")
 	public UserSettingDTO newUserSettings(@Valid @RequestBody UserSettingDTO userSettingDTO) throws OHServiceException {
 		LOGGER.info("Create a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
@@ -126,9 +135,10 @@ public class UserSettingController {
 	 * @return {@link UserSettingDTO} if the UserSetting has been updated.
 	 * @throws OHServiceException If the update operation fails
 	 */
-	@PutMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO updateUserSettings(@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO)
-					throws OHServiceException {
+	@PutMapping(value = "/usersettings/{id}")
+	public UserSettingDTO updateUserSettings(
+		@PathVariable(name = "id") int id, @Valid @RequestBody UserSettingDTO userSettingDTO
+	) throws OHServiceException {
 		LOGGER.info("Update a UserSetting.");
 		String requestUserName = userSettingDTO.getUser();
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -161,10 +171,12 @@ public class UserSettingController {
 	 * Retrieves an existing {@link UserSettingDTO} by user.
 	 * @param configName - the name of the userSetting {@link UserSetting} .
 	 * @return {@link UserSettingDTO} if the UserSetting exists, null otherwise.
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get user setting
 	 */
-	@GetMapping(value = "/usersettings/{configName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public UserSettingDTO getUserSettingByUser(@PathVariable(name = "configName") String configName) throws OHServiceException {
+	@GetMapping(value = "/usersettings/{configName}")
+	public UserSettingDTO getUserSettingByUser(
+		@PathVariable(name = "configName") String configName
+	) throws OHServiceException {
 		String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 		LOGGER.info("Retrieve the userSetting By user {} and configName {}.", currentUser, configName);
 		UserSetting userSetting = userSettingManager.getUserSettingByUserNameConfigName(currentUser, configName);
@@ -181,7 +193,7 @@ public class UserSettingController {
 	 * @throws OHServiceException If the deletion fails
 	 */
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@DeleteMapping(value = "/usersettings/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@DeleteMapping(value = "/usersettings/{id}")
 	public void deleteUserSetting(@PathVariable(name = "id") int id) throws OHServiceException {
 		Optional<UserSetting> userSetting = userSettingManager.getUserSettingById(id);
 		final String ADMIN = "admin";

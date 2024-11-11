@@ -28,72 +28,70 @@ import org.isf.hospital.model.Hospital;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/hospitals")
+@RestController
 @Tag(name = "Hospitals")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class HospitalController {
 
-    @Autowired
-    private HospitalBrowsingManager hospitalBrowsingManager;
+    private final HospitalBrowsingManager hospitalBrowsingManager;
 
-    @Autowired
-    private HospitalMapper hospitalMapper;
+    private final HospitalMapper hospitalMapper;
 
     public HospitalController(HospitalBrowsingManager hospitalBrowsingManager, HospitalMapper hospitalMapper) {
         this.hospitalBrowsingManager = hospitalBrowsingManager;
         this.hospitalMapper = hospitalMapper;
     }
 
-    @PutMapping(value = "/hospitals/{code:.+}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HospitalDTO> updateHospital(@PathVariable String code, @RequestBody HospitalDTO hospitalDTO) throws OHServiceException {
-
+    @PutMapping("/hospitals/{code:.+}")
+    public HospitalDTO updateHospital(
+        @PathVariable String code, @RequestBody HospitalDTO hospitalDTO
+    ) throws OHServiceException {
         if (!hospitalDTO.getCode().equals(code)) {
             throw new OHAPIException(new OHExceptionMessage("Hospital code mismatch."));
         }
+
         if (hospitalBrowsingManager.getHospital().getCode() == null) {
-            throw new OHAPIException(new OHExceptionMessage("Hospital not found."));
+            throw new OHAPIException(new OHExceptionMessage("Hospital not found."), HttpStatus.NOT_FOUND);
         }
 
         Hospital hospital = hospitalMapper.map2Model(hospitalDTO);
         hospital.setLock(hospitalDTO.getLock());
-        Hospital hospi = hospitalBrowsingManager.updateHospital(hospital);
 
-        return ResponseEntity.ok(hospitalMapper.map2DTO(hospi));
+        return hospitalMapper.map2DTO(hospitalBrowsingManager.updateHospital(hospital));
     }
 
-    @GetMapping(value = "/hospitals", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<HospitalDTO> getHospital() throws OHServiceException {
+    @GetMapping("/hospitals")
+    public HospitalDTO getHospital() throws OHServiceException {
         Hospital hospital = hospitalBrowsingManager.getHospital();
 
         if (hospital == null) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(hospitalMapper.map2DTO(hospital));
+            throw new OHAPIException(new OHExceptionMessage("Hospital not found."), HttpStatus.NOT_FOUND);
         }
+
+        return hospitalMapper.map2DTO(hospital);
     }
 
-    @GetMapping(value = "/hospitals/currencyCode", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getHospitalCurrencyCode() throws OHServiceException {
+    @GetMapping(value = "/hospitals/currencyCode", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String getHospitalCurrencyCode() throws OHServiceException {
         String hospitalCurrencyCod = hospitalBrowsingManager.getHospitalCurrencyCod();
 
         if (hospitalCurrencyCod == null || hospitalCurrencyCod.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-        } else {
-            return ResponseEntity.ok(hospitalCurrencyCod);
+            throw new OHAPIException(new OHExceptionMessage("Hospital not found."), HttpStatus.NOT_FOUND);
         }
-    }
 
+        return hospitalCurrencyCod;
+    }
 }

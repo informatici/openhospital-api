@@ -176,7 +176,6 @@ public class UserGroupControllerTest {
 	@DisplayName("Delete user groups")
 	void deleteUserGroup() throws Exception {
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
-		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 
 		when(userManager.getUserGroup()).thenReturn(List.of(userGroup));
 		doNothing().when(userManager).deleteGroup(any());
