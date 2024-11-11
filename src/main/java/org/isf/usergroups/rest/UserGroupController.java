@@ -117,10 +117,12 @@ public class UserGroupController {
 		try {
 			userManager.deleteGroup(group);
 		} catch (OHDataIntegrityViolationException ex) {
-			group.setDeleted(true);
-			userManager.updateUserGroup(group);
-		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
+			UserGroup update = new UserGroup(group.getCode(), group.getDesc());
+			update.setDeleted(true);
+			userManager.updateUserGroup(update);
+		} catch (OHServiceException ex) {
+			OHExceptionMessage mex = ex.getMessages().get(0);
+			throw new OHAPIException(new OHExceptionMessage(Objects.equals(mex, null) ? "User group not deleted" : mex.getMessage()));
 		}
 	}
 

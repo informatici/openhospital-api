@@ -22,6 +22,7 @@
 package org.isf.users.rest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -198,11 +199,13 @@ public class UserController {
 		try {
 			userManager.deleteUser(foundUser);
 		} catch (OHDataIntegrityViolationException ex) {
-			foundUser.setDeleted(true);
-			userManager.updateUser(foundUser);
+			User update = new User(foundUser.getUserName(), foundUser.getUserGroupName(), "", foundUser.getDesc());
+			update.setDeleted(true);
+			userManager.updateUser(update);
 		} catch (OHServiceException ex) {
 			ex.printStackTrace();
-			throw new OHAPIException(new OHExceptionMessage("User not deleted."));
+			OHExceptionMessage mex = ex.getMessages().get(0);
+			throw new OHAPIException(new OHExceptionMessage(Objects.equals(mex, null) ? "User not deleted" : mex.getMessage()));
 		}
 	}
 
