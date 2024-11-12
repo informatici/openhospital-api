@@ -39,7 +39,6 @@ import org.isf.shared.exceptions.OHAPIException;
 import org.isf.usergroups.dto.GroupPermissionsDTO;
 import org.isf.usergroups.dto.UserGroupDTO;
 import org.isf.usergroups.mapper.UserGroupMapper;
-import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHDataValidationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
@@ -116,10 +115,6 @@ public class UserGroupController {
 		UserGroup group = userManager.findUserGroupByCode(code, true);
 		try {
 			userManager.deleteGroup(group);
-		} catch (OHDataIntegrityViolationException ex) {
-			UserGroup update = new UserGroup(group.getCode(), group.getDesc());
-			update.setDeleted(true);
-			userManager.updateUserGroup(update);
 		} catch (OHServiceException ex) {
 			OHExceptionMessage mex = ex.getMessages().get(0);
 			throw new OHAPIException(new OHExceptionMessage(Objects.equals(mex, null) ? "User group not deleted" : mex.getMessage()));

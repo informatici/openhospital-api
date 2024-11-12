@@ -38,7 +38,6 @@ import org.isf.usergroups.mapper.UserGroupMapper;
 import org.isf.users.dto.UserDTO;
 import org.isf.users.dto.UserProfileDTO;
 import org.isf.users.mapper.UserMapper;
-import org.isf.utils.exception.OHDataIntegrityViolationException;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
@@ -198,10 +197,6 @@ public class UserController {
 		}
 		try {
 			userManager.deleteUser(foundUser);
-		} catch (OHDataIntegrityViolationException ex) {
-			User update = new User(foundUser.getUserName(), foundUser.getUserGroupName(), "", foundUser.getDesc());
-			update.setDeleted(true);
-			userManager.updateUser(update);
 		} catch (OHServiceException ex) {
 			ex.printStackTrace();
 			OHExceptionMessage mex = ex.getMessages().get(0);
