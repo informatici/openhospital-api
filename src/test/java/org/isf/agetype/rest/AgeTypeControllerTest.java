@@ -22,6 +22,8 @@
 package org.isf.agetype.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,6 +57,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class AgeTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeControllerTest.class);
@@ -63,6 +67,8 @@ public class AgeTypeControllerTest {
 	private AgeTypeBrowserManager ageTypeManagerMock;
 
 	private final AgeTypeMapper ageTypeMapper = new AgeTypeMapper();
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private MockMvc mockMvc;
 
@@ -110,22 +116,21 @@ public class AgeTypeControllerTest {
 	@Test
 	public void testUpdateAgeType_200() throws Exception {
 		String request = "/agetypes";
-		AgeTypeDTO body = ageTypeMapper.map2DTO(AgeTypeHelper.setup());
+		List<AgeType> ageTypes = AgeTypeHelper.genList(5);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
 
-		List<AgeType> ageTypes = new ArrayList<>();
-		ageTypes.add(AgeTypeHelper.setup());
-
-		when(ageTypeManagerMock.updateAgeType(ageTypes))
-			.thenReturn(ageTypes);
+		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(ageTypes.get(0));
+		when(ageTypeManagerMock.getTypeByCode(anyInt())).thenReturn(ageTypes.get(0));
+		when(ageTypeManagerMock.updateAgeType(ageTypes)).thenReturn(ageTypes);
 
 		MvcResult result = this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(Objects.requireNonNull(AgeTypeHelper.asJsonString(body)))
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(body))))
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
