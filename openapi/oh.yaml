@@ -1904,7 +1904,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AgeTypeDTO"
+              type: array
+              items:
+                $ref: "#/components/schemas/AgeTypeDTO"
         required: true
       responses:
         "200":
@@ -1912,7 +1914,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgeTypeDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgeTypeDTO"
       security:
         - bearerAuth: [ ]
   /admissiontypes:
@@ -6231,11 +6235,11 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
         female:
           type: boolean
         male:
+          type: boolean
+        opd:
           type: boolean
         pharmacy:
           type: boolean
