@@ -97,7 +97,7 @@ public class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should failed to get patient examination with wrong ID")
+	@DisplayName("Should fail to get patient examination with wrong ID")
 	void testGetPatientExaminationWithWrongId() throws Exception {
 		when(manager.getByID(anyInt())).thenReturn(null);
 
@@ -105,7 +105,7 @@ public class ExaminationControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isNoContent());
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -130,7 +130,7 @@ public class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should failed to get patient default examination with wrong patient ID")
+	@DisplayName("Should fail to get patient default examination with wrong patient ID")
 	void testGetDefaultPatientExaminationWithWrongPatientID() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -143,7 +143,7 @@ public class ExaminationControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -222,7 +222,7 @@ public class ExaminationControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(true))));
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(patientExaminationDTO))));
 	}
 
 	@Test
@@ -247,6 +247,6 @@ public class ExaminationControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(true))));
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(patientExaminationDTO))));
 	}
 }

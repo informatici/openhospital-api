@@ -185,7 +185,7 @@ public class ExamRowControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.create"})
-	@DisplayName("Should failed to add new exam row with wrong exam code")
+	@DisplayName("Should fail to add new exam row with wrong exam code")
 	void testAddExamRowWithWrongExam() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		ExamRow examRow = generateExamRows(exam, 1).get(0);
@@ -200,7 +200,7 @@ public class ExamRowControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -223,7 +223,7 @@ public class ExamRowControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.delete"})
-	@DisplayName("Should failed to delete exam row with wrong code")
+	@DisplayName("Should fail to delete exam row with wrong code")
 	void testDeleteExamRowWithWrongCode() throws Exception {
 		when(manager.getExamRow(anyInt())).thenReturn(List.of());
 		doNothing().when(manager).deleteExamRow(any());
@@ -232,7 +232,7 @@ public class ExamRowControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isBadRequest());
+			.andExpect(status().isNotFound());
 	}
 
 	private List<ExamRow> generateExamRows(Exam exam, int size) {
