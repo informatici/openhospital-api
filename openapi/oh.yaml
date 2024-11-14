@@ -6564,6 +6564,10 @@ components:
           type: string
           description: The user's description
           example: Lab chief technician
+        deleted:
+          type: boolean
+          description: Whether the user has been soft deleted or not
+          example: false
     UserGroupDTO:
       required:
         - code
@@ -6579,6 +6583,10 @@ components:
           type: string
           description: The description of the group
           example: Staff members working in the laboratory
+        deleted:
+          type: boolean
+          description: Whether the group has been soft deleted or not
+          example: false
         permissions:
           type: array
           description: List of group's permissions

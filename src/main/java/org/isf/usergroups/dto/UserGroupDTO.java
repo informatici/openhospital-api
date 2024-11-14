@@ -34,33 +34,36 @@ public class UserGroupDTO {
 	@NotNull
 	@Schema(description = "Name of the group (must be unique)", example = "labo", maxLength = 50)
 	private String code;
-
 	@Schema(description = "The description of the group", example = "Staff members working in the laboratory", maxLength = 128)
 	private String desc;
+	@Schema(description = "Whether the group has been soft deleted or not", example = "false")
+	private boolean deleted;
 
 	@Schema(description = "List of group's permissions")
-	List<PermissionDTO> permissions;
+	private List<PermissionDTO> permissions;
 
 	public UserGroupDTO() {
 	}
 
 	public UserGroupDTO(String code, String desc) {
+		this(code, desc, false);
+	}
+
+	public UserGroupDTO(String code, String desc, boolean deleted) {
 		this.code = code;
 		this.desc = desc;
+		this.deleted = deleted;
 	}
 
 	public String getCode() {
 		return this.code;
 	}
-
-	public String getDesc() {
-		return this.desc;
-	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
+	public String getDesc() {
+		return this.desc;
+	}
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
@@ -71,5 +74,13 @@ public class UserGroupDTO {
 
 	public void setPermissions(List<PermissionDTO> permissions) {
 		this.permissions = permissions;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }

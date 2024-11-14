@@ -87,7 +87,7 @@ public class UserControllerTest {
 	private PermissionManager permissionManager;
 
 	@Test
-	@WithMockUser(username = "admin", authorities = {"users.create"})
+	@WithMockUser(username = "admin", authorities = { "users.create" })
 	@DisplayName("Create user")
 	void createUser() throws Exception {
 		User user = UserHelper.generateUser();
@@ -108,12 +108,12 @@ public class UserControllerTest {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = {"users.delete"})
+	@WithMockUser(username = "admin", authorities = { "users.delete" })
 	@DisplayName("Delete user")
 	void deleteUser() throws Exception {
 		User user = UserHelper.generateUser();
 
-		when(userManager.getUserByName(any())).thenReturn(user);
+		when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 		doNothing().when(userManager).deleteUser(any());
 
 		var result = mvc.perform(
@@ -124,17 +124,36 @@ public class UserControllerTest {
 
 		LOGGER.debug("result: {}", result);
 	}
+	@Test
+	@WithMockUser(username = "john")
+	@DisplayName("Should get user profile")
+	void shouldGetUserProfile() throws Exception {
+		User user = UserHelper.generateUsers(1).get(0);
+		user.setUserName("john");
+
+		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
+		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+
+		var result = mvc.perform(
+				get("/users/me").contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
 
 	@Nested
 	@DisplayName("Get user")
 	class GetUser {
+
 		@Test
-		@WithMockUser(username = "admin", authorities = {"users.read"})
+		@WithMockUser(username = "admin", authorities = { "users.read" })
 		@DisplayName("Should get user by name")
 		void shouldGetUserByName() throws Exception {
 			User user = UserHelper.generateUsers(1).get(0);
 
-			when(userManager.getUserByName(user.getUserName())).thenReturn(user);
+			when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 
 			var result = mvc.perform(
 					get("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
@@ -159,7 +178,7 @@ public class UserControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "user", authorities = {"users.read"})
+		@WithMockUser(username = "user", authorities = { "users.read" })
 		@DisplayName("Should throw not found error when user not found")
 		void shouldThrowNotFoundErrorWhenUserNotFound() throws Exception {
 			when(userManager.getUserByName(any())).thenReturn(null);
@@ -174,31 +193,12 @@ public class UserControllerTest {
 		}
 	}
 
-	@Test
-	@WithMockUser(username = "john")
-	@DisplayName("Should get user profile")
-	void shouldGetUserProfile() throws Exception {
-		User user = UserHelper.generateUsers(1).get(0);
-		user.setUserName("john");
-
-		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
-		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
-
-		var result = mvc.perform(
-				get("/users/me").contentType(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
-	}
-
 	@Nested
 	@DisplayName("Get users")
 	class GetUsers {
 
 		@Test
-		@WithMockUser(username = "admin", authorities = {"users.read"})
+		@WithMockUser(username = "admin", authorities = { "users.read" })
 		@DisplayName("Get all users")
 		void getAllUsers() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
@@ -217,7 +217,7 @@ public class UserControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = {"users.read"})
+		@WithMockUser(username = "admin", authorities = { "users.read" })
 		@DisplayName("Get users by group code")
 		void getAllUsersByGroupCode() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
@@ -237,14 +237,14 @@ public class UserControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = {"users.read"})
+		@WithMockUser(username = "admin", authorities = { "users.read" })
 		@DisplayName("Get user by name")
 		void getUserByName() throws Exception {
 			User user = UserHelper.generateUser();
 			UserDTO userDTO = userMapper.map2DTO(user);
 			String username = "admin";
 
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.getUserByName(username, true)).thenReturn(user);
 
 			userDTO.setPasswd(null);
 
@@ -265,13 +265,13 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should update the user")
-		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldUpdateTheUser() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -284,7 +284,7 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update when username in the patch doesn't match")
-		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldFailToUpdateWhenUsernameInThePathDoesNtMatch() throws Exception {
 			var user = new User("laboratorist", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 			var result = mvc.perform(
@@ -298,7 +298,7 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should fail to update user when insufficient permissions")
-		@WithMockUser(username = "admin", authorities = {"roles.read"})
+		@WithMockUser(username = "admin", authorities = { "roles.read" })
 		void shouldFailToUpdateUserWhenInsufficientPermissions() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
@@ -313,7 +313,7 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should fail when user to update doesn't exist")
-		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldFailWhenUserToUpdateIsNotFound() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
@@ -330,13 +330,13 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should update only password")
-		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldUpdateOnlyPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -352,13 +352,13 @@ public class UserControllerTest {
 
 		@Test
 		@DisplayName("Should update user without updating password")
-		@WithMockUser(username = "admin", authorities = {"users.read", "users.update"})
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldUpdateUserWithoutUpdatingPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
-			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -391,8 +391,8 @@ public class UserControllerTest {
 		void shouldUpdateUserProfile() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
@@ -440,8 +440,8 @@ public class UserControllerTest {
 		void shouldUpdateOnlyPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
@@ -462,8 +462,8 @@ public class UserControllerTest {
 		void shouldUpdateUserWithoutUpdatingPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
-			when(userManager.updateUser(any())).thenReturn(true);
-			when(userManager.updatePassword(any())).thenReturn(true);
+			when(userManager.updateUser(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
 
 			var result = mvc.perform(
