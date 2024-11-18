@@ -128,7 +128,7 @@ public class UserGroupControllerTest {
 		userGroupDTO.setPermissions(permissionDTOS);
 
 		when(userManager.newUserGroup(any(), any())).thenReturn(userGroup);
-		when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 
 		var result = mvc.perform(
 				post("/usergroups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
@@ -158,7 +158,7 @@ public class UserGroupControllerTest {
 		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 		userGroupDTO.setPermissions(permissionDTOS);
 
-		when(userManager.findUserGroupByCode(userGroup.getCode())).thenReturn(userGroup);
+		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 		when(groupPermissionManager.findUserGroupPermissions(any())).thenReturn(groupPermissions);
 
 		var result = mvc.perform(
@@ -204,8 +204,9 @@ public class UserGroupControllerTest {
 			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 			userGroupDTO.setPermissions(permissionDTOS);
 
+			when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
-			when(userManager.updateUserGroup(any(), any())).thenReturn(true);
+			when(userManager.updateUserGroup(any(), any())).thenReturn(userGroup);
 
 			var result = mvc.perform(
 					put("/usergroups/{group_code}", userGroupDTO.getCode())

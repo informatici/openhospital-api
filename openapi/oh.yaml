@@ -1930,7 +1930,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AgeTypeDTO"
+              type: array
+              items:
+                $ref: "#/components/schemas/AgeTypeDTO"
         required: true
       responses:
         "200":
@@ -1938,7 +1940,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AgeTypeDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgeTypeDTO"
       security:
       - bearerAuth: []
   /admissiontypes:
@@ -6328,13 +6332,13 @@ components:
           description: lock
           format: int32
           example: 0
-        female:
+        opd:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        female:
           type: boolean
-        opd:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -6657,6 +6661,10 @@ components:
           type: string
           description: The user's description
           example: Lab chief technician
+        deleted:
+          type: boolean
+          description: Whether the user has been soft deleted or not
+          example: false
     UserGroupDTO:
       required:
       - code
@@ -6672,6 +6680,10 @@ components:
           type: string
           description: The description of the group
           example: Staff members working in the laboratory
+        deleted:
+          type: boolean
+          description: Whether the group has been soft deleted or not
+          example: false
         permissions:
           type: array
           description: List of group's permissions
@@ -6811,9 +6823,10 @@ components:
           type: string
           description: The value of the setting
           example: "FALSE"
-        Description:
+        description:
           maxLength: 500
           type: string
+          description: Description
         needRestart:
           type: boolean
           description: Whether the app needs restart after the setting has been modified
@@ -7114,11 +7127,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:

@@ -112,11 +112,12 @@ public class UserGroupController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@DeleteMapping(value = "/usergroups/{group_code}")
 	public void deleteGroup(@PathVariable("group_code") String code) throws OHServiceException {
+		UserGroup group = userManager.findUserGroupByCode(code, true);
 		try {
-			UserGroup group = loadUserGroup(code);
 			userManager.deleteGroup(group);
-		} catch (OHServiceException serviceException) {
-			throw new OHAPIException(new OHExceptionMessage("User group not deleted."));
+		} catch (OHServiceException ex) {
+			OHExceptionMessage mex = ex.getMessages().get(0);
+			throw new OHAPIException(new OHExceptionMessage(Objects.equals(mex, null) ? "User group not deleted" : mex.getMessage()));
 		}
 	}
 
@@ -140,7 +141,7 @@ public class UserGroupController {
 
 		try {
 			var group = userManager.newUserGroup(userGroup, permissions);
-			return getUserGroup(group.getCode());
+			return loadUserGroupDTO(group.getCode(), true);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("User group not created."));
 		}
@@ -161,8 +162,15 @@ public class UserGroupController {
 		}
 		UserGroup group = userGroupMapper.map2Model(userGroupDTO);
 
-		if (!userManager.findUserGroupByCode(userGroupDTO.getCode()).getCode().equals(group.getCode())) {
+		UserGroup oldUserGroup = userManager.findUserGroupByCode(group.getCode(), true);
+
+		if (oldUserGroup == null) {
 			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
+		}
+
+		if (oldUserGroup.isDeleted() && !group.isDeleted()) {
+			userManager.updateUserGroup(group);
+			return loadUserGroupDTO(group.getCode(), true);
 		}
 
 		List<Permission> permissions = new ArrayList<>();
@@ -172,9 +180,9 @@ public class UserGroupController {
 				.toList();
 		}
 
-		boolean isUpdated = userManager.updateUserGroup(group, permissions);
-		if (isUpdated) {
-			return getUserGroup(group.getCode());
+		UserGroup updatedUserGroup = userManager.updateUserGroup(group, permissions);
+		if (updatedUserGroup != null) {
+			return loadUserGroupDTO(group.getCode(), true);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User group not updated."));
 		}
@@ -188,20 +196,7 @@ public class UserGroupController {
 	 */
 	@GetMapping(value = "/usergroups/{group_code}")
 	public UserGroupDTO getUserGroup(@PathVariable("group_code") String code) throws OHServiceException {
-		UserGroup userGroup = userManager.findUserGroupByCode(code);
-		if (userGroup == null) {
-			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
-		}
-
-		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
-		List<PermissionDTO> permissions = groupPermissions.stream()
-			.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
-			.toList();
-
-		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
-		userGroupDTO.setPermissions(permissions);
-
-		return userGroupDTO;
+		return loadUserGroupDTO(code, true);
 	}
 
 	/**
@@ -333,11 +328,20 @@ public class UserGroupController {
 		}
 	}
 
-	private UserGroup loadUserGroup(String code) throws OHServiceException {
-		List<UserGroup> group = userManager.getUserGroup().stream().filter(g -> g.getCode().equals(code)).toList();
-		if (group.isEmpty()) {
+	public UserGroupDTO loadUserGroupDTO(String code, boolean withTrashed) throws OHServiceException {
+		UserGroup userGroup = userManager.findUserGroupByCode(code, withTrashed);
+		if (userGroup == null) {
 			throw new OHAPIException(new OHExceptionMessage("User group not found."), HttpStatus.NOT_FOUND);
 		}
-		return group.get(0);
+
+		List<GroupPermission> groupPermissions = groupPermissionManager.findUserGroupPermissions(userGroup.getCode());
+		List<PermissionDTO> permissions = groupPermissions.stream()
+			.map(groupPermission -> permissionMapper.map2DTO(groupPermission.getPermission()))
+			.toList();
+
+		UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
+		userGroupDTO.setPermissions(permissions);
+
+		return userGroupDTO;
 	}
 }

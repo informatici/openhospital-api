@@ -43,15 +43,22 @@ public class UserDTO {
 
 	@Schema(description = "The user's description", example = "Lab chief technician", maxLength = 128)
 	private String desc;
+	@Schema(description = "Whether the user has been soft deleted or not", example = "false")
+	private boolean deleted;
 
 	public UserDTO() {
 	}
 
 	public UserDTO(String userName, UserGroupDTO userGroupName, String passwd, String desc) {
+		this(userName, userGroupName, passwd, desc, false);
+	}
+
+	public UserDTO(String userName, UserGroupDTO userGroupName, String passwd, String desc, boolean deleted) {
 		this.userName = userName;
 		this.userGroupName = userGroupName;
 		this.passwd = passwd;
 		this.desc = desc;
+		this.deleted = deleted;
 	}
 
 	public String getUserName() {
@@ -77,5 +84,13 @@ public class UserDTO {
 	}
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+	
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }
