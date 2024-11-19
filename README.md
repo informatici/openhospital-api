@@ -112,7 +112,7 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
  ### note: if the DB is on the host, use 'host.docker.internal' as DBSERVER
  rsc/log4j2-spring.properties
  
- ### as required in [Admin Doc](https://github.com/informatici/openhospital-doc/blob/develop/doc_admin/AdminManual.adoc)
+ ### as required in [Admin Doc](https://github.com/informatici/openhospital-doc/blob/develop/doc_admin/AdminManual.adoc#settings-properties)
  rsc/settings.properties
  ```
  
