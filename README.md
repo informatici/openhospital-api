@@ -58,7 +58,7 @@ For the moment, to build this project you should
     - URL base: http://localhost:8080
     - URL login: http://localhost:8080/auth/login
     - URL patients: http://localhost:8080/patients
-    - URL swagger: http://localhost:8080/swagger-ui.html
+    - URL swagger: http://localhost:8080/swagger-ui/index.html
 
 You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index.html
 
@@ -104,14 +104,14 @@ Make sure you have docker with docker-compose installed, then run the following 
 - (optional - demo data after set the database container, English only) run `docker compose run --rm oh-database-init`
 - run `docker compose up backend`
 
-When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
+When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/index.html
 
 You can change the deployment branch using the .env file.
 
 NOTE: 
 
 - API should be already available from LAN at http://your-server-ip:[API_PORT]
-- Swagger will be available at http://[API_HOST]:[API_PORT]
+- Swagger will be available at http://[API_HOST]:[API_PORT]/swagger-ui/index.html
 
 ## How to generate openapi specs
 
