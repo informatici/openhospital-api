@@ -8286,6 +8286,11 @@ components:
           description: The out-quantity
           format: float
           example: 89
+        lock:
+          type: integer
+          description: Lock
+          format: int32
+          example: 0
     MedicalWardIdDTO:
       required:
         - medical
