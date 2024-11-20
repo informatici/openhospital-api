@@ -120,7 +120,7 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
  
  ```
  ### OH-core must have been built and available in .m2 (Maven) repo
- ./mvnw clean install -P war
+ ./mvnw clean install -DskipTests=true -P war
  ```
  
  3. (Optional) rename war to the desired `<appname>.war`:
