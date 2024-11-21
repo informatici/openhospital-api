@@ -9,6 +9,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
   * [How to build [WIP]](#how-to-build-wip)
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
+  * [How to build a war file](#how-to-build-a-war-file)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
   * [How to generate openapi specs](#how-to-generate-openapi-specs)
   * [Cleaning](#cleaning)
@@ -41,7 +42,7 @@ For the moment, to build this project you should
         rsc/database.properties
         rsc/log4j2-spring.properties
         rsc/...
- 
+        
  4. set target/rsc/database.properties
  
         DB can be created with `docker-compose up` from `openhospital-core` or using a dedicated MySQL server
@@ -93,6 +94,40 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
 ### Using Postman
 
  1. import postman_collection.json in your Postman installation
+ 
+## How to build a war file
+
+ 1. Prepare settings from each `rsc/*.dist` file 
+
+ ```
+ ### Note: 
+ ### server.address, server.port, server.servlet.context-path and server.tomcat.accesslog.* will be ignored
+ ### jwt.token.secret <- set a SHA-256 jwt token
+ ### api.host <- set to openhospital-api-0.1.0 (<artifactId>-<version>) or any <appname> that will match <appname>.war
+ rsc/application.properties
+ 
+ ### note: if the DB is on the host, use 'host.docker.internal' as hostname
+ rsc/database.properties
+ 
+ ### note: if the DB is on the host, use 'host.docker.internal' as DBSERVER
+ rsc/log4j2-spring.properties
+ 
+ ### as required in [Admin Doc](https://github.com/informatici/openhospital-doc/blob/develop/doc_admin/AdminManual.adoc#settings-properties)
+ rsc/settings.properties
+ ```
+ 
+ 2. Build war file
+ 
+ ```
+ ### OH-core must have been built and available in .m2 (Maven) repo
+ ./mvnw clean install -DskipTests=true -P war
+ ```
+ 
+ 3. (Optional) rename war to the desired `<appname>.war`:
+ 
+ ```
+ mv /target/openhospital-api-0.1.0.war <appname>.war
+ ```
  
 ## How to deploy backend in Docker environment
 

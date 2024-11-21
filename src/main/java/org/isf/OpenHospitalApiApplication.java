@@ -27,7 +27,9 @@ import org.isf.generaldata.GeneralData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.ApplicationPidFileWriter;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +37,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 @ImportResource({ "classpath*:/applicationContext.xml" })
 @SpringBootApplication
-public class OpenHospitalApiApplication {
+public class OpenHospitalApiApplication extends SpringBootServletInitializer {
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -50,6 +52,11 @@ public class OpenHospitalApiApplication {
 	public void setUp() {
 		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 		GeneralData.getGeneralData(); // initialize core settings
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(OpenHospitalApiApplication.class);
 	}
 
 }

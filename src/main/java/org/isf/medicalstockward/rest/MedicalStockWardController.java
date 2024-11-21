@@ -93,7 +93,7 @@ public class MedicalStockWardController {
 	 * @throws OHServiceException When failed to get ward medicals
 	 */
 	@GetMapping(value = "/medicalstockward/{ward_code}")
-	public List<MedicalWardDTO> getMedicalsWard(@PathVariable("ward_code") char wardId) throws OHServiceException {
+	public List<MedicalWardDTO> getMedicalsWard(@PathVariable("ward_code") String wardId) throws OHServiceException {
 		// FIXME: provide provision for boolean ,false?
 		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId, true);
 
