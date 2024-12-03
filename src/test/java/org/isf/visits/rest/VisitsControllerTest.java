@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class VisitsControllerTest {
+class VisitsControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VisitsControllerTest.class);
 
@@ -70,7 +70,7 @@ public class VisitsControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VisitsController(visitManagerMock, visitMapper))
@@ -89,7 +89,7 @@ public class VisitsControllerTest {
 	}
 
 	@Test
-	public void testGetVisit_200() throws Exception {
+	void testGetVisit_200() throws Exception {
 		String request = "/visits/patient/{patID}";
 
 		int patID = 0;
@@ -112,7 +112,7 @@ public class VisitsControllerTest {
 	}
 
 	@Test
-	public void testNewVisit_201() throws Exception {
+	void testNewVisit_201() throws Exception {
 		String request = "/visits";
 		int id = 1;
 		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(id));
@@ -134,7 +134,7 @@ public class VisitsControllerTest {
 	}
 
 	@Test
-	public void testNewVisits_201() throws Exception {
+	void testNewVisits_201() throws Exception {
 		String request = "/visits/insertList";
 
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
@@ -159,7 +159,7 @@ public class VisitsControllerTest {
 	}
 
 	@Test
-	public void testDeleteVisitsRelatedToPatient_200() throws Exception {
+	void testDeleteVisitsRelatedToPatient_200() throws Exception {
 		String request = "/visits/delete/{patId}";
 
 		int id = 1;

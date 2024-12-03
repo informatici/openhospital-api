@@ -57,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DeliveryResultTypeControllerTest {
+class DeliveryResultTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryResultTypeControllerTest.class);
 
@@ -71,7 +71,7 @@ public class DeliveryResultTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new DeliveryResultTypeController(deliveryResultTypeBrowserManagerMock, deliveryResultTypeMapper))
@@ -89,7 +89,7 @@ public class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	public void testNewDeliveryResultType_201() throws Exception {
+	void testNewDeliveryResultType_201() throws Exception {
 		String request = "/deliveryresulttypes";
 		int code = 123;
 		DeliveryResultType deliveryResultType = DeliveryResultTypeHelper.setup(code);
@@ -118,7 +118,7 @@ public class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateDeliveryResultTypet_200() throws Exception {
+	void testUpdateDeliveryResultTypet_200() throws Exception {
 		String request = "/deliveryresulttypes";
 		int code = 456;
 
@@ -145,7 +145,7 @@ public class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	public void testGetDeliveryResultTypes_200() throws Exception {
+	void testGetDeliveryResultTypes_200() throws Exception {
 		String request = "/deliveryresulttypes";
 
 		List<DeliveryResultType> results = DeliveryResultTypeHelper.setupDeliveryResultTypeList(3);
@@ -167,7 +167,7 @@ public class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteDeliveryResultType() throws Exception {
+	void testDeleteDeliveryResultType() throws Exception {
 		String request = "/deliveryresulttypes/{code}";
 
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(DeliveryResultTypeHelper.setup(0));

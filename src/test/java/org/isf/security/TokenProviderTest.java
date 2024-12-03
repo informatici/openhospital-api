@@ -65,7 +65,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
-public class TokenProviderTest {
+class TokenProviderTest {
 
 	@Autowired
 	private TokenProvider tokenProvider;
@@ -77,12 +77,12 @@ public class TokenProviderTest {
 	protected PermissionManager permissionManager;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		tokenProvider.init();
 	}
 
 	@Test
-	public void testGenerateJwtToken() throws NoSuchFieldException, IllegalAccessException {
+	void testGenerateJwtToken() throws NoSuchFieldException, IllegalAccessException {
 		Authentication authentication = createAuthentication();
 		Key key = extractKeyFromTokenProvider();
 
@@ -98,7 +98,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_Valid() {
+	void testValidateToken_Valid() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -130,7 +130,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_Expired() throws Exception {
+	void testValidateToken_Expired() throws Exception {
 		Key key = extractKeyFromTokenProvider();
 
 		// Create an expired token by setting the expiration date in the past
@@ -149,7 +149,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_Malformed() {
+	void testValidateToken_Malformed() {
 		String malformedToken = "malformed.token"; // valid token it must contain two dots "."
 
 		// Validate the token using tokenProvider
@@ -159,7 +159,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_InvalidSignature() {
+	void testValidateToken_InvalidSignature() {
 		String invalidSignatureToken = "eyJhbGciOiJIUzI1NiJ9.MISSING_PART.HMAC_SIGNATURE";
 
 		// Validate the token using tokenProvider
@@ -169,7 +169,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_Unsupported() throws Exception {
+	void testValidateToken_Unsupported() throws Exception {
 		KeyPair keyPair = generateRsaKeyPair("RSA");
 
 		// Create a JWT token signed with RS256 (RSA algorithm) instead of HS512
@@ -185,7 +185,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testValidateToken_EmptyClaims() throws Exception {
+	void testValidateToken_EmptyClaims() throws Exception {
 		Key key = extractKeyFromTokenProvider();
 
 		// Create a token with empty claims
@@ -202,7 +202,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGetAuthentication() {
+	void testGetAuthentication() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -228,7 +228,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGetAuthentication_EmptyAuthorities() {
+	void testGetAuthentication_EmptyAuthorities() {
 		// Create an Authentication with empty authorities
 		List<GrantedAuthority> authorities = List.of();
 		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
@@ -243,13 +243,13 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testSetJwtParser() {
+	void testSetJwtParser() {
 		JwtParser mockJwtParser = mock(JwtParser.class);
 		tokenProvider.setJwtParser(mockJwtParser);
 	}
 
 	@Test
-	public void testGetUsernameFromToken() {
+	void testGetUsernameFromToken() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -260,7 +260,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGetAllClaimsFromToken() {
+	void testGetAllClaimsFromToken() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -272,7 +272,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGetExpirationDateFromToken() {
+	void testGetExpirationDateFromToken() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -284,7 +284,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGetClaimFromToken() {
+	void testGetClaimFromToken() {
 		Authentication authentication = createAuthentication();
 
 		// Generate token
@@ -298,7 +298,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testIsTokenExpired() throws Exception {
+	void testIsTokenExpired() throws Exception {
 		Authentication authentication = createAuthentication();
 		Key key = extractKeyFromTokenProvider();
 
@@ -324,7 +324,7 @@ public class TokenProviderTest {
 	}
 
 	@Test
-	public void testGenerateJwtToken_WithRememberMe() {
+	void testGenerateJwtToken_WithRememberMe() {
 		Authentication authentication = createAuthentication();
 		boolean rememberMe = true;
 

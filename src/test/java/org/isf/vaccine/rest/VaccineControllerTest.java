@@ -70,7 +70,7 @@ public class VaccineControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineController(vaccineBrowserManagerMock, vaccineMapper))
@@ -88,7 +88,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccines_200() throws Exception {
+	void testGetVaccines_200() throws Exception {
 		String request = "/vaccines";
 
 		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
@@ -110,7 +110,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testGetVaccinesByVaccineTypeCode_200() throws Exception {
+	void testGetVaccinesByVaccineTypeCode_200() throws Exception {
 		String request = "/vaccines/type-code/{vaccineTypeCode}";
 
 		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
@@ -131,7 +131,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testNewVaccine_201() throws Exception {
+	void testNewVaccine_201() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -154,7 +154,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testUpdateVaccine_200() throws Exception {
+	void testUpdateVaccine_200() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -177,7 +177,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testDeleteVaccine_200() throws Exception {
+	void testDeleteVaccine_200() throws Exception {
 		String request = "/vaccines/{code}";
 		String basecode = "0";
 
@@ -201,7 +201,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	public void testCheckVaccineCode_200() throws Exception {
+	void testCheckVaccineCode_200() throws Exception {
 		String request = "/vaccines/check/{code}";
 
 		String code = "AA";

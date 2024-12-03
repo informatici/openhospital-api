@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DiseaseControllerTest {
+class DiseaseControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseControllerTest.class);
 
@@ -70,7 +70,7 @@ public class DiseaseControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new DiseaseController(diseaseBrowserManagerMock, diseaseMapper))
@@ -88,7 +88,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesOpd_200() throws Exception {
+	void testGetDiseasesOpd_200() throws Exception {
 		String request = "/diseases/opd";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -106,7 +106,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesOpdByCode_200() throws Exception {
+	void testGetDiseasesOpdByCode_200() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -127,7 +127,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdOut_200() throws Exception {
+	void testGetDiseasesIpdOut_200() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -146,7 +146,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdOutByCode_200() throws Exception {
+	void testGetDiseasesIpdOutByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -167,7 +167,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdIn_200() throws Exception {
+	void testGetDiseasesIpdIn_200() throws Exception {
 
 		String request = "/diseases/ipd/in";
 
@@ -187,7 +187,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesIpdInByCode_200() throws Exception {
+	void testGetDiseasesIpdInByCode_200() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -208,7 +208,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseases_200() throws Exception {
+	void testGetDiseases_200() throws Exception {
 		String request = "/diseases/both";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -227,7 +227,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseasesString_200() throws Exception {
+	void testGetDiseasesString_200() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -249,7 +249,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetAllDiseases_200() throws Exception {
+	void testGetAllDiseases_200() throws Exception {
 		String request = "/diseases/all";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -268,7 +268,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testGetDiseaseByCode() throws Exception {
+	void testGetDiseaseByCode() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -289,7 +289,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testNewDisease_200() throws Exception {
+	void testNewDisease_200() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -318,7 +318,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testUpdateDisease_201() throws Exception {
+	void testUpdateDisease_201() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -344,7 +344,7 @@ public class DiseaseControllerTest {
 	}
 
 	@Test
-	public void testDeleteDisease() throws Exception {
+	void testDeleteDisease() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";

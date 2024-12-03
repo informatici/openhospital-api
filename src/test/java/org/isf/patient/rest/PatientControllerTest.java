@@ -81,7 +81,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 /**
  * @author ecastaneda1
  */
-public class PatientControllerTest {
+class PatientControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PatientControllerTest.class);
 
@@ -101,7 +101,7 @@ public class PatientControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper,
@@ -126,7 +126,7 @@ public class PatientControllerTest {
 	 * @throws Exception When error occurs
 	 */
 	@Test
-	public void when_post_patients_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
+	void when_post_patients_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
 		String request = "/patients";
 
 		MvcResult result = this.mockMvc
@@ -150,7 +150,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
+	void when_post_patients_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
 		String request = "/patients";
 		String empty_body = "";
 
@@ -178,7 +178,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
@@ -208,7 +208,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
+	void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -238,7 +238,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
+	void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -265,7 +265,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
+	void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 12345;
@@ -305,7 +305,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_invalid_body_and_existent_code_then_HttpMessageNotReadableException_BadRequest() throws Exception {
+	void when_put_update_patient_with_invalid_body_and_existent_code_then_HttpMessageNotReadableException_BadRequest() throws Exception {
 		Integer code = 12345;
 		String request = "/patients/{code}";
 
@@ -331,7 +331,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
+	void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 123;
@@ -361,7 +361,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
+	void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
 		String request = "/patients";
 
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
@@ -393,7 +393,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -423,7 +423,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -456,7 +456,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
 		Integer code = 1000;
 		String request = "/patients/search";
 
@@ -478,7 +478,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String request = "/patients/search";
 
 		this.mockMvc
@@ -496,7 +496,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String name = null;
 		String request = "/patients/search";
 
@@ -517,7 +517,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
+	void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -540,7 +540,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
+	void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
 		Integer code = 111;
 		String request = "/patients/{code}";
 
@@ -560,7 +560,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
+	void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();

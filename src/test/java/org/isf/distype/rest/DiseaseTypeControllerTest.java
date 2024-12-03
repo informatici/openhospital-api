@@ -57,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DiseaseTypeControllerTest {
+class DiseaseTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
 
@@ -71,7 +71,7 @@ public class DiseaseTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new DiseaseTypeController(diseaseTypeBrowserManager, diseaseTypeMapper))
@@ -89,7 +89,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllDiseaseTypes_200() throws Exception {
+	void testGetAllDiseaseTypes_200() throws Exception {
 		String request = "/diseasetypes";
 
 		List<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
@@ -111,7 +111,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testNewDiseaseType_201() throws Exception {
+	void testNewDiseaseType_201() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -137,7 +137,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateDiseaseType_200() throws Exception {
+	void testUpdateDiseaseType_200() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -164,7 +164,7 @@ public class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteDiseaseType_200() throws Exception {
+	void testDeleteDiseaseType_200() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));

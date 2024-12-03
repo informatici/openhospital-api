@@ -57,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DischargeTypeControllerTest {
+class DischargeTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DischargeTypeControllerTest.class);
 
@@ -71,7 +71,7 @@ public class DischargeTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new DischargeTypeController(discTypeManagerMock, dischargeTypeMapper))
@@ -89,7 +89,7 @@ public class DischargeTypeControllerTest {
 	}
 
 	@Test
-	public void testNewDischargeType_201() throws Exception {
+	void testNewDischargeType_201() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
 		DischargeType dischargeType = DischargeTypeHelper.setup(code);
@@ -115,7 +115,7 @@ public class DischargeTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateDischargeType_200() throws Exception {
+	void testUpdateDischargeType_200() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
 		DischargeType dischargeType = DischargeTypeHelper.setup(code);
@@ -141,7 +141,7 @@ public class DischargeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetDischargeTypes_200() throws Exception {
+	void testGetDischargeTypes_200() throws Exception {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
@@ -164,7 +164,7 @@ public class DischargeTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteDischargeType_200() throws Exception {
+	void testDeleteDischargeType_200() throws Exception {
 		String request = "/dischargetypes/{code}";
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));

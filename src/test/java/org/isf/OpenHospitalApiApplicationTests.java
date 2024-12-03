@@ -27,10 +27,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class OpenHospitalApiApplicationTests {
+class OpenHospitalApiApplicationTests {
 
 //	@Test
-//	public void contextLoads() {
+//	void contextLoads() {
 //		/*
 //		 * Context loading is working correctly. However, since this test does not provide any additional value and may actually slow down the tests execution,
 //		 * it's recommended to remove it. The loading context is implicitly tested by other tests that run as SpringBootTest.

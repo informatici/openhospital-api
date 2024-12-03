@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class OpdControllerTest {
+class OpdControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpdControllerTest.class);
 
@@ -81,7 +81,7 @@ public class OpdControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock,
@@ -100,7 +100,7 @@ public class OpdControllerTest {
 	}
 
 	@Test
-	public void testNewOpd_201() throws Exception {
+	void testNewOpd_201() throws Exception {
 		String request = "/opds";
 		Patient patient = PatientHelper.setup();
 		Integer patientCode = 1;

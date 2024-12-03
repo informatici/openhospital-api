@@ -83,7 +83,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class AdmissionControllerTest {
+class AdmissionControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionControllerTest.class);
 
@@ -122,13 +122,13 @@ public class AdmissionControllerTest {
 
 	private AutoCloseable closeable;
 
-	public AdmissionControllerTest() {
+	AdmissionControllerTest() {
 		admittedMapper = new AdmittedPatientMapper();
 		admissionMapper = new AdmissionMapper();
 	}
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new AdmissionController(admissionManagerMock, patientManagerMock, wardManagerMock,
@@ -153,7 +153,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetCurrentAdmission_200() throws Exception {
+	void testGetCurrentAdmission_200() throws Exception {
 		String request = "/admissions/current";
 		Integer patientCode = 1;
 
@@ -179,7 +179,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetAllAdmittedPatients_200() throws Exception {
+	void testGetAllAdmittedPatients_200() throws Exception {
 		String request = "/admissions/admittedPatients";
 		List<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
@@ -199,7 +199,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetAdmittedPatientsSearch_200() throws Exception {
+	void testGetAdmittedPatientsSearch_200() throws Exception {
 		String request = "/admissions/admittedPatients?searchterms={searchTerms}";
 		List<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
@@ -219,7 +219,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetAdmittedPatients_200() throws Exception {
+	void testGetAdmittedPatients_200() throws Exception {
 		String request = "/admissions/admittedPatients?searchterms={searchTerms}&admissionRange={admissionRange}&dischargeRange={dischargeRange}";
 		List<AdmittedPatient> admittedPatients = PatientHelper.setupAdmittedPatientList(2);
 
@@ -240,7 +240,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetPatientAdmissions_200() throws Exception {
+	void testGetPatientAdmissions_200() throws Exception {
 		int patientCode = 1;
 		String request = "/admissions/patient/{patientCode}" ;
 
@@ -265,7 +265,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetNextYProgressiveId_200() throws Exception {
+	void testGetNextYProgressiveId_200() throws Exception {
 		String request = "/admissions/getNextProgressiveIdInYear";
 		String wardCode = "1";
 
@@ -291,7 +291,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testGetUsedWardBed_200() throws Exception {
+	void testGetUsedWardBed_200() throws Exception {
 		String request = "/admissions/getBedsOccupationInWard?wardid={wardCode}";
 		String wardCode = "1";
 
@@ -315,7 +315,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testDeleteAdmission_200() throws Exception {
+	void testDeleteAdmission_200() throws Exception {
 		int id = 123;
 		String request = "/admissions/{id}";
 
@@ -334,7 +334,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testDischargeAdmission_200() throws Exception {
+	void testDischargeAdmission_200() throws Exception {
 
 		Integer patientCode = 1;
 		String request = "/admissions/discharge";
@@ -373,7 +373,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testNewAdmissions_201() throws Exception {
+	void testNewAdmissions_201() throws Exception {
 		String request = "/admissions";
 
 		Integer id = 1;
@@ -424,7 +424,7 @@ public class AdmissionControllerTest {
 	}
 
 	@Test
-	public void testUpdateAdmissions() throws Exception {
+	void testUpdateAdmissions() throws Exception {
 		String request = "/admissions";
 
 		AdmissionDTO body = AdmissionHelper.setup(admissionMapper);

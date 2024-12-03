@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class WardControllerTest {
+class WardControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WardControllerTest.class);
 
@@ -70,7 +70,7 @@ public class WardControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new WardController(wardBrowserManagerMock, wardMapper))
@@ -88,7 +88,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetWards_200() throws Exception {
+	void testGetWards_200() throws Exception {
 		String request = "/wards";
 
 		List<Ward> wardList = WardHelper.setupWardList(4);
@@ -110,7 +110,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetWardsNoMaternity_200() throws Exception {
+	void testGetWardsNoMaternity_200() throws Exception {
 		String request = "/wardsNoMaternity";
 
 		List<Ward> wardList = WardHelper.setupWardList(4);
@@ -133,7 +133,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testGetCurrentOccupation() throws Exception {
+	void testGetCurrentOccupation() throws Exception {
 		String request = "/wards/occupation/{code}";
 
 		int code = 4;
@@ -160,7 +160,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testNewWard_200() throws Exception {
+	void testNewWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
 		Ward ward = WardHelper.setup(code);
@@ -183,7 +183,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testUpdateWard_200() throws Exception {
+	void testUpdateWard_200() throws Exception {
 		String request = "/wards";
 		int code = 1;
 		Ward ward = WardHelper.setup(code);
@@ -206,7 +206,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testDeleteWard() throws Exception {
+	void testDeleteWard() throws Exception {
 		String request = "/wards/{code}";
 		int basecode = 1;
 
@@ -230,7 +230,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testCheckWardCode() throws Exception {
+	void testCheckWardCode() throws Exception {
 		String request = "/wards/check/{code}";
 
 		int basecode = 1;
@@ -254,7 +254,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testCheckWardMaternityCode_true_200() throws Exception {
+	void testCheckWardMaternityCode_true_200() throws Exception {
 		String request = "/wards/check/maternity/{createIfNotExist}";
 
 		Boolean createIfNotExist = true;
@@ -274,7 +274,7 @@ public class WardControllerTest {
 	}
 
 	@Test
-	public void testCheckWardMaternityCode_false_200() throws Exception {
+	void testCheckWardMaternityCode_false_200() throws Exception {
 		String request = "/wards/check/maternity/{createIfNotExist}";
 
 		Boolean createIfNotExist = false;

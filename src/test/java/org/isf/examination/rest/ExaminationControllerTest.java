@@ -61,7 +61,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
-public class ExaminationControllerTest {
+class ExaminationControllerTest {
 	@Autowired
 	private MockMvc mvc;
 

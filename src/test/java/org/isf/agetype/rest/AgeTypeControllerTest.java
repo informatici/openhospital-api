@@ -58,7 +58,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AgeTypeControllerTest {
+class AgeTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeControllerTest.class);
 
@@ -74,7 +74,7 @@ public class AgeTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new AgeTypeController(ageTypeManagerMock, ageTypeMapper))
@@ -92,7 +92,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllAgeTypes_200() throws Exception {
+	void testGetAllAgeTypes_200() throws Exception {
 		String request = "/agetypes";
 
 		List<AgeType> results = AgeTypeHelper.genArrayList(5);
@@ -113,7 +113,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateAgeType_200() throws Exception {
+	void testUpdateAgeType_200() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(5);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -136,7 +136,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAgeTypeCodeByAge_200() throws Exception {
+	void testGetAgeTypeCodeByAge_200() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 10;
@@ -158,7 +158,7 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAgeTypeByIndex_200() throws Exception {
+	void testGetAgeTypeByIndex_200() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);

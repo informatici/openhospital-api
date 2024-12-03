@@ -67,7 +67,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class LaboratoryControllerTest {
+class LaboratoryControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LaboratoryControllerTest.class);
 
@@ -89,7 +89,7 @@ public class LaboratoryControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper))
@@ -107,7 +107,7 @@ public class LaboratoryControllerTest {
 	}
 
 	@Test
-	public void testNewLaboratory_201() throws Exception {
+	void testNewLaboratory_201() throws Exception {
 		String request = "/laboratories";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -142,7 +142,7 @@ public class LaboratoryControllerTest {
 	}
 
 	@Test
-	public void testUpdateLaboratory_200() throws Exception {
+	void testUpdateLaboratory_200() throws Exception {
 		String request = "/laboratories/{code}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -180,7 +180,7 @@ public class LaboratoryControllerTest {
 	}
 
 	@Test
-	public void testGetLaboratory_200() throws Exception {
+	void testGetLaboratory_200() throws Exception {
 		String request = "/laboratories/byPatientId/{patId}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();

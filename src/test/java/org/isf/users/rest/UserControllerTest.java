@@ -67,9 +67,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
-public class UserControllerTest {
+class UserControllerTest {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(UserControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;
@@ -378,7 +378,7 @@ public class UserControllerTest {
 	class UpdateProfileTests {
 
 		@BeforeEach
-		public void setup() throws OHServiceException {
+		void setup() throws OHServiceException {
 			var permission = new Permission();
 			permission.setName("users.read");
 			permission.setDescription("Allow to read users");

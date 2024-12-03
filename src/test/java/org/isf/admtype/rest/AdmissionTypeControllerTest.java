@@ -55,7 +55,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class AdmissionTypeControllerTest {
+class AdmissionTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
 
@@ -69,7 +69,7 @@ public class AdmissionTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new AdmissionTypeController(admissionTypeManagerMock, admissionTypemapper))
@@ -87,7 +87,7 @@ public class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	public void testNewAdmissionType_201() throws Exception {
+	void testNewAdmissionType_201() throws Exception {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
@@ -113,7 +113,7 @@ public class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateAdmissionType_200() throws Exception {
+	void testUpdateAdmissionType_200() throws Exception {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
@@ -138,7 +138,7 @@ public class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAdmissionTypes_200() throws Exception {
+	void testGetAdmissionTypes_200() throws Exception {
 		String request = "/admissiontypes";
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
@@ -158,7 +158,7 @@ public class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteAdmissionType_200() throws Exception {
+	void testDeleteAdmissionType_200() throws Exception {
 		String request = "/admissiontypes/{code}";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		String code = body.getCode();

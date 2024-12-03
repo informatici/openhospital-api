@@ -56,7 +56,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class VaccineTypeControllerTest {
+class VaccineTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VaccineTypeControllerTest.class);
 
@@ -70,7 +70,7 @@ public class VaccineTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 				.standaloneSetup(new VaccineTypeController(vaccineTypeBrowserManagerMock, vaccineTypeMapper))
@@ -88,7 +88,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testGetVaccineType_200() throws Exception {
+	void testGetVaccineType_200() throws Exception {
 		String request = "/vaccinetypes";
 
 		List<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
@@ -110,7 +110,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testNewVaccineType_200() throws Exception {
+	void testNewVaccineType_200() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -133,7 +133,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateVaccineType_200() throws Exception {
+	void testUpdateVaccineType_200() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -156,7 +156,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteVaccineType_200() throws Exception {
+	void testDeleteVaccineType_200() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String basecode = "0";
 
@@ -180,7 +180,7 @@ public class VaccineTypeControllerTest {
 	}
 
 	@Test
-	public void testCheckVaccineTypeCode_200() throws Exception {
+	void testCheckVaccineTypeCode_200() throws Exception {
 		String request = "/vaccinetypes/check/{code}";
 
 		String code = "AA";

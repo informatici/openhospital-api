@@ -57,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DeliveryTypeControllerTest {
+class DeliveryTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
 
@@ -71,7 +71,7 @@ public class DeliveryTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new DeliveryTypeController(deliveryTypeBrowserManagerMock, deliveryTypeMapper))
@@ -89,7 +89,7 @@ public class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	public void testNewDeliveryType_201() throws Exception {
+	void testNewDeliveryType_201() throws Exception {
 		String request = "/deliverytypes";
 		int code = 123;
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
@@ -118,7 +118,7 @@ public class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	public void testUpdateDeliveryTypet_200() throws Exception {
+	void testUpdateDeliveryTypet_200() throws Exception {
 		String request = "/deliverytypes/";
 		int code = 456;
 
@@ -145,7 +145,7 @@ public class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	public void testGetDeliveryTypes_200() throws Exception {
+	void testGetDeliveryTypes_200() throws Exception {
 		String request = "/deliverytypes";
 
 		List<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
@@ -167,7 +167,7 @@ public class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	public void testDeleteDeliveryType_200() throws Exception {
+	void testDeleteDeliveryType_200() throws Exception {
 		String request = "/deliverytypes/{code}";
 
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));

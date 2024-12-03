@@ -43,7 +43,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
 
-public class JWTFilterTest {
+class JWTFilterTest {
 
 	@Mock
 	private TokenProvider tokenProvider;
@@ -58,14 +58,14 @@ public class JWTFilterTest {
 	private MockHttpServletResponse response;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 	}
 
 	@Test
-	public void testDoFilter_ValidToken() throws ServletException, IOException {
+	void testDoFilter_ValidToken() throws ServletException, IOException {
 		String validToken = "valid.token";
 		Authentication mockAuthentication = mock(Authentication.class);
 
@@ -81,7 +81,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_ExpiredToken() throws ServletException, IOException {
+	void testDoFilter_ExpiredToken() throws ServletException, IOException {
 		String expiredToken = "expired.token";
 		when(tokenProvider.validateToken(expiredToken)).thenReturn(TokenValidationResult.EXPIRED);
 
@@ -93,7 +93,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_MalformedToken() throws ServletException, IOException {
+	void testDoFilter_MalformedToken() throws ServletException, IOException {
 		String malformedToken = "malformed.token";
 		when(tokenProvider.validateToken(malformedToken)).thenReturn(TokenValidationResult.MALFORMED);
 
@@ -105,13 +105,13 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_NoToken() throws ServletException, IOException {
+	void testDoFilter_NoToken() throws ServletException, IOException {
 		jwtFilter.doFilter(request, response, filterChain);
 		verify(filterChain).doFilter(request, response); // Ensure the filter chain continues even without a token
 	}
 
 	@Test
-	public void testDoFilter_InvalidSignatureToken() throws ServletException, IOException {
+	void testDoFilter_InvalidSignatureToken() throws ServletException, IOException {
 		String invalidSignatureToken = "eyJhbGciOiJIUzI1NiJ9.MISSING_PART.HMAC_SIGNATURE";
 		when(tokenProvider.validateToken(invalidSignatureToken)).thenReturn(TokenValidationResult.INVALID_SIGNATURE);
 
@@ -123,7 +123,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_UnsupportedToken() throws ServletException, IOException {
+	void testDoFilter_UnsupportedToken() throws ServletException, IOException {
 		String unsupportedToken = "unsupported.token";
 		when(tokenProvider.validateToken(unsupportedToken)).thenReturn(TokenValidationResult.UNSUPPORTED);
 
@@ -135,7 +135,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_EmptyClaimsToken() throws ServletException, IOException {
+	void testDoFilter_EmptyClaimsToken() throws ServletException, IOException {
 		String emptyClaimsToken = "empty.claims.token";
 		when(tokenProvider.validateToken(emptyClaimsToken)).thenReturn(TokenValidationResult.EMPTY_CLAIMS);
 
@@ -147,7 +147,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_UnexpectedResult() throws ServletException, IOException {
+	void testDoFilter_UnexpectedResult() throws ServletException, IOException {
 		String unexpectedToken = "unexpected.token";
 		when(tokenProvider.validateToken(unexpectedToken)).thenAnswer(invocation -> {
 			// Return an unexpected result
@@ -162,7 +162,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_NullValidationResult() throws ServletException, IOException {
+	void testDoFilter_NullValidationResult() throws ServletException, IOException {
 		String tokenWithNullValidationResult = "null.validation.token";
 		when(tokenProvider.validateToken(tokenWithNullValidationResult)).thenReturn(null);
 
@@ -174,7 +174,7 @@ public class JWTFilterTest {
 	}
 
 	@Test
-	public void testDoFilter_ValidButExpiredToken() throws ServletException, IOException {
+	void testDoFilter_ValidButExpiredToken() throws ServletException, IOException {
 		String validTokenButExpired = "valid.token.but.expired";
 		Authentication mockAuthentication = mock(Authentication.class);
 

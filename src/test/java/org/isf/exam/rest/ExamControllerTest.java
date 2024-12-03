@@ -58,9 +58,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
-public class ExamControllerTest {
+class ExamControllerTest {
 
-	private final Logger LOGGER = LoggerFactory.getLogger(ExamControllerTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExamControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;

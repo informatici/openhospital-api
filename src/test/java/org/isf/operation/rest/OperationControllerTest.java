@@ -63,7 +63,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class OperationControllerTest {
+class OperationControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OperationControllerTest.class);
 
@@ -92,7 +92,7 @@ public class OperationControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new OperationController(
@@ -118,7 +118,7 @@ public class OperationControllerTest {
 	}
 
 	@Test
-	public void testNewOperation_201() throws Exception {
+	void testNewOperation_201() throws Exception {
 		String request = "/operations";
 
 		Operation operation = OperationHelper.setup();
@@ -148,7 +148,7 @@ public class OperationControllerTest {
 	}
 
 	@Test
-	public void testUpdateOperation_200() throws Exception {
+	void testUpdateOperation_200() throws Exception {
 		String request = "/operations/{code}";
 		String code = "25";
 
@@ -175,7 +175,7 @@ public class OperationControllerTest {
 	}
 
 	@Test
-	public void testGetOperation_200() throws Exception {
+	void testGetOperation_200() throws Exception {
 		String request = "/operations";
 
 		List<Operation> results = OperationHelper.setupOperationList(3);
@@ -197,7 +197,7 @@ public class OperationControllerTest {
 	}
 
 	@Test
-	public void testDeleteOperation_200() throws Exception {
+	void testDeleteOperation_200() throws Exception {
 		String request = "/operations/{code}";
 		Operation deleteOperation = OperationHelper.setup();
 		OperationDTO body = operationMapper.map2DTO(deleteOperation);
