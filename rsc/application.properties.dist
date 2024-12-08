@@ -38,4 +38,5 @@ jwt.token.secret=JWT_TOKEN_SECRET
 
 # Hibernate properties
 # needed to start application even without DB connection
+spring.jpa.database-platform=org.hibernate.dialect.MariaDBDialect
 spring.jpa.hibernate.ddl-auto=none
