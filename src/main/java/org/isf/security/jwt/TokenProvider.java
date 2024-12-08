@@ -79,7 +79,7 @@ public class TokenProvider implements Serializable {
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
-		LOGGER.info("Initializing JWT key with secret: {}", secret);
+		LOGGER.debug("Initializing JWT key with secret: {}", secret);
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
@@ -131,8 +131,8 @@ public class TokenProvider implements Serializable {
 
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 		final String authorities = authentication.getAuthorities().stream()
-						.map(GrantedAuthority::getAuthority)
-						.collect(Collectors.joining(","));
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.joining(","));
 
 		long now = System.currentTimeMillis();
 		Date validity;
@@ -143,21 +143,21 @@ public class TokenProvider implements Serializable {
 		}
 
 		return Jwts.builder()
-						.setSubject(authentication.getName())
-						.claim(AUTHORITIES_KEY, authorities)
-						.setIssuedAt(new Date())
-						.signWith(key, SignatureAlgorithm.HS512)
-						.setExpiration(validity)
-						.compact();
+			.setSubject(authentication.getName())
+			.claim(AUTHORITIES_KEY, authorities)
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(validity)
+			.compact();
 	}
 
 	public String generateRefreshToken(Authentication authentication) {
 		return Jwts.builder()
-						.setSubject(authentication.getName())
-						.setIssuedAt(new Date())
-						.signWith(key, SignatureAlgorithm.HS512)
-						.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
-						.compact();
+			.setSubject(authentication.getName())
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
+			.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
@@ -173,8 +173,8 @@ public class TokenProvider implements Serializable {
 		}
 
 		final Collection< ? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-						.map(SimpleGrantedAuthority::new)
-						.collect(Collectors.toList());
+			.map(SimpleGrantedAuthority::new)
+			.collect(Collectors.toList());
 
 		User principal = new User(claims.getSubject(), "", authorities);
 
