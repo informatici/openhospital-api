@@ -25,21 +25,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class RootController {
 
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Map<String, String>> root() {
+	@GetMapping(value = "/")
+	public Map<String, String> root() {
 		Map<String, String> response = new LinkedHashMap<>();
 		response.put("service", "Open Hospital API");
 		response.put("version", "0.1.0");
 		response.put("documentation", "/swagger-ui/index.html");
-		return ResponseEntity.ok(response);
+		response.put("healthcheck", "/healthcheck");
+		return response;
+	}
+
+	@GetMapping(value = "/healthcheck")
+	public Map<String, String> healthcheck() {
+		Map<String, String> response = new LinkedHashMap<>();
+		response.put("status", "UP");
+		return response;
 	}
 }
