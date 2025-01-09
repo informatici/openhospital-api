@@ -21,9 +21,11 @@
  */
 package org.isf.menu.rest;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,11 +35,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class RootController {
 
+	@Autowired
+	private VersionService versionReader;
+
 	@GetMapping(value = "/")
 	public Map<String, String> root() {
+
+		String version;
+		try {
+			version = versionReader.getVersion();
+		} catch (IOException e) {
+			version = "Unknown";
+		}
+
 		Map<String, String> response = new LinkedHashMap<>();
 		response.put("service", "Open Hospital API");
-		response.put("version", "0.1.0");
+		response.put("version", version);
 		response.put("documentation", "/swagger-ui/index.html");
 		response.put("healthcheck", "/healthcheck");
 		return response;
