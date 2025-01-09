@@ -19,7 +19,7 @@ spring.jpa.open-in-view=false
 cors.allowed.origins=http://API_HOST:API_PORT,http://UI_HOST:UI_PORT
 
 ### Swagger-UI (info)
-api.host=http://API_HOST:API_PORT
+api.host=API_HOST:API_PORT
 api.protocol=http
 springdoc.swagger-ui.tagsSorter=alpha
 springdoc.swagger-ui.doc-expansion=none
