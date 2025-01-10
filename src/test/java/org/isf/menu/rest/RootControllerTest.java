@@ -21,30 +21,45 @@
  */
 package org.isf.menu.rest;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.isf.OpenHospitalApiApplication;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
-@AutoConfigureMockMvc
 class RootControllerTest {
 
-	@Autowired
 	private MockMvc mockMvc;
+
+	@Mock
+	private VersionService versionService;
+
+	@InjectMocks
+	private RootController rootController;
+
+	@BeforeEach
+	public void setup() {
+		mockMvc = MockMvcBuilders.standaloneSetup(rootController).build();
+	}
 
 	@Test
 	void testRootEndpoint() throws Exception {
+		// Mock the VersionService to return a specific version
+		when(versionService.getVersion()).thenReturn("X.Y.Z");
+
 		mockMvc.perform(get("/"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.service").value("Open Hospital API"))
-			.andExpect(jsonPath("$.version").value("0.1.0"))
+			.andExpect(jsonPath("$.version").value("X.Y.Z"))
 			.andExpect(jsonPath("$.documentation").value("/swagger-ui/index.html"))
 			.andExpect(jsonPath("$.healthcheck").value("/healthcheck"));
 	}

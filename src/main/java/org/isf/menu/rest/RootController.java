@@ -36,14 +36,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class RootController {
 
 	@Autowired
-	private VersionService versionReader;
+	private VersionService versionService;
 
 	@GetMapping(value = "/")
 	public Map<String, String> root() {
 
 		String version;
 		try {
-			version = versionReader.getVersion();
+			version = versionService.getVersion();
 		} catch (IOException e) {
 			version = "Unknown";
 		}
