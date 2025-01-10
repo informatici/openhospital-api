@@ -88,6 +88,7 @@ public class TokenProvider implements Serializable {
 
 		// default 3 days (604,800,000 milliseconds)
 		this.tokenValidityInMillisecondsForRememberMe = env.getProperty("jwt.token.validityInMillisecondsForRememberMe", Long.class, 1000L * 60 * 60 * 24 * 3);
+		LOGGER.debug("Setting token validity - tokenValidityInMilliseconds: {}, tokenValidityInMillisecondsForRememberMe: {}", this.tokenValidityInMilliseconds, this.tokenValidityInMillisecondsForRememberMe);
 
 		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
 	}
