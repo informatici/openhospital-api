@@ -103,7 +103,7 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
  ### Note: 
  ### server.address, server.port, server.servlet.context-path and server.tomcat.accesslog.* will be ignored
  ### jwt.token.secret <- set a SHA-256 jwt token
- ### api.host <- set to openhospital-api-0.1.0 (<artifactId>-<version>) or any <appname> that will match <appname>.war
+ ### api.host <- set and add /openhospital-api-0.1.0 (<artifactId>-<version>) or any /<appname> that will match <appname>.war
  rsc/application.properties
  
  ### note: if the DB is on the host, use 'host.docker.internal' as hostname
