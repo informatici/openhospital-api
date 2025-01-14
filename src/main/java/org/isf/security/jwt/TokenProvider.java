@@ -83,11 +83,14 @@ public class TokenProvider implements Serializable {
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
-		// default 30 minutes (900,000 milliseconds)
-		this.tokenValidityInMilliseconds = env.getProperty("jwt.token.validityInMilliseconds", Long.class, 1000L * 60 * 30);
+		// default 30 minutes (1800 milliseconds)
+		Long tokenValidityInSeconds = env.getProperty("jwt.token.validityInSeconds", Long.class, 60L * 30);
+		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
 
-		// default 3 days (604,800,000 milliseconds)
-		this.tokenValidityInMillisecondsForRememberMe = env.getProperty("jwt.token.validityInMillisecondsForRememberMe", Long.class, 1000L * 60 * 60 * 24 * 3);
+		// default 3 days (259,200 seconds milliseconds)
+		Long validityInSecondsForRememberMe = env.getProperty("jwt.token.validityInSecondsForRememberMe", Long.class, 60L * 60 * 24 * 3);
+		this.tokenValidityInMillisecondsForRememberMe = validityInSecondsForRememberMe * 1000;
+
 		LOGGER.debug("Setting token validity - tokenValidityInMilliseconds: {}, tokenValidityInMillisecondsForRememberMe: {}", this.tokenValidityInMilliseconds, this.tokenValidityInMillisecondsForRememberMe);
 
 		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
