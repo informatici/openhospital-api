@@ -131,6 +131,68 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.8</version>
+                <executions>
+                    <!-- Prepare the JaCoCo agent to track coverage during tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Merge e2e & u-t execution data files after tests are run -->
+                    <execution>
+                        <id>merge-ut-e2e</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>jacoco.exec</include>
+                                        <include>keploy-e2e.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <!-- Output of merged data -->
+                            <destFile>${project.build.directory}/ut-e2e-merged.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <!-- Generate report based on the different execution data -->
+                    <!-- Generate unit test report-->
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco.exec</dataFile>
+                            <!-- Use merged data file -->
+                            <outputDirectory>${project.reporting.outputDirectory}/ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- Generate combined (e2e+ut) report test report-->
+                    <execution>
+                        <id>combined-ut-e2e</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/ut-e2e-merged.exec</dataFile>
+                            <!-- Use merged data file -->
+                            <outputDirectory>${project.reporting.outputDirectory}/e2e-ut-aggregate</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <release>${java.version}</release>
