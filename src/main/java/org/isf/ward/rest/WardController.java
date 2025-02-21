@@ -43,6 +43,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.fasterxml.jackson.databind.ObjectMapper; // For JSON parsing
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -72,8 +79,71 @@ public class WardController {
      */
     @GetMapping(value = "/wards")
     public List<WardDTO> getWards() throws OHServiceException {
-        LOGGER.info("Get wards");
+        LOGGER.info("Fetching wards from multiple Go microservices...");
 
+        // Use Java's built-in HttpClient
+        HttpClient httpClient = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper(); // To convert JSON response into WardDTO
+
+        List<String> endpoints = List.of(
+            "http://localhost:8081/data",
+            "http://localhost:8082/data",
+            "http://localhost:8083/data",
+            "http://localhost:8084/data"
+        );
+
+        for (String endpoint : endpoints) {
+            System.out.println("Fetching data from " + endpoint);
+            try {
+                // Create HTTP request
+                HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .GET()
+                    .build();
+
+                // Send request and receive response
+                HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                System.out.println("Received response from " + endpoint);
+                if (response.statusCode() == 200) {
+                    System.out.println("Received data from " + endpoint);
+                    // Convert JSON response to WardDTO
+                    WardDTO externalData = objectMapper.readValue(response.body(), WardDTO.class);
+                    System.out.println("Received Ward Data: Code=" + externalData.getCode() + ", Description=" + externalData.getDescription());
+                    // Log received data for debugging
+                    LOGGER.info("Received Ward Data: Code={}, Description={}", 
+                                externalData.getCode(), externalData.getDescription());
+
+                    // Convert external data to a WardDTO
+                    WardDTO wardDTO = new WardDTO();
+                    wardDTO.setCode(externalData.getCode() != null ? externalData.getCode() : "UNKNOWN");
+                    wardDTO.setDescription(externalData.getDescription() != null ? externalData.getDescription() : "No Description");
+                    wardDTO.setTelephone(externalData.getTelephone() != null ? externalData.getTelephone() : "N/A");
+                    wardDTO.setFax(externalData.getFax() != null ? externalData.getFax() : "N/A");
+                    wardDTO.setEmail(externalData.getEmail() != null ? externalData.getEmail() : "N/A");
+                    wardDTO.setBeds(externalData.getBeds() != null ? externalData.getBeds() : 0);
+                    wardDTO.setNurs(externalData.getNurs() != null ? externalData.getNurs() : 0);
+                    wardDTO.setDocs(externalData.getDocs() != null ? externalData.getDocs() : 0);
+                    wardDTO.setPharmacy(externalData.isPharmacy());
+                    wardDTO.setMale(externalData.isMale());
+                    wardDTO.setFemale(externalData.isFemale());
+                    wardDTO.setOpd(externalData.isOpd());
+                    wardDTO.setVisitDuration(externalData.getVisitDuration() != null ? externalData.getVisitDuration() : 0);
+                    wardDTO.setLock(externalData.getLock() != null ? externalData.getLock() : 0);
+
+                    // Create the Ward in the database
+                    Ward createdWard = wardManager.newWard(mapper.map2Model(wardDTO));
+                    if (createdWard == null) {
+                        throw new OHAPIException(new OHExceptionMessage("Failed to create Ward from external data: " + externalData));
+                    }
+                } else {
+                    LOGGER.warn("Failed to fetch Ward data from {} (Status Code: {})", endpoint, response.statusCode());
+                }
+            } catch (Exception e) {
+                LOGGER.error("Error fetching data from {}: {}", endpoint, e.getMessage());
+            }
+        }
+
+        // Return all stored wards
         return mapper.map2DTOList(wardManager.getWards());
     }
 
