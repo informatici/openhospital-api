@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.maven.plugin.version>4.6</license.maven.plugin.version>
         <springdoc.outputFileName>oh.yaml</springdoc.outputFileName>
+        <oh-core.dir>../openhospital-core</oh-core.dir>
     </properties>
 
     <dependencies>
@@ -183,6 +184,21 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+						<id>copy-report</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/rpt_base</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${oh-core.dir}/rpt_base</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
                 </executions>
             </plugin>
             <plugin>
