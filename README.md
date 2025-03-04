@@ -50,10 +50,10 @@ For the moment, to build this project you should
  5. start openhospital-api (in `target` folder)
  
         # Windows
-        java -cp "openhospital-api-0.1.0.jar;rsc/;static/" org.springframework.boot.loader.launch.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar;rsc/;rpt_base/;rpt_base/images;static/" org.springframework.boot.loader.launch.JarLauncher
 
         # Linux
-        java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.launch.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar:rsc/:rpt_base/:rpt_base/images:static/" org.springframework.boot.loader.launch.JarLauncher
         
  6. call services
     - URL base: http://localhost:8080

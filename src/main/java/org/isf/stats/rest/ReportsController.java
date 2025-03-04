@@ -41,6 +41,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -66,6 +67,11 @@ public class ReportsController {
 	@GetMapping("/reports/diseases-list")
 	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
+	}
+	
+	@GetMapping("/reports/patientexamination")
+	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("patId") int patId, @RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+	    return getReport(reportsManager.getPatientExaminationPdf(patId, examinationId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
