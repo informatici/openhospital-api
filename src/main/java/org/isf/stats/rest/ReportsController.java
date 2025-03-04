@@ -26,8 +26,6 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.apache.poi.util.IOUtils;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.stat.dto.JasperReportResultDto;
@@ -41,10 +39,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @Tag(name = "Reports")
@@ -69,8 +69,8 @@ public class ReportsController {
 	}
 	
 	@GetMapping("/reports/patientexamination")
-	public ResponseEntity<byte[]> printPatientExaminationPdf(HttpServletRequest request) throws OHServiceException, IOException {
-		return getReport(reportsManager.getPatientExaminationPdf(Integer.parseInt(request.getParameter("patId")), Integer.parseInt(request.getParameter("examinationId"))), request);
+	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("patId") int patId, @RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+	    return getReport(reportsManager.getPatientExaminationPdf(patId, examinationId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
