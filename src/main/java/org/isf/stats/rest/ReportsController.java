@@ -73,7 +73,7 @@ public class ReportsController {
 	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
 	    return getReport(reportsManager.getPatientExaminationPdf(examinationId), request);
 	}
-    // add 
+
 	private ResponseEntity<byte[]> getReport(
 		JasperReportResultDto resultDto, HttpServletRequest request
 	) throws OHServiceException, IOException {
