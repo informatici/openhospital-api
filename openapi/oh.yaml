@@ -3819,7 +3819,7 @@ paths:
   /reports/patientexamination:
     get:
       tags:
-      - Reports
+       - Reports
       operationId: printExaminationListPdf
       parameters:
         - name: examinationId
@@ -3837,7 +3837,7 @@ paths:
                 items:
                   type: string
                   format: byte
-      secuity:
+      security:
       - bearerAuth: []
   /pricelists/prices:
     get:
