@@ -50,7 +50,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Reports")
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 public class ReportsController {
 
 	private final JasperReportsManager reportsManager;
@@ -70,8 +70,8 @@ public class ReportsController {
 	}
 	
 	@GetMapping("/reports/patientexamination")
-	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("patId") int patId, @RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
-	    return getReport(reportsManager.getPatientExaminationPdf(patId, examinationId), request);
+	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+	    return getReport(reportsManager.getPatientExaminationPdf(examinationId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
