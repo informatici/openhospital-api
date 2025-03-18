@@ -767,6 +767,30 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  /patients/by-codes:
+     post:
+      tags:
+      - Patients
+      operationId: getPatientByCodes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientDTO"
+      security:
+      - bearerAuth: []
   /patientconsensus/{patientId}:
     get:
       tags:

@@ -277,7 +277,7 @@ public class PatientController {
 		return patientManager.getCities();
 	}
 	
-	@PostMapping("/by-codes")
+	@PostMapping("/patients/by-codes")
     public List<PatientDTO> getPatientByCodes(@RequestBody List<Integer> codes) throws OHServiceException {
 		if (codes == null || codes.isEmpty()) {
 			throw new OHAPIException(new OHExceptionMessage("The list of patients' codes cannot be empty."));
