@@ -280,7 +280,7 @@ public class PatientController {
 	@PostMapping("/by-ids")
     public List<PatientDTO> getPatients(@RequestBody List<Integer> ids) throws OHServiceException {
 		if (ids == null || ids.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("TThe ID list cannot be empty."));
+			throw new OHAPIException(new OHExceptionMessage("The ID list cannot be empty."));
 		}
 		List<Patient> patients = patientManager.getPatientByIds(ids);
 		if (patients == null || patients.isEmpty()) {
