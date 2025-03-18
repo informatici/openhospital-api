@@ -283,6 +283,9 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage("TThe ID list cannot be empty."));
 		}
 		List<Patient> patients = patientManager.getPatientByIds(ids);
+		if (patients == null || patients.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
+		}
 		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients);
         return patientsDTO;
     }
