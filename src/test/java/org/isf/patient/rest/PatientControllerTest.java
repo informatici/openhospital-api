@@ -80,7 +80,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author ecastaneda1
