@@ -165,8 +165,11 @@ public class AdmissionController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found with ID :" + patientCode), HttpStatus.NOT_FOUND);
 		}
-
-		return admissionMapper.map2DTO(admissionManager.getCurrentAdmission(patient));
+		Admission currentAdmission = admissionManager.getCurrentAdmission(patient);
+		if (currentAdmission == null) {
+			throw new OHAPIException(new OHExceptionMessage("Current admission not found for patient with ID :" + patientCode), HttpStatus.NOT_FOUND);
+		}
+		return admissionMapper.map2DTO(currentAdmission);
 	}
 
 	/**
