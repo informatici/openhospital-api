@@ -276,4 +276,17 @@ public class PatientController {
 
 		return patientManager.getCities();
 	}
+	
+	@PostMapping("/patients/by-codes")
+    public List<PatientDTO> getPatientByCodes(@RequestBody List<Integer> codes) throws OHServiceException {
+		if (codes == null || codes.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("The list of patients' codes cannot be empty."));
+		}
+		List<Patient> patients = patientManager.getPatientByCodes(codes);
+		if (patients == null || patients.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
+		}
+		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients);
+        return patientsDTO;
+    }
 }
