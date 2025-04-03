@@ -3782,6 +3782,30 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  /reports/patientexamination:
+    get:
+      tags:
+      - Reports
+      operationId: printPatientExaminationPdf
+      parameters:
+      - name: examinationId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+      security:
+      - bearerAuth: []
   /reports/exams-list:
     get:
       tags:
@@ -3809,29 +3833,6 @@ paths:
           description: OK
           content:
             application/octet-stream:
-              schema:
-                type: array
-                items:
-                  type: string
-                  format: byte
-      security:
-      - bearerAuth: []
-  /reports/patientexamination:
-    get:
-      tags:
-       - Reports
-      operationId: printExaminationListPdf
-      parameters:
-        - name: examinationId
-          in: query
-          required: true
-          schema:
-            type: number
-      responses: 
-        "200":
-          description: OK
-          content:
-            application/octect-stream:
               schema:
                 type: array
                 items:
@@ -6286,13 +6287,13 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
-        male:
+        pharmacy:
           type: boolean
         female:
           type: boolean
-        pharmacy:
+        male:
+          type: boolean
+        opd:
           type: boolean
     PatientDTO:
       required:
@@ -7012,11 +7013,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
