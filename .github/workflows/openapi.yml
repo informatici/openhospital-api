@@ -103,7 +103,12 @@ jobs:
           popd
           
       - name: Generate OpenAPI yaml
-        run: mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
+        run: |
+          mvn springdoc-openapi:generate -Dspringdoc.outputFileName=oh_rev.yaml
+          if [ ! -f "openapi/oh_rev.yaml" ]; then
+            echo "Error: oh_rev.yaml was not generated. The command may have failed."
+            exit 1
+          fi
 
       # Step 1: Check if oh_rev.yaml differs from the committed version
       - name: Install yq
