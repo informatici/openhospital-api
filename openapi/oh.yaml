@@ -2677,7 +2677,7 @@ paths:
   /patients/by-codes:
     post:
       tags:
-        - Patients
+      - Patients
       operationId: getPatientByCodes
       requestBody:
         content:
@@ -2698,7 +2698,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/PatientDTO"
       security:
-        - bearerAuth: []
+      - bearerAuth: []
   /operationtypes:
     get:
       tags:
