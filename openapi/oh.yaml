@@ -2674,6 +2674,31 @@ paths:
                 $ref: "#/components/schemas/PatientDTO"
       security:
       - bearerAuth: []
+  /patients/by-codes:
+    post:
+      tags:
+      - Patients
+      operationId: getPatientByCodes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int32
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientDTO"
+      security:
+      - bearerAuth: []
   /operationtypes:
     get:
       tags:
@@ -6287,9 +6312,11 @@ components:
           description: lock
           format: int32
           example: 0
-        pharmacy:
-          type: boolean
         female:
+          type: boolean
+        male:
+          type: boolean
+        opd:
           type: boolean
         male:
           type: boolean

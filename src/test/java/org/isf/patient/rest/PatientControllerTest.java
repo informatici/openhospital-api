@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -77,6 +79,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+
 
 /**
  * @author ecastaneda1
@@ -586,5 +589,32 @@ class PatientControllerTest {
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link PatientController#getPatientByCodes(List<Integer>)}.
+	 *
+	 * @throws Exception
+	 */
+	@Test
+    void when_get_patients_with_the_list_of_existing_code_then_return_list_of_PatientDTO() throws Exception {
+        String request = "/patients/by-codes";
+        List<Patient> patientList = PatientHelper.setupPatientList(5);
+        
+        List<Integer> codes = new ArrayList<Integer>();
+        
+        for (Patient patient: patientList) {
+        	codes.add(patient.getCode());
+        }
 
+        when(patientBrowserManagerMock.getPatientByCodes(anyList())).thenReturn(patientList);
+
+        this.mockMvc
+            .perform(post(request)
+                .content(codes.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString(PatientHelper.asJsonString(patientMapper.map2DTOList(patientList)))));
+    }
 }
