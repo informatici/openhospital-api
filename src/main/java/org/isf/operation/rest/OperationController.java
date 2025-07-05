@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -109,6 +109,12 @@ public class OperationController {
 	public OperationDTO newOperation(@RequestBody OperationDTO operationDTO) throws OHServiceException {
 		String code = operationDTO.getCode();
 		LOGGER.info("Create operation {}.", code);
+		if (operationManager.isCodePresent(operationDTO.getCode())) {
+			throw new OHAPIException(new OHExceptionMessage(
+				"Another operation already exist with provided code."
+			));
+		}
+
 		if (operationManager.descriptionControl(operationDTO.getDescription(), operationDTO.getType().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage(
 				"Another operation already created with provided description and types."
