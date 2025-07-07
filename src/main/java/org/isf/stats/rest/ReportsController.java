@@ -81,7 +81,7 @@ public class ReportsController {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
 		}
 		int patId = patientExamination.getPatient().getCode();
-	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId, "patient_examination"), request);
+	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
