@@ -43,8 +43,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -74,8 +74,8 @@ public class ReportsController {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
 	}
 	
-	@GetMapping("/reports/patientexamination")
-	public ResponseEntity<byte[]> printPatientExaminationPdf(@RequestParam("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+	@GetMapping("/reports/patientexamination/{examinationId}")
+	public ResponseEntity<byte[]> printPatientExaminationPdf(@PathVariable("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
 		PatientExamination patientExamination = examinationBrowserManager.getByID(examinationId);
 		if (patientExamination == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
