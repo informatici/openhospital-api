@@ -29,6 +29,8 @@ import java.nio.file.Paths;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.poi.util.IOUtils;
+import org.isf.examination.manager.ExaminationBrowserManager;
+import org.isf.examination.model.PatientExamination;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
@@ -37,9 +39,11 @@ import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,13 +53,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @Tag(name = "Reports")
 @SecurityRequirement(name = "bearerAuth")
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 public class ReportsController {
 
 	private final JasperReportsManager reportsManager;
+	private final ExaminationBrowserManager examinationBrowserManager;
 
-	public ReportsController(JasperReportsManager reportsManager) {
+	public ReportsController(JasperReportsManager reportsManager, ExaminationBrowserManager examinationBrowserManager) {
 		this.reportsManager = reportsManager;
+		this.examinationBrowserManager = examinationBrowserManager;
 	}
 
 	@GetMapping("/reports/exams-list")
@@ -66,6 +72,16 @@ public class ReportsController {
 	@GetMapping("/reports/diseases-list")
 	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
+	}
+	
+	@GetMapping("/reports/patientexamination/{examinationId}")
+	public ResponseEntity<byte[]> printPatientExaminationPdf(@PathVariable("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+		PatientExamination patientExamination = examinationBrowserManager.getByID(examinationId);
+		if (patientExamination == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
+		}
+		int patId = patientExamination.getPatient().getCode();
+	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
@@ -81,7 +97,7 @@ public class ReportsController {
 		} catch (MalformedURLException e) {
 			throw new OHAPIException(new OHExceptionMessage("File not found."));
 		}
-
+		
 		String contentType;
 		try {
 			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
