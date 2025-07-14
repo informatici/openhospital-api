@@ -246,6 +246,8 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
 				.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 				.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
+				// radiology
+				.requestMatchers(HttpMethod.GET, "/radiology/**").hasAuthority("radiology.read")
 				// grouppermission
 				.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
 				.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
