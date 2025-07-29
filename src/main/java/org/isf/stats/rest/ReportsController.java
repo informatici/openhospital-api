@@ -31,6 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.poi.util.IOUtils;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.model.PatientExamination;
+import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
@@ -58,10 +60,12 @@ public class ReportsController {
 
 	private final JasperReportsManager reportsManager;
 	private final ExaminationBrowserManager examinationBrowserManager;
+	private final PatientBrowserManager patientBrowserManager;
 
-	public ReportsController(JasperReportsManager reportsManager, ExaminationBrowserManager examinationBrowserManager) {
+	public ReportsController(JasperReportsManager reportsManager, ExaminationBrowserManager examinationBrowserManager, PatientBrowserManager patientBrowserManager) {
 		this.reportsManager = reportsManager;
 		this.examinationBrowserManager = examinationBrowserManager;
+		this.patientBrowserManager = patientBrowserManager;
 	}
 
 	@GetMapping("/reports/exams-list")
@@ -82,6 +86,15 @@ public class ReportsController {
 		}
 		int patId = patientExamination.getPatient().getCode();
 	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId), request);
+	}
+	
+	@GetMapping("/reports/patientexamrequest/{patientId}")
+	public ResponseEntity<byte[]> printPatientExamRequestPdf(@PathVariable("patientId") int patientId, HttpServletRequest request) throws OHServiceException, IOException {
+		Patient patient = patientBrowserManager.getPatientById(patientId);
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
+		}
+	    return getReport(reportsManager.getGenericReportPatientExamRequestPdf(patientId), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(

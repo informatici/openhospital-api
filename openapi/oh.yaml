@@ -9,7 +9,7 @@ info:
     url: https://github.com/informatici/openhospital-api?tab=GPL-3.0-1-ov-file#readme
   version: 0.1.0
 servers:
-- url: http://localhost:8080
+- url: http://API_HOST:API_PORT
 security:
 - bearerAuth: []
 paths:
@@ -3807,14 +3807,38 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
-  /reports/patientexamination:
+  /reports/patientexamrequest/{patientId}:
+    get:
+      tags:
+      - Reports
+      operationId: printPatientExamRequestPdf
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+      security:
+      - bearerAuth: []
+  /reports/patientexamination/{examinationId}:
     get:
       tags:
       - Reports
       operationId: printPatientExaminationPdf
       parameters:
       - name: examinationId
-        in: query
+        in: path
         required: true
         schema:
           type: integer
@@ -6400,13 +6424,11 @@ components:
           example: 0
         opd:
           type: boolean
-        male:
-          type: boolean
         female:
           type: boolean
         male:
           type: boolean
-        opd:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -7126,11 +7148,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
