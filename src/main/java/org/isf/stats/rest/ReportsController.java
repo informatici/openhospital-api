@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -85,7 +86,7 @@ public class ReportsController {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
 		}
 		int patId = patientExamination.getPatient().getCode();
-	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId), request);
+	    return getReport(reportsManager.getGenericReportPatientExaminationPdf(patId, examinationId, request.getLocale()), request);
 	}
 	
 	@GetMapping("/reports/patientexamrequest/{patientId}")
@@ -94,7 +95,7 @@ public class ReportsController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
-	    return getReport(reportsManager.getGenericReportPatientExamRequestPdf(patientId), request);
+	    return getReport(reportsManager.getGenericReportPatientExamRequestPdf(patientId, request.getLocale()), request);
 	}
 
 	private ResponseEntity<byte[]> getReport(
