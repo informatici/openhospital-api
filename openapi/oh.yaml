@@ -3807,14 +3807,14 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
-  /reports/patientexamination:
+  /reports/patientexamination/{examinationId}:
     get:
       tags:
       - Reports
       operationId: printPatientExaminationPdf
       parameters:
       - name: examinationId
-        in: query
+        in: path
         required: true
         schema:
           type: integer
@@ -6404,9 +6404,7 @@ components:
           type: boolean
         female:
           type: boolean
-        male:
-          type: boolean
-        opd:
+        pharmacy:
           type: boolean
     PatientDTO:
       required:
@@ -6575,6 +6573,38 @@ components:
           type: boolean
           description: Consensus service flag
           example: true
+        commune:
+          type: string
+          description: Commune
+        ethnic:
+          type: string
+          description: Ethnic
+        fatherOccupation:
+          type: string
+          description: Father occupation
+          example: Doctor
+        fatherAge:
+          type: integer
+          description: Father age
+          format: int32
+          example: 45
+        fatherPhone:
+          type: string
+          description: Father phone
+          example: "+393456789012"
+        motherOccupation:
+          type: string
+          description: Mother occupation
+          example: Analyst
+        motherAge:
+          type: integer
+          description: Mother age
+          format: int32
+          example: 35
+        motherPhone:
+          type: string
+          description: Mother phone
+          example: "+393456789012"
       description: Class representing a patient
     VisitDTO:
       required:
@@ -7126,11 +7156,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7881,6 +7911,14 @@ components:
           description: Lock
           format: int32
           example: 0
+        pex_body_mass_index:
+          type: string
+          description: Body mass index
+          example: "0"
+        pex_branchial_perimeter:
+          type: string
+          description: Branchial perimeter
+          example: "0"
     BillItemsDTO:
       required:
       - itemAmount
