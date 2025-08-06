@@ -94,12 +94,6 @@ public class PatientExaminationDTO {
 	@Schema(description = "Lock", example = "0")
 	private int lock;
 
-	@Schema(description = "Body mass index", example = "0")
-	private String pex_body_mass_index;
-
-	@Schema(description = "Branchial perimeter", example = "0")
-	private String pex_branchial_perimeter;
-
 	public int getPex_ID() {
 		return this.pex_ID;
 	}
@@ -242,21 +236,5 @@ public class PatientExaminationDTO {
 
 	public void setLock(int lock) {
 		this.lock = lock;
-	}
-
-	public String getPex_body_mass_index() {
-		return pex_body_mass_index;
-	}
-
-	public void setPex_body_mass_index(String pex_body_mass_index) {
-		this.pex_body_mass_index = pex_body_mass_index;
-	}
-
-	public String getPex_branchial_perimeter() {
-		return pex_branchial_perimeter;
-	}
-
-	public void setPex_branchial_perimeter(String pex_branchial_perimeter) {
-		this.pex_branchial_perimeter = pex_branchial_perimeter;
 	}
 }

@@ -6398,11 +6398,11 @@ components:
           description: lock
           format: int32
           example: 0
+        opd:
+          type: boolean
         male:
           type: boolean
         female:
-          type: boolean
-        opd:
           type: boolean
         pharmacy:
           type: boolean
@@ -7911,14 +7911,6 @@ components:
           description: Lock
           format: int32
           example: 0
-        pex_body_mass_index:
-          type: string
-          description: Body mass index
-          example: "0"
-        pex_branchial_perimeter:
-          type: string
-          description: Branchial perimeter
-          example: "0"
     BillItemsDTO:
       required:
       - itemAmount
