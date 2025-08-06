@@ -3807,14 +3807,14 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
-  /reports/patientexamination:
+  /reports/patientexamination/{examinationId}:
     get:
       tags:
       - Reports
       operationId: printPatientExaminationPdf
       parameters:
       - name: examinationId
-        in: query
+        in: path
         required: true
         schema:
           type: integer
@@ -6398,13 +6398,11 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
-        male:
-          type: boolean
         female:
           type: boolean
         male:
+          type: boolean
+        pharmacy:
           type: boolean
         opd:
           type: boolean
@@ -7126,11 +7124,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       description: The admission
     AdmissionTypeDTO:
       required:
@@ -7879,6 +7877,16 @@ components:
         lock:
           type: integer
           description: Lock
+          format: int32
+          example: 0
+        pex_body_mass_index:
+          type: integer
+          description: Body mass index
+          format: int32
+          example: 0
+        pex_branchial_perimeter:
+          type: integer
+          description: Branchial perimeter
           format: int32
           example: 0
     BillItemsDTO:
