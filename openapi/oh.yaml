@@ -6398,11 +6398,11 @@ components:
           description: lock
           format: int32
           example: 0
-        opd:
-          type: boolean
         male:
           type: boolean
         female:
+          type: boolean
+        opd:
           type: boolean
         pharmacy:
           type: boolean
