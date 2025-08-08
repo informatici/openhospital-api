@@ -69,17 +69,17 @@ public class ReportsController {
 	}
 
 	@GetMapping("/reports/exams-list")
-	public ResponseEntity<byte[]> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<Resource> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getExamsListPdf(), request);
 	}
 
 	@GetMapping("/reports/diseases-list")
-	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<Resource> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
 	}
 	
 	@GetMapping("/reports/patientexamination/{examinationId}")
-	public ResponseEntity<byte[]> printPatientExaminationPdf(@PathVariable("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<Resource> printPatientExaminationPdf(@PathVariable("examinationId") int examinationId, HttpServletRequest request) throws OHServiceException, IOException {
 		PatientExamination patientExamination = examinationBrowserManager.getByID(examinationId);
 		if (patientExamination == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
@@ -89,7 +89,7 @@ public class ReportsController {
 	}
 	
 	@GetMapping("/reports/patientexamrequest/{patientId}")
-	public ResponseEntity<byte[]> printPatientExamRequestPdf(@PathVariable("patientId") int patientId, HttpServletRequest request) throws OHServiceException, IOException {
+	public ResponseEntity<Resource> printPatientExamRequestPdf(@PathVariable("patientId") int patientId, HttpServletRequest request) throws OHServiceException, IOException {
 		Patient patient = patientBrowserManager.getPatientById(patientId);
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
@@ -97,7 +97,7 @@ public class ReportsController {
 	    return getReport(reportsManager.getGenericReportPatientExamRequestPdf(patientId, request.getLocale()), request);
 	}
 
-	private ResponseEntity<byte[]> getReport(
+	private ResponseEntity<Resource> getReport(
 		JasperReportResultDto resultDto, HttpServletRequest request
 	) throws OHServiceException, IOException {
 		Path report = Paths.get(resultDto.getFilename()).normalize();
@@ -110,25 +110,11 @@ public class ReportsController {
 		} catch (MalformedURLException e) {
 			throw new OHAPIException(new OHExceptionMessage("File not found."));
 		}
-		
-		String contentType;
-		try {
-			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-		} catch (IOException ex) {
-			throw new OHAPIException(new OHExceptionMessage("Failed to load the file's type."));
-		}
-
-		// Fallback to the default content type if type could not be determined
-		if (contentType == null) {
-			contentType = "application/octet-stream";
-		}
-
-		byte[] out = IOUtils.toByteArray(resource.getInputStream());
 
 		return ResponseEntity.ok()
-			.contentType(MediaType.parseMediaType(contentType))
+			.contentType(MediaType.APPLICATION_OCTET_STREAM)
 			.header(HttpHeaders.CONTENT_DISPOSITION,
 				"attachment; filename=\"" + resource.getFilename() + '"')
-			.body(out);
+			.body(resource);
 	}
 }

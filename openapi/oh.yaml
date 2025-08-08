@@ -3826,7 +3826,7 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: byte
+                format: binary
       security:
       - bearerAuth: []
   /reports/patientexamination/{examinationId}:
@@ -3848,7 +3848,7 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: byte
+                format: binary
       security:
       - bearerAuth: []
   /reports/exams-list:
@@ -3863,7 +3863,7 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: byte
+                format: binary
       security:
       - bearerAuth: []
   /reports/diseases-list:
@@ -3878,7 +3878,7 @@ paths:
             application/octet-stream:
               schema:
                 type: string
-                format: byte
+                format: binary
       security:
       - bearerAuth: []
   /radiology/studies/{id}/series:
@@ -6411,13 +6411,13 @@ components:
           format: int32
           description: lock
           example: 0
-        female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
-        opd:
+        female:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
       required:
       - beds
