@@ -1,0 +1,5 @@
+orthanc.base-url=
+orthanc.explorer-url=
+orthanc.username=admin
+orthanc.password=adminADMIN!123#
+orthanc.enabled=false

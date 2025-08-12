@@ -5,21 +5,25 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
+        <version>3.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
     <version>0.1.0</version>
+    <packaging>${packaging.type}</packaging>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
 
     <properties>
+        <packaging.type>jar</packaging.type>
         <oh-core.version>1.14.2-SNAPSHOT</oh-core.version>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <license.maven.plugin.version>4.6</license.maven.plugin.version>
+        <license.maven.plugin.version>5.0.0</license.maven.plugin.version>
         <springdoc.outputFileName>oh.yaml</springdoc.outputFileName>
+        <oh-core.dir>../openhospital-core</oh-core.dir>
     </properties>
 
     <dependencies>
@@ -31,16 +35,9 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -86,12 +83,12 @@
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.5.0</version>
+            <version>2.8.6</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
@@ -187,6 +184,21 @@
                             </resources>
                         </configuration>
                     </execution>
+                    <execution>
+						<id>copy-report</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/rpt_base</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${oh-core.dir}/rpt_base</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
                 </executions>
             </plugin>
             <plugin>
@@ -242,14 +254,6 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-maven-plugin</artifactId>
                 <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
                     <outputFileName>${springdoc.outputFileName}</outputFileName>
@@ -308,6 +312,32 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>war</id>
+            <properties>
+                <packaging.type>war</packaging.type>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+			<build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>rsc</directory>
+                        <includes>
+                            <include>**/*.properties</include>
+                        </includes>
+                        <filtering>false</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
-
 </project>

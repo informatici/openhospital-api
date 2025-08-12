@@ -10,4 +10,6 @@ OH_API_BRANCH=develop
 GITHUB_ORG=informatici
 API_PORT=8080
 API_HOST=localhost
+UI_PORT=3000
+UI_HOST=localhost
 JWT_TOKEN_SECRET=

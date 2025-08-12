@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -79,15 +79,19 @@ public class TokenProvider implements Serializable {
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
-		LOGGER.info("Initializing JWT key with secret: {}", secret);
+		LOGGER.debug("Initializing JWT key with secret: {}", secret);
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
-		// 30 minutes (900,000 milliseconds)
-		this.tokenValidityInMilliseconds = 1000L * 60 * 30;
+		// default 30 minutes (1800 milliseconds)
+		Long tokenValidityInSeconds = env.getProperty("jwt.token.validityInSeconds", Long.class, 60L * 30);
+		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
 
-		// 3 days (604,800,000 milliseconds)
-		this.tokenValidityInMillisecondsForRememberMe = 1000L * 60 * 60 * 24 * 3;
+		// default 3 days (259,200 seconds milliseconds)
+		Long validityInSecondsForRememberMe = env.getProperty("jwt.token.validityInSecondsForRememberMe", Long.class, 60L * 60 * 24 * 3);
+		this.tokenValidityInMillisecondsForRememberMe = validityInSecondsForRememberMe * 1000;
+
+		LOGGER.debug("Setting token validity - tokenValidityInMilliseconds: {}, tokenValidityInMillisecondsForRememberMe: {}", this.tokenValidityInMilliseconds, this.tokenValidityInMillisecondsForRememberMe);
 
 		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
 	}
@@ -131,8 +135,8 @@ public class TokenProvider implements Serializable {
 
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
 		final String authorities = authentication.getAuthorities().stream()
-						.map(GrantedAuthority::getAuthority)
-						.collect(Collectors.joining(","));
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.joining(","));
 
 		long now = System.currentTimeMillis();
 		Date validity;
@@ -143,21 +147,21 @@ public class TokenProvider implements Serializable {
 		}
 
 		return Jwts.builder()
-						.setSubject(authentication.getName())
-						.claim(AUTHORITIES_KEY, authorities)
-						.setIssuedAt(new Date())
-						.signWith(key, SignatureAlgorithm.HS512)
-						.setExpiration(validity)
-						.compact();
+			.setSubject(authentication.getName())
+			.claim(AUTHORITIES_KEY, authorities)
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(validity)
+			.compact();
 	}
 
 	public String generateRefreshToken(Authentication authentication) {
 		return Jwts.builder()
-						.setSubject(authentication.getName())
-						.setIssuedAt(new Date())
-						.signWith(key, SignatureAlgorithm.HS512)
-						.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
-						.compact();
+			.setSubject(authentication.getName())
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
+			.compact();
 	}
 
 	public Authentication getAuthentication(String token) {
@@ -173,8 +177,8 @@ public class TokenProvider implements Serializable {
 		}
 
 		final Collection< ? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-						.map(SimpleGrantedAuthority::new)
-						.collect(Collectors.toList());
+			.map(SimpleGrantedAuthority::new)
+			.collect(Collectors.toList());
 
 		User principal = new User(claims.getSubject(), "", authorities);
 

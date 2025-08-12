@@ -96,7 +96,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 /**
  * @author Emerson Castaneda
  */
-public class BillControllerTest extends ControllerBaseTest {
+class BillControllerTest extends ControllerBaseTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BillControllerTest.class);
 
@@ -122,7 +122,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new BillController(billManagerMock, priceListManagerMock, patientManagerMock, billMapper, billItemsMapper, billPaymentsMapper))
@@ -147,7 +147,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_bills_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
+	void when_post_bills_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
 		String request = "/bills";
 
 		MvcResult result = this.mockMvc
@@ -167,7 +167,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_bills_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
+	void when_post_bills_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
 		String request = "/bills";
 		String empty_body = "";
 
@@ -191,7 +191,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/bills";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
 		Integer id = 0;
@@ -223,7 +223,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		Integer id = 123;
 		String request = "/bills/{id}";
 
@@ -256,7 +256,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OK() throws Exception {
+	void when_put_bills_PatientBrowserManager_getPatient_returns_null_then_OK() throws Exception {
 		Integer id = 123;
 		String request = "/bills/{id}";
 		FullBillDTO newFullBillDTO = FullBillDTOHelper.setup(patientMapper, billItemsMapper, billPaymentsMapper);
@@ -309,7 +309,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_items_with_existent_id_then_getItems_returns_items_and_OK() throws Exception {
+	void when_get_items_with_existent_id_then_getItems_returns_items_and_OK() throws Exception {
 		Integer id = 123;
 		String request = "/bills/items/{bill_id}";
 
@@ -332,7 +332,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_items_with_existent_id_then_getItems_is_empty_and_isNoContent() throws Exception {
+	void when_get_items_with_existent_id_then_getItems_is_empty_and_isNoContent() throws Exception {
 		Integer id = 123;
 		String request = "/bills/items/{bill_id}";
 
@@ -346,7 +346,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_bill_with_existent_id_then_response_BillDTO_and_OK() throws Exception {
+	void when_get_bill_with_existent_id_then_response_BillDTO_and_OK() throws Exception {
 		int id = 123;
 		String request = "/bills/{id}";
 
@@ -367,7 +367,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_delete_bill_with_existent_id_then_response_true_and_OK() throws Exception {
+	void when_delete_bill_with_existent_id_then_response_true_and_OK() throws Exception {
 		int id = 123;
 		String request = "/bills/{id}";
 
@@ -386,7 +386,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_bill_pending_affiliate_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
+	void when_get_bill_pending_affiliate_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/bills/pending/affiliate?patient_code={code}";
 
@@ -409,7 +409,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_searchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
+	void when_post_searchBillsByPayments_with_a_list_of_existent_billsPaymentsDTO_then_response_List_of_BillDTO_and_OK() throws Exception {
 		String request = "/bills/search/by/payments";
 
 		List<BillPayments> billsPaymentsList = BillPaymentsDTOHelper.genListModel(2, billPaymentsMapper);
@@ -435,7 +435,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_pendingBills_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
+	void when_get_pendingBills_with_existent_patient_code_then_response_List_of_BillDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/bills/pending?patient_code={code}";
 
@@ -461,7 +461,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK()
+	void when_post_searchBillsByItem_with_valid_dates_and_billItemsDTO_content_and_PatientBrowserManager_getBills_returns_billList_then_OK()
 		throws Exception {
 		String request = "/bills/search/by/item?datefrom={dateFrom}&dateto={dateTo}";
 		String dateFrom = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
@@ -494,7 +494,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_searchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
+	void when_get_searchBills_with_valid_dates_and_valid_patient_code_and_PatientBrowserManager_getBills_returns_billList_then_OK() throws Exception {
 		String request = "/bills?datefrom={dateFrom}&dateto={dateTo}&patient_code={patient_code}";
 		String dateFrom = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
 		String dateTo = LocalDateTime.now().format(DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_YYYY_MM_DD_T_HH_MM_SS_SSS_Z));
@@ -524,7 +524,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_getDistinctItems_BillBrowserManager_getDistinctItems_returns_BillItemsDTOList_then_OK() throws Exception {
+	void when_get_getDistinctItems_BillBrowserManager_getDistinctItems_returns_BillItemsDTOList_then_OK() throws Exception {
 		String request = "/bills/items";
 
 		//TODO move to a Helper once it duplicates somewhere else
@@ -553,7 +553,7 @@ public class BillControllerTest extends ControllerBaseTest {
 	}
 
 	@Test
-	public void when_get_getPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
+	void when_get_getPaymentsByBillId_with_valid_bill_id_and_BillBrowserManager_getPayments_returns_BillPaymentsList_then_OK() throws Exception {
 		String request = "/bills/payments/{bill_id}";
 
 		int billId = 123;

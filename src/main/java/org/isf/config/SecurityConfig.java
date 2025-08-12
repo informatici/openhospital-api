@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -36,12 +36,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -55,9 +53,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-	@Autowired
-	private UserDetailsService userDetailsService;
 
 	private final TokenProvider tokenProvider;
 
@@ -74,14 +69,6 @@ public class SecurityConfig {
 
 	@Autowired
 	private CustomLogoutHandler customLogoutHandler;
-
-	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userDetailsService);
-		authProvider.setPasswordEncoder(encoder());
-		return authProvider;
-	}
 
 	@Bean
 	public PasswordEncoder encoder() {
@@ -114,6 +101,7 @@ public class SecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(csrf -> csrf.disable()) // Disable CSRF protection
 			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/", "/healthcheck").permitAll()
 				.requestMatchers("/auth/login", "/auth/refresh-token").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
 				// admissions
@@ -258,6 +246,8 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
 				.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 				.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
+				// radiology
+				.requestMatchers(HttpMethod.GET, "/radiology/**").hasAuthority("radiology.read")
 				// grouppermission
 				.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
 				.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")

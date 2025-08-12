@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -38,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -78,10 +80,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 
+
 /**
  * @author ecastaneda1
  */
-public class PatientControllerTest {
+class PatientControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PatientControllerTest.class);
 
@@ -101,7 +104,7 @@ public class PatientControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
 			.standaloneSetup(new PatientController(patientBrowserManagerMock, admissionBrowserManagerMock, patientMapper,
@@ -126,7 +129,7 @@ public class PatientControllerTest {
 	 * @throws Exception When error occurs
 	 */
 	@Test
-	public void when_post_patients_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
+	void when_post_patients_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
 		String request = "/patients";
 
 		MvcResult result = this.mockMvc
@@ -150,7 +153,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
+	void when_post_patients_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
 		String request = "/patients";
 		String empty_body = "";
 
@@ -178,7 +181,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
@@ -208,7 +211,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
+	void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -238,7 +241,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
+	void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -265,7 +268,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
+	void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 12345;
@@ -305,7 +308,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_invalid_body_and_existent_code_then_HttpMessageNotReadableException_BadRequest() throws Exception {
+	void when_put_update_patient_with_invalid_body_and_existent_code_then_HttpMessageNotReadableException_BadRequest() throws Exception {
 		Integer code = 12345;
 		String request = "/patients/{code}";
 
@@ -331,7 +334,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
+	void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 123;
@@ -361,7 +364,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
+	void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
 		String request = "/patients";
 
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
@@ -393,7 +396,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -423,7 +426,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -456,7 +459,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
 		Integer code = 1000;
 		String request = "/patients/search";
 
@@ -478,7 +481,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String request = "/patients/search";
 
 		this.mockMvc
@@ -496,7 +499,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
 		String name = null;
 		String request = "/patients/search";
 
@@ -517,7 +520,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
+	void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -540,7 +543,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
+	void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
 		Integer code = 111;
 		String request = "/patients/{code}";
 
@@ -560,7 +563,7 @@ public class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
+	void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -586,5 +589,32 @@ public class PatientControllerTest {
 		oHAPIException.ifPresent(se -> assertThat(se, notNullValue()));
 		oHAPIException.ifPresent(se -> assertThat(se, instanceOf(OHAPIException.class)));
 	}
+	
+	/**
+	 * Test method for
+	 * {@link PatientController#getPatientByCodes(List<Integer>)}.
+	 *
+	 * @throws Exception
+	 */
+	@Test
+    void when_get_patients_with_the_list_of_existing_code_then_return_list_of_PatientDTO() throws Exception {
+        String request = "/patients/by-codes";
+        List<Patient> patientList = PatientHelper.setupPatientList(5);
+        
+        List<Integer> codes = new ArrayList<Integer>();
+        
+        for (Patient patient: patientList) {
+        	codes.add(patient.getCode());
+        }
 
+        when(patientBrowserManagerMock.getPatientByCodes(anyList())).thenReturn(patientList);
+
+        this.mockMvc
+            .perform(post(request)
+                .content(codes.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(log())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString(PatientHelper.asJsonString(patientMapper.map2DTOList(patientList)))));
+    }
 }

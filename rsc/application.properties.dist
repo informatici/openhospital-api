@@ -12,6 +12,8 @@ server.servlet.session.cookie.http-only=true
 #server.servlet.session.cookie.secure=true # only over HTTPS
 spring.pid.fail-on-write-error=true
 spring.pid.file=OH_API_PID
+spring.mustache.check-template-location=false
+spring.jpa.open-in-view=false
 
 ### In production change to http://<domain>
 cors.allowed.origins=http://API_HOST:API_PORT,http://UI_HOST:UI_PORT
@@ -33,6 +35,12 @@ spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
 
 ### Security token secret (JWT)
 jwt.token.secret=JWT_TOKEN_SECRET
+
+### JWT token validity, 30 minutes (1,800 seconds)
+jwt.token.validityInSeconds=1800
+
+### JWT token validity for remember me, 3 days (259,200 seconds)
+jwt.token.validityInSecondsForRememberMe=259200
 
 # Hibernate properties
 # needed to start application even without DB connection

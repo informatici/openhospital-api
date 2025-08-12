@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -93,7 +93,7 @@ public class MedicalStockWardController {
 	 * @throws OHServiceException When failed to get ward medicals
 	 */
 	@GetMapping(value = "/medicalstockward/{ward_code}")
-	public List<MedicalWardDTO> getMedicalsWard(@PathVariable("ward_code") char wardId) throws OHServiceException {
+	public List<MedicalWardDTO> getMedicalsWard(@PathVariable("ward_code") String wardId) throws OHServiceException {
 		// FIXME: provide provision for boolean ,false?
 		List<MedicalWard> medWards = movWardBrowserManager.getMedicalsWard(wardId, true);
 

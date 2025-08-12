@@ -64,7 +64,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import io.jsonwebtoken.JwtException;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
-public class LoginControllerTest {
+class LoginControllerTest {
 
 	private MockMvc mvc;
 
@@ -86,7 +86,7 @@ public class LoginControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setUp() {
+	void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 
 		LoginController loginController = new LoginController(

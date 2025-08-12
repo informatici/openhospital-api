@@ -50,9 +50,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,8 +63,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
-public class SupplierControllerTest {
-	private final Logger LOGGER = LoggerFactory.getLogger(SupplierControllerTest.class);
+class SupplierControllerTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SupplierControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;
@@ -75,7 +75,7 @@ public class SupplierControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@MockBean
+	@MockitoBean
 	private SupplierBrowserManager supplierBrowserManager;
 
 	@Test
