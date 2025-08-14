@@ -295,6 +295,10 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/reports/**").hasAnyAuthority("reports.read")
 				.requestMatchers(HttpMethod.PUT, "/reports/**").hasAuthority("reports.update")
 				.requestMatchers(HttpMethod.DELETE, "/reports/**").hasAuthority("reports.delete")
+				// Settings
+				.requestMatchers(HttpMethod.GET, "/settings/**").hasAnyAuthority("settings.read")
+				.requestMatchers(HttpMethod.PUT, "/settings/**").hasAuthority("settings.update")
+				.requestMatchers(HttpMethod.POST, "/settings/**").hasAuthority("settings.update")
 				// sms
 				.requestMatchers(HttpMethod.POST, "/sms/**").hasAuthority("sms.create")
 				.requestMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
@@ -332,7 +336,6 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
 
 				.anyRequest().authenticated()
-
 			)
 			.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint))
 			.logout(logout -> logout.logoutUrl("/auth/logout")
