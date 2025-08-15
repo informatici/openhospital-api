@@ -1,5 +1,6 @@
 package org.isf.encounter.dto;
 
+import org.isf.encouter.model.EncounterStatus;
 import org.isf.patient.dto.PatientDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,7 +14,7 @@ public class EncounterDTO {
 
 	@NotNull
 	@Schema(description = "Status of encounter")
-	private String status;
+	private EncounterStatus status;
 	
 	@NotNull
 	@Schema(description = "Patient")
@@ -30,12 +31,12 @@ public class EncounterDTO {
 	}
 
 	
-	public String getStatus() {
+	public EncounterStatus getStatus() {
 		return status;
 	}
 
 	
-	public void setStatus(String status) {
+	public void setStatus(EncounterStatus status) {
 		this.status = status;
 	}
 
@@ -48,4 +49,15 @@ public class EncounterDTO {
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
 	}
+
+
+	public EncounterDTO(String code, EncounterStatus status, PatientDTO patient) {
+		this.code = code;
+		this.status = status;
+		this.patient = patient;
+	}
+
+
+	public EncounterDTO() {}
+	
 }

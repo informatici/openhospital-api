@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -45,9 +43,9 @@ public class EncounterController {
 	}
 
 	@PostMapping(value = "/encounters")
-	public EncounterDTO createEncounter(@Valid @RequestBody EncounterDTO encounterDTO) throws OHServiceException {
-		LOGGER.info("Create encounter {}", encounterDTO.getCode());
-		Encounter encounter = encounterMapper.map2Model(encounterDTO);
+	public EncounterDTO createEncounter(@Valid @RequestBody String code) throws OHServiceException {
+		LOGGER.info("Create encounter with {}", code);
+		Encounter encounter = new Encounter(code, EncounterStatus.OPEN);
 		encounter = encounterBrowserManager.saveEncounter(encounter);			
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
@@ -55,31 +53,17 @@ public class EncounterController {
 		return encounterMapper.map2DTO(encounter);
 	}
 
-	@PutMapping(value = "/encounters/{code}")
-	public EncounterDTO updateEncounter(@PathVariable String code, @Valid @RequestBody EncounterDTO encounterDTO) throws OHServiceException {
-		LOGGER.info("Update Encounter with code: '{}'.", code);
-		if (!encounterDTO.getCode().equals(code)) {
-			throw new OHAPIException(new OHExceptionMessage("Encounter code mismatch."));
-		}
-		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
-		if (encounter == null) {
-			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code :" + code), HttpStatus.NOT_FOUND);
-		}
-		encounter = encounterMapper.map2Model(encounterDTO);
-		encounter = encounterBrowserManager.saveEncounter(encounter);			
-		if (encounter == null) {
-			throw new OHAPIException(new OHExceptionMessage("Failed to update encounter"));
-		}
-		return encounterMapper.map2DTO(encounter);
-	}
-
 	@PatchMapping("/encounters/{id}/status")
-	public EncounterDTO updateEncounterStatus(@PathVariable String code, @RequestParam String status) throws OHServiceException {
+	public EncounterDTO updateEncounterStatus(@PathVariable String code) throws OHServiceException {
 		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code :" + code), HttpStatus.NOT_FOUND);
 		}
-		encounter.setStatus(EncounterStatus.valueOf(status));
+		if (encounter.getStatus().toString().equals(EncounterStatus.OPEN.toString())) {
+			encounter.setStatus(EncounterStatus.CLOSE);
+		} else {
+			encounter.setStatus(EncounterStatus.OPEN);
+		}
 		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to update encounter"));
@@ -89,9 +73,7 @@ public class EncounterController {
 
 	@GetMapping("/encounters/{patientId}")
 	public List<EncounterDTO> getEncountersByPatient(@PathVariable int patientId) throws OHServiceException {
-		 List<Encounter> encounterDTOs = encounterBrowserManager.getEncountersByPatient(patientId);
-		 return encounterDTOs.stream().map(e-> {
-			 return encounterMapper.map2DTO(e);
-		 }).toList();
+		 List<Encounter> encounters = encounterBrowserManager.getEncountersByPatient(patientId);
+		 return encounterMapper.map2DTOList(encounters);
 	}
 }
