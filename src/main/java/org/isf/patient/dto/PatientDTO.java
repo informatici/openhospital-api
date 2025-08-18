@@ -129,6 +129,31 @@ public class PatientDTO {
 	@Schema(description = "Consensus service flag", example = "true")
 	private boolean consensusServiceFlag;
 
+	@Schema(description = "Commune", example = "")
+	private String commune;
+
+	@Schema(description = "Ethnic", example = "")
+	private String ethnic;
+
+	@Schema(description = "Father occupation", example = "Doctor")
+	private String fatherOccupation;
+
+	@Schema(description = "Father age", example = "45")
+	private int fatherAge;
+
+	@Schema(description = "Father phone", example = "+393456789012")
+	private String fatherPhone;
+
+	@Schema(description = "Mother occupation", example = "Analyst")
+	private String motherOccupation;
+
+	@Schema(description = "Mother age", example = "35")
+	private int motherAge;
+
+	@Schema(description = "Mother phone", example = "+393456789012")
+	private String motherPhone;
+
+
 	public boolean isConsensusFlag() {
 		return consensusFlag;
 	}
@@ -355,6 +380,70 @@ public class PatientDTO {
 
 	public void setFatherName(String fatherName) {
 		this.fatherName = fatherName;
+	}
+
+	public String getCommune() {
+		return commune;
+	}
+
+	public void setCommune(String commune) {
+		this.commune = commune;
+	}
+
+	public String getEthnic() {
+		return ethnic;
+	}
+
+	public void setEthnic(String ethnic) {
+		this.ethnic = ethnic;
+	}
+
+	public String getFatherOccupation() {
+		return fatherOccupation;
+	}
+
+	public void setFatherOccupation(String fatherOccupation) {
+		this.fatherOccupation = fatherOccupation;
+	}
+
+	public int getFatherAge() {
+		return fatherAge;
+	}
+
+	public void setFatherAge(int fatherAge) {
+		this.fatherAge = fatherAge;
+	}
+
+	public String getFatherPhone() {
+		return fatherPhone;
+	}
+
+	public void setFatherPhone(String fatherPhone) {
+		this.fatherPhone = fatherPhone;
+	}
+
+	public String getMotherOccupation() {
+		return motherOccupation;
+	}
+
+	public void setMotherOccupation(String motherOccupation) {
+		this.motherOccupation = motherOccupation;
+	}
+
+	public int getMotherAge() {
+		return motherAge;
+	}
+
+	public void setMotherAge(int motherAge) {
+		this.motherAge = motherAge;
+	}
+
+	public String getMotherPhone() {
+		return motherPhone;
+	}
+
+	public void setMotherPhone(String motherPhone) {
+		this.motherPhone = motherPhone;
 	}
 
 	public byte[] getBlobPhoto() {
