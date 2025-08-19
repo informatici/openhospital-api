@@ -139,7 +139,7 @@ public class PatientDTO {
 	private String fatherOccupation;
 
 	@Schema(description = "Father age", example = "45")
-	private int fatherAge;
+	private Integer fatherAge;
 
 	@Schema(description = "Father phone", example = "+393456789012")
 	private String fatherPhone;
@@ -148,7 +148,7 @@ public class PatientDTO {
 	private String motherOccupation;
 
 	@Schema(description = "Mother age", example = "35")
-	private int motherAge;
+	private Integer motherAge;
 
 	@Schema(description = "Mother phone", example = "+393456789012")
 	private String motherPhone;
@@ -406,11 +406,11 @@ public class PatientDTO {
 		this.fatherOccupation = fatherOccupation;
 	}
 
-	public int getFatherAge() {
+	public Integer getFatherAge() {
 		return fatherAge;
 	}
 
-	public void setFatherAge(int fatherAge) {
+	public void setFatherAge(Integer fatherAge) {
 		this.fatherAge = fatherAge;
 	}
 
@@ -430,11 +430,11 @@ public class PatientDTO {
 		this.motherOccupation = motherOccupation;
 	}
 
-	public int getMotherAge() {
+	public Integer getMotherAge() {
 		return motherAge;
 	}
 
-	public void setMotherAge(int motherAge) {
+	public void setMotherAge(Integer motherAge) {
 		this.motherAge = motherAge;
 	}
 
