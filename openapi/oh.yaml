@@ -7344,6 +7344,15 @@ components:
           description: "Assessment performed before the patient's admission. Example:\
             \ preliminary examinations, lab results, medical observations."
           example: Blood test and X-ray prior to admission
+        conditionAtAdmission:
+          type: array
+          description: "Patient's condition at the time of admission. Stored as a\
+            \ list of descriptors (e.g., stable, critical, unconscious)."
+          example:
+            - stable
+            - conscious
+          items:
+            type: string
         userID:
           type: string
           description: User id
@@ -7360,11 +7369,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       required:
         - admDate
         - admitted
