@@ -210,9 +210,9 @@ class ExaminationControllerTest {
 		patient.setCode(2);
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		patientExamination.setPex_sat(100.0);
+		patientExamination.setPex_branchial_perimeter(30.5);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 		patientExaminationDTO.setPatientCode(patient.getCode());
-
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(manager.saveOrUpdate(any())).thenReturn(patientExamination);
 
@@ -234,6 +234,7 @@ class ExaminationControllerTest {
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		patientExamination.setPex_ID(1);
 		patientExamination.setPex_sat(100.0);
+		patientExamination.setPex_branchial_perimeter(30.5);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
 		patientExaminationDTO.setPatientCode(patient.getCode());
 
