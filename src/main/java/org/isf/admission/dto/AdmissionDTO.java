@@ -22,6 +22,7 @@
 package org.isf.admission.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -130,6 +131,27 @@ public class AdmissionDTO {
 	private LocalDateTime ctrlDate2;
 
 	private LocalDateTime abortDate;
+
+	@Schema(
+		description = "Treatment received by the patient before admission. " +
+			"Example: medication, outpatient care, prior therapy.",
+		example = "Antibiotic treatment before hospitalization"
+	)
+	private String preTreatment;
+
+	@Schema(
+		description = "Assessment performed before the patient's admission. " +
+			"Example: preliminary examinations, lab results, medical observations.",
+		example = "Blood test and X-ray prior to admission"
+	)
+	private String preAssessment;
+
+	@Schema(
+		description = "Patient's condition at the time of admission. " +
+			"Stored as a list of descriptors (e.g., stable, critical, unconscious).",
+		example = "[\"stable\", \"conscious\"]"
+	)
+	private List<String> conditionAtAdmission;
 
 	@Schema(description = "User id")
 	private String userID;
@@ -406,5 +428,29 @@ public class AdmissionDTO {
 
 	public void setDeleted(String deleted) {
 		this.deleted = deleted;
+	}
+
+	public String getPreTreatment() {
+		return preTreatment;
+	}
+
+	public void setPreTreatment(String preTreatment) {
+		this.preTreatment = preTreatment;
+	}
+
+	public String getPreAssessment() {
+		return preAssessment;
+	}
+
+	public void setPreAssessment(String preAssessment) {
+		this.preAssessment = preAssessment;
+	}
+
+	public List<String> getConditionAtAdmission() {
+		return conditionAtAdmission;
+	}
+
+	public void setConditionAtAdmission(List<String> conditionAtAdmission) {
+		this.conditionAtAdmission = conditionAtAdmission;
 	}
 }

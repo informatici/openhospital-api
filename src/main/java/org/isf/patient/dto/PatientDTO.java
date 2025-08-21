@@ -92,7 +92,7 @@ public class PatientDTO {
 
 	@NotNull
 	@Schema(description = "Blood type (0-/+, A-/+ , B-/+, AB-/+)", allowableValues = { "0-", "0+", "A-", "A+", "B-",
-			"B+", "AB-", "AB+" }, example = "A+")
+		"B+", "AB-", "AB+" }, example = "A+")
 	private String bloodType;
 
 	@Schema(description = "HasInsurance (Y=Yes, N=no)", allowableValues = { "Y", "N" }, example = "N")
@@ -152,7 +152,6 @@ public class PatientDTO {
 
 	@Schema(description = "Mother phone", example = "+393456789012")
 	private String motherPhone;
-
 
 	public boolean isConsensusFlag() {
 		return consensusFlag;
