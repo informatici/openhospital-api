@@ -208,6 +208,7 @@ public class ExaminationController {
 
 		Integer pex_height = newPatientExamination.getPex_height();
 		Double pex_weight = newPatientExamination.getPex_weight();
+		Double pex_pb = newPatientExamination.getPex_branchial_perimeter();
 		if (pex_height == null || pex_weight == null) {
 			throw new OHAPIException(new OHExceptionMessage("The height and weight are compulsory"));
 		}
@@ -273,5 +274,10 @@ public class ExaminationController {
 		if (pex_auscultation != null) {
 			Ausculation.valueOf(pex_auscultation.toString());
 		}
+		if ( pex_pb < ExaminationParameters.BRANCHIAL_PERIMETER_MIN
+						|| pex_pb > ExaminationParameters.BRANCHIAL_PERIMETER_MAX) {
+						throw new OHAPIException(new OHExceptionMessage(
+							"The branchial perimeter should be between " + ExaminationParameters.BRANCHIAL_PERIMETER_MIN + " and " + ExaminationParameters.BRANCHIAL_PERIMETER_MAX));
+					}
 	}
 }
