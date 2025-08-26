@@ -1,7 +1,7 @@
 package org.isf.encounter.mapper;
 
 import org.isf.encounter.dto.EncounterDTO;
-import org.isf.encouter.model.Encounter;
+import org.isf.encounter.model.Encounter;
 import org.isf.shared.GenericMapper;
 import org.springframework.stereotype.Component;
 

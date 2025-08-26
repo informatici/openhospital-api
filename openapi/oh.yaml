@@ -3180,6 +3180,26 @@ paths:
                 $ref: "#/components/schemas/PatientExaminationDTO"
       security:
       - bearerAuth: []
+  /encounters:
+    post:
+      tags:
+      - Encounter
+      operationId: createEncounter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EncounterDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncounterDTO"
+      security:
+      - bearerAuth: []
   /bills:
     get:
       tags:
@@ -3365,6 +3385,52 @@ paths:
             application/json:
               schema:
                 type: boolean
+      security:
+      - bearerAuth: []
+  /encounters/{code}:
+    patch:
+      tags:
+      - Encounter
+      operationId: updateEncounterCode
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncounterDTO"
+      security:
+      - bearerAuth: []
+  /encounters/{code}/status:
+    patch:
+      tags:
+      - Encounter
+      operationId: updateEncounterStatus
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncounterDTO"
       security:
       - bearerAuth: []
   /wardsNoMaternity:
@@ -5644,6 +5710,50 @@ paths:
                   $ref: "#/components/schemas/PatientExaminationDTO"
       security:
       - bearerAuth: []
+  /encounters/{patientId}:
+    get:
+      tags:
+      - Encounter
+      operationId: getEncountersByPatient
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EncounterDTO"
+      security:
+      - bearerAuth: []
+  /encounters/current/{patientId}:
+    get:
+      tags:
+      - Encounter
+      operationId: getCurrentEncounterByPatient
+      parameters:
+      - name: patientId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EncounterDTO"
+      security:
+      - bearerAuth: []
   /diseases/{code}:
     get:
       tags:
@@ -6510,9 +6620,9 @@ components:
           example: 0
         pharmacy:
           type: boolean
-        male:
-          type: boolean
         female:
+          type: boolean
+        male:
           type: boolean
         opd:
           type: boolean
@@ -6975,6 +7085,7 @@ components:
           - pharmacy
           - gui
           - application
+          - integration
           example: application
         type:
           type: string
@@ -7317,11 +7428,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       required:
       - admDate
       - admitted
@@ -8530,6 +8641,29 @@ components:
           example: NEGATIVE
         exam:
           $ref: "#/components/schemas/ExamDTO"
+    EncounterDTO:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code of the encounter
+          example: 123
+        status:
+          type: string
+          description: Status of encounter
+          enum:
+          - OPEN
+          - CLOSE
+          example: OPEN
+        patientCode:
+          type: integer
+          format: int32
+          description: Patient id
+          example: 45
+      required:
+      - code
+      - patientCode
+      - status
     TokenRefreshRequest:
       type: object
       properties:
