@@ -11,7 +11,6 @@ public class EncounterDTO {
 	@Schema(description = "Code of the encounter", example = "123")
 	private String code;
 
-	@NotNull
 	@Schema(description = "Status of encounter", example = "OPEN")
 	private EncounterStatus status;
 	

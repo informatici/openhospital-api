@@ -1,6 +1,7 @@
 package org.isf.encounter.rest;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.mapper.EncounterMapper;
@@ -16,11 +17,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 @RestController
 @Tag(name = "Encounter")
@@ -50,6 +51,9 @@ public class EncounterController {
 		if (encounterDTO.getPatientCode() == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient code must not be null"));
 		}
+		if (encounterBrowserManager.getEncountersByCode(encounterDTO.getCode()) != null) {
+			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
+		}
 
 		Patient patient = patientBrowserManager.getPatientById(encounterDTO.getPatientCode());
 		if (patient == null) {
@@ -57,6 +61,7 @@ public class EncounterController {
 		}
 
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
+		encounter.setStatus(EncounterStatus.OPEN);
 		encounter = encounterBrowserManager.saveEncounter(encounter);			
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
@@ -66,7 +71,7 @@ public class EncounterController {
 	}
 
 	@PatchMapping("/encounters/{code}/status")
-	public EncounterDTO updateEncounterStatus(@PathVariable String code) throws OHServiceException {
+	public ResponseEntity<EncounterDTO> updateEncounterStatus(@PathVariable String code) throws OHServiceException {
 		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code :" + code), HttpStatus.NOT_FOUND);
@@ -76,39 +81,52 @@ public class EncounterController {
 		} else {
 			encounter.setStatus(EncounterStatus.OPEN);
 		}
+
 		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to update encounter"));
 		}
-		return encounterMapper.map2DTO(encounter);
+		return ResponseEntity.status(HttpStatus.CREATED).body(encounterMapper.map2DTO(encounter));
 	}
 
 	@GetMapping("/encounters/{patientId}")
-	public List<EncounterDTO> getEncountersByPatient(@PathVariable int patientId) throws OHServiceException {
-		 List<Encounter> encounters = encounterBrowserManager.getEncountersByPatient(patientId);
-		 return encounterMapper.map2DTOList(encounters);
+	public ResponseEntity<List<EncounterDTO>> getEncountersByPatient(@PathVariable int patientId) throws OHServiceException {
+		LOGGER.info("Get patient encounters  with code {}", patientId);
+		List<Encounter> encounters = encounterBrowserManager.getEncountersByPatient(patientId);
+		 return ResponseEntity.status(HttpStatus.OK).body(encounterMapper.map2DTOList(encounters));
 	}
 
 	@GetMapping("/encounters/current/{patientId}")
-	public EncounterDTO getCurrentEncounterByPatient(@PathVariable int patientId) throws OHServiceException {
+	public ResponseEntity<EncounterDTO> getCurrentEncounterByPatient(@PathVariable int patientId) throws OHServiceException {
 		Encounter encounter = encounterBrowserManager.getCurrentEncounter(patientId);
-		return encounterMapper.map2DTO(encounter);
+		if (encounter == null) {
+			return null;
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(encounterMapper.map2DTO(encounter));
 	}
 
 	@PatchMapping("/encounters/{code}")
-	public EncounterDTO updateEncounterCode(@PathVariable String code, @RequestBody @Valid String newCode) throws OHServiceException {
-		LOGGER.info("Update encounter with new code {}", newCode);
+	public ResponseEntity<EncounterDTO> updateEncounterCode(@PathVariable String code, @RequestBody EncounterDTO encounter) throws OHServiceException {
+		LOGGER.info("Update encounter with new code {}", encounter.getCode());
 		Encounter encounterToUpdate = encounterBrowserManager.getEncountersByCode(code);
 		if (encounterToUpdate == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found"));
 		}
 
-		if (newCode == null) {
-			throw new OHAPIException(new OHExceptionMessage("New code should not be empty"));
+		if (!Objects.equals(encounter.getPatientCode(), encounterToUpdate.getPatientCode())) {
+			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
-		encounterToUpdate.setCode(newCode);
+		if (encounter.getStatus() == EncounterStatus.CLOSE) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+		}
+
+		if (encounterBrowserManager.getEncountersByCode(encounter.getCode()) != null) {
+			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
+		}
+
+		encounterToUpdate.setCode(encounter.getCode());
 		Encounter encounterUpdated = encounterBrowserManager.saveEncounter(encounterToUpdate);
-		return encounterMapper.map2DTO(encounterUpdated);
+		return ResponseEntity.status(HttpStatus.OK).body(encounterMapper.map2DTO(encounterUpdated));
 	}
 }
