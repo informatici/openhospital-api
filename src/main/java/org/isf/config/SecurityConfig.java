@@ -104,6 +104,11 @@ public class SecurityConfig {
 				.requestMatchers("/", "/healthcheck").permitAll()
 				.requestMatchers("/auth/login", "/auth/refresh-token").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+				//accounting
+				.requestMatchers(HttpMethod.POST, "/bills/**").hasAuthority("bills.create")
+				.requestMatchers(HttpMethod.GET, "/bills/**").hasAnyAuthority("bills.read")
+				.requestMatchers(HttpMethod.PUT, "/bills/**").hasAuthority("bills.update")
+				.requestMatchers(HttpMethod.DELETE, "/bills/**").hasAuthority("bills.delete")
 				// admissions
 				.requestMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
 				.requestMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admissions.read")
@@ -246,6 +251,11 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
 				.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
 				.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
+				//pregtreattype
+				.requestMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
+				.requestMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.read")
+				.requestMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.delete")
 				// radiology
 				.requestMatchers(HttpMethod.GET, "/radiology/**").hasAuthority("radiology.read")
 				// grouppermission
@@ -304,6 +314,8 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
 				.requestMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
 				.requestMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
+				//stats.rest
+				.requestMatchers(HttpMethod.GET, "/reports/**").hasAnyAuthority("reports.read")
 				// suppliers
 				.requestMatchers(HttpMethod.POST, "/suppliers/**").hasAuthority("suppliers.create")
 				.requestMatchers(HttpMethod.GET, "/suppliers/**").hasAnyAuthority("suppliers.read")
