@@ -67,7 +67,7 @@ public class EncounterController {
 
 	@PostMapping(value = "/encounters")
 	@ResponseStatus(HttpStatus.CREATED)
-	public EncounterDTO createEncounter(@RequestBody EncounterDTO encounterDTO) throws OHServiceException {
+	public ResponseEntity<EncounterDTO> createEncounter(@RequestBody EncounterDTO encounterDTO) throws OHServiceException {
 		LOGGER.info("Create encounter with {}", encounterDTO.getCode());
 		if (encounterDTO.getPatientCode() == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient code must not be null"));
@@ -88,7 +88,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
 		}
 
-		return encounterMapper.map2DTO(encounter);
+		return ResponseEntity.status(HttpStatus.CREATED).body(encounterMapper.map2DTO(encounter));
 	}
 
 	@PatchMapping("/encounters/{code}/status")
@@ -107,7 +107,7 @@ public class EncounterController {
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to update encounter"));
 		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(encounterMapper.map2DTO(encounter));
+		return ResponseEntity.status(HttpStatus.OK).body(encounterMapper.map2DTO(encounter));
 	}
 
 	@GetMapping("/encounters/{patientId}")
