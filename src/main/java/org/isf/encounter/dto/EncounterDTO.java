@@ -25,6 +25,9 @@ import org.isf.encounter.model.EncounterStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import org.isf.patient.dto.PatientDTO;
+
+import java.time.LocalDateTime;
 
 public class EncounterDTO {
 
@@ -36,8 +39,11 @@ public class EncounterDTO {
 	private EncounterStatus status;
 	
 	@NotNull
-	@Schema(description = "Patient id", example = "45")
-	private Integer patientCode;
+	@Schema(description = "Patient")
+	private PatientDTO patient;
+
+	@Schema(description = "Created date", example = "2025-08-26 16:15:58")
+	private LocalDateTime createdDate;
 
 	public String getCode() {
 		return code;
@@ -55,12 +61,20 @@ public class EncounterDTO {
 		this.status = status;
 	}
 
-	public Integer getPatientCode() {
-		return patientCode;
+	public PatientDTO getPatient() {
+		return patient;
 	}
 
-	public void setPatientCode(Integer patientCode) {
-		this.patientCode = patientCode;
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
+	}
+
+	public LocalDateTime getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(LocalDateTime createdDate) {
+		this.createdDate = createdDate;
 	}
 
 	public EncounterDTO() {}

@@ -69,19 +69,20 @@ public class EncounterController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<EncounterDTO> createEncounter(@RequestBody EncounterDTO encounterDTO) throws OHServiceException {
 		LOGGER.info("Create encounter with {}", encounterDTO.getCode());
-		if (encounterDTO.getPatientCode() == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient code must not be null"));
+		if (encounterDTO.getPatient() == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient must not be null."));
 		}
 		if (encounterBrowserManager.getEncountersByCode(encounterDTO.getCode()) != null) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
 		}
 
-		Patient patient = patientBrowserManager.getPatientById(encounterDTO.getPatientCode());
+		Patient patient = patientBrowserManager.getPatientById(encounterDTO.getPatient().getCode());
 		if (patient == null) {
-			throw new OHAPIException(new OHExceptionMessage("Patient not found"));
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."));
 		}
 
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
+		encounter.setPatient(patient);
 		encounter.setStatus(EncounterStatus.OPEN);
 		encounter = encounterBrowserManager.saveEncounter(encounter);			
 		if (encounter == null) {
@@ -93,6 +94,7 @@ public class EncounterController {
 
 	@PatchMapping("/encounters/{code}/status")
 	public ResponseEntity<EncounterDTO> updateEncounterStatus(@PathVariable String code) throws OHServiceException {
+		LOGGER.info("Update encounter with code {}", code);
 		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code :" + code), HttpStatus.NOT_FOUND);
@@ -134,7 +136,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found"));
 		}
 
-		if (!Objects.equals(encounter.getPatientCode(), encounterToUpdate.getPatientCode())) {
+		if (!Objects.equals(encounter.getPatient().getCode(), encounterToUpdate.getPatient().getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
@@ -142,7 +144,8 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
 		}
 
-		if (encounterBrowserManager.getEncountersByCode(encounter.getCode()) != null) {
+		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
+		if (encounterFound != null) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
 		}
 
