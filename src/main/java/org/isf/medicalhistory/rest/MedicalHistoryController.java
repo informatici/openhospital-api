@@ -29,6 +29,7 @@ import org.isf.medicalhistory.dto.MedicalHistoryDTO;
 import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
+import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -68,8 +69,8 @@ public class MedicalHistoryController {
 		this.patientBrowserManager = patientBrowserManager;
 	}
 
-	@GetMapping("/medicalhistories/{id}")
-	public ResponseEntity<MedicalHistoryDTO> getOne(@PathVariable Integer id) throws OHServiceException {
+	@GetMapping(value = "/medicalhistories/{id}")
+	public ResponseEntity<MedicalHistoryDTO> getMedicalHistoryById(@PathVariable Integer id) throws OHServiceException {
 		LOGGER.info("Get medical history {}", id);
 		MedicalHistory mh = medicalHistoryBrowsingManager.getMedicalHistoryById(id);
 		if (mh == null) {
@@ -79,8 +80,8 @@ public class MedicalHistoryController {
 		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTO);
 	}
 
-	@GetMapping("/medicalhistories/patient/{patientCode}")
-	public ResponseEntity<List<MedicalHistoryDTO>> getByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
+	@GetMapping(value = "/medicalhistories/patient/{patientCode}")
+	public ResponseEntity<List<MedicalHistoryDTO>> getMedicalHistoryByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get medical histories for patient code {}", patientCode);
 		List<MedicalHistory> histories = medicalHistoryBrowsingManager.getMedicalHistoriesByPatientCode(patientCode);
 		if (histories == null || histories.isEmpty()) {
@@ -90,23 +91,23 @@ public class MedicalHistoryController {
 		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTOs);
 	}
 
-	@PostMapping("/medicalhistories")
-	public ResponseEntity<MedicalHistoryDTO> create(@Valid @RequestBody MedicalHistoryDTO dto) throws OHServiceException {
-		LOGGER.info("Create medical history for patient {}", dto.getPatientId());
-		Patient patient = patientBrowserManager.getPatientById(dto.getPatientId());
+	@PostMapping(value = "/medicalhistories")
+	public ResponseEntity<MedicalHistoryDTO> createMedicalHistory(@Valid @RequestBody MedicalHistoryDTO dto) throws OHServiceException {
+		LOGGER.info("Create medical history with code ");
+		PatientDTO patientDTO = dto.getPatient();
+		Patient patient = patientBrowserManager.getPatientById(patientDTO.getCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
 		MedicalHistory mh = medicalHistoryMapper.map2Model(dto);
-		mh.setPatient(patient);
 		MedicalHistoryDTO saved = medicalHistoryMapper.map2DTO(medicalHistoryBrowsingManager.add(mh));
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 	}
 
-	@PutMapping("/medicalhistories/{id}")
-	public ResponseEntity<MedicalHistoryDTO> update(@PathVariable Integer id, @Valid @RequestBody MedicalHistoryDTO dto) throws OHServiceException {
+	@PutMapping(value = "/medicalhistories/{id}")
+	public ResponseEntity<MedicalHistoryDTO> updateMedicalHistory(@PathVariable Integer id, @Valid @RequestBody MedicalHistoryDTO dto) throws OHServiceException {
 		LOGGER.info("Update medical history {}", id);
-		int patientCode = dto.getPatientId();
+		PatientDTO patientDTO = dto.getPatient();
 		if (!dto.getId().equals(id)) {
 			throw new OHAPIException(new OHExceptionMessage("Medical history code mismatch."));
 		}
@@ -114,14 +115,12 @@ public class MedicalHistoryController {
 		if (mh == null) {
 			throw new OHAPIException(new OHExceptionMessage("Medical history not found with id: " + id), HttpStatus.NOT_FOUND);
 		}
-		Patient patient = patientBrowserManager.getPatientById(patientCode);
+		Patient patient = patientBrowserManager.getPatientById(patientDTO.getCode());
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
 		mh = medicalHistoryMapper.map2Model(dto);
-		mh.setPatient(patient);
-		mh = medicalHistoryBrowsingManager.update(mh);
-		MedicalHistoryDTO medicalHistoryDTO = medicalHistoryMapper.map2DTO(mh);
+		MedicalHistoryDTO medicalHistoryDTO = medicalHistoryMapper.map2DTO(medicalHistoryBrowsingManager.update(mh));
 		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTO);
 	}
 }

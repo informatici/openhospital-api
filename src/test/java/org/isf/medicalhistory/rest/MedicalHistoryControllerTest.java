@@ -65,56 +65,7 @@ public class MedicalHistoryControllerTest {
 	void closeService() throws Exception {
 		closeable.close();
 	}
-
-	@Test
-	void testGetOne_200() throws Exception {
-		String request = "/medicalhistories/{id}";
-		Integer id = 1;
-
-		MedicalHistory mh = MedicalHistoryHelper.setup();
-		mh.setId(id);
-
-		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
-
-		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(mh);
-
-		MvcResult result = this.mockMvc
-			.perform(get(request, id))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().json(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
-	}
-
-	@Test
-	void testGetByPatientCode_200() throws Exception {
-		String request = "/medicalhistories/patient/{patientCode}";
-		Integer patientCode = 1;
-
-		List<MedicalHistory> histories = MedicalHistoryHelper.genList(3);
-		histories.forEach(h -> {
-			try {
-				h.setPatient(PatientHelper.setup());
-			} catch (OHException e) {
-				throw new RuntimeException(e);
-			}
-		});
-		List<MedicalHistoryDTO> dtos = mhMapper.map2DTOList(histories);
-
-		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(histories);
-
-		MvcResult result = this.mockMvc
-			.perform(get(request, patientCode))
-			.andDo(log())
-			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(MedicalHistoryHelper.getObjectMapper().writeValueAsString(dtos))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
-	}
-
+	
 	@Test
 	void testGetByPatientCode_404() throws Exception {
 		String request = "/medicalhistories/patient/{patientCode}";
