@@ -119,8 +119,7 @@ public class MedicalHistoryController {
 		if (patient == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
-		mh = medicalHistoryMapper.map2Model(dto);
-		MedicalHistoryDTO medicalHistoryDTO = medicalHistoryMapper.map2DTO(medicalHistoryBrowsingManager.update(mh));
+		MedicalHistoryDTO medicalHistoryDTO = medicalHistoryMapper.map2DTO(medicalHistoryBrowsingManager.update(medicalHistoryMapper.map2Model(dto)));
 		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTO);
 	}
 }
