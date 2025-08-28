@@ -23,6 +23,8 @@ package org.isf.conditioning.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import org.isf.patient.dto.PatientDTO;
+import org.isf.users.dto.UserDTO;
 
 import java.time.LocalDateTime;
 
@@ -59,8 +61,12 @@ public class ConditioningDTO {
 	private String others;
 
 	@NotNull
-	@Schema(description = "Id for user perform", example = "222343")
-	private String performById;
+	@Schema(description = "user perform", example = "222343")
+	private UserDTO performBy;
+
+	@NotNull
+	@Schema(description = "patient", example = "22")
+	private PatientDTO patient;
 
 	@Schema(description = "Perform date", example = "String")
 	private LocalDateTime performAt;
@@ -137,12 +143,12 @@ public class ConditioningDTO {
 		this.others = others;
 	}
 
-	public String getPerformById() {
-		return performById;
+	public UserDTO getPerformBy() {
+		return performBy;
 	}
 
-	public void setPerformById(String performById) {
-		this.performById = performById;
+	public void setPerformBy(UserDTO performBy) {
+		this.performBy = performBy;
 	}
 
 	public LocalDateTime getPerformAt() {
@@ -159,5 +165,13 @@ public class ConditioningDTO {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public PatientDTO getPatient() {
+		return patient;
+	}
+
+	public void setPatient(PatientDTO patient) {
+		this.patient = patient;
 	}
 }
