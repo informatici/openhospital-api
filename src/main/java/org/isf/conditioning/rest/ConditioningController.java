@@ -1,8 +1,30 @@
+/*
+ * Open Hospital (www.open-hospital.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ *
+ * Open Hospital is a free and open source software for healthcare data management.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * https://www.gnu.org/licenses/gpl-3.0-standalone.html
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.isf.conditioning.rest;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.isf.admission.model.Admission;
 import org.isf.admission.rest.AdmissionController;
 import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.manager.ConditioningBrowserManager;
@@ -38,6 +60,13 @@ public class ConditioningController {
 		this.conditioningMapper = conditioningMapper;
 	}
 
+	/**
+	 * Update an existing {@link Conditioning}.
+	 *
+	 * @param updateConditioningDTO Conditioning data to update
+	 * @return updated {@link ConditioningDTO} if successful, or error message if not found or invalid
+	 * @throws OHServiceException When the update operation fails
+	 */
 	@PutMapping("/conditionings")
 	public ResponseEntity<ConditioningDTO> updateConditioning(@RequestBody @Valid ConditioningDTO updateConditioningDTO)
 		throws OHServiceException {
