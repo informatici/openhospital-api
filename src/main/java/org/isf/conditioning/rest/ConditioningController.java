@@ -39,10 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Tag(name = "Conditioning")
@@ -67,10 +64,13 @@ public class ConditioningController {
 	 * @return updated {@link ConditioningDTO} if successful, or error message if not found or invalid
 	 * @throws OHServiceException When the update operation fails
 	 */
-	@PutMapping("/conditionings")
-	public ResponseEntity<ConditioningDTO> updateConditioning(@RequestBody @Valid ConditioningDTO updateConditioningDTO)
+	@PutMapping("/conditioning/{id}")
+	public ResponseEntity<ConditioningDTO> updateConditioning(@PathVariable("id") int id, @RequestBody @Valid ConditioningDTO updateConditioningDTO)
 		throws OHServiceException {
 
+		if(id != updateConditioningDTO.getId()){
+			throw new OHAPIException(new OHExceptionMessage("Conditioning does not match."));
+		}
 		Conditioning old = browserManager.getConditioning(updateConditioningDTO.getId());
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not found."));

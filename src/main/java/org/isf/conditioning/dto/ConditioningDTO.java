@@ -31,39 +31,30 @@ public class ConditioningDTO {
 	@Schema(description = "Conditioning key", example = "12")
 	private int id;
 
-	@NotNull
 	@Schema(description = "Aspiration conditioning", example = "true")
 	private Boolean aspiration;
 
-	@NotNull
 	@Schema(description = "Mce duree conditioning", example = "4")
 	private Integer mceDuree;
 
-	@NotNull
 	@Schema(description = "Ventilation duree conditioning", example = "2")
 	private Integer ventilationDuree;
 
-	@NotNull
 	@Schema(description = "Oxygene debit conditioning", example = "3")
 	private Double oxygeneDebit;
 
-	@NotNull
 	@Schema(description = "Sg volume conditioning", example = "10")
 	private Double sgVolume;
 
-	@NotNull
 	@Schema(description = "Diazepam dose conditioning", example = "12")
 	private Double diazepamDose;
 
-	@NotNull
 	@Schema(description = "Bolus volume conditioning", example = "3")
 	private Double bolusSsVolume;
 
-	@NotNull
 	@Schema(description = "Conditioning number sng", example = "3434634")
 	private String sngNumero;
 
-	@NotNull
 	@Schema(description = "Conditioning others", example = "others")
 	private String others;
 
@@ -71,7 +62,6 @@ public class ConditioningDTO {
 	@Schema(description = "Id for user perform", example = "222343")
 	private String performById;
 
-	@NotNull
 	@Schema(description = "Perform date", example = "String")
 	private LocalDateTime performAt;
 
