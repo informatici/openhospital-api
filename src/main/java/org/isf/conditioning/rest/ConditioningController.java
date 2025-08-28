@@ -81,7 +81,7 @@ public class ConditioningController {
 		if (updateConditioningDTO.getPerformById() != null) {
 			User user = browserManager.getConditioning(updateConditioningDTO.getId()).getPerformBy();
 			if (user == null) {
-				throw new OHAPIException(new OHExceptionMessage("User (performBy) not found."));
+				throw new OHAPIException(new OHExceptionMessage("User not found."));
 			}
 			updateConditioning.setPerformBy(user);
 		} else {
