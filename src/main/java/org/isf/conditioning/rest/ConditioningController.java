@@ -67,7 +67,7 @@ public class ConditioningController {
 	/**
 	 * Inserts a new conditioning.
 	 *
-	 * @param conditioningDTO the conditioning to insert.
+	 * @param conditioningDTO - the conditioning to insert.
 	 * @return {@code true} if the conditioning has been successfully inserted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
@@ -94,9 +94,7 @@ public class ConditioningController {
 			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
 		}
 
-		browserManager.validateConditioning(newConditioning);
-
-		Conditioning savedConditioning = browserManager.updateConditioning(newConditioning);
+		Conditioning savedConditioning = browserManager.newConditioning(newConditioning);
 		if (savedConditioning == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not save."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -104,8 +102,9 @@ public class ConditioningController {
 	}
 
 	/**
-	 * Retrieve all existing {@link Conditioning} records.
+	 * Retrieve all existing {@link Conditioning} by patient code.
 	 *
+	 * @param patientCode - the patient code.
 	 * @return a list of {@link ConditioningDTO} objects, empty if none found
 	 * @throws OHServiceException When the retrieval operation fails
 	 */
@@ -126,7 +125,8 @@ public class ConditioningController {
 	/**
 	 * Update an existing {@link Conditioning}.
 	 *
-	 * @param updateConditioningDTO Conditioning data to update
+	 * @param id - the conditioning id.
+	 * @param updateConditioningDTO - Conditioning data to update.
 	 * @return updated {@link ConditioningDTO} if successful, or error message if not found or invalid
 	 * @throws OHServiceException When the update operation fails
 	 */
@@ -163,8 +163,6 @@ public class ConditioningController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Patient is required."), HttpStatus.BAD_REQUEST);
 		}
-
-		browserManager.validateConditioning(updateConditioning);
 
 		Conditioning updatedConditioning = browserManager.updateConditioning(updateConditioning);
 		if (updatedConditioning == null) {
