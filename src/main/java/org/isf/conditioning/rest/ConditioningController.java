@@ -21,9 +21,8 @@
  */
 package org.isf.conditioning.rest;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.manager.ConditioningBrowserManager;
 import org.isf.conditioning.mapper.ConditioningMapper;
@@ -40,9 +39,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @Tag(name = "Conditionings")
@@ -52,13 +59,13 @@ public class ConditioningController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConditioningController.class);
 
-	private final ConditioningBrowserManager browserManager;
+	private final ConditioningBrowserManager conditioningBrowserManager;
 	private final ConditioningMapper conditioningMapper;
 	private final UserBrowsingManager userBrowsingManager;
 	private final PatientBrowserManager patientBrowserManager;
 
 	public ConditioningController(ConditioningBrowserManager browserManager, ConditioningMapper conditioningMapper, UserBrowsingManager userBrowsingManager, PatientBrowserManager patientBrowserManager) {
-		this.browserManager = browserManager;
+		this.conditioningBrowserManager = browserManager;
 		this.conditioningMapper = conditioningMapper;
 		this.userBrowsingManager = userBrowsingManager;
 		this.patientBrowserManager = patientBrowserManager;
@@ -92,7 +99,7 @@ public class ConditioningController {
 			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
 		}
 		Conditioning newConditioning = conditioningMapper.map2Model(conditioningDTO);
-		Conditioning savedConditioning = browserManager.newConditioning(newConditioning);
+		Conditioning savedConditioning = conditioningBrowserManager.newConditioning(newConditioning);
 		if (savedConditioning == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not save."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -110,7 +117,7 @@ public class ConditioningController {
 	public ResponseEntity<List<ConditioningDTO>> getConditioningByPatientCode(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("get conditioning by patient code : {}", patientCode);
 
-		List<Conditioning> conditioningList = browserManager.getConditioningByPatientCode(patientCode);
+		List<Conditioning> conditioningList = conditioningBrowserManager.getConditioningByPatientCode(patientCode);
 		if (conditioningList == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not found."), HttpStatus.NOT_FOUND);
 		}
@@ -135,13 +142,13 @@ public class ConditioningController {
 		if (id != updateConditioningDTO.getId()) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning does not match."), HttpStatus.BAD_REQUEST);
 		}
-		Conditioning old = browserManager.getConditioningById(id);
+		Conditioning old = conditioningBrowserManager.getConditioningById(id);
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not found with id "+ id), HttpStatus.NOT_FOUND);
 		}
 
 		if (updateConditioningDTO.getPerformBy() != null) {
-			User user = browserManager.getConditioningById(updateConditioningDTO.getId()).getPerformBy();
+			User user = conditioningBrowserManager.getConditioningById(updateConditioningDTO.getId()).getPerformBy();
 			if (user == null) {
 				throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 			}
@@ -150,7 +157,7 @@ public class ConditioningController {
 		}
 
 		if (updateConditioningDTO.getPatient() != null) {
-			Patient patient = browserManager.getConditioningById(updateConditioningDTO.getId()).getPatient();
+			Patient patient = conditioningBrowserManager.getConditioningById(updateConditioningDTO.getId()).getPatient();
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 			}
@@ -158,7 +165,7 @@ public class ConditioningController {
 			throw new OHAPIException(new OHExceptionMessage("Patient is required."), HttpStatus.BAD_REQUEST);
 		}
 		Conditioning updateConditioning = conditioningMapper.map2Model(updateConditioningDTO);
-		Conditioning updatedConditioning = browserManager.updateConditioning(updateConditioning);
+		Conditioning updatedConditioning = conditioningBrowserManager.updateConditioning(updateConditioning);
 		if (updatedConditioning == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not updated."), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
