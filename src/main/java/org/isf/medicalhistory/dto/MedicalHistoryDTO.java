@@ -85,6 +85,9 @@ public class MedicalHistoryDTO {
 	private String otherPersonalPathologies;
 
 	private String otherFamilyPathologies;
+	
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	public Integer getId() {
 		return id;
@@ -264,5 +267,13 @@ public class MedicalHistoryDTO {
 	}
 	public void setOtherFamilyPathologies(String otherFamilyPathologies) {
 		this.otherFamilyPathologies = otherFamilyPathologies;
+	}
+	
+	public int getLock() {
+		return lock;
+	}
+	
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
