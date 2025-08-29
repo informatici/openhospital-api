@@ -21,12 +21,13 @@
  */
 package org.isf.conditioning.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
 import org.isf.patient.dto.PatientDTO;
 import org.isf.users.dto.UserDTO;
 
-import java.time.LocalDateTime;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 public class ConditioningDTO {
 
@@ -70,6 +71,9 @@ public class ConditioningDTO {
 
 	@Schema(description = "Perform date", example = "String")
 	private LocalDateTime performAt;
+	
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	public Boolean getAspiration() {
 		return aspiration;
@@ -173,5 +177,13 @@ public class ConditioningDTO {
 
 	public void setPatient(PatientDTO patient) {
 		this.patient = patient;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }
