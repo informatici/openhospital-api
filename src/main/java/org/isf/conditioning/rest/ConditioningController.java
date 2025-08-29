@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@Tag(name = "Conditioning")
+@Tag(name = "Conditionings")
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class ConditioningController {
@@ -71,29 +71,27 @@ public class ConditioningController {
 	 * @return {@code true} if the conditioning has been successfully inserted, {@code false} otherwise.
 	 * @throws OHServiceException
 	 */
-	@PostMapping("/conditioning")
+	@PostMapping("/conditionings")
 	public ResponseEntity<ConditioningDTO> newConditioning(@RequestBody @Valid ConditioningDTO conditioningDTO) throws OHServiceException {
-
-		Conditioning newConditioning = conditioningMapper.map2Model(conditioningDTO);
-
+		LOGGER.info("Create conditioning");
 		if (conditioningDTO.getPatient() != null) {
 			Patient patient = patientBrowserManager.getPatientById(conditioningDTO.getPatient().getCode());
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 			}
-			newConditioning.setPatient(patient);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Patient is required."), HttpStatus.BAD_REQUEST);
 		}
 
 		if (conditioningDTO.getPerformBy() != null) {
-			if (!userBrowsingManager.isUserNamePresent(conditioningDTO.getPerformBy().getUserName())) {
+			String userName = conditioningDTO.getPerformBy().getUserName();
+			if (!userBrowsingManager.isUserNamePresent(userName)) {
 				throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 			}
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
 		}
-
+		Conditioning newConditioning = conditioningMapper.map2Model(conditioningDTO);
 		Conditioning savedConditioning = browserManager.newConditioning(newConditioning);
 		if (savedConditioning == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not save."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,7 +106,7 @@ public class ConditioningController {
 	 * @return a list of {@link ConditioningDTO} objects, empty if none found
 	 * @throws OHServiceException When the retrieval operation fails
 	 */
-	@GetMapping("/conditioning/{patientCode}")
+	@GetMapping("/conditionings/{patientCode}")
 	public ResponseEntity<List<ConditioningDTO>> getConditioningByPatientCode(@PathVariable("patientCode") int patientCode) throws OHServiceException {
 		LOGGER.info("get conditioning by patient code : {}", patientCode);
 
@@ -130,10 +128,10 @@ public class ConditioningController {
 	 * @return updated {@link ConditioningDTO} if successful, or error message if not found or invalid
 	 * @throws OHServiceException When the update operation fails
 	 */
-	@PutMapping("/conditioning/{id}")
+	@PutMapping("/conditionings/{id}")
 	public ResponseEntity<ConditioningDTO> updateConditioning(@PathVariable("id") int id, @RequestBody @Valid ConditioningDTO updateConditioningDTO)
 		throws OHServiceException {
-
+		LOGGER.info("Update conditioning with id : {}", id);
 		if (id != updateConditioningDTO.getId()) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning does not match."), HttpStatus.BAD_REQUEST);
 		}
@@ -142,14 +140,11 @@ public class ConditioningController {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not found with id "+ id), HttpStatus.NOT_FOUND);
 		}
 
-		Conditioning updateConditioning = conditioningMapper.map2Model(updateConditioningDTO);
-
 		if (updateConditioningDTO.getPerformBy() != null) {
 			User user = browserManager.getConditioningById(updateConditioningDTO.getId()).getPerformBy();
 			if (user == null) {
 				throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
 			}
-			updateConditioning.setPerformBy(user);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
 		}
@@ -159,11 +154,10 @@ public class ConditioningController {
 			if (patient == null) {
 				throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 			}
-			updateConditioning.setPatient(patient);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Patient is required."), HttpStatus.BAD_REQUEST);
 		}
-
+		Conditioning updateConditioning = conditioningMapper.map2Model(updateConditioningDTO);
 		Conditioning updatedConditioning = browserManager.updateConditioning(updateConditioning);
 		if (updatedConditioning == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not updated."), HttpStatus.INTERNAL_SERVER_ERROR);

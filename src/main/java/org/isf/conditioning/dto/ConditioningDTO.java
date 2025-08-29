@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 public class ConditioningDTO {
 
 	@Schema(description = "Conditioning key", example = "12")
-	private int id;
+	private Integer id;
 
 	@Schema(description = "Aspiration conditioning", example = "true")
 	private Boolean aspiration;
@@ -159,11 +159,11 @@ public class ConditioningDTO {
 		this.performAt = performAt;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
