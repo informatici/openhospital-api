@@ -38,9 +38,6 @@ public class MedicalHistoryDTO {
 	@Schema(description = "The patient identifier linked to this medical history")
 	private PatientDTO patient;
 
-	@Schema(description = "Lock", example = "0")
-	private int lock;
-
 	private Integer siblingRank;
 
 	private String termPregnancy;
@@ -134,13 +131,6 @@ public class MedicalHistoryDTO {
 	}
 	public void setBirthWeight(Double birthWeight) {
 		this.birthWeight = birthWeight;
-	}
-	public int getLock() {
-		return lock;
-	}
-
-	public void setLock(int lock) {
-		this.lock = lock;
 	}
 
 	public String getVaccinationState() {
