@@ -1,13 +1,17 @@
 package org.isf.medicalhistory.data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.medicalhistory.TestMedicalHistory;
 import org.isf.medicalhistory.dto.MedicalHistoryDTO;
+import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
-import org.isf.patient.data.PatientHelper;
+import org.isf.patient.TestPatient;
+import org.isf.patient.model.Patient;
+import org.isf.patient.service.PatientIoOperationRepository;
+import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,59 +21,48 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class MedicalHistoryHelper {
 	private static ObjectMapper objectMapper;
+	private static PatientIoOperationRepository patientRepository;
 
-	public static MedicalHistory setup() {
-		MedicalHistory mh = new MedicalHistory();
+	public static MedicalHistory setup() throws OHException {
+		TestMedicalHistory testMedicalHistory = new TestMedicalHistory();
+		Patient patient = new TestPatient().setup(true);
+		return testMedicalHistory.createMedicalHistory(patient) ;
+	}
+
+	public static List<MedicalHistory> setupMedicalHistories(int size) {
+		return IntStream.range(1, size + 1)
+			.mapToObj(i -> {
+					MedicalHistory mh = null;
+					try {
+						mh = MedicalHistoryHelper.setup();
+					} catch (OHException e) {
+						e.printStackTrace();
+					}
+					return mh;
+				}
+			).collect(Collectors.toList());
+	}
+
+	public static String asJsonString(MedicalHistoryDTO medicalHistoryDTO) {
 		try {
-			mh.setPatient(PatientHelper.setup());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		mh.setSiblingRank(1);
-		mh.setTermPregnancy("Full-term");
-		mh.setDeliveryMode("Normal");
-		mh.setApgarScore("8/10");
-		mh.setBirthWeight(3.2);
-		mh.setVaccinationState("Up to date");
-		mh.setAntiMalarialProphylaxis("None");
-		mh.setDiet("Normal");
-		mh.setDeParasitization("Yes");
-		mh.setPsychomotorDev("Normal");
-		mh.setSomaticGrowth("Normal");
-		mh.setIronSupplement(true);
-		mh.setFolicAcidSupplement(true);
-		mh.setVitASupplement(false);
-		mh.setOtherSupplements("None");
-		mh.setTransfusion(false);
-		mh.setLastTransfusionDate(LocalDateTime.now());
-		mh.setSickleCell(false);
-		mh.setDrugAllergy(false);
-		mh.setAllergyPrecision("");
-		mh.setHemylosis("None");
-		mh.setOtherPersonalPathologies("");
-		mh.setOtherFamilyPathologies("");
-		return mh;
-	}
-
-	public static MedicalHistory setup(Integer id) {
-		MedicalHistory mh = setup();
-		mh.setId(id);
-		return mh;
-	}
-
-	public static List<MedicalHistory> genList(int n) {
-		return IntStream.range(0, n)
-			.mapToObj(MedicalHistoryHelper::setup)
-			.collect(Collectors.toList());
-	}
-
-	public static String asJsonString(MedicalHistoryDTO dto) {
-		try {
-			return getObjectMapper().writeValueAsString(dto);
+			return getObjectMapper().writeValueAsString(medicalHistoryDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static String asJsonString(List<?> list) {
+		try {
+			return getObjectMapper().writeValueAsString(list);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static MedicalHistoryDTO setup(MedicalHistoryMapper medicalHistoryMapper) throws OHException {
+		return medicalHistoryMapper.map2DTO(MedicalHistoryHelper.setup());
 	}
 
 	public static ObjectMapper getObjectMapper() {
