@@ -5379,9 +5379,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MedicalHistoryDTO"
+                $ref: "#/components/schemas/MedicalHistoryDTO"
       security:
       - bearerAuth: []
   /malnutritions/{id_admission}:
@@ -6778,11 +6776,11 @@ components:
           format: int32
           description: lock
           example: 0
+        opd:
+          type: boolean
         female:
           type: boolean
         male:
-          type: boolean
-        opd:
           type: boolean
         pharmacy:
           type: boolean
@@ -7639,11 +7637,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       required:
       - admDate
       - admitted
@@ -8141,6 +8139,11 @@ components:
           type: string
         otherFamilyPathologies:
           type: string
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 0
       required:
       - patient
     MalnutritionDTO:
@@ -8536,6 +8539,11 @@ components:
           format: date-time
           description: Perform date
           example: String
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 0
       required:
       - patient
       - performBy
