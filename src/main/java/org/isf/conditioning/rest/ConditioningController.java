@@ -27,8 +27,6 @@ import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.manager.ConditioningBrowserManager;
 import org.isf.conditioning.mapper.ConditioningMapper;
 import org.isf.conditioning.model.Conditioning;
-import org.isf.menu.manager.UserBrowsingManager;
-import org.isf.menu.model.User;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -61,13 +59,11 @@ public class ConditioningController {
 
 	private final ConditioningBrowserManager conditioningBrowserManager;
 	private final ConditioningMapper conditioningMapper;
-	private final UserBrowsingManager userBrowsingManager;
 	private final PatientBrowserManager patientBrowserManager;
 
-	public ConditioningController(ConditioningBrowserManager browserManager, ConditioningMapper conditioningMapper, UserBrowsingManager userBrowsingManager, PatientBrowserManager patientBrowserManager) {
+	public ConditioningController(ConditioningBrowserManager browserManager, ConditioningMapper conditioningMapper, PatientBrowserManager patientBrowserManager) {
 		this.conditioningBrowserManager = browserManager;
 		this.conditioningMapper = conditioningMapper;
-		this.userBrowsingManager = userBrowsingManager;
 		this.patientBrowserManager = patientBrowserManager;
 	}
 
@@ -89,15 +85,7 @@ public class ConditioningController {
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("Patient is required."), HttpStatus.BAD_REQUEST);
 		}
-
-		if (conditioningDTO.getPerformBy() != null) {
-			String userName = conditioningDTO.getPerformBy().getUserName();
-			if (!userBrowsingManager.isUserNamePresent(userName)) {
-				throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
-			}
-		} else {
-			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
-		}
+		
 		Conditioning newConditioning = conditioningMapper.map2Model(conditioningDTO);
 		Conditioning savedConditioning = conditioningBrowserManager.newConditioning(newConditioning);
 		if (savedConditioning == null) {
@@ -145,15 +133,6 @@ public class ConditioningController {
 		Conditioning old = conditioningBrowserManager.getConditioningById(id);
 		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage("Conditioning not found with id "+ id), HttpStatus.NOT_FOUND);
-		}
-
-		if (updateConditioningDTO.getPerformBy() != null) {
-			User user = conditioningBrowserManager.getConditioningById(updateConditioningDTO.getId()).getPerformBy();
-			if (user == null) {
-				throw new OHAPIException(new OHExceptionMessage("User not found."), HttpStatus.NOT_FOUND);
-			}
-		} else {
-			throw new OHAPIException(new OHExceptionMessage("User is required."), HttpStatus.BAD_REQUEST);
 		}
 
 		if (updateConditioningDTO.getPatient() != null) {
