@@ -6778,11 +6778,11 @@ components:
           format: int32
           description: lock
           example: 0
-        pharmacy:
-          type: boolean
         female:
           type: boolean
         male:
+          type: boolean
+        pharmacy:
           type: boolean
         opd:
           type: boolean
@@ -9008,7 +9008,7 @@ components:
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: Patient
-        date:
+        performAt:
           type: string
           format: date-time
           description: Created date
