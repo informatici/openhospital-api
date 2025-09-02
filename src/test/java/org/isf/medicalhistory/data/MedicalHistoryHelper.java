@@ -47,7 +47,7 @@ public class MedicalHistoryHelper {
 	public static MedicalHistory setup() throws OHException {
 		TestMedicalHistory testMedicalHistory = new TestMedicalHistory();
 		Patient patient = new TestPatient().setup(false);
-		return testMedicalHistory.createMedicalHistory(patient) ;
+		return testMedicalHistory.createMedicalHistory(patient);
 	}
 
 	public static List<MedicalHistory> setupMedicalHistories(int size) {

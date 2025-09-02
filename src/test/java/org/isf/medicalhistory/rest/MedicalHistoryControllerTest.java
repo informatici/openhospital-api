@@ -40,7 +40,6 @@ import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.patient.data.PatientHelper;
-import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
@@ -101,7 +100,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testGetByPatientCode_404() throws Exception {
+	void testGetMedicalHistoriesByPatientCode_404() throws Exception {
 		String request = "/medicalhistories/patient/{patientCode}";
 		Integer patientCode = 999;
 
@@ -114,13 +113,13 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testGetByPatientCode_200() throws Exception {
+	void testGetMedicalHistoriesByPatientCode_200() throws Exception {
 		String request = "/medicalhistories/patient/{patientCode}";
 		List<MedicalHistory> medicalHistories = MedicalHistoryHelper.setupMedicalHistories(3);
 
 		int patientCode = 1;
 
-		when(mhManagerMock.getMedicalHistoriesByPatientCode(1)).thenReturn(medicalHistories);
+		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(medicalHistories);
 
 		MvcResult result = this.mockMvc
 			.perform(get(request, patientCode).contentType(MediaType.APPLICATION_JSON))
@@ -133,7 +132,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testGetOne_404() throws Exception {
+	void testGetMedicalHistoryById_404() throws Exception {
 		String request = "/medicalhistories/{id}";
 		int id = 999;
 
@@ -146,7 +145,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testGetOne_200() throws Exception {
+	void testGetMedicalHistoryById_200() throws Exception {
 		String request = "/medicalhistories/{id}";
 		MedicalHistory mh = MedicalHistoryHelper.setup();
 
@@ -154,40 +153,13 @@ public class MedicalHistoryControllerTest {
 
 		mhManagerMock.add(mh);
 
-		when(mhManagerMock.getMedicalHistoryById(1)).thenReturn(mh);
+		when(mhManagerMock.getMedicalHistoryById(patientCode)).thenReturn(mh);
 
 		MvcResult result = this.mockMvc
 			.perform(get(request, patientCode).contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
-	}
-
-	@Test
-	void testCreateMedicalHistory_404() throws Exception {
-		MedicalHistory mh = MedicalHistoryHelper.setup();
-
-		int patientCode = 1;
-		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
-		newPatientDTO.setCode(patientCode);
-		Patient newPatient = PatientHelper.setup();
-		newPatient.setCode(patientCode);
-
-		mh.setPatient(newPatient);
-		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
-
-		when(mhManagerMock.add(mhMapper.map2Model(dto))).thenReturn(mh);
-
-		MvcResult result = mockMvc
-			.perform(post("/medicalhistories")
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
-			.andExpect(status().isNotFound())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -222,7 +194,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testCreateMedicalHistory_404_PatientNotFound() throws Exception {
+	void testCreateMedicalHistory_404() throws Exception {
 		MedicalHistory mh = MedicalHistoryHelper.setup();
 		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
 
@@ -239,7 +211,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testUpdateMed() throws Exception {
+	void testUpdateMedicalHistory_200() throws Exception {
 		String request = "/medicalhistories/{id}";
 
 		MedicalHistoryDTO body = MedicalHistoryHelper.setup(mhMapper);
@@ -275,7 +247,7 @@ public class MedicalHistoryControllerTest {
 	}
 
 	@Test
-	void testUpdateMedNotFound_404() throws Exception {
+	void testUpdateMedicalHistory_404() throws Exception {
 		String request = "/medicalhistories/{id}";
 
 		MedicalHistoryDTO body = MedicalHistoryHelper.setup(mhMapper);
