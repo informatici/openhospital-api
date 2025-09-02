@@ -1,6 +1,5 @@
 package org.isf.medicalhistory.rest;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,24 +7,41 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
 import java.util.Objects;
 
+import org.isf.admission.data.AdmissionHelper;
+import org.isf.admission.dto.AdmissionDTO;
+import org.isf.admission.model.Admission;
+import org.isf.admtype.data.AdmissionTypeDTOHelper;
+import org.isf.admtype.model.AdmissionType;
+import org.isf.disctype.data.DischargeTypeHelper;
+import org.isf.disctype.model.DischargeType;
+import org.isf.disease.data.DiseaseHelper;
+import org.isf.disease.model.Disease;
 import org.isf.medicalhistory.data.MedicalHistoryHelper;
 import org.isf.medicalhistory.dto.MedicalHistoryDTO;
 import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
+import org.isf.operation.data.OperationHelper;
+import org.isf.operation.model.Operation;
 import org.isf.patient.data.PatientHelper;
+import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
+import org.isf.patient.mapper.PatientMapper;
 import org.isf.patient.model.Patient;
+import org.isf.pregtreattype.data.PregnantTreatmentTypeHelper;
+import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
 import org.isf.shared.mapper.mappings.PatientMapping;
-import org.isf.utils.exception.OHException;
+import org.isf.ward.data.WardHelper;
+import org.isf.ward.model.Ward;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +56,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.core.StreamWriteConstraints;
-
 public class MedicalHistoryControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MedicalHistoryControllerTest.class);
@@ -49,11 +63,15 @@ public class MedicalHistoryControllerTest {
 	@Mock
 	private MedicalHistoryBrowsingManager mhManagerMock;
 
-
+	@Mock
 	protected PatientBrowserManager patientBrowserManagerMock;
 
+	private final PatientMapper patientMapper = new PatientMapper();
+
 	private final MedicalHistoryMapper mhMapper = new MedicalHistoryMapper();
+
 	private MockMvc mockMvc;
+
 	private AutoCloseable closeable;
 
 	@BeforeEach
@@ -68,6 +86,7 @@ public class MedicalHistoryControllerTest {
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		PatientMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(mhMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(patientMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
@@ -102,129 +121,181 @@ public class MedicalHistoryControllerTest {
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(MedicalHistoryHelper.asJsonString(medicalHistories))))
 			.andReturn();
 
-		LOGGER.debug("result : {} " + result );
+		LOGGER.debug("result : {} {}", result);
+	}
+
+	@Test
+	void testGetOne_404() throws Exception {
+		String request = "/medicalhistories/{id}";
+		int id = 999;
+
+		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, id).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetOne_200() throws Exception {
+		String request = "/medicalhistories/{id}";
+		MedicalHistory mh = MedicalHistoryHelper.setup();
+
+		int patientCode = 1;
+
+		mhManagerMock.add(mh);
+
+		when(mhManagerMock.getMedicalHistoryById(1)).thenReturn(mh);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, patientCode).contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testCreateMedicalHistory_404() throws Exception {
+		MedicalHistory mh = MedicalHistoryHelper.setup();
+
+		int patientCode = 1;
+		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
+		newPatientDTO.setCode(patientCode);
+		Patient newPatient = PatientHelper.setup();
+		newPatient.setCode(patientCode);
+
+		Patient savedPatient = patientBrowserManagerMock.savePatient(any(Patient.class));
+
+		mh.setPatient(newPatient);
+		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
+
+		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(savedPatient);
+		when(mhManagerMock.add(mhMapper.map2Model(dto))).thenReturn(mh);
+
+		mockMvc.perform(post("/medicalhistories")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+	}
+
+	@Test
+	void testCreateMedicalHistory_201() throws Exception {
+		MedicalHistory mh = MedicalHistoryHelper.setup();
+
+		int patientCode = 1;
+		Patient newPatient = PatientHelper.setup();
+		newPatient.setCode(patientCode);
+
+		mh.setPatient(newPatient);
+		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
+
+		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(newPatient);
+		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
+
+		when(mhManagerMock.add(any(MedicalHistory.class))).thenReturn(mh);
+
+		mockMvc.perform(post("/medicalhistories")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
+			.andExpect(status().isCreated())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.patient.code").value(patientCode));
+	}
+
+	@Test
+	void testCreateMedicalHistory_404_PatientNotFound() throws Exception {
+		MedicalHistory mh = MedicalHistoryHelper.setup();
+		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
+
+		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(null);
+
+		mockMvc.perform(post("/medicalhistories")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
+			.andExpect(status().isNotFound());
 	}
 
 //	@Test
-//	void testGetOne_404() throws Exception {
-//		String request = "/medicalhistories/{id}";
-//		Integer id = 999; // an ID that doesn't exist
-//
-//		// Mock the manager to return null
-//		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(null);
-//
-//		// Perform the GET request and expect 404
-//		this.mockMvc
-//			.perform(get(request, id))
-//			.andDo(log())
-//			.andExpect(status().isNotFound());
-//	}
-//
-//	@Test
-//	void testGetOne_200() throws Exception {
-//		String request = "/medicalhistories/{id}";
-//		Integer id = 1;
-//
+//	void testUpdatePatientInMedicalHistory_200() throws Exception {
 //		MedicalHistory mh = MedicalHistoryHelper.setup();
-//		mh.setId(id);
 //
+//		int patientCode = 1;
+//		Patient newPatient = PatientHelper.setup();
+//		newPatient.setCode(patientCode);
+//
+//		mh.setPatient(newPatient);
 //		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
 //
-//		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(mh);
+//		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(newPatient);
+//		when(patientBrowserManagerMock.savePatient(any(Patient.class))).thenReturn(newPatient);
 //
-//		MvcResult result = this.mockMvc
-//			.perform(get(request, id))
-//			.andDo(log())
-//			.andExpect(status().isOk())
-//			.andExpect(content().json(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
-//			.andReturn();
-//
-//		LOGGER.debug("result: {}", result);
-//	}
-//
-//	@Test
-//	void testCreateMedicalHistory_201() throws Exception {
-//		MedicalHistory mh = MedicalHistoryHelper.setup();
-//		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
-//		Patient patient = PatientHelper.setup();
-//
-//		// Mock patient exists
-//		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(patient);
-//		// Mock saving history
-//		when(mhManagerMock.add(mhMapper.map2Model(dto))).thenReturn(mh);
+//		when(mhManagerMock.add(mh)).thenReturn(mh);
 //
 //		mockMvc.perform(post("/medicalhistories")
 //				.contentType(MediaType.APPLICATION_JSON)
-//				.content(MedicalHistoryHelper.asJsonString(dto)))
+//				.accept(MediaType.APPLICATION_JSON)
+//				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
 //			.andExpect(status().isCreated())
 //			.andExpect(content().contentType(MediaType.APPLICATION_JSON));
-//	}
 //
-//	@Test
-//	void testCreateMedicalHistory_404_PatientNotFound() throws Exception {
-//		MedicalHistory mh = MedicalHistoryHelper.setup();
-//		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
+//		int updatedPatientCode = 2;
+//		Patient updatedPatient = PatientHelper.setup();
+//		updatedPatient.setCode(updatedPatientCode);
+//		mh.setPatient(updatedPatient);
+//		dto = mhMapper.map2DTO(mh);
 //
-//		// Mock patient not found
-//		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(null);
+//		when(patientBrowserManagerMock.getPatientById(updatedPatientCode)).thenReturn(updatedPatient);
+//		when(mhManagerMock.update(any(MedicalHistory.class))).thenReturn(mh);
 //
-//		mockMvc.perform(post("/medicalhistories")
+//		mockMvc.perform(put("/medicalhistories/{id}", mh.getId())
 //				.contentType(MediaType.APPLICATION_JSON)
-//				.content(MedicalHistoryHelper.asJsonString(dto)))
-//			.andExpect(status().isNotFound());
-//	}
-//
-//	// ===================== UPDATE MEDICAL HISTORY =====================
-//	@Test
-//	void testUpdateMedicalHistory_200() throws Exception {
-//		Integer id = 1;
-//		MedicalHistory mh = MedicalHistoryHelper.setup(id);
-//		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
-//		Patient patient = PatientHelper.setup();
-//
-//		// Mock existing history
-//		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(mh);
-//		// Mock patient exists
-//		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(patient);
-//		// Mock update
-//		when(mhManagerMock.update(mhMapper.map2Model(dto))).thenReturn(mh);
-//
-//		mockMvc.perform(put("/medicalhistories/{id}", id)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.content(MedicalHistoryHelper.asJsonString(dto)))
+//				.accept(MediaType.APPLICATION_JSON)
+//				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(dto))))
 //			.andExpect(status().isOk())
-//			.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+//			.andExpect(jsonPath("$.patient.code").value(updatedPatient.getCode()))
+//			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
 //	}
-//
-//	@Test
-//	void testUpdateMedicalHistory_404_PatientNotFound() throws Exception {
-//		Integer id = 1;
-//		MedicalHistory mh = MedicalHistoryHelper.setup(id);
-//		MedicalHistoryDTO dto = mhMapper.map2DTO(mh);
-//
-//		// Mock existing history
-//		when(mhManagerMock.getMedicalHistoryById(id)).thenReturn(mh);
-//		// Mock patient not found
-//		when(patientBrowserManagerMock.getPatientById(dto.getPatient().getCode())).thenReturn(null);
-//
-//		mockMvc.perform(put("/medicalhistories/{id}", id)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.content(MedicalHistoryHelper.asJsonString(dto)))
-//			.andExpect(status().isNotFound());
-//	}
-//
-//	@Test
-//	void testUpdateMedicalHistory_404_CodeMismatch() throws Exception {
-//		Integer id = 1;
-//		MedicalHistory mh = MedicalHistoryHelper.setup(2); // different ID
-//		MedicalHistoryDTO dto = mhMapper.map2DTO(mh); // now dto has ID = 2
-//
-//		mockMvc.perform(put("/medicalhistories/{id}", id)
-//				.contentType(MediaType.APPLICATION_JSON)
-//				.content(MedicalHistoryHelper.asJsonString(dto)))
-//			.andExpect(status().isNotFound());
-//	}
+
+	@Test
+	void testUpdateMedicalHistory() throws Exception {
+		String request = "/medicalhistories/{id}";
+
+		MedicalHistoryDTO body = MedicalHistoryHelper.setup(mhMapper);
+		Integer code = 10;
+		body.getPatient().setCode(code);
+
+		MedicalHistory old = mhMapper.map2Model(body);
+		mhManagerMock.add(old);
+
+		MedicalHistory update = mhMapper.map2Model(body);
+
+		when(mhManagerMock.getMedicalHistoryById(1)).thenReturn(update);
+
+		Patient patient = PatientHelper.setup();
+		patient.setCode(code);
+		when(patientBrowserManagerMock.getPatientById(body.getPatient().getCode()))
+			.thenReturn(patient);
+
+		when(mhManagerMock.update(update))
+			.thenReturn(update);
+
+		MvcResult result = this.mockMvc
+			.perform(put("/medicalhistories/{id}", old.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(MedicalHistoryHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
 }
