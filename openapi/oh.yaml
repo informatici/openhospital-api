@@ -6780,13 +6780,11 @@ components:
           example: 0
         pharmacy:
           type: boolean
-        female:
-          type: boolean
         male:
           type: boolean
-        opd:
+        female:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
       required:
       - beds
@@ -8143,6 +8141,11 @@ components:
           type: string
         otherFamilyPathologies:
           type: string
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 0
       required:
       - patient
     MalnutritionDTO:
@@ -8525,22 +8528,23 @@ components:
           type: string
           description: Conditioning others
           example: others
-        performBy:
-          $ref: "#/components/schemas/UserDTO"
-          description: user perform
-          example: 222343
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: patient
           example: 22
-        performAt:
+        date:
           type: string
           format: date-time
           description: Perform date
           example: String
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 0
       required:
+      - date
       - patient
-      - performBy
     BillItemsDTO:
       type: object
       description: Class representing a billItem
