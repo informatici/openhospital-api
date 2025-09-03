@@ -43,7 +43,7 @@ public class EncounterDTO {
 	private PatientDTO patient;
 
 	@Schema(description = "Created date", example = "2025-08-26 16:15:58")
-	private LocalDateTime createdDate;
+	private LocalDateTime performAt;
 
 	public String getCode() {
 		return code;
@@ -69,12 +69,12 @@ public class EncounterDTO {
 		this.patient = patient;
 	}
 
-	public LocalDateTime getCreatedDate() {
-		return createdDate;
+	public LocalDateTime getPerformAt() {
+		return performAt;
 	}
 
-	public void setCreatedDate(LocalDateTime createdDate) {
-		this.createdDate = createdDate;
+	public void setPerformAt(LocalDateTime performAt) {
+		this.performAt = performAt;
 	}
 
 	public EncounterDTO() {}

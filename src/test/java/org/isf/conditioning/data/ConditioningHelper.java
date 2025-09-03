@@ -29,10 +29,6 @@ import org.isf.conditioning.TestConditioning;
 import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.mapper.ConditioningMapper;
 import org.isf.conditioning.model.Conditioning;
-import org.isf.menu.TestUser;
-import org.isf.menu.TestUserGroup;
-import org.isf.menu.model.User;
-import org.isf.menu.model.UserGroup;
 import org.isf.patient.TestPatient;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
@@ -50,12 +46,8 @@ public class ConditioningHelper {
 	public static Conditioning setup() throws OHException {
 		TestPatient testPatient = new TestPatient();
 		Patient patient = testPatient.setup(false);
-		TestUserGroup testUserGroup = new TestUserGroup();
-		UserGroup userGroup = testUserGroup.setup(false);
-		TestUser testUser = new TestUser();
-		User user = testUser.setup(userGroup, false);
 		TestConditioning testConditioning = new TestConditioning();
-		return testConditioning.setup(patient, user, false);
+		return testConditioning.setup(patient, false);
 	}
 
 	public static List<Conditioning> setupConditioningList(int size) {

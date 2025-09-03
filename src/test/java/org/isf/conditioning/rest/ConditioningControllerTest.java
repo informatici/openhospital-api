@@ -26,7 +26,6 @@ import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.manager.ConditioningBrowserManager;
 import org.isf.conditioning.mapper.ConditioningMapper;
 import org.isf.conditioning.model.Conditioning;
-import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
@@ -69,9 +68,6 @@ public class ConditioningControllerTest {
 	@Mock
 	protected PatientBrowserManager patientBrowserManagerMock;
 
-	@Mock
-	protected UserBrowsingManager userBrowsingManagerMock;
-
 	private final ConditioningMapper conditioningMapper = new ConditioningMapper();
 
 	private MockMvc mockMvc;
@@ -82,7 +78,7 @@ public class ConditioningControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new ConditioningController(conBrowserManagerMock, conditioningMapper, userBrowsingManagerMock,
+			.standaloneSetup(new ConditioningController(conBrowserManagerMock, conditioningMapper,
 				patientBrowserManagerMock))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
@@ -108,8 +104,7 @@ public class ConditioningControllerTest {
 
 		when(patientBrowserManagerMock.getPatientById(body.getPatient().getCode()))
 			.thenReturn(conditioning.getPatient());
-		when(userBrowsingManagerMock.isUserNamePresent(body.getPerformBy().getUserName()))
-			.thenReturn(true);
+		
 		when(conBrowserManagerMock.newConditioning(any(Conditioning.class)))
 			.thenReturn(conditioning);
 
@@ -203,8 +198,6 @@ public class ConditioningControllerTest {
 		ConditioningDTO body = conditioningMapper.map2DTO(conditioning);
 
 		when(conBrowserManagerMock.getConditioningById(id)).thenReturn(conditioning);
-
-		when(userBrowsingManagerMock.isUserNamePresent(body.getPerformBy().getUserName())).thenReturn(true);
 
 		when(patientBrowserManagerMock.getPatientById(body.getPatient().getCode())).thenReturn(conditioning.getPatient());
 

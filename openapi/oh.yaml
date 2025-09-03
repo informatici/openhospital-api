@@ -8526,15 +8526,11 @@ components:
           type: string
           description: Conditioning others
           example: others
-        performBy:
-          $ref: "#/components/schemas/UserDTO"
-          description: user perform
-          example: 222343
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: patient
           example: 22
-        performAt:
+        date:
           type: string
           format: date-time
           description: Perform date
@@ -8545,8 +8541,8 @@ components:
           description: Lock
           example: 0
       required:
+      - date
       - patient
-      - performBy
     BillItemsDTO:
       type: object
       description: Class representing a billItem
@@ -9014,7 +9010,7 @@ components:
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: Patient
-        createdDate:
+        date:
           type: string
           format: date-time
           description: Created date
