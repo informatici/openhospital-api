@@ -24,7 +24,6 @@ package org.isf.conditioning.dto;
 import java.time.LocalDateTime;
 
 import org.isf.patient.dto.PatientDTO;
-import org.isf.users.dto.UserDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -61,19 +60,20 @@ public class ConditioningDTO {
 	@Schema(description = "Conditioning others", example = "others")
 	private String others;
 
-	@NotNull
-	@Schema(description = "user perform", example = "222343")
-	private UserDTO performBy;
 
 	@NotNull
 	@Schema(description = "patient", example = "22")
 	private PatientDTO patient;
 
+	@NotNull
 	@Schema(description = "Perform date", example = "String")
-	private LocalDateTime performAt;
+	private LocalDateTime date;
 	
 	@Schema(description = "Lock", example = "0")
 	private int lock;
+	
+	@Schema(description = "CPAP", example = "true")
+	private Boolean cpap;
 
 	public Boolean getAspiration() {
 		return aspiration;
@@ -147,20 +147,12 @@ public class ConditioningDTO {
 		this.others = others;
 	}
 
-	public UserDTO getPerformBy() {
-		return performBy;
+	public LocalDateTime getDate() {
+		return date;
 	}
 
-	public void setPerformBy(UserDTO performBy) {
-		this.performBy = performBy;
-	}
-
-	public LocalDateTime getPerformAt() {
-		return performAt;
-	}
-
-	public void setPerformAt(LocalDateTime performAt) {
-		this.performAt = performAt;
+	public void setDate(LocalDateTime date) {
+		this.date = date;
 	}
 
 	public Integer getId() {
@@ -186,4 +178,13 @@ public class ConditioningDTO {
 	public void setLock(int lock) {
 		this.lock = lock;
 	}
+	
+	public Boolean getCpap() {
+		return cpap;
+	}
+
+	public void setCpap(Boolean cpap) {
+		this.cpap = cpap;
+	}
+	
 }
