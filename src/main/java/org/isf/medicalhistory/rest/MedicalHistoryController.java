@@ -81,19 +81,19 @@ public class MedicalHistoryController {
 	}
 
 	@GetMapping(value = "/medicalhistories/patient/{patientCode}")
-	public ResponseEntity<List<MedicalHistoryDTO>> getMedicalHistoryByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
+	public ResponseEntity<MedicalHistoryDTO> getMedicalHistoryByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get medical histories for patient code {}", patientCode);
-		List<MedicalHistory> histories = medicalHistoryBrowsingManager.getMedicalHistoriesByPatientCode(patientCode);
-		if (histories == null || histories.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("No medical histories found for patient code: " + patientCode),HttpStatus.NOT_FOUND);
+		MedicalHistory history = medicalHistoryBrowsingManager.getMedicalHistoriesByPatientCode(patientCode);
+		if (history == null) {
+			throw new OHAPIException(new OHExceptionMessage("No medical history found for patient code: " + patientCode),HttpStatus.NOT_FOUND);
 		}
-		List<MedicalHistoryDTO> medicalHistoryDTOs = medicalHistoryMapper.map2DTOList(histories);
+		MedicalHistoryDTO medicalHistoryDTOs = medicalHistoryMapper.map2DTO(history);
 		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTOs);
 	}
 
 	@PostMapping(value = "/medicalhistories")
 	public ResponseEntity<MedicalHistoryDTO> createMedicalHistory(@Valid @RequestBody MedicalHistoryDTO dto) throws OHServiceException {
-		LOGGER.info("Create medical history with code ");
+		LOGGER.info("Create medical history for the patient: {}", dto.getPatient().getCode());
 		PatientDTO patientDTO = dto.getPatient();
 		Patient patient = patientBrowserManager.getPatientById(patientDTO.getCode());
 		if (patient == null) {
