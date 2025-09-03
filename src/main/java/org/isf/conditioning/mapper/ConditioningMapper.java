@@ -31,4 +31,5 @@ public class ConditioningMapper extends GenericMapper<Conditioning, Conditioning
 	public ConditioningMapper() {
 		super(Conditioning.class, ConditioningDTO.class);
 	}
+
 }

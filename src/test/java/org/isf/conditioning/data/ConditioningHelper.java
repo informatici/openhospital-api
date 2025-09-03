@@ -19,19 +19,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.medicalhistory.data;
+package org.isf.conditioning.data;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.isf.medicalhistory.TestMedicalHistory;
-import org.isf.medicalhistory.dto.MedicalHistoryDTO;
-import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
-import org.isf.medicalhistory.model.MedicalHistory;
+import org.isf.conditioning.TestConditioning;
+import org.isf.conditioning.dto.ConditioningDTO;
+import org.isf.conditioning.mapper.ConditioningMapper;
+import org.isf.conditioning.model.Conditioning;
+import org.isf.menu.TestUser;
+import org.isf.menu.TestUserGroup;
+import org.isf.menu.model.User;
+import org.isf.menu.model.UserGroup;
 import org.isf.patient.TestPatient;
 import org.isf.patient.model.Patient;
-import org.isf.patient.service.PatientIoOperationRepository;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,33 +43,37 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
-public class MedicalHistoryHelper {
+public class ConditioningHelper {
+
 	private static ObjectMapper objectMapper;
-	private static PatientIoOperationRepository patientRepository;
 
-	public static MedicalHistory setup() throws OHException {
-		TestMedicalHistory testMedicalHistory = new TestMedicalHistory();
-		Patient patient = new TestPatient().setup(false);
-		return testMedicalHistory.createMedicalHistory(patient);
+	public static Conditioning setup() throws OHException {
+		TestPatient testPatient = new TestPatient();
+		Patient patient = testPatient.setup(false);
+		TestUserGroup testUserGroup = new TestUserGroup();
+		UserGroup userGroup = testUserGroup.setup(false);
+		TestUser testUser = new TestUser();
+		User user = testUser.setup(userGroup, false);
+		TestConditioning testConditioning = new TestConditioning();
+		return testConditioning.setup(patient, user, false);
 	}
 
-	public static List<MedicalHistory> setupMedicalHistories(int size) {
-		return IntStream.range(1, size + 1)
+	public static List<Conditioning> setupConditioningList(int size) {
+		return IntStream.range(0, size)
 			.mapToObj(i -> {
-					MedicalHistory mh = null;
-					try {
-						mh = MedicalHistoryHelper.setup();
-					} catch (OHException e) {
-						e.printStackTrace();
-					}
-					return mh;
+				try {
+					return ConditioningHelper.setup();
+				} catch (OHException e) {
+					e.printStackTrace();
 				}
-			).collect(Collectors.toList());
+				return null;
+			})
+			.collect(Collectors.toList());
 	}
 
-	public static String asJsonString(MedicalHistoryDTO medicalHistoryDTO) {
+	public static String asJsonString(ConditioningDTO conditioningDTO) {
 		try {
-			return getObjectMapper().writeValueAsString(medicalHistoryDTO);
+			return getObjectMapper().writeValueAsString(conditioningDTO);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
@@ -82,8 +89,8 @@ public class MedicalHistoryHelper {
 		return null;
 	}
 
-	public static MedicalHistoryDTO setup(MedicalHistoryMapper medicalHistoryMapper) throws OHException {
-		return medicalHistoryMapper.map2DTO(MedicalHistoryHelper.setup());
+	public static ConditioningDTO setup(ConditioningMapper conditioningMapper) throws OHException {
+		return conditioningMapper.map2DTO(ConditioningHelper.setup());
 	}
 
 	public static ObjectMapper getObjectMapper() {
@@ -95,4 +102,5 @@ public class MedicalHistoryHelper {
 		}
 		return objectMapper;
 	}
+
 }
