@@ -71,6 +71,9 @@ public class ConditioningDTO {
 	
 	@Schema(description = "Lock", example = "0")
 	private int lock;
+	
+	@Schema(description = "CPAP", example = "true")
+	private Boolean cpap;
 
 	public Boolean getAspiration() {
 		return aspiration;
@@ -175,4 +178,13 @@ public class ConditioningDTO {
 	public void setLock(int lock) {
 		this.lock = lock;
 	}
+	
+	public Boolean getCpap() {
+		return cpap;
+	}
+
+	public void setCpap(Boolean cpap) {
+		this.cpap = cpap;
+	}
+	
 }
