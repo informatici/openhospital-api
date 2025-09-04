@@ -51,7 +51,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class EncounterController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EncounterController.class);
-	
+
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
@@ -59,7 +59,7 @@ public class EncounterController {
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
 							   PatientBrowserManager patientBrowserManager
-							   ) {
+	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
@@ -84,7 +84,7 @@ public class EncounterController {
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
 		encounter.setPatient(patient);
 		encounter.setStatus(EncounterStatus.OPEN);
-		encounter = encounterBrowserManager.saveEncounter(encounter);			
+		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
 		}
@@ -96,7 +96,7 @@ public class EncounterController {
 	public List<EncounterDTO> getEncountersByPatient(@PathVariable int patientId) throws OHServiceException {
 		LOGGER.info("Get patient encounters  with code {}", patientId);
 		List<Encounter> encounters = encounterBrowserManager.getEncountersByPatient(patientId);
-		 return encounterMapper.map2DTOList(encounters);
+		return encounterMapper.map2DTOList(encounters);
 	}
 
 	@GetMapping("/encounters/current/{patientId}")
@@ -125,7 +125,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
 		}
 
-		if(encounter.getStatus() == null) {
+		if (encounter.getStatus() == null) {
 			encounter.setStatus(EncounterStatus.OPEN);
 		}
 
