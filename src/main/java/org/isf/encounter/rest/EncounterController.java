@@ -140,17 +140,18 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
-		if (encounter.getStatus() == EncounterStatus.CLOSE) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
-		}
-
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
 		if (encounterFound != null && !Objects.equals(encounterFound.getCode(), encounterToUpdate.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
 		}
 
-		encounterToUpdate.setCode(encounter.getCode());
-		Encounter encounterUpdated = encounterBrowserManager.saveEncounter(encounterToUpdate);
-		return ResponseEntity.status(HttpStatus.OK).body(encounterMapper.map2DTO(encounterUpdated));
+		if(encounter.getStatus() == null) {
+			encounter.setStatus(EncounterStatus.OPEN);
+		}
+
+		Encounter encounterToUpdated = encounterMapper.map2Model(encounter);
+
+		encounterBrowserManager.saveEncounter(encounterToUpdated);
+		return ResponseEntity.status(HttpStatus.OK).body(encounter);
 	}
 }

@@ -36,26 +36,26 @@ public class ConditioningDTO {
 	@Schema(description = "Aspiration conditioning", example = "true")
 	private Boolean aspiration;
 
-	@Schema(description = "Mce duree conditioning", example = "4")
-	private Integer mceDuree;
+	@Schema(description = "Conditioning mce duration", example = "4")
+	private Integer mce;
 
-	@Schema(description = "Ventilation duree conditioning", example = "2")
-	private Integer ventilationDuree;
+	@Schema(description = "Conditioning ventilation duration", example = "2")
+	private Integer ventilation;
 
-	@Schema(description = "Oxygene debit conditioning", example = "3")
-	private Double oxygeneDebit;
+	@Schema(description = "Oxygen debit", example = "3")
+	private Double oxygenDebit;
 
-	@Schema(description = "Sg volume conditioning", example = "10")
+	@Schema(description = "Sg volume", example = "10")
 	private Double sgVolume;
 
-	@Schema(description = "Diazepam dose conditioning", example = "12")
+	@Schema(description = "Diazepam dose", example = "12")
 	private Double diazepamDose;
 
-	@Schema(description = "Bolus volume conditioning", example = "3")
+	@Schema(description = "Bolus volume ", example = "3")
 	private Double bolusSsVolume;
 
-	@Schema(description = "Conditioning number sng", example = "3434634")
-	private String sngNumero;
+	@Schema(description = "Conditioning sng number", example = "3434634")
+	private String sngNumber;
 
 	@Schema(description = "Conditioning others", example = "others")
 	private String others;
@@ -66,8 +66,8 @@ public class ConditioningDTO {
 	private PatientDTO patient;
 
 	@NotNull
-	@Schema(description = "Perform date", example = "String")
-	private LocalDateTime date;
+	@Schema(description = "Conditioning date", example = "String")
+	private LocalDateTime performedAt;
 	
 	@Schema(description = "Lock", example = "0")
 	private int lock;
@@ -83,28 +83,28 @@ public class ConditioningDTO {
 		this.aspiration = aspiration;
 	}
 
-	public Integer getMceDuree() {
-		return mceDuree;
+	public Integer getMce() {
+		return mce;
 	}
 
-	public void setMceDuree(Integer mceDuree) {
-		this.mceDuree = mceDuree;
+	public void setMce(Integer mce) {
+		this.mce = mce;
 	}
 
-	public Integer getVentilationDuree() {
-		return ventilationDuree;
+	public Integer getVentilation() {
+		return ventilation;
 	}
 
-	public void setVentilationDuree(Integer ventilationDuree) {
-		this.ventilationDuree = ventilationDuree;
+	public void setVentilation(Integer ventilation) {
+		this.ventilation = ventilation;
 	}
 
-	public Double getOxygeneDebit() {
-		return oxygeneDebit;
+	public Double getOxygenDebit() {
+		return oxygenDebit;
 	}
 
-	public void setOxygeneDebit(Double oxygeneDebit) {
-		this.oxygeneDebit = oxygeneDebit;
+	public void setOxygenDebit(Double oxygenDebit) {
+		this.oxygenDebit = oxygenDebit;
 	}
 
 	public Double getSgVolume() {
@@ -131,12 +131,12 @@ public class ConditioningDTO {
 		this.bolusSsVolume = bolusSsVolume;
 	}
 
-	public String getSngNumero() {
-		return sngNumero;
+	public String getSngNumber() {
+		return sngNumber;
 	}
 
-	public void setSngNumero(String sngNumero) {
-		this.sngNumero = sngNumero;
+	public void setSngNumber(String sngNumber) {
+		this.sngNumber = sngNumber;
 	}
 
 	public String getOthers() {
@@ -147,12 +147,12 @@ public class ConditioningDTO {
 		this.others = others;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
+	public LocalDateTime getPerformedAt() {
+		return performedAt;
 	}
 
-	public void setDate(LocalDateTime date) {
-		this.date = date;
+	public void setPerformedAt(LocalDateTime performedAt) {
+		this.performedAt = performedAt;
 	}
 
 	public Integer getId() {
