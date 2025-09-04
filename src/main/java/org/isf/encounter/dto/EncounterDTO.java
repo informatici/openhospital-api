@@ -45,8 +45,8 @@ public class EncounterDTO {
 	@Schema(description = "Patient")
 	private PatientDTO patient;
 
-	@Schema(description = "Created date", example = "2025-08-26 16:15:58")
-	private LocalDateTime performAt;
+	@Schema(description = "Encounter date", example = "2025-08-26 16:15:58")
+	private LocalDateTime performedAt;
 
 	@Schema(description = "Closed date", example = "2025-08-26 16:15:58")
 	private LocalDateTime closedAt;
@@ -83,12 +83,12 @@ public class EncounterDTO {
 		this.patient = patient;
 	}
 
-	public LocalDateTime getPerformAt() {
-		return performAt;
+	public LocalDateTime getPerformedAt() {
+		return performedAt;
 	}
 
 	public void setPerformAt(LocalDateTime performedAt) {
-		this.performAt = performedAt;
+		this.performedAt = performedAt;
 	}
 
 	public LocalDateTime getClosedAt() {

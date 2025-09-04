@@ -104,7 +104,7 @@ public class MedicalHistoryControllerTest {
 		String request = "/medicalhistories/patient/{patientCode}";
 		Integer patientCode = 999;
 
-		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(List.of());
+		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(null);
 
 		this.mockMvc
 			.perform(get(request, patientCode))
@@ -119,7 +119,7 @@ public class MedicalHistoryControllerTest {
 
 		int patientCode = 1;
 
-		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(medicalHistories);
+		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(medicalHistories.get(0));
 
 		MvcResult result = this.mockMvc
 			.perform(get(request, patientCode).contentType(MediaType.APPLICATION_JSON))
