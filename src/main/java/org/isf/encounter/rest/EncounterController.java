@@ -129,7 +129,7 @@ public class EncounterController {
 			encounter.setStatus(EncounterStatus.OPEN);
 		}
 
-		encounter.setPerformAt(encounterToUpdate.getPerformedAt());
+		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
 
 		Encounter encounterToUpdated = encounterMapper.map2Model(encounter);
 

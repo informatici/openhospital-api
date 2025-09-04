@@ -87,7 +87,7 @@ public class EncounterDTO {
 		return performedAt;
 	}
 
-	public void setPerformAt(LocalDateTime performedAt) {
+	public void setPerformedAt(LocalDateTime performedAt) {
 		this.performedAt = performedAt;
 	}
 
