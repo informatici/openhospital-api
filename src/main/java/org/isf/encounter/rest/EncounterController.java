@@ -21,14 +21,21 @@
  */
 package org.isf.encounter.rest;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
+import org.isf.opd.dto.OpdDTO;
+import org.isf.opd.manager.OpdBrowserManager;
+import org.isf.opd.mapper.OpdMapper;
+import org.isf.opd.model.Opd;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -55,14 +62,20 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
+	private final OpdBrowserManager opdManager;
+	private final OpdMapper opdMapper;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
-							   PatientBrowserManager patientBrowserManager
-	) {
+							   PatientBrowserManager patientBrowserManager,
+							   OpdBrowserManager opdManager,
+							   OpdMapper opdMapper
+							   ) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
+		this.opdManager = opdManager;
+		this.opdMapper = opdMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -120,6 +133,10 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
+		if (encounter.getStatus() == EncounterStatus.CLOSE) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+		}
+
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
 		if (encounterFound != null && !Objects.equals(encounterFound.getCode(), encounterToUpdate.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
@@ -135,5 +152,36 @@ public class EncounterController {
 
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
 		return encounter;
+	}
+
+	@GetMapping("/encounters/{code}/opds")
+	public List<OpdDTO> getOPDByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Opd> opdList = opdManager.getOpdList(encounter.getPatient().getCode());
+		if (opdList == null || opdList.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
+		}
+
+		List<Opd> opdListFound = null;
+		if (encounter.getStatus().toString().equals(EncounterStatus.CLOSE.toString())) {
+			opdListFound = opdList.stream()
+					.filter(opd -> opd.getDate().isAfter(encounter.getPerformedAt())
+							&& opd.getDate().isBefore(encounter.getClosedAt()))
+					.toList();
+		} else {
+			opdListFound = opdList.stream()
+					.filter(opd -> opd.getDate().isBefore(LocalDateTime.now()))
+					.toList();
+		}
+
+		if (opdListFound.isEmpty()) {
+			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
+		}
+
+		return opdMapper.map2DTOList(opdListFound);
 	}
 }
