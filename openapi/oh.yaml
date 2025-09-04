@@ -3505,7 +3505,7 @@ paths:
     patch:
       tags:
       - Encounter
-      operationId: updateEncounterCode
+      operationId: updateEncounter
       parameters:
       - name: code
         in: path
@@ -3518,26 +3518,6 @@ paths:
             schema:
               $ref: "#/components/schemas/EncounterDTO"
         required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/EncounterDTO"
-      security:
-      - bearerAuth: []
-  /encounters/{code}/status:
-    patch:
-      tags:
-      - Encounter
-      operationId: updateEncounterStatus
-      parameters:
-      - name: code
-        in: path
-        required: true
-        schema:
-          type: string
       responses:
         "200":
           description: OK
@@ -6776,11 +6756,11 @@ components:
           format: int32
           description: lock
           example: 0
-        female:
-          type: boolean
         pharmacy:
           type: boolean
         male:
+          type: boolean
+        female:
           type: boolean
         opd:
           type: boolean
@@ -7637,11 +7617,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       required:
       - admDate
       - admitted
@@ -9019,16 +8999,20 @@ components:
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: Patient
-        performAt:
+        performedAt:
           type: string
           format: date-time
-          description: Created date
+          description: Encounter date
           example: 2025-08-26 16:15:58
         closedAt:
           type: string
           format: date-time
           description: Closed date
           example: 2025-08-26 16:15:58
+        performAt:
+          type: string
+          format: date-time
+          writeOnly: true
       required:
       - code
       - patient
