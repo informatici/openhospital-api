@@ -31,19 +31,33 @@ import java.time.LocalDateTime;
 
 public class EncounterDTO {
 
+	@Schema(description = "id of the encounter", example = "13")
+	private Integer id;
+
 	@NotNull
 	@Schema(description = "Code of the encounter", example = "123")
 	private String code;
 
 	@Schema(description = "Status of encounter", example = "OPEN")
 	private EncounterStatus status;
-	
+
 	@NotNull
 	@Schema(description = "Patient")
 	private PatientDTO patient;
 
-	@Schema(description = "Created date", example = "2025-08-26 16:15:58")
-	private LocalDateTime date;
+	@Schema(description = "Encounter date", example = "2025-08-26 16:15:58")
+	private LocalDateTime performedAt;
+
+	@Schema(description = "Closed date", example = "2025-08-26 16:15:58")
+	private LocalDateTime closedAt;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getCode() {
 		return code;
@@ -69,12 +83,20 @@ public class EncounterDTO {
 		this.patient = patient;
 	}
 
-	public LocalDateTime getDate() {
-		return date;
+	public LocalDateTime getPerformedAt() {
+		return performedAt;
 	}
 
-	public void setDate(LocalDateTime Date) {
-		this.date = Date;
+	public void setPerformedAt(LocalDateTime performedAt) {
+		this.performedAt = performedAt;
+	}
+
+	public LocalDateTime getClosedAt() {
+		return closedAt;
+	}
+
+	public void setClosedAt(LocalDateTime closedAt) {
+		this.closedAt = closedAt;
 	}
 
 	public EncounterDTO() {}
