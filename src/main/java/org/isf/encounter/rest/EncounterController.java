@@ -33,6 +33,11 @@ import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.opd.dto.OpdDTO;
+import org.isf.opd.manager.OpdBrowserManager;
+import org.isf.opd.mapper.OpdMapper;
+import org.isf.opd.model.Opd;
+
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -60,16 +65,22 @@ public class EncounterController {
 	private final PatientBrowserManager patientBrowserManager;
 	private final ExaminationBrowserManager examinationBrowserManager;
 	private final PatientExaminationMapper examinationMapper;
+	private final OpdBrowserManager opdManager;
+	private final OpdMapper opdMapper;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
 							   PatientBrowserManager patientBrowserManager,
+							   OpdBrowserManager opdManager,
+							   OpdMapper opdMapper,
 							   ExaminationBrowserManager examinationBrowserManager,
 							   PatientExaminationMapper examinationMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
+		this.opdManager = opdManager;
+		this.opdMapper = opdMapper;
 		this.examinationBrowserManager = examinationBrowserManager;
 		this.examinationMapper = examinationMapper;
 	}
@@ -129,6 +140,10 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
+		if (encounter.getStatus() == EncounterStatus.CLOSE) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+		}
+
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
 		if (encounterFound != null && !Objects.equals(encounterFound.getCode(), encounterToUpdate.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
@@ -145,7 +160,17 @@ public class EncounterController {
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
 		return encounter;
 	}
-	
+
+	@GetMapping("/encounters/{code}/opds")
+	public List<OpdDTO> getOPDByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
+		return opdMapper.map2DTOList(opdList);
+	}
+
 	/**
 	 * Retrieves the list of {@link PatientExaminationDTO} objects associated with a specific encounter,
 	 * identified by its unique code.
@@ -163,7 +188,6 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
 		List<PatientExamination> patientExaminationList = examinationBrowserManager.getPatientExaminationsForEncounter(encounter);
-		
 		return examinationMapper.map2DTOList(patientExaminationList);
 	}
 }
