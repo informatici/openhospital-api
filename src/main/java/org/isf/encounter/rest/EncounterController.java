@@ -21,11 +21,8 @@
  */
 package org.isf.encounter.rest;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.mapper.EncounterMapper;
@@ -45,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -161,27 +157,12 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
 
-		List<Opd> opdList = opdManager.getOpdList(encounter.getPatient().getCode());
-		if (opdList == null || opdList.isEmpty()) {
+		List<Opd> opdList = opdManager.getOpdByDateBetweenAndPatientCode(encounter);
+
+		if (opdList == null) {
 			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
 		}
 
-		List<Opd> opdListFound = null;
-		if (encounter.getStatus().toString().equals(EncounterStatus.CLOSE.toString())) {
-			opdListFound = opdList.stream()
-					.filter(opd -> opd.getDate().isAfter(encounter.getPerformedAt())
-							&& opd.getDate().isBefore(encounter.getClosedAt()))
-					.toList();
-		} else {
-			opdListFound = opdList.stream()
-					.filter(opd -> opd.getDate().isBefore(LocalDateTime.now()))
-					.toList();
-		}
-
-		if (opdListFound.isEmpty()) {
-			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
-		}
-
-		return opdMapper.map2DTOList(opdListFound);
+		return opdMapper.map2DTOList(opdList);
 	}
 }

@@ -6778,13 +6778,13 @@ components:
           format: int32
           description: lock
           example: 0
-        opd:
+        pharmacy:
           type: boolean
         female:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        opd:
           type: boolean
       required:
       - beds
