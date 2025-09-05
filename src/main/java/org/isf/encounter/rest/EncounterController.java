@@ -157,7 +157,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
 
-		List<Opd> opdList = opdManager.getOpdByDateBetweenAndPatientCode(encounter);
+		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
 
 		if (opdList == null) {
 			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
