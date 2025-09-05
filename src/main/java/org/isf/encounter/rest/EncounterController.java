@@ -57,8 +57,8 @@ public class EncounterController {
 	private final PatientBrowserManager patientBrowserManager;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
-							   EncounterMapper encounterMapper,
-							   PatientBrowserManager patientBrowserManager
+		EncounterMapper encounterMapper,
+		PatientBrowserManager patientBrowserManager
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -83,7 +83,7 @@ public class EncounterController {
 
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
 		encounter.setPatient(patient);
-		encounter.setStatus(EncounterStatus.OPEN);
+		encounter.setStatus(EncounterStatus.ACTIVE);
 		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
@@ -126,7 +126,7 @@ public class EncounterController {
 		}
 
 		if (encounter.getStatus() == null) {
-			encounter.setStatus(EncounterStatus.OPEN);
+			encounter.setStatus(EncounterStatus.ACTIVE);
 		}
 
 		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
