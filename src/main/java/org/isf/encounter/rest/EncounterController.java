@@ -29,6 +29,10 @@ import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
+import org.isf.medicalhistory.dto.MedicalHistoryDTO;
+import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
+import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
+import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -55,14 +59,20 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
+	private final MedicalHistoryBrowsingManager medicalHistoryManager;
+	private final MedicalHistoryMapper medicalHistoryMapper;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
-							   PatientBrowserManager patientBrowserManager
+							   PatientBrowserManager patientBrowserManager,
+							   MedicalHistoryBrowsingManager medicalHistoryManager,
+							   MedicalHistoryMapper medicalHistoryMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
+		this.medicalHistoryManager = medicalHistoryManager;
+		this.medicalHistoryMapper = medicalHistoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -135,5 +145,17 @@ public class EncounterController {
 
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
 		return encounter;
+	}
+
+	@GetMapping("/encounters/{code}/medicalhistories")
+	public List<MedicalHistoryDTO> getMedicalHistoriesEncounterByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<MedicalHistory> medicalHistoryList = medicalHistoryManager.getMedicalHistoriesForEncounter(encounter);
+
+		return medicalHistoryMapper.map2DTOList(medicalHistoryList);
 	}
 }
