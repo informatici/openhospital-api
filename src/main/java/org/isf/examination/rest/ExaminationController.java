@@ -274,8 +274,8 @@ public class ExaminationController {
 		if (pex_auscultation != null) {
 			Ausculation.valueOf(pex_auscultation.toString());
 		}
-		if ( pex_pb < ExaminationParameters.BRANCHIAL_PERIMETER_MIN
-						|| pex_pb > ExaminationParameters.BRANCHIAL_PERIMETER_MAX) {
+		if ( pex_pb != null && (pex_pb < ExaminationParameters.BRANCHIAL_PERIMETER_MIN
+						|| pex_pb > ExaminationParameters.BRANCHIAL_PERIMETER_MAX)) {
 						throw new OHAPIException(new OHExceptionMessage(
 							"The branchial perimeter should be between " + ExaminationParameters.BRANCHIAL_PERIMETER_MIN + " and " + ExaminationParameters.BRANCHIAL_PERIMETER_MAX));
 					}
