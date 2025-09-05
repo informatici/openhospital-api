@@ -24,6 +24,10 @@ package org.isf.encounter.rest;
 import java.util.List;
 import java.util.Objects;
 
+import org.isf.conditioning.dto.ConditioningDTO;
+import org.isf.conditioning.manager.ConditioningBrowserManager;
+import org.isf.conditioning.mapper.ConditioningMapper;
+import org.isf.conditioning.model.Conditioning;
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
@@ -38,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -55,14 +58,21 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
+	private final ConditioningBrowserManager conditioningManager;
+	private final ConditioningMapper conditioningMapper;
 
-	public EncounterController(EncounterBrowserManager encounterBrowserManager,
-							   EncounterMapper encounterMapper,
-							   PatientBrowserManager patientBrowserManager
+	public EncounterController(
+		EncounterBrowserManager encounterBrowserManager,
+		EncounterMapper encounterMapper,
+		PatientBrowserManager patientBrowserManager,
+		ConditioningBrowserManager conditioningManager,
+		ConditioningMapper conditioningMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
+		this.conditioningManager = conditioningManager;
+		this.conditioningMapper = conditioningMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -120,6 +130,10 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
+		if (encounter.getStatus() == EncounterStatus.CLOSE) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+		}
+
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
 		if (encounterFound != null && !Objects.equals(encounterFound.getCode(), encounterToUpdate.getCode())) {
 			throw new OHAPIException(new OHExceptionMessage("The encounter code is already in use."));
@@ -135,5 +149,17 @@ public class EncounterController {
 
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
 		return encounter;
+	}
+
+	@GetMapping("/encounters/{code}/conditionings")
+	public List<ConditioningDTO> getConditioningByPatientEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Conditioning> conditioningList = conditioningManager.getConditioningByPatientEncounter(encounter);
+
+		return conditioningMapper.map2DTOList(conditioningList);
 	}
 }
