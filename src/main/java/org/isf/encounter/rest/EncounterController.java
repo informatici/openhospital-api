@@ -159,10 +159,6 @@ public class EncounterController {
 
 		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
 
-		if (opdList == null) {
-			throw new OHAPIException(new OHExceptionMessage("No opd found"), HttpStatus.NOT_FOUND);
-		}
-
 		return opdMapper.map2DTOList(opdList);
 	}
 }
