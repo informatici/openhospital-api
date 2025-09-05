@@ -5848,6 +5848,28 @@ paths:
                   $ref: "#/components/schemas/EncounterDTO"
       security:
       - bearerAuth: []
+  /encounters/{code}/examinations:
+    get:
+      tags:
+      - Encounter
+      operationId: getPatientExaminationsByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientExaminationDTO"
+      security:
+      - bearerAuth: []
   /encounters/current/{patientId}:
     get:
       tags:
@@ -6756,13 +6778,13 @@ components:
           format: int32
           description: lock
           example: 0
-        male:
+        opd:
           type: boolean
-        pharmacy:
+        male:
           type: boolean
         female:
           type: boolean
-        opd:
+        pharmacy:
           type: boolean
       required:
       - beds
