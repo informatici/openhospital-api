@@ -29,10 +29,18 @@ import org.isf.conditioning.manager.ConditioningBrowserManager;
 import org.isf.conditioning.mapper.ConditioningMapper;
 import org.isf.conditioning.model.Conditioning;
 import org.isf.encounter.dto.EncounterDTO;
-import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
+import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
+import org.isf.examination.dto.PatientExaminationDTO;
+import org.isf.examination.manager.ExaminationBrowserManager;
+import org.isf.examination.mapper.PatientExaminationMapper;
+import org.isf.examination.model.PatientExamination;
+import org.isf.opd.dto.OpdDTO;
+import org.isf.opd.manager.OpdBrowserManager;
+import org.isf.opd.mapper.OpdMapper;
+import org.isf.opd.model.Opd;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -42,7 +50,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,19 +73,26 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
+	private final ExaminationBrowserManager examinationBrowserManager;
+	private final PatientExaminationMapper examinationMapper;
+	private final OpdBrowserManager opdManager;
+	private final OpdMapper opdMapper;
 	private final ConditioningBrowserManager conditioningManager;
 	private final ConditioningMapper conditioningMapper;
 
-	public EncounterController(
-		EncounterBrowserManager encounterBrowserManager,
-		EncounterMapper encounterMapper,
-		PatientBrowserManager patientBrowserManager,
-		ConditioningBrowserManager conditioningManager,
+	public EncounterController(EncounterBrowserManager encounterBrowserManager,
+							   EncounterMapper encounterMapper,
+							   PatientBrowserManager patientBrowserManager, ExaminationBrowserManager examinationBrowserManager,
+		PatientExaminationMapper examinationMapper, OpdBrowserManager opdManager, OpdMapper opdMapper, ConditioningBrowserManager conditioningManager,
 		ConditioningMapper conditioningMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
+		this.examinationBrowserManager = examinationBrowserManager;
+		this.examinationMapper = examinationMapper;
+		this.opdManager = opdManager;
+		this.opdMapper = opdMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
 	}
@@ -116,6 +138,36 @@ public class EncounterController {
 			return null;
 		}
 		return encounterMapper.map2DTO(encounter);
+	}
+
+	@GetMapping("/encounters/{code}/opds")
+	public List<OpdDTO> getOPDByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
+		return opdMapper.map2DTOList(opdList);
+	}
+
+	/**
+	 * Retrieves the list of {@link PatientExaminationDTO} objects associated with a specific encounter,
+	 * identified by its unique code.
+	 *
+	 * @param code the unique encounter code used to identify the encounter
+	 * @return a {@link List} of {@link PatientExaminationDTO} objects associated with the given encounter
+	 * @throws OHServiceException if an error occurs while retrieving patient examinations
+	 * @throws OHAPIException if no encounter is found with the provided code
+	 */
+	@GetMapping("/encounters/{code}/examinations")
+	public List<PatientExaminationDTO> getPatientExaminationsByEncounter(@PathVariable String code) throws OHServiceException {
+		LOGGER.info("Get patient examination By encounter code: {}", code);
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+		List<PatientExamination> patientExaminationList = examinationBrowserManager.getPatientExaminationsForEncounter(encounter);
+		return examinationMapper.map2DTOList(patientExaminationList);
 	}
 
 	@PatchMapping("/encounters/{code}")

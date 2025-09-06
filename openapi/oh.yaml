@@ -5848,6 +5848,50 @@ paths:
                   $ref: "#/components/schemas/EncounterDTO"
       security:
       - bearerAuth: []
+  /encounters/{code}/opds:
+    get:
+      tags:
+      - Encounter
+      operationId: getOPDByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpdDTO"
+      security:
+      - bearerAuth: []
+  /encounters/{code}/examinations:
+    get:
+      tags:
+      - Encounter
+      operationId: getPatientExaminationsByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientExaminationDTO"
+      security:
+      - bearerAuth: []
   /encounters/{code}/conditionings:
     get:
       tags:
@@ -7639,11 +7683,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       required:
       - admDate
       - admitted
