@@ -5848,11 +5848,55 @@ paths:
                   $ref: "#/components/schemas/EncounterDTO"
       security:
       - bearerAuth: []
-  /encounters/{code}/admissions:
+  /encounters/{code}/opds:
     get:
       tags:
       - Encounter
       operationId: getOPDByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OpdDTO"
+      security:
+      - bearerAuth: []
+  /encounters/{code}/examinations:
+    get:
+      tags:
+      - Encounter
+      operationId: getPatientExaminationsByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientExaminationDTO"
+      security:
+      - bearerAuth: []
+  /encounters/{code}/admissions:
+    get:
+      tags:
+      - Encounter
+      operationId: getAdmissionsByEncounter
       parameters:
       - name: code
         in: path
@@ -6778,13 +6822,13 @@ components:
           format: int32
           description: lock
           example: 0
-        pharmacy:
+        opd:
           type: boolean
         male:
           type: boolean
         female:
           type: boolean
-        opd:
+        pharmacy:
           type: boolean
       required:
       - beds
@@ -7639,11 +7683,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
-        fhu:
-          type: string
         yprog:
           type: integer
           format: int32
+        fhu:
+          type: string
       required:
       - admDate
       - admitted
