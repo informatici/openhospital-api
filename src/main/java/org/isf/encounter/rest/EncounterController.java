@@ -29,12 +29,10 @@ import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
-<<<<<<< HEAD
 import org.isf.medicalhistory.dto.MedicalHistoryDTO;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.model.MedicalHistory;
-=======
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
@@ -44,7 +42,6 @@ import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
 
->>>>>>> sokponta
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -70,41 +67,32 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
-<<<<<<< HEAD
 	private final MedicalHistoryBrowsingManager medicalHistoryManager;
 	private final MedicalHistoryMapper medicalHistoryMapper;
-=======
 	private final ExaminationBrowserManager examinationBrowserManager;
 	private final PatientExaminationMapper examinationMapper;
 	private final OpdBrowserManager opdManager;
 	private final OpdMapper opdMapper;
->>>>>>> sokponta
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
 							   PatientBrowserManager patientBrowserManager,
-<<<<<<< HEAD
 							   MedicalHistoryBrowsingManager medicalHistoryManager,
-							   MedicalHistoryMapper medicalHistoryMapper
-=======
+							   MedicalHistoryMapper medicalHistoryMapper,
 							   OpdBrowserManager opdManager,
 							   OpdMapper opdMapper,
 							   ExaminationBrowserManager examinationBrowserManager,
 							   PatientExaminationMapper examinationMapper
->>>>>>> sokponta
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
-<<<<<<< HEAD
 		this.medicalHistoryManager = medicalHistoryManager;
 		this.medicalHistoryMapper = medicalHistoryMapper;
-=======
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
 		this.examinationBrowserManager = examinationBrowserManager;
 		this.examinationMapper = examinationMapper;
->>>>>>> sokponta
 	}
 
 	@PostMapping(value = "/encounters")
