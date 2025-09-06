@@ -29,10 +29,15 @@ import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
+import org.isf.examination.dto.PatientExaminationDTO;
+import org.isf.examination.manager.ExaminationBrowserManager;
+import org.isf.examination.mapper.PatientExaminationMapper;
+import org.isf.examination.model.PatientExamination;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -58,6 +63,8 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
+	private final ExaminationBrowserManager examinationBrowserManager;
+	private final PatientExaminationMapper examinationMapper;
 	private final OpdBrowserManager opdManager;
 	private final OpdMapper opdMapper;
 
@@ -65,13 +72,17 @@ public class EncounterController {
 							   EncounterMapper encounterMapper,
 							   PatientBrowserManager patientBrowserManager,
 							   OpdBrowserManager opdManager,
-							   OpdMapper opdMapper
-							   ) {
+							   OpdMapper opdMapper,
+							   ExaminationBrowserManager examinationBrowserManager,
+							   PatientExaminationMapper examinationMapper
+	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
+		this.examinationBrowserManager = examinationBrowserManager;
+		this.examinationMapper = examinationMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -156,9 +167,27 @@ public class EncounterController {
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
-
 		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
-
 		return opdMapper.map2DTOList(opdList);
+	}
+
+	/**
+	 * Retrieves the list of {@link PatientExaminationDTO} objects associated with a specific encounter,
+	 * identified by its unique code.
+	 *
+	 * @param code the unique encounter code used to identify the encounter
+	 * @return a {@link List} of {@link PatientExaminationDTO} objects associated with the given encounter
+	 * @throws OHServiceException if an error occurs while retrieving patient examinations
+	 * @throws OHAPIException if no encounter is found with the provided code
+	 */
+	@GetMapping("/encounters/{code}/examinations")
+	public List<PatientExaminationDTO> getPatientExaminationsByEncounter(@PathVariable String code) throws OHServiceException {
+		LOGGER.info("Get patient examination By encounter code: {}", code);
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+		List<PatientExamination> patientExaminationList = examinationBrowserManager.getPatientExaminationsForEncounter(encounter);
+		return examinationMapper.map2DTOList(patientExaminationList);
 	}
 }
