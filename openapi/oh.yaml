@@ -5359,7 +5359,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MedicalHistoryDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicalHistoryDTO"
       security:
       - bearerAuth: []
   /malnutritions/{id_admission}:
@@ -6824,11 +6826,11 @@ components:
           example: 0
         opd:
           type: boolean
-        male:
+        pharmacy:
           type: boolean
         female:
           type: boolean
-        pharmacy:
+        male:
           type: boolean
       required:
       - beds
