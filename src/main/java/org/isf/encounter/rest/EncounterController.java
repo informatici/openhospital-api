@@ -150,7 +150,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
-		if (encounter.getStatus() == EncounterStatus.CLOSE) {
+		if (encounterToUpdate.getStatus() == EncounterStatus.CLOSE) {
 			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
 		}
 

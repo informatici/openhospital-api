@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.exa.manager.ExamBrowsingManager;
 import org.isf.lab.data.LaboratoryHelper;
 import org.isf.lab.dto.LabWithRowsDTO;
@@ -84,6 +85,8 @@ class LaboratoryControllerTest {
 
 	protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
+	protected EncounterBrowserManager encounterBrowserManager;
+
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
@@ -92,7 +95,7 @@ class LaboratoryControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper))
+			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper, encounterBrowserManager))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 		ModelMapper modelMapper = new ModelMapper();
