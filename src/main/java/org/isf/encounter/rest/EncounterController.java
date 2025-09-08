@@ -23,6 +23,7 @@ package org.isf.encounter.rest;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -41,11 +42,13 @@ import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.model.Laboratory;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
 
+import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -67,6 +70,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class EncounterController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EncounterController.class);
+
+	private static final String DRAFT = LaboratoryStatus.draft.toString();
+
+	private static final String OPEN = LaboratoryStatus.open.toString();
 
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
@@ -241,5 +248,31 @@ public class EncounterController {
 		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter);
 
 		return laboratoryMapper.map2DTOList(LaboratoryList);
+	}
+
+	/**
+	 * Get all {@link LaboratoryDTO}s examRequest linked to the specified {@link Encounter}.
+	 *
+	 * @param code Encounter code
+	 * @return the {@link List} of found {@link LaboratoryDTO} of examRequest or NO_CONTENT otherwise.
+	 * @throws OHServiceException When failed to get lab exams for the encounter
+	 */
+	@GetMapping("/encounters/{code}/examRequest")
+	public List<LaboratoryDTO> getLaboratoryExamRequestByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter).stream()
+			.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).toList();
+
+		return LaboratoryList.stream().map(lab -> {
+			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
+			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
+			return laboratoryDTO;
+		}).collect(Collectors.toList());
 	}
 }
