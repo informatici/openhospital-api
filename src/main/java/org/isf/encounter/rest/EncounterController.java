@@ -24,6 +24,10 @@ package org.isf.encounter.rest;
 import java.util.List;
 import java.util.Objects;
 
+import org.isf.admission.dto.AdmissionDTO;
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.mapper.AdmissionMapper;
+import org.isf.admission.model.Admission;
 import org.isf.conditioning.dto.ConditioningDTO;
 import org.isf.conditioning.manager.ConditioningBrowserManager;
 import org.isf.conditioning.mapper.ConditioningMapper;
@@ -77,13 +81,22 @@ public class EncounterController {
 	private final PatientExaminationMapper examinationMapper;
 	private final OpdBrowserManager opdManager;
 	private final OpdMapper opdMapper;
+	private final AdmissionMapper admissionMapper;
+	private final AdmissionBrowserManager admissionBrowserManager;
 	private final ConditioningBrowserManager conditioningManager;
 	private final ConditioningMapper conditioningMapper;
 
-	public EncounterController(EncounterBrowserManager encounterBrowserManager,
-							   EncounterMapper encounterMapper,
-							   PatientBrowserManager patientBrowserManager, ExaminationBrowserManager examinationBrowserManager,
-		PatientExaminationMapper examinationMapper, OpdBrowserManager opdManager, OpdMapper opdMapper, ConditioningBrowserManager conditioningManager,
+	public EncounterController(
+		EncounterBrowserManager encounterBrowserManager,
+		EncounterMapper encounterMapper,
+		PatientBrowserManager patientBrowserManager,
+		ExaminationBrowserManager examinationBrowserManager,
+		PatientExaminationMapper examinationMapper,
+		OpdBrowserManager opdManager,
+		OpdMapper opdMapper,
+		AdmissionBrowserManager admissionBrowserManager,
+		AdmissionMapper admissionMapper,
+		ConditioningBrowserManager conditioningManager,
 		ConditioningMapper conditioningMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
@@ -93,6 +106,8 @@ public class EncounterController {
 		this.examinationMapper = examinationMapper;
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
+		this.admissionBrowserManager =  admissionBrowserManager;
+		this.admissionMapper = admissionMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
 	}
@@ -213,5 +228,17 @@ public class EncounterController {
 		List<Conditioning> conditioningList = conditioningManager.getConditioningByPatientEncounter(encounter);
 
 		return conditioningMapper.map2DTOList(conditioningList);
+	}
+
+	@GetMapping("/encounters/{code}/admissions")
+	public List<AdmissionDTO> getAdmissionsByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
+
+		return admissionMapper.map2DTOList(admissionList);
 	}
 }
