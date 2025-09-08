@@ -24,6 +24,10 @@ package org.isf.encounter.rest;
 import java.util.List;
 import java.util.Objects;
 
+import org.isf.admission.dto.AdmissionDTO;
+import org.isf.admission.manager.AdmissionBrowserManager;
+import org.isf.admission.mapper.AdmissionMapper;
+import org.isf.admission.model.Admission;
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.manager.EncounterBrowserManager;
@@ -73,6 +77,8 @@ public class EncounterController {
 	private final PatientExaminationMapper examinationMapper;
 	private final OpdBrowserManager opdManager;
 	private final OpdMapper opdMapper;
+	private final AdmissionMapper admissionMapper;
+	private final AdmissionBrowserManager admissionBrowserManager;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
@@ -82,7 +88,9 @@ public class EncounterController {
 							   OpdBrowserManager opdManager,
 							   OpdMapper opdMapper,
 							   ExaminationBrowserManager examinationBrowserManager,
-							   PatientExaminationMapper examinationMapper
+							   PatientExaminationMapper examinationMapper,
+							   AdmissionBrowserManager admissionBrowserManager,
+							   AdmissionMapper admissionMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -93,6 +101,8 @@ public class EncounterController {
 		this.opdMapper = opdMapper;
 		this.examinationBrowserManager = examinationBrowserManager;
 		this.examinationMapper = examinationMapper;
+		this.admissionBrowserManager = admissionBrowserManager;
+		this.admissionMapper = admissionMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -210,6 +220,18 @@ public class EncounterController {
 		}
 		List<PatientExamination> patientExaminationList = examinationBrowserManager.getPatientExaminationsForEncounter(encounter);
 		return examinationMapper.map2DTOList(patientExaminationList);
+	}
+
+	@GetMapping("/encounters/{code}/admissions")
+	public List<AdmissionDTO> getAdmissionsByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
+
+		return admissionMapper.map2DTOList(admissionList);
 	}
 
 	/**
