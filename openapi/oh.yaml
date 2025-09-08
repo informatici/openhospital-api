@@ -6848,9 +6848,9 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
-          type: boolean
         female:
+          type: boolean
+        pharmacy:
           type: boolean
         male:
           type: boolean
