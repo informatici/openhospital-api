@@ -151,7 +151,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
-		if (encounter.getClosedAt() != null) {
+		if (encounterToUpdate.getClosedAt() != null) {
 			throw new OHAPIException(new OHExceptionMessage("You cannot modify a closed encounter."));
 		}
 
