@@ -152,7 +152,7 @@ public class EncounterController {
 		}
 
 		if (encounter.getClosedAt() != null) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify a closed encounter."));
 		}
 
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
