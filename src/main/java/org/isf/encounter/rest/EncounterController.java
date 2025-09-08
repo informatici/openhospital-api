@@ -37,6 +37,10 @@ import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.lab.dto.LaboratoryDTO;
+import org.isf.lab.manager.LabManager;
+import org.isf.lab.mapper.LaboratoryMapper;
+import org.isf.lab.model.Laboratory;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
@@ -73,6 +77,8 @@ public class EncounterController {
 	private final OpdMapper opdMapper;
 	private final AdmissionMapper admissionMapper;
 	private final AdmissionBrowserManager admissionBrowserManager;
+	private final LabManager labManager;
+	private final LaboratoryMapper laboratoryMapper;
 
 	public EncounterController(EncounterBrowserManager encounterBrowserManager,
 							   EncounterMapper encounterMapper,
@@ -82,7 +88,10 @@ public class EncounterController {
 							   ExaminationBrowserManager examinationBrowserManager,
 							   PatientExaminationMapper examinationMapper,
 							   AdmissionBrowserManager admissionBrowserManager,
-							   AdmissionMapper admissionMapper
+							   AdmissionMapper admissionMapper,
+							   LabManager labManager,
+							   LaboratoryMapper laboratoryMapper
+
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -93,6 +102,8 @@ public class EncounterController {
 		this.examinationMapper = examinationMapper;
 		this.admissionBrowserManager = admissionBrowserManager;
 		this.admissionMapper = admissionMapper;
+		this.labManager = labManager;
+		this.laboratoryMapper = laboratoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -151,7 +162,7 @@ public class EncounterController {
 		}
 
 		if (encounterToUpdate.getStatus() == EncounterStatus.CLOSE) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the closed encounter."));
 		}
 
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
@@ -211,5 +222,24 @@ public class EncounterController {
 		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
 
 		return admissionMapper.map2DTOList(admissionList);
+	}
+
+	/**
+	 * Get all {@link LaboratoryDTO}s linked to the specified {@link Encounter}.
+	 *
+	 * @param code Encounter code
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
+	 * @throws OHServiceException When failed to get lab exams for the encounter
+	 */
+	@GetMapping("/encounters/{code}/exams")
+	public List<LaboratoryDTO> getLaboratoryByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter);
+
+		return laboratoryMapper.map2DTOList(LaboratoryList);
 	}
 }

@@ -98,22 +98,18 @@ public class LaboratoryController {
 
 	private final LaboratoryRowMapper laboratoryRowMapper;
 
-	private final EncounterBrowserManager encounterBrowserManager;
-
 	public LaboratoryController(
 		LabManager laboratoryManager,
 		PatientBrowserManager patientBrowserManager,
 		ExamBrowsingManager examManager,
 		LaboratoryMapper laboratoryMapper,
-		LaboratoryRowMapper laboratoryRowMapper,
-		EncounterBrowserManager encounterBrowserManager
+		LaboratoryRowMapper laboratoryRowMapper
 	) {
 		this.laboratoryManager = laboratoryManager;
 		this.patientBrowserManager = patientBrowserManager;
 		this.examManager = examManager;
 		this.laboratoryMapper = laboratoryMapper;
 		this.laboratoryRowMapper = laboratoryRowMapper;
-		this.encounterBrowserManager = encounterBrowserManager;
 	}
 
 	/**
@@ -383,25 +379,6 @@ public class LaboratoryController {
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Exam is not deleted."));
 		}
-	}
-
-	/**
-	 * Get all {@link LaboratoryDTO}s linked to the specified {@link Encounter}.
-	 *
-	 * @param code Encounter code
-	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
-	 * @throws OHServiceException When failed to get lab exams for the encounter
-	 */
-	@GetMapping("/encounters/{code}/exams")
-	public List<LaboratoryDTO> getAdmissionsByEncounter(@PathVariable String code) throws OHServiceException {
-		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
-		if (encounter == null) {
-			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
-		}
-
-		List<Laboratory> LaboratoryList = laboratoryManager.getLaboratoryByEncounter(encounter);
-
-		return laboratoryMapper.map2DTOList(LaboratoryList);
 	}
 
 	/**

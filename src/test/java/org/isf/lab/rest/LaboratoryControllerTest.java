@@ -85,8 +85,6 @@ class LaboratoryControllerTest {
 
 	protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
-	protected EncounterBrowserManager encounterBrowserManager;
-
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
@@ -95,7 +93,7 @@ class LaboratoryControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper, encounterBrowserManager))
+			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 		ModelMapper modelMapper = new ModelMapper();
