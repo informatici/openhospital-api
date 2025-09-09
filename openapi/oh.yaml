@@ -5870,6 +5870,28 @@ paths:
                   $ref: "#/components/schemas/OpdDTO"
       security:
       - bearerAuth: []
+  /encounters/{code}/medicalhistories:
+    get:
+      tags:
+      - Encounter
+      operationId: getMedicalHistoriesEncounterByEncounter
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicalHistoryDTO"
+      security:
+      - bearerAuth: []
   /encounters/{code}/examinations:
     get:
       tags:
@@ -6846,11 +6868,11 @@ components:
           example: 0
         opd:
           type: boolean
+        pharmacy:
+          type: boolean
         male:
           type: boolean
         female:
-          type: boolean
-        pharmacy:
           type: boolean
       required:
       - beds
