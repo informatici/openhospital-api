@@ -26,6 +26,11 @@ import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.mapper.AdmissionMapper;
 import org.isf.admission.model.Admission;
+import org.isf.conditioning.data.ConditioningHelper;
+import org.isf.conditioning.dto.ConditioningDTO;
+import org.isf.conditioning.manager.ConditioningBrowserManager;
+import org.isf.conditioning.mapper.ConditioningMapper;
+import org.isf.conditioning.model.Conditioning;
 import org.isf.encounter.data.EncounterHelper;
 import org.isf.encounter.dto.EncounterDTO;
 import org.isf.encounter.manager.EncounterBrowserManager;
@@ -90,11 +95,15 @@ public class EncounterControllerTest {
 	@Mock
 	protected AdmissionBrowserManager admissionBrowserManagerMock;
 
+	@Mock
+	protected ConditioningBrowserManager browserManagerMock;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
 	private final EncounterMapper encounterMapper = new EncounterMapper();
 	protected PatientMapper patientMapper = new PatientMapper();
+	protected ConditioningMapper conditioningMapper = new ConditioningMapper();
 
 	private MockMvc mockMvc;
 
@@ -104,7 +113,7 @@ public class EncounterControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, opdManagerMock, opdMapper, examinationBrowserManagerMock, examinationMapper, admissionBrowserManagerMock, admissionMapper))
+			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, opdManagerMock, opdMapper, examinationBrowserManagerMock, examinationMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 
@@ -117,6 +126,7 @@ public class EncounterControllerTest {
 		ReflectionTestUtils.setField(opdMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(admissionMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(examinationMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(conditioningMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
@@ -479,7 +489,52 @@ public class EncounterControllerTest {
 		LOGGER.debug("result: {}", result);
 	}
 
+	@Test
+	void testGetConditioningsByEncounter_success() throws Exception {
+		String request = "/encounters/{code}/conditionings";
+		String encounterCode = "ENC_123";
 
+		Encounter encounter = encounterMapper.map2Model(EncounterHelper.setup(encounterMapper));
+		ConditioningDTO conditioningDTO1 = conditioningMapper.map2DTO(ConditioningHelper.setup());
+		ConditioningDTO conditioningDTO2 = conditioningMapper.map2DTO(ConditioningHelper.setup());
+		Conditioning conditioning1 = conditioningMapper.map2Model(conditioningDTO1);
+		Conditioning conditioning2 = conditioningMapper.map2Model(conditioningDTO2);
+		conditioning1.setId(1);
+		conditioning2.setId(2);
+		List<Conditioning> conditionings = Arrays.asList(conditioning1, conditioning2);
+
+		when(encounterBrowserManagerMock.getEncountersByCode(encounterCode))
+			.thenReturn(encounter);
+		when(browserManagerMock.getConditioningByPatientEncounter(encounter))
+			.thenReturn(conditionings);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, encounterCode))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].id").value(conditioning1.getId()))
+			.andExpect(jsonPath("$[1].id").value(conditioning2.getId()))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetConditioningsByEncounter_notFound() throws Exception {
+		String request = "/encounters/{code}/conditionings";
+		String nonExistentCode = "NOT_EXIST";
+
+		when(encounterBrowserManagerMock.getEncountersByCode(nonExistentCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, nonExistentCode))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
 
 	public MockMvc getMockMvc() {
 		return mockMvc;
