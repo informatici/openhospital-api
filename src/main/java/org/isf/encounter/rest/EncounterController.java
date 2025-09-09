@@ -42,6 +42,10 @@ import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.medicalhistory.dto.MedicalHistoryDTO;
+import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
+import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
+import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.manager.LabManager;
 import org.isf.lab.mapper.LaboratoryMapper;
@@ -97,13 +101,16 @@ public class EncounterController {
 	private final AdmissionBrowserManager admissionBrowserManager;
 	private final ConditioningBrowserManager conditioningManager;
 	private final ConditioningMapper conditioningMapper;
-	private final LabManager labManager;
-	private final LaboratoryMapper laboratoryMapper;
+	private final MedicalHistoryBrowsingManager medicalHistoryManager;
+	private final MedicalHistoryMapper medicalHistoryMapper;
+	private LabManager labManager;
+	private LaboratoryMapper laboratoryMapper;
 
 	public EncounterController(
 		EncounterBrowserManager encounterBrowserManager,
 		EncounterMapper encounterMapper,
 		PatientBrowserManager patientBrowserManager,
+
 		ExaminationBrowserManager examinationBrowserManager,
 		PatientExaminationMapper examinationMapper,
 		OpdBrowserManager opdManager,
@@ -112,8 +119,8 @@ public class EncounterController {
 		AdmissionMapper admissionMapper,
 		ConditioningBrowserManager conditioningManager,
 		ConditioningMapper conditioningMapper,
-		LabManager labManager,
-		LaboratoryMapper laboratoryMapper
+		MedicalHistoryBrowsingManager medicalHistoryManager,
+		MedicalHistoryMapper medicalHistoryMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -122,12 +129,12 @@ public class EncounterController {
 		this.examinationMapper = examinationMapper;
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
-		this.admissionBrowserManager =  admissionBrowserManager;
+		this.admissionBrowserManager = admissionBrowserManager;
 		this.admissionMapper = admissionMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
-		this.labManager = labManager;
-		this.laboratoryMapper = laboratoryMapper;
+		this.medicalHistoryManager = medicalHistoryManager;
+		this.medicalHistoryMapper = medicalHistoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -207,16 +214,22 @@ public class EncounterController {
 	public EncounterDTO updateEncounter(@PathVariable String code, @RequestBody EncounterDTO encounter) throws OHServiceException {
 		LOGGER.info("Update encounter with new code {}", encounter.getCode());
 		Encounter encounterToUpdate = encounterBrowserManager.getEncountersByCode(code);
-		if (encounterToUpdate == null) {
+		if (encounterToUpdate == null || encounterToUpdate.getStatus() == EncounterStatus.CANCELLED) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found"));
 		}
 
-		if (!Objects.equals(encounter.getPatient().getCode(), encounterToUpdate.getPatient().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
+		if (encounter.getPatient() == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter most have patient property"));
 		}
 
-		if (encounterToUpdate.getStatus() == EncounterStatus.CANCELLED) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the closed encounter."));
+		Integer patientCode = encounter.getPatient().getCode();
+
+		if (!Objects.equals(patientCode, encounterToUpdate.getPatient().getCode())) {
+			throw new OHAPIException(new OHExceptionMessage("The encounter found is not for the patient with code "+patientCode));
+		}
+
+		if (encounterToUpdate.getClosedAt() != null) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify a closed encounter."));
 		}
 
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
@@ -236,6 +249,15 @@ public class EncounterController {
 		return encounter;
 	}
 
+	/**
+	 * Retrieves the list of {@link OpdDTO} objects associated with a specific encounter,
+	 * identified by its unique code.
+	 *
+	 * @param code the unique encounter code used to identify the encounter
+	 * @return a {@link List} of {@link OpdDTO} objects associated with the given encounter
+	 * @throws OHServiceException if an error occurs while retrieving patient examinations
+	 * @throws OHAPIException if no encounter is found with the provided code
+	 */
 	@GetMapping("/encounters/{code}/conditionings")
 	public List<ConditioningDTO> getConditioningByPatientEncounter(@PathVariable String code) throws OHServiceException {
 		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
@@ -246,6 +268,25 @@ public class EncounterController {
 		List<Conditioning> conditioningList = conditioningManager.getConditioningByPatientEncounter(encounter);
 
 		return conditioningMapper.map2DTOList(conditioningList);
+	}
+
+	/**
+	 * Retrieves the list of {@link MedicalHistoryDTO} objects associated with a specific encounter,
+	 * identified by its unique code.
+	 *
+	 * @param code the unique encounter code used to identify the encounter
+	 * @return a {@link List} of {@link MedicalHistoryDTO} objects associated with the given encounter
+	 * @throws OHServiceException if an error occurs while retrieving patient examinations
+	 * @throws OHAPIException if no encounter is found with the provided code
+	 */
+	@GetMapping("/encounters/{code}/medicalhistories")
+	public List<MedicalHistoryDTO> getMedicalHistoriesEncounterByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+		List<MedicalHistory> medicalHistoryList = medicalHistoryManager.getMedicalHistoriesForEncounter(encounter);
+		return medicalHistoryMapper.map2DTOList(medicalHistoryList);
 	}
 
 	@GetMapping("/encounters/{code}/admissions")
