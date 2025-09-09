@@ -115,7 +115,7 @@ public class EncounterController {
 		this.examinationMapper = examinationMapper;
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
-		this.admissionBrowserManager =  admissionBrowserManager;
+		this.admissionBrowserManager = admissionBrowserManager;
 		this.admissionMapper = admissionMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
@@ -141,7 +141,7 @@ public class EncounterController {
 
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
 		encounter.setPatient(patient);
-		encounter.setStatus(EncounterStatus.OPEN);
+		encounter.setStatus(EncounterStatus.ACTIVE);
 		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
@@ -204,12 +204,18 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found"));
 		}
 
-		if (!Objects.equals(encounter.getPatient().getCode(), encounterToUpdate.getPatient().getCode())) {
-			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
+		if (encounter.getPatient() == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter most have patient property"));
 		}
 
-		if (encounter.getStatus() == EncounterStatus.CLOSE) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the code of a closed encounter."));
+		Integer patientCode = encounter.getPatient().getCode();
+
+		if (!Objects.equals(patientCode, encounterToUpdate.getPatient().getCode())) {
+			throw new OHAPIException(new OHExceptionMessage("The encounter found is not for the patient with code "+patientCode));
+		}
+
+		if (encounter.getStatus() == EncounterStatus.CANCELLED) {
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify the canceled encounter."));
 		}
 
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
@@ -218,7 +224,7 @@ public class EncounterController {
 		}
 
 		if (encounter.getStatus() == null) {
-			encounter.setStatus(EncounterStatus.OPEN);
+			encounter.setStatus(EncounterStatus.ACTIVE);
 		}
 
 		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
