@@ -148,7 +148,7 @@ public class EncounterController {
 
 		Encounter encounter = encounterMapper.map2Model(encounterDTO);
 		encounter.setPatient(patient);
-		encounter.setStatus(EncounterStatus.OPEN);
+		encounter.setStatus(EncounterStatus.ACTIVE);
 		encounter = encounterBrowserManager.saveEncounter(encounter);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Failed to create encounter"));
@@ -215,7 +215,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter and the patient do not match."));
 		}
 
-		if (encounterToUpdate.getStatus() == EncounterStatus.CLOSE) {
+		if (encounterToUpdate.getStatus() == EncounterStatus.CANCELLED) {
 			throw new OHAPIException(new OHExceptionMessage("You cannot modify the closed encounter."));
 		}
 
@@ -225,7 +225,7 @@ public class EncounterController {
 		}
 
 		if (encounter.getStatus() == null) {
-			encounter.setStatus(EncounterStatus.OPEN);
+			encounter.setStatus(EncounterStatus.ACTIVE);
 		}
 
 		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
