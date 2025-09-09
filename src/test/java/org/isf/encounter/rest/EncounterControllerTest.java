@@ -40,6 +40,11 @@ import org.isf.examination.TestPatientExamination;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.medicalhistory.data.MedicalHistoryHelper;
+import org.isf.medicalhistory.dto.MedicalHistoryDTO;
+import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
+import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
+import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.opd.data.OpdHelper;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -98,12 +103,16 @@ public class EncounterControllerTest {
 	@Mock
 	protected ConditioningBrowserManager browserManagerMock;
 
+	@Mock
+	protected MedicalHistoryBrowsingManager medicalHistoryBrowsingManager;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
 	private final EncounterMapper encounterMapper = new EncounterMapper();
 	protected PatientMapper patientMapper = new PatientMapper();
 	protected ConditioningMapper conditioningMapper = new ConditioningMapper();
+	protected MedicalHistoryMapper medicalHistoryMapper = new MedicalHistoryMapper();
 
 	private MockMvc mockMvc;
 
@@ -113,7 +122,7 @@ public class EncounterControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, opdManagerMock, opdMapper, examinationBrowserManagerMock, examinationMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper))
+			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 
@@ -127,6 +136,7 @@ public class EncounterControllerTest {
 		ReflectionTestUtils.setField(admissionMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(examinationMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(conditioningMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(medicalHistoryMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
@@ -522,6 +532,54 @@ public class EncounterControllerTest {
 	@Test
 	void testGetConditioningsByEncounter_notFound() throws Exception {
 		String request = "/encounters/{code}/conditionings";
+		String nonExistentCode = "NOT_EXIST";
+
+		when(encounterBrowserManagerMock.getEncountersByCode(nonExistentCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, nonExistentCode))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+
+	@Test
+	void testGetMedicalhistoriesByEncounter_success() throws Exception {
+		String request = "/encounters/{code}/medicalhistories";
+		String encounterCode = "ENC_123";
+
+		Encounter encounter = encounterMapper.map2Model(EncounterHelper.setup(encounterMapper));
+		MedicalHistoryDTO medicalHistoryDTO1 = medicalHistoryMapper.map2DTO(MedicalHistoryHelper.setup());
+		MedicalHistoryDTO medicalHistoryDTO2 = medicalHistoryMapper.map2DTO(MedicalHistoryHelper.setup());
+		MedicalHistory medicalHistory1 = medicalHistoryMapper.map2Model(medicalHistoryDTO1);
+		MedicalHistory medicalHistory2 = medicalHistoryMapper.map2Model(medicalHistoryDTO2);
+		medicalHistory1.setId(1);
+		medicalHistory2.setId(2);
+		List<MedicalHistory> medicalHistories = Arrays.asList(medicalHistory1, medicalHistory2);
+
+		when(encounterBrowserManagerMock.getEncountersByCode(encounterCode))
+			.thenReturn(encounter);
+		when(medicalHistoryBrowsingManager.getMedicalHistoriesForEncounter(encounter))
+			.thenReturn(medicalHistories);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, encounterCode))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].id").value(medicalHistory1.getId()))
+			.andExpect(jsonPath("$[1].id").value(medicalHistory2.getId()))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetMedicalhistoriesByEncounter_notFound() throws Exception {
+		String request = "/encounters/{code}/medicalhistories";
 		String nonExistentCode = "NOT_EXIST";
 
 		when(encounterBrowserManagerMock.getEncountersByCode(nonExistentCode))

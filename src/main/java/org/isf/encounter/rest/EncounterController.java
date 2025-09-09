@@ -101,18 +101,16 @@ public class EncounterController {
 		PatientExaminationMapper examinationMapper,
 		OpdBrowserManager opdManager,
 		OpdMapper opdMapper,
-		MedicalHistoryBrowsingManager medicalHistoryManager,
-		MedicalHistoryMapper medicalHistoryMapper,
 		AdmissionBrowserManager admissionBrowserManager,
 		AdmissionMapper admissionMapper,
 		ConditioningBrowserManager conditioningManager,
-		ConditioningMapper conditioningMapper
+		ConditioningMapper conditioningMapper,
+		MedicalHistoryBrowsingManager medicalHistoryManager,
+		MedicalHistoryMapper medicalHistoryMapper
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
-		this.medicalHistoryManager = medicalHistoryManager;
-		this.medicalHistoryMapper = medicalHistoryMapper;
 		this.examinationBrowserManager = examinationBrowserManager;
 		this.examinationMapper = examinationMapper;
 		this.opdManager = opdManager;
@@ -121,6 +119,8 @@ public class EncounterController {
 		this.admissionMapper = admissionMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
+		this.medicalHistoryManager = medicalHistoryManager;
+		this.medicalHistoryMapper = medicalHistoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
