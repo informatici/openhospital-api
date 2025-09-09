@@ -6848,11 +6848,11 @@ components:
           example: 0
         opd:
           type: boolean
+        male:
+          type: boolean
         female:
           type: boolean
         pharmacy:
-          type: boolean
-        male:
           type: boolean
       required:
       - beds
