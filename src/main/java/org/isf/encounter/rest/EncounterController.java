@@ -215,7 +215,7 @@ public class EncounterController {
 		}
 
 		if (encounterToUpdate.getClosedAt() != null) {
-			throw new OHAPIException(new OHExceptionMessage("You cannot modify the canceled encounter."));
+			throw new OHAPIException(new OHExceptionMessage("You cannot modify a closed encounter."));
 		}
 
 		Encounter encounterFound = encounterBrowserManager.getEncountersByCode(encounter.getCode());
