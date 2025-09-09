@@ -6846,11 +6846,11 @@ components:
           example: 0
         opd:
           type: boolean
-        male:
+        pharmacy:
           type: boolean
         female:
           type: boolean
-        pharmacy:
+        male:
           type: boolean
       required:
       - beds
@@ -9097,6 +9097,11 @@ components:
           format: date-time
           description: Closed date
           example: 2025-08-26 16:15:58
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 1
       required:
       - code
       - patient

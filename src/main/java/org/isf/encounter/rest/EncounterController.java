@@ -184,8 +184,8 @@ public class EncounterController {
 		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
 
 		Encounter encounterToUpdated = encounterMapper.map2Model(encounter);
-
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
+
 		return encounter;
 	}
 
