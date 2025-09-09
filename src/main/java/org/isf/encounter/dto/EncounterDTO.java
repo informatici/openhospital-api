@@ -24,7 +24,9 @@ package org.isf.encounter.dto;
 import org.isf.encounter.model.EncounterStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.validation.constraints.NotNull;
+
 import org.isf.patient.dto.PatientDTO;
 
 import java.time.LocalDateTime;
@@ -38,7 +40,7 @@ public class EncounterDTO {
 	@Schema(description = "Code of the encounter", example = "123")
 	private String code;
 
-	@Schema(description = "Status of encounter", example = "OPEN")
+	@Schema(description = "Status of encounter", example = "ACTIVE")
 	private EncounterStatus status;
 
 	@NotNull
@@ -70,7 +72,7 @@ public class EncounterDTO {
 	public EncounterStatus getStatus() {
 		return status;
 	}
-	
+
 	public void setStatus(EncounterStatus status) {
 		this.status = status;
 	}
@@ -99,5 +101,6 @@ public class EncounterDTO {
 		this.closedAt = closedAt;
 	}
 
-	public EncounterDTO() {}
+	public EncounterDTO() {
+	}
 }

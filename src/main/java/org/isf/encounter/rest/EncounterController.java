@@ -37,14 +37,14 @@ import org.isf.encounter.manager.EncounterBrowserManager;
 import org.isf.encounter.mapper.EncounterMapper;
 import org.isf.encounter.model.Encounter;
 import org.isf.encounter.model.EncounterStatus;
-import org.isf.medicalhistory.dto.MedicalHistoryDTO;
-import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
-import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
-import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.examination.dto.PatientExaminationDTO;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.medicalhistory.dto.MedicalHistoryDTO;
+import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
+import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
+import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
@@ -81,8 +81,6 @@ public class EncounterController {
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
-	private final MedicalHistoryBrowsingManager medicalHistoryManager;
-	private final MedicalHistoryMapper medicalHistoryMapper;
 	private final ExaminationBrowserManager examinationBrowserManager;
 	private final PatientExaminationMapper examinationMapper;
 	private final OpdBrowserManager opdManager;
@@ -91,17 +89,20 @@ public class EncounterController {
 	private final AdmissionBrowserManager admissionBrowserManager;
 	private final ConditioningBrowserManager conditioningManager;
 	private final ConditioningMapper conditioningMapper;
+	private final MedicalHistoryBrowsingManager medicalHistoryManager;
+	private final MedicalHistoryMapper medicalHistoryMapper;
 
 	public EncounterController(
 		EncounterBrowserManager encounterBrowserManager,
 		EncounterMapper encounterMapper,
 		PatientBrowserManager patientBrowserManager,
+
 		ExaminationBrowserManager examinationBrowserManager,
 		PatientExaminationMapper examinationMapper,
-							   MedicalHistoryBrowsingManager medicalHistoryManager,
-							   MedicalHistoryMapper medicalHistoryMapper,
 		OpdBrowserManager opdManager,
 		OpdMapper opdMapper,
+		MedicalHistoryBrowsingManager medicalHistoryManager,
+		MedicalHistoryMapper medicalHistoryMapper,
 		AdmissionBrowserManager admissionBrowserManager,
 		AdmissionMapper admissionMapper,
 		ConditioningBrowserManager conditioningManager,
@@ -228,7 +229,6 @@ public class EncounterController {
 		return encounter;
 	}
 
-
 	/**
 	 * Retrieves the list of {@link OpdDTO} objects associated with a specific encounter,
 	 * identified by its unique code.
@@ -250,18 +250,6 @@ public class EncounterController {
 		return conditioningMapper.map2DTOList(conditioningList);
 	}
 
-	@GetMapping("/encounters/{code}/admissions")
-	public List<AdmissionDTO> getAdmissionsByEncounter(@PathVariable String code) throws OHServiceException {
-		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
-		if (encounter == null) {
-			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
-		}
-
-		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
-
-		return admissionMapper.map2DTOList(admissionList);
-	}
-
 	/**
 	 * Retrieves the list of {@link MedicalHistoryDTO} objects associated with a specific encounter,
 	 * identified by its unique code.
@@ -279,5 +267,17 @@ public class EncounterController {
 		}
 		List<MedicalHistory> medicalHistoryList = medicalHistoryManager.getMedicalHistoriesForEncounter(encounter);
 		return medicalHistoryMapper.map2DTOList(medicalHistoryList);
+	}
+
+	@GetMapping("/encounters/{code}/admissions")
+	public List<AdmissionDTO> getAdmissionsByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
+
+		return admissionMapper.map2DTOList(admissionList);
 	}
 }
