@@ -9081,9 +9081,9 @@ components:
           type: string
           description: Status of encounter
           enum:
-          - OPEN
-          - CLOSE
-          example: OPEN
+          - ACTIVE
+          - CANCELLED
+          example: ACTIVE
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: Patient
