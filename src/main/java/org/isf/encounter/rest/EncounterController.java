@@ -214,7 +214,7 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("The encounter found is not for the patient with code "+patientCode));
 		}
 
-		if (encounter.getStatus() == EncounterStatus.CANCELLED) {
+		if (encounterToUpdate.getStatus() == EncounterStatus.CANCELLED) {
 			throw new OHAPIException(new OHExceptionMessage("You cannot modify the canceled encounter."));
 		}
 
