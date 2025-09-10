@@ -119,7 +119,7 @@ public class MedicalHistoryControllerTest {
 
 		int patientCode = 1;
 
-		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(medicalHistories.get(0));
+		when(mhManagerMock.getMedicalHistoriesByPatientCode(patientCode)).thenReturn(medicalHistories);
 
 		MvcResult result = this.mockMvc
 			.perform(get(request, patientCode).contentType(MediaType.APPLICATION_JSON))
