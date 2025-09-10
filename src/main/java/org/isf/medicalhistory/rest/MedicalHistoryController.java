@@ -81,14 +81,13 @@ public class MedicalHistoryController {
 	}
 
 	@GetMapping(value = "/medicalhistories/patient/{patientCode}")
-	public ResponseEntity<MedicalHistoryDTO> getMedicalHistoryByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
+	public List<MedicalHistoryDTO> getMedicalHistoryByPatientCode(@PathVariable Integer patientCode) throws OHServiceException {
 		LOGGER.info("Get medical histories for patient code {}", patientCode);
-		MedicalHistory history = medicalHistoryBrowsingManager.getMedicalHistoriesByPatientCode(patientCode);
-		if (history == null) {
+		List<MedicalHistory> medicalHistories = medicalHistoryBrowsingManager.getMedicalHistoriesByPatientCode(patientCode);
+		if (medicalHistories == null) {
 			throw new OHAPIException(new OHExceptionMessage("No medical history found for patient code: " + patientCode),HttpStatus.NOT_FOUND);
 		}
-		MedicalHistoryDTO medicalHistoryDTOs = medicalHistoryMapper.map2DTO(history);
-		return ResponseEntity.status(HttpStatus.OK).body(medicalHistoryDTOs);
+		return medicalHistoryMapper.map2DTOList(medicalHistories);
 	}
 
 	@PostMapping(value = "/medicalhistories")
