@@ -108,6 +108,9 @@ public class EncounterControllerTest {
 	@Mock
 	protected MedicalHistoryBrowsingManager medicalHistoryBrowsingManager;
 
+	@Mock
+	protected OperationRowBrowserManager operationRowManager;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
@@ -115,8 +118,7 @@ public class EncounterControllerTest {
 	protected PatientMapper patientMapper = new PatientMapper();
 	protected ConditioningMapper conditioningMapper = new ConditioningMapper();
 	protected MedicalHistoryMapper medicalHistoryMapper = new MedicalHistoryMapper();
-	protected OperationRowBrowserManager operationRowManager;
-	protected OperationRowMapper opRowMapper;
+	protected OperationRowMapper opRowMapper = new OperationRowMapper();
 
 	private MockMvc mockMvc;
 
@@ -141,6 +143,7 @@ public class EncounterControllerTest {
 		ReflectionTestUtils.setField(examinationMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(conditioningMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(medicalHistoryMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(opRowMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
