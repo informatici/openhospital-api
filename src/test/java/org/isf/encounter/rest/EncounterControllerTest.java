@@ -40,6 +40,8 @@ import org.isf.examination.TestPatientExamination;
 import org.isf.examination.manager.ExaminationBrowserManager;
 import org.isf.examination.mapper.PatientExaminationMapper;
 import org.isf.examination.model.PatientExamination;
+import org.isf.lab.manager.LabManager;
+import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.medicalhistory.data.MedicalHistoryHelper;
 import org.isf.medicalhistory.dto.MedicalHistoryDTO;
 import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
@@ -106,6 +108,12 @@ public class EncounterControllerTest {
 	@Mock
 	protected MedicalHistoryBrowsingManager medicalHistoryBrowsingManager;
 
+	@Mock
+	protected LabManager labManager;
+
+	@Mock
+	protected LaboratoryMapper laboratoryMapper;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
@@ -122,7 +130,7 @@ public class EncounterControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper))
+			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper, labManager, laboratoryMapper))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 

@@ -103,8 +103,8 @@ public class EncounterController {
 	private final ConditioningMapper conditioningMapper;
 	private final MedicalHistoryBrowsingManager medicalHistoryManager;
 	private final MedicalHistoryMapper medicalHistoryMapper;
-	private LabManager labManager;
-	private LaboratoryMapper laboratoryMapper;
+	private final LabManager labManager;
+	private final LaboratoryMapper laboratoryMapper;
 
 	public EncounterController(
 		EncounterBrowserManager encounterBrowserManager,
@@ -120,7 +120,10 @@ public class EncounterController {
 		ConditioningBrowserManager conditioningManager,
 		ConditioningMapper conditioningMapper,
 		MedicalHistoryBrowsingManager medicalHistoryManager,
-		MedicalHistoryMapper medicalHistoryMapper
+		MedicalHistoryMapper medicalHistoryMapper,
+		LabManager labManager,
+		LaboratoryMapper laboratoryMapper
+
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -135,6 +138,8 @@ public class EncounterController {
 		this.conditioningMapper = conditioningMapper;
 		this.medicalHistoryManager = medicalHistoryManager;
 		this.medicalHistoryMapper = medicalHistoryMapper;
+		this.labManager = labManager;
+		this.laboratoryMapper = laboratoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -315,7 +320,8 @@ public class EncounterController {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
 
-		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter);
+		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter).stream()
+			.filter(e -> !DRAFT.equalsIgnoreCase(e.getStatus()) && !OPEN.equalsIgnoreCase(e.getStatus())).toList();
 
 		return laboratoryMapper.map2DTOList(LaboratoryList);
 	}
@@ -335,7 +341,7 @@ public class EncounterController {
 		}
 
 		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter).stream()
-			.filter(e -> e.getStatus().equalsIgnoreCase(DRAFT) || e.getStatus().equalsIgnoreCase(OPEN)).toList();
+			.filter(e -> DRAFT.equalsIgnoreCase(e.getStatus()) || OPEN.equalsIgnoreCase(e.getStatus())).toList();
 
 		return LaboratoryList.stream().map(lab -> {
 			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
