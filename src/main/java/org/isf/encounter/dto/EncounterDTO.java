@@ -53,6 +53,9 @@ public class EncounterDTO {
 	@Schema(description = "Closed date", example = "2025-08-26 16:15:58")
 	private LocalDateTime closedAt;
 
+	@Schema(description = "Lock", example = "1")
+	private Integer lock;
+
 	public Integer getId() {
 		return id;
 	}
@@ -99,6 +102,14 @@ public class EncounterDTO {
 
 	public void setClosedAt(LocalDateTime closedAt) {
 		this.closedAt = closedAt;
+	}
+
+	public Integer getLock() {
+		return lock;
+	}
+
+	public void setLock(Integer lock) {
+		this.lock = lock;
 	}
 
 	public EncounterDTO() {
