@@ -7771,11 +7771,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       required:
       - admDate
       - admitted
@@ -9163,6 +9163,11 @@ components:
           format: date-time
           description: Closed date
           example: 2025-08-26 16:15:58
+        lock:
+          type: integer
+          format: int32
+          description: Lock
+          example: 1
       required:
       - code
       - patient
