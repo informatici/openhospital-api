@@ -275,9 +275,10 @@ public class EncounterController {
 				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with an Opd."));
 			}
 		}
-		encounterBrowserManager.saveEncounter(encounterToUpdated);
 
-		return encounter;
+		encounterToUpdated = encounterBrowserManager.saveEncounter(encounterToUpdated);
+
+		return encounterMapper.map2DTO(encounterToUpdated);
 	}
 
 	/**
