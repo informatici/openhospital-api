@@ -252,11 +252,9 @@ public class EncounterController {
 			encounter.setStatus(EncounterStatus.ACTIVE);
 		}
 
-		encounter.setPerformedAt(encounterToUpdate.getPerformedAt());
-
 		Encounter encounterToUpdated = encounterMapper.map2Model(encounter);
-
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
+
 		return encounter;
 	}
 
