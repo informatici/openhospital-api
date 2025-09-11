@@ -247,17 +247,45 @@ public class EncounterController {
 		}
 
 		Encounter encounterToUpdated = encounterMapper.map2Model(encounter);
+
+		if (encounter.getStatus() == EncounterStatus.CANCELLED) {
+			List<Conditioning> conditioningList = conditioningManager.getConditioningByPatientEncounter(encounterToUpdated);
+			if (conditioningList != null && !conditioningList.isEmpty()) {
+				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with a Conditioning."));
+			}
+
+			List<MedicalHistory> medicalHistoryList = medicalHistoryManager.getMedicalHistoriesForEncounter(encounterToUpdated);
+			if (medicalHistoryList != null && !medicalHistoryList.isEmpty()) {
+				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with a Medical History."));
+			}
+
+			List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounterToUpdated);
+			if (admissionList != null && !admissionList.isEmpty()) {
+				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with an Admission."));
+			}
+
+			List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounterToUpdated).stream()
+				.filter(e -> !DRAFT.equalsIgnoreCase(e.getStatus()) && !OPEN.equalsIgnoreCase(e.getStatus())).toList();
+			if (admissionList != null && !admissionList.isEmpty()) {
+				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with a Laboratory."));
+			}
+
+			List<Opd> opdList = opdManager.getOpdForEncounter(encounterToUpdated);
+			if (opdList != null && !opdList.isEmpty()) {
+				throw new OHAPIException(new OHExceptionMessage("This encounter cannot be deleted because it is associated with an Opd."));
+			}
+		}
 		encounterBrowserManager.saveEncounter(encounterToUpdated);
 
 		return encounter;
 	}
 
 	/**
-	 * Retrieves the list of {@link OpdDTO} objects associated with a specific encounter,
+	 * Retrieves the list of {@link ConditioningDTO} objects associated with a specific encounter,
 	 * identified by its unique code.
 	 *
 	 * @param code the unique encounter code used to identify the encounter
-	 * @return a {@link List} of {@link OpdDTO} objects associated with the given encounter
+	 * @return a {@link List} of {@link ConditioningDTO} objects associated with the given encounter
 	 * @throws OHServiceException if an error occurs while retrieving patient examinations
 	 * @throws OHAPIException if no encounter is found with the provided code
 	 */
