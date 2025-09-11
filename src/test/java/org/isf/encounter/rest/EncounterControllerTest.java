@@ -50,6 +50,8 @@ import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+import org.isf.operation.manager.OperationRowBrowserManager;
+import org.isf.operation.mapper.OperationRowMapper;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -106,6 +108,9 @@ public class EncounterControllerTest {
 	@Mock
 	protected MedicalHistoryBrowsingManager medicalHistoryBrowsingManager;
 
+	@Mock
+	protected OperationRowBrowserManager operationRowManager;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
@@ -113,6 +118,7 @@ public class EncounterControllerTest {
 	protected PatientMapper patientMapper = new PatientMapper();
 	protected ConditioningMapper conditioningMapper = new ConditioningMapper();
 	protected MedicalHistoryMapper medicalHistoryMapper = new MedicalHistoryMapper();
+	protected OperationRowMapper opRowMapper = new OperationRowMapper();
 
 	private MockMvc mockMvc;
 
@@ -122,7 +128,7 @@ public class EncounterControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper))
+			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionMapper, admissionBrowserManagerMock, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper, operationRowManager, opRowMapper))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 
@@ -137,6 +143,7 @@ public class EncounterControllerTest {
 		ReflectionTestUtils.setField(examinationMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(conditioningMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(medicalHistoryMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(opRowMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
