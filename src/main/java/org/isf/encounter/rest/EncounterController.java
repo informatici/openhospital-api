@@ -23,6 +23,7 @@ package org.isf.encounter.rest;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -45,10 +46,17 @@ import org.isf.medicalhistory.dto.MedicalHistoryDTO;
 import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
+import org.isf.lab.dto.LaboratoryDTO;
+import org.isf.lab.manager.LabManager;
+import org.isf.lab.mapper.LaboratoryMapper;
+import org.isf.lab.model.Laboratory;
+import org.isf.lab.model.LaboratoryStatus;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+
+import org.isf.patient.dto.PatientSTATUS;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -78,6 +86,10 @@ public class EncounterController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EncounterController.class);
 
+	private static final String DRAFT = LaboratoryStatus.draft.toString();
+
+	private static final String OPEN = LaboratoryStatus.open.toString();
+
 	private final EncounterBrowserManager encounterBrowserManager;
 	private final EncounterMapper encounterMapper;
 	private final PatientBrowserManager patientBrowserManager;
@@ -91,6 +103,8 @@ public class EncounterController {
 	private final ConditioningMapper conditioningMapper;
 	private final MedicalHistoryBrowsingManager medicalHistoryManager;
 	private final MedicalHistoryMapper medicalHistoryMapper;
+	private final LabManager labManager;
+	private final LaboratoryMapper laboratoryMapper;
 
 	public EncounterController(
 		EncounterBrowserManager encounterBrowserManager,
@@ -106,7 +120,10 @@ public class EncounterController {
 		ConditioningBrowserManager conditioningManager,
 		ConditioningMapper conditioningMapper,
 		MedicalHistoryBrowsingManager medicalHistoryManager,
-		MedicalHistoryMapper medicalHistoryMapper
+		MedicalHistoryMapper medicalHistoryMapper,
+		LabManager labManager,
+		LaboratoryMapper laboratoryMapper
+
 	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
@@ -121,6 +138,8 @@ public class EncounterController {
 		this.conditioningMapper = conditioningMapper;
 		this.medicalHistoryManager = medicalHistoryManager;
 		this.medicalHistoryMapper = medicalHistoryMapper;
+		this.labManager = labManager;
+		this.laboratoryMapper = laboratoryMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -283,5 +302,51 @@ public class EncounterController {
 		List<Admission> admissionList = admissionBrowserManager.getAdmissionsByEncounter(encounter);
 
 		return admissionMapper.map2DTOList(admissionList);
+	}
+
+	/**
+	 * Get all {@link LaboratoryDTO}s linked to the specified {@link Encounter}.
+	 *
+	 * @param code Encounter code
+	 * @return the {@link List} of found {@link LaboratoryDTO} or NO_CONTENT otherwise.
+	 * @throws OHServiceException When failed to get lab exams for the encounter
+	 */
+	@GetMapping("/encounters/{code}/exams")
+	public List<LaboratoryDTO> getLaboratoryByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter).stream()
+			.filter(e -> !DRAFT.equalsIgnoreCase(e.getStatus()) && !OPEN.equalsIgnoreCase(e.getStatus())).toList();
+
+		return laboratoryMapper.map2DTOList(LaboratoryList);
+	}
+
+	/**
+	 * Get all {@link LaboratoryDTO}s examRequest linked to the specified {@link Encounter}.
+	 *
+	 * @param code Encounter code
+	 * @return the {@link List} of found {@link LaboratoryDTO} of examRequest or NO_CONTENT otherwise.
+	 * @throws OHServiceException When failed to get lab exams for the encounter
+	 */
+	@GetMapping("/encounters/{code}/examRequest")
+	public List<LaboratoryDTO> getLaboratoryExamRequestByEncounter(@PathVariable String code) throws OHServiceException {
+		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
+		if (encounter == null) {
+			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
+		}
+
+		List<Laboratory> LaboratoryList = labManager.getLaboratoryByEncounter(encounter).stream()
+			.filter(e -> DRAFT.equalsIgnoreCase(e.getStatus()) || OPEN.equalsIgnoreCase(e.getStatus())).toList();
+
+		return LaboratoryList.stream().map(lab -> {
+			LaboratoryDTO laboratoryDTO = laboratoryMapper.map2DTO(lab);
+			laboratoryDTO.setRegistrationDate(lab.getCreatedDate());
+			laboratoryDTO.setInOutPatient(PatientSTATUS.valueOf(lab.getInOutPatient()));
+			laboratoryDTO.setStatus(LaboratoryStatus.valueOf(lab.getStatus()));
+			return laboratoryDTO;
+		}).collect(Collectors.toList());
 	}
 }
