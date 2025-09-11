@@ -21,10 +21,8 @@
  */
 package org.isf.encounter.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.manager.AdmissionBrowserManager;
@@ -48,13 +46,9 @@ import org.isf.medicalhistory.manager.MedicalHistoryBrowsingManager;
 import org.isf.medicalhistory.mapper.MedicalHistoryMapper;
 import org.isf.medicalhistory.model.MedicalHistory;
 import org.isf.opd.dto.OpdDTO;
-import org.isf.opd.dto.OpdWithOperationRowDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
-import org.isf.operation.manager.OperationRowBrowserManager;
-import org.isf.operation.mapper.OperationRowMapper;
-import org.isf.operation.model.OperationRow;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHAPIException;
@@ -97,11 +91,23 @@ public class EncounterController {
 	private final ConditioningMapper conditioningMapper;
 	private final MedicalHistoryBrowsingManager medicalHistoryManager;
 	private final MedicalHistoryMapper medicalHistoryMapper;
-	private final OperationRowBrowserManager operationRowManager;
-	private final OperationRowMapper opRowMapper;
 
+	public EncounterController(
+		EncounterBrowserManager encounterBrowserManager,
+		EncounterMapper encounterMapper,
+		PatientBrowserManager patientBrowserManager,
 
-	public EncounterController(EncounterBrowserManager encounterBrowserManager, EncounterMapper encounterMapper, PatientBrowserManager patientBrowserManager, ExaminationBrowserManager examinationBrowserManager, PatientExaminationMapper examinationMapper, OpdBrowserManager opdManager, OpdMapper opdMapper, AdmissionMapper admissionMapper, AdmissionBrowserManager admissionBrowserManager, ConditioningBrowserManager conditioningManager, ConditioningMapper conditioningMapper, MedicalHistoryBrowsingManager medicalHistoryManager, MedicalHistoryMapper medicalHistoryMapper, OperationRowBrowserManager operationRowManager, OperationRowMapper opRowMapper) {
+		ExaminationBrowserManager examinationBrowserManager,
+		PatientExaminationMapper examinationMapper,
+		OpdBrowserManager opdManager,
+		OpdMapper opdMapper,
+		AdmissionBrowserManager admissionBrowserManager,
+		AdmissionMapper admissionMapper,
+		ConditioningBrowserManager conditioningManager,
+		ConditioningMapper conditioningMapper,
+		MedicalHistoryBrowsingManager medicalHistoryManager,
+		MedicalHistoryMapper medicalHistoryMapper
+	) {
 		this.encounterBrowserManager = encounterBrowserManager;
 		this.encounterMapper = encounterMapper;
 		this.patientBrowserManager = patientBrowserManager;
@@ -109,14 +115,12 @@ public class EncounterController {
 		this.examinationMapper = examinationMapper;
 		this.opdManager = opdManager;
 		this.opdMapper = opdMapper;
-		this.admissionMapper = admissionMapper;
 		this.admissionBrowserManager = admissionBrowserManager;
+		this.admissionMapper = admissionMapper;
 		this.conditioningManager = conditioningManager;
 		this.conditioningMapper = conditioningMapper;
 		this.medicalHistoryManager = medicalHistoryManager;
 		this.medicalHistoryMapper = medicalHistoryMapper;
-		this.operationRowManager = operationRowManager;
-		this.opRowMapper = opRowMapper;
 	}
 
 	@PostMapping(value = "/encounters")
@@ -161,44 +165,15 @@ public class EncounterController {
 		}
 		return encounterMapper.map2DTO(encounter);
 	}
-	/**
-	 * Retrieves the list of {@link OpdWithOperationRowDTO} objects associated with a specific encounter,
-	 * identified by its unique code.
-	 *
-	 * @param code the unique encounter code used to identify the encounter
-	 * @return a {@link List} of {@link OpdWithOperationRowDTO} objects associated with the given encounter
-	 * @throws OHServiceException if an error occurs while retrieving patient examinations
-	 * @throws OHAPIException if no encounter is found with the provided code
-	 */
+
 	@GetMapping("/encounters/{code}/opds")
-	public List<OpdWithOperationRowDTO> getOPDByEncounter(@PathVariable String code) throws OHServiceException {
+	public List<OpdDTO> getOPDByEncounter(@PathVariable String code) throws OHServiceException {
 		Encounter encounter = encounterBrowserManager.getEncountersByCode(code);
 		if (encounter == null) {
 			throw new OHAPIException(new OHExceptionMessage("Encounter not found with code " + code), HttpStatus.NOT_FOUND);
 		}
-		List<Opd> opds = opdManager.getOpdForEncounter(encounter);
-		List<OpdWithOperationRowDTO> opdWithOperations = new ArrayList<>();
-		if (!opds.isEmpty()) {
-			opdWithOperations = opds.stream().map(opd -> {
-				OpdWithOperationRowDTO opRows = new OpdWithOperationRowDTO();
-				opRows.setOpdDTO(opdMapper.map2DTO(opd));
-				List<OperationRow> listOp = new ArrayList<>();
-				try {
-					listOp = operationRowManager.getOperationRowByOpd(opd);
-				} catch (OHServiceException e) {
-					// TODO Auto-generated catch block
-					LOGGER.error("Unable to get the List of operation associate to this Opd");
-				}
-				if (!listOp.isEmpty()) {
-					opRows.setOperationRows(opRowMapper.map2DTOList(listOp));
-				} else {
-					opRows.setOperationRows(new ArrayList<>());
-				}
-				return opRows;
-			}).collect(Collectors.toList());
-
-		}
-		return opdWithOperations;
+		List<Opd> opdList = opdManager.getOpdForEncounter(encounter);
+		return opdMapper.map2DTOList(opdList);
 	}
 
 	/**
@@ -259,11 +234,11 @@ public class EncounterController {
 	}
 
 	/**
-	 * Retrieves the list of {@link ConditioningDTO} objects associated with a specific encounter,
+	 * Retrieves the list of {@link OpdDTO} objects associated with a specific encounter,
 	 * identified by its unique code.
 	 *
 	 * @param code the unique encounter code used to identify the encounter
-	 * @return a {@link List} of {@link ConditioningDTO} objects associated with the given encounter
+	 * @return a {@link List} of {@link OpdDTO} objects associated with the given encounter
 	 * @throws OHServiceException if an error occurs while retrieving patient examinations
 	 * @throws OHAPIException if no encounter is found with the provided code
 	 */
