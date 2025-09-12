@@ -52,6 +52,9 @@ import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.mapper.OpdMapper;
 import org.isf.opd.model.Opd;
+import org.isf.operation.manager.OperationRowBrowserManager;
+import org.isf.operation.mapper.OperationRowMapper;
+import org.isf.operation.model.OperationRow;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.dto.PatientDTO;
 import org.isf.patient.manager.PatientBrowserManager;
@@ -114,6 +117,9 @@ public class EncounterControllerTest {
 	@Mock
 	protected LaboratoryMapper laboratoryMapper;
 
+	@Mock
+	protected OperationRowBrowserManager operationRowManager;
+
 	protected OpdMapper opdMapper = new OpdMapper();
 	protected AdmissionMapper admissionMapper = new AdmissionMapper();
 	protected PatientExaminationMapper examinationMapper = new PatientExaminationMapper();
@@ -121,6 +127,7 @@ public class EncounterControllerTest {
 	protected PatientMapper patientMapper = new PatientMapper();
 	protected ConditioningMapper conditioningMapper = new ConditioningMapper();
 	protected MedicalHistoryMapper medicalHistoryMapper = new MedicalHistoryMapper();
+	private final OperationRowMapper opRowMapper = new OperationRowMapper();
 
 	private MockMvc mockMvc;
 
@@ -130,7 +137,7 @@ public class EncounterControllerTest {
 	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper, labManager, laboratoryMapper))
+			.standaloneSetup(new EncounterController(encounterBrowserManagerMock, encounterMapper, patientBrowserManagerMock, examinationBrowserManagerMock, examinationMapper, opdManagerMock, opdMapper, admissionBrowserManagerMock, admissionMapper, browserManagerMock, conditioningMapper, medicalHistoryBrowsingManager, medicalHistoryMapper, labManager, laboratoryMapper,opRowMapper,operationRowManager))
 			.setControllerAdvice(new OHResponseEntityExceptionHandler())
 			.build();
 
@@ -145,6 +152,7 @@ public class EncounterControllerTest {
 		ReflectionTestUtils.setField(examinationMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(conditioningMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(medicalHistoryMapper, "modelMapper", modelMapper);
+		ReflectionTestUtils.setField(opRowMapper, "modelMapper", modelMapper);
 	}
 
 	@AfterEach
@@ -379,12 +387,15 @@ public class EncounterControllerTest {
 		String encounterCode = "ENC_001";
 
 		Encounter encounter = encounterMapper.map2Model(EncounterHelper.setup(encounterMapper));
-
-		OpdDTO opdDTO1 = opdMapper.map2DTO(OpdHelper.setup());
-		OpdDTO opdDTO2 = opdMapper.map2DTO(OpdHelper.setup());
-		Opd opd1 = opdMapper.map2Model(opdDTO1);
-		Opd opd2 = opdMapper.map2Model(opdDTO2);
+		Opd opd1 = OpdHelper.setup();
+		Opd opd2 = OpdHelper.setup();
 		List<Opd> opdList = Arrays.asList(opd1, opd2);
+
+		OperationRow operationRow1 = new OperationRow();
+		operationRow1.setId(1);
+		OperationRow operationRow2 = new OperationRow();
+		operationRow2.setId(2);
+		List<OperationRow> operationRows = Arrays.asList(operationRow1, operationRow2);
 
 		when(encounterBrowserManagerMock.getEncountersByCode(encounterCode))
 			.thenReturn(encounter);
@@ -392,10 +403,22 @@ public class EncounterControllerTest {
 		when(opdManagerMock.getOpdForEncounter(encounter))
 			.thenReturn(opdList);
 
+		when(operationRowManager.getOperationRowByOpd(opd1))
+			.thenReturn(operationRows);
+
+		when(operationRowManager.getOperationRowByOpd(opd2))
+			.thenReturn(operationRows);
+
 		MvcResult result = this.mockMvc
 			.perform(get(request, encounterCode))
 			.andDo(log())
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$").isArray())
+			.andExpect(jsonPath("$.length()").value(opdList.size()))
+			.andExpect(jsonPath("$[0].opdDTO").exists())
+			.andExpect(jsonPath("$[0].operationRows").isArray())
+			.andExpect(jsonPath("$[1].opdDTO").exists())
+			.andExpect(jsonPath("$[1].operationRows").isArray())
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
