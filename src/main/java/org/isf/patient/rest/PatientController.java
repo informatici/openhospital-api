@@ -183,11 +183,13 @@ public class PatientController {
 	}
 
 	@GetMapping(value = "/patients/search")
-	public List<PatientDTO> searchPatient(
+	public Page<PatientDTO> searchPatient(
 		@RequestParam(value = "firstName", defaultValue = "", required = false) String firstName,
 		@RequestParam(value = "secondName", defaultValue = "", required = false) String secondName,
 		@RequestParam(value = "birthDate", defaultValue = "", required = false) LocalDateTime birthDate,
-		@RequestParam(value = "address", defaultValue = "", required = false) String address
+		@RequestParam(value = "address", defaultValue = "", required = false) String address,
+		@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+		@RequestParam(value = "size", required = false, defaultValue = DEFAULT_PAGE_SIZE) int size
 	) throws OHServiceException {
 		Map<String, Object> params = new HashMap<>();
 
@@ -207,16 +209,26 @@ public class PatientController {
 			params.put("address", address);
 		}
 
-		List<Patient> patientList = new ArrayList<>();
+		PagedResponse<Patient> patientList = new PagedResponse<>();
 		if (!params.entrySet().isEmpty()) {
-			patientList = patientManager.getPatients(params);
+			patientList = patientManager.getPatients(params, page, size);
 		}
 
-		return patientList.stream().map(patient -> {
-			Admission admission = admissionManager.getCurrentAdmission(patient);
-			Boolean status = admission != null;
-			return patientMapper.map2DTOWS(patient, status);
-		}).toList();
+		Page<PatientDTO> patientPageableDTO = new Page<>();
+		List<PatientDTO> patientsDTO = new ArrayList<>();
+		if (patientList.getData() != null) {
+			patientsDTO = patientList.getData().stream().map(patient -> {
+				Admission admission = admissionManager.getCurrentAdmission(patient);
+				Boolean status = admission != null;
+				return patientMapper.map2DTOWS(patient, status);
+			}).toList();
+		}
+		patientPageableDTO.setData(patientsDTO);
+		if (patientList.getPageInfo() != null) {
+			patientPageableDTO.setPageInfo(patientMapper.setParameterPageInfo(patientList.getPageInfo()));
+		}
+
+		return patientPageableDTO;
 	}
 
 	@GetMapping(value = "/patients/all")
