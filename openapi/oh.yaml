@@ -4503,15 +4503,27 @@ paths:
         schema:
           type: string
           default: ""
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 80
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PatientDTO"
+                $ref: "#/components/schemas/PagePatientDTO"
       security:
       - bearerAuth: []
   /patients/nextcode:
@@ -5359,7 +5371,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MedicalHistoryDTO"
+                type: array
+                items:
+                  $ref: "#/components/schemas/MedicalHistoryDTO"
       security:
       - bearerAuth: []
   /malnutritions/{id_admission}:
@@ -6912,11 +6926,11 @@ components:
           example: 0
         opd:
           type: boolean
-        pharmacy:
-          type: boolean
         female:
           type: boolean
         male:
+          type: boolean
+        pharmacy:
           type: boolean
       required:
       - beds
