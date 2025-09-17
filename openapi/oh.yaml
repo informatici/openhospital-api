@@ -3904,50 +3904,6 @@ paths:
                 $ref: "#/components/schemas/SettingDTO"
       security:
       - bearerAuth: []
-  /reports/patientexamrequest/{patientId}:
-    get:
-      tags:
-      - Reports
-      operationId: printPatientExamRequestPdf
-      parameters:
-      - name: patientId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      security:
-      - bearerAuth: []
-  /reports/patientexamination/{examinationId}:
-    get:
-      tags:
-      - Reports
-      operationId: printPatientExaminationPdf
-      parameters:
-      - name: examinationId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: OK
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-      security:
-      - bearerAuth: []
   /reports/exams-list:
     get:
       tags:
@@ -3957,10 +3913,10 @@ paths:
         "200":
           description: OK
           content:
-            application/octet-stream:
+            application/json:
               schema:
                 type: string
-                format: binary
+                format: byte
       security:
       - bearerAuth: []
   /reports/diseases-list:
@@ -3972,10 +3928,10 @@ paths:
         "200":
           description: OK
           content:
-            application/octet-stream:
+            application/json:
               schema:
                 type: string
-                format: binary
+                format: byte
       security:
       - bearerAuth: []
   /pricelists/prices:
@@ -6422,13 +6378,13 @@ components:
           format: int32
           description: lock
           example: 0
-        pharmacy:
+        opd:
           type: boolean
         female:
           type: boolean
         male:
           type: boolean
-        opd:
+        pharmacy:
           type: boolean
       required:
       - beds
