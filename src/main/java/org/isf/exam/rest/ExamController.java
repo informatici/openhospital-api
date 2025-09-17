@@ -109,11 +109,13 @@ public class ExamController {
 	) throws OHServiceException {
 		ExamDTO examDTO = examWithRowsDTO.exam();
 		List<String> examRows = examWithRowsDTO.rows();
+		
+		Exam existingExam = examManager.findByCode(code);
 
 		if (!examDTO.getCode().equals(code)) {
 			throw new OHAPIException(new OHExceptionMessage("Exam code mismatch."));
 		}
-		if (examManager.findByCode(code) == null) {
+		if (existingExam == null) {
 			throw new OHAPIException(new OHExceptionMessage("Exam not found."), HttpStatus.NOT_FOUND);
 		}
 
@@ -128,7 +130,11 @@ public class ExamController {
 				throw new OHAPIException(new OHExceptionMessage("Exam default result doesn't match any exam rows."));
 			}
 		}
-
+		if (existingExam.getLock() != examDTO.getLock()) {
+			throw new OHAPIException(new OHExceptionMessage("The data has been updated by someone else."));
+		} else {
+			examDTO.setLock(existingExam.getLock() + 1);
+		}
 		Exam exam = examMapper.map2Model(examDTO);
 		exam.setExamtype(examType);
 		Exam examUpdated = examManager.update(exam, examRows);
