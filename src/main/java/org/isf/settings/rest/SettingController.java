@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -56,6 +56,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class SettingController {
+
 	private static final Logger logger = LoggerFactory.getLogger(SettingController.class);
 
 	private final SettingMapper mapper;
@@ -118,7 +119,6 @@ public class SettingController {
 
 	/**
 	 * Update setting
-	 *
 	 * @param code Setting code
 	 * @param dto Setting Update payload
 	 * @return {@link SettingDTO} the updated setting

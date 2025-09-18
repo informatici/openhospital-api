@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,6 +21,7 @@
  */
 package org.isf.settings.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import org.isf.settings.model.SettingCategory;
@@ -33,37 +34,39 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Silevester D.
  */
 public class SettingDTO {
-	@Schema(description = "Setting ID", example = "1")
+
 	@NotNull
+	@Schema(description = "Setting ID", example = "1")
 	private int id;
 
-	@Schema(description="Setting code", maxLength = 50, example = "AUTOMATICLOT_IN")
-	@NotNull
+	@NotBlank
+	@Schema(description = "Setting code", maxLength = 50, example = "AUTOMATICLOT_IN")
 	private String code;
 
-	@Schema(description = "Setting category", example = "application")
 	@NotNull
+	@Schema(description = "Setting category", example = "application")
 	private SettingCategory category;
 
-	@Schema(description = "value type", example = "bool")
 	@NotNull
+	@Schema(description = "value type", example = "bool")
 	private SettingValueType type;
 
 	@Schema(description = "Comma-separated list of possible values", maxLength = 500)
 	private String valueOptions;
 
-	@Schema(description="Default value", example = "TRUE")
-	@NotNull
+	@NotBlank
+	@Schema(description = "Default value", example = "TRUE")
 	private String defaultValue;
 
-	@Schema(description="The value of the setting", example = "FALSE")
+	@Schema(description = "The value of the setting", example = "FALSE")
 	private String value;
 
-	@Schema(description="Description", maxLength = 500)
+	@Schema(description = "Description", maxLength = 500)
 	private String description;
 
-	@Schema(description="Whether the app needs restart after the setting has been modified", example = "true")
-	private Boolean needRestart = true;
+	@NotNull
+	@Schema(description = "Whether the app needs restart after the setting has been modified", example = "true")
+	private boolean needRestart = true;
 
 	public int getId() {
 		return id;

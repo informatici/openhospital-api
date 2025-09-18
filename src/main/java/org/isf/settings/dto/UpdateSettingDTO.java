@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,7 +28,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Silevester D.
  */
 public class UpdateSettingDTO {
-	@Schema(description="The value of the setting", example = "FALSE")
+
+	@Schema(description = "The value of the setting", example = "FALSE")
 	private String value;
 
 	public String getValue() {

@@ -184,21 +184,6 @@
                             </resources>
                         </configuration>
                     </execution>
-                    <execution>
-						<id>copy-report</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.basedir}/target/rpt_base</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${oh-core.dir}/rpt_base</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
                 </executions>
             </plugin>
             <plugin>
@@ -324,7 +309,7 @@
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
-			<build>
+            <build>
                 <resources>
                     <resource>
                         <directory>src/main/resources</directory>

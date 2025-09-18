@@ -6378,13 +6378,13 @@ components:
           format: int32
           description: lock
           example: 0
-        opd:
-          type: boolean
-        female:
+        pharmacy:
           type: boolean
         male:
           type: boolean
-        pharmacy:
+        female:
+          type: boolean
+        opd:
           type: boolean
       required:
       - beds
@@ -6832,6 +6832,7 @@ components:
           description: Setting code
           example: AUTOMATICLOT_IN
           maxLength: 50
+          minLength: 1
         category:
           type: string
           description: Setting category
@@ -6864,6 +6865,7 @@ components:
           type: string
           description: Default value
           example: "TRUE"
+          minLength: 1
         value:
           type: string
           description: The value of the setting
@@ -6878,9 +6880,8 @@ components:
           example: true
       required:
       - category
-      - code
-      - defaultValue
       - id
+      - needRestart
       - type
     PricesOthersDTO:
       type: object
@@ -7188,11 +7189,11 @@ components:
           type: string
           description: "Flag record deleted, values are 'Y' OR 'N' "
           example: "N"
+        fhu:
+          type: string
         yprog:
           type: integer
           format: int32
-        fhu:
-          type: string
       required:
       - admDate
       - admitted

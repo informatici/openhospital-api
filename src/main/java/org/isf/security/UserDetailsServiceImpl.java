@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -75,12 +75,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		}
 
 		org.springframework.security.core.userdetails.User userDetails = new org.springframework.security.core.userdetails.User(
-						/*
-						 * TODO: to pass same {@link User} information for:
-						 * 
-						 * boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked
-						 */
-						user.getUserName(), user.getPasswd(), true, true, true, true, authorities);
+			/*
+			 * TODO: to pass same {@link User} information for:
+			 *
+			 * boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked
+			 */
+			user.getUserName(), user.getPasswd(), true, true, true, true, authorities);
 		return userDetails;
 	}
 
