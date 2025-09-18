@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -94,15 +94,15 @@ public class SettingHelper {
 	public static List<Setting> generate(int number) {
 		return IntStream.range(0, number).mapToObj(i -> {
 			Setting setting;
-			if (i >= 4 && i%4 == 0) {
+			if (i >= 4 && i % 4 == 0) {
 				setting = selectSetting();
 				setting.setId(i);
 				return setting;
-			} else if (i >= 3 && i%3 == 0) {
+			} else if (i >= 3 && i % 3 == 0) {
 				setting = textSetting();
 				setting.setId(i);
 				return setting;
-			} else if (i >= 2 && i%2 == 0) {
+			} else if (i >= 2 && i % 2 == 0) {
 				setting = numberSetting();
 				setting.setId(i);
 				return setting;
