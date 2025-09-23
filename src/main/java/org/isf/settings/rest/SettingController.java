@@ -57,7 +57,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class SettingController {
 
-	private static final Logger logger = LoggerFactory.getLogger(SettingController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SettingController.class);
 
 	private final SettingMapper mapper;
 
@@ -82,7 +82,7 @@ public class SettingController {
 			throw new OHAPIException(new OHExceptionMessage("setting not found with ID: " + id), HttpStatus.NOT_FOUND);
 		}
 
-		logger.info("Retrieving setting {} using id, current value: {}", setting.getCode(), setting.getValue());
+		LOGGER.info("Retrieving setting {} using id, current value: {}", setting.getCode(), setting.getValue());
 
 		return mapper.map2DTO(setting);
 	}
@@ -101,7 +101,7 @@ public class SettingController {
 			throw new OHAPIException(new OHExceptionMessage("setting not found with code: " + code), HttpStatus.NOT_FOUND);
 		}
 
-		logger.info("Retrieving setting {} using code, current value: {}", setting.getCode(), setting.getValue());
+		LOGGER.info("Retrieving setting {} using code, current value: {}", setting.getCode(), setting.getValue());
 
 		return mapper.map2DTO(setting);
 	}
@@ -113,7 +113,7 @@ public class SettingController {
 	 */
 	@GetMapping("/settings")
 	public List<SettingDTO> getAllSettings() throws OHServiceException {
-		logger.info("Retrieved all settings");
+		LOGGER.info("Retrieved all settings");
 		return mapper.map2DTOList(manager.findAll());
 	}
 
@@ -133,7 +133,7 @@ public class SettingController {
 			throw new OHAPIException(new OHExceptionMessage("setting not found with code: " + code), HttpStatus.NOT_FOUND);
 		}
 
-		logger.info("Updating setting {}, old value: {}, new value: {}", setting.getCode(), setting.getValue(), dto.getValue());
+		LOGGER.info("Updating setting {}, old value: {}, new value: {}", setting.getCode(), setting.getValue(), dto.getValue());
 
 		setting.setValue(dto.getValue());
 
@@ -142,13 +142,13 @@ public class SettingController {
 
 	/**
 	 * Reset all settings to default
-	 * @return <code>true</code> when settings have been reset, <code>false</code> otherwise
+	 * @return {@code true} when settings have been reset, {@code false} otherwise
 	 * @throws OHServiceException When failed to reset settings
 	 */
 	@PostMapping("/settings/reset")
 	@ResponseStatus(HttpStatus.OK)
 	public boolean resetAllSettings() throws OHServiceException {
-		logger.info("Reset all settings");
+		LOGGER.info("Reset all settings");
 		return manager.resetAll();
 	}
 }

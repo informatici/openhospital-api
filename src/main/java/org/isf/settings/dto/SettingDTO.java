@@ -124,11 +124,11 @@ public class SettingDTO {
 		this.description = description;
 	}
 
-	public Boolean getNeedRestart() {
+	public boolean getNeedRestart() {
 		return needRestart;
 	}
 
-	public void setNeedRestart(Boolean needRestart) {
+	public void setNeedRestart(boolean needRestart) {
 		this.needRestart = needRestart;
 	}
 
