@@ -6239,6 +6239,199 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  /plugins:
+    get:
+      summary: Retrieve the plugin manifest.
+      tags:
+        - Plugins
+      operationId: getPluginsManifest
+      responses:
+        '200':
+          description: PluginsManifest successfully retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginsManifest'
+        "400":
+          description: Bad Request
+  /plugins/{id}:
+    get:
+      summary: Retrieve a specific plugin resource (JavaScript bundle) by id.
+      tags:
+        - Plugins
+      operationId: getPluginResource
+      parameters:
+        - name: pluginId
+          in: query
+          description: Unique id of the plugin.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Plugin resource (JavaScript file) successfully retrieved.
+          content:
+            application/javascript:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Type:
+              description: "Content type header for JavaScript resources."
+              schema:
+                type: string
+                example: "application/javascript; charset=utf-8"
+        "400":
+          description: Bad Request
+  /documents:
+    get:
+      summary: Retrieves a paginated list of documents associated with a person.
+      operationId: listDocuments
+      tags:
+        - Documents
+      parameters:
+        - name: personId
+          in: query
+          description: The unique identifier of the person.
+          required: true
+          schema:
+            type: string
+            example: P000123
+        - name: type
+          in: query
+          description: The document type (e.g., DOC, MED, REF).
+          required: true
+          schema:
+            type: string
+            example: DOC
+        - name: page
+          in: query
+          description: The page number for pagination (starts at 1).
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: fromDate
+          in: query
+          description: Start date for document filtering (inclusive).
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          description: End date for document filtering (inclusive).
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successfully retrieved the paginated list of documents.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+        '400':
+          description: Bad Request (Invalid parameters supplied).
+        '404':
+          description: Not Found (Person not found).
+      security:
+        - bearerAuth: [ ]
+    post:
+      summary: Uploads a new document file and metadata.
+      operationId: uploadDocument
+      tags:
+        - Documents
+      parameters:
+        - name: personId
+          in: query
+          description: The unique identifier (code) of the person/client.
+          required: true
+          schema:
+            type: string
+            example: P000123
+        - name: type
+          in: query
+          description: The document type code (e.g., RX, MRI, LAB).
+          required: true
+          schema:
+            type: string
+            example: RX
+        - name: documentDate
+          in: query
+          description: The date the document was physically created/taken.
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: file
+          schema:
+            image/jpeg:
+              schema:
+                $ref: '#/components/schemas/BinaryFile'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: The image file (JPEG, PNG, or TIFF) to be uploaded.
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        '201':
+          description: Document successfully created and uploaded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad Request (Invalid parameters or file format).
+        '403':
+          description: Forbidden (User lacks permissions).
+      security:
+        - bearerAuth: [ ]
+  /documents/{documentId}:
+    get:
+      summary: Downloads the content of a specific document (file).
+      operationId: downloadDocument
+      tags:
+        - Documents
+      parameters:
+        - name: documentId
+          in: path
+          description: The unique identifier of the document.
+          required: true
+          schema:
+            type: string
+            example: 123e4567-e89b-12d3-a456-426614174000
+      responses:
+        '200':
+          description: Document file successfully retrieved.
+          content:
+            image/jpeg:
+              schema:
+                $ref: '#/components/schemas/BinaryFile'
+          headers:
+            Content-Type:
+              description: MIME type of the returned file.
+              schema:
+                type: string
+                example: image/jpeg
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="doc_001.jpeg"'
+        '404':
+          description: Not Found (Document not found).
+      security:
+        - bearerAuth: [ ]
 components:
   schemas:
     WardDTO:
@@ -8423,6 +8616,66 @@ components:
           $ref: "#/components/schemas/PatientDTO"
         admission:
           $ref: "#/components/schemas/AdmissionDTO"
+    PluginsManifest:
+      type: object
+      description: Manifest listing available plugins.
+      properties:
+        plugins:
+          type: array
+          items:
+            $ref: '#/components/schemas/PluginEntry'
+    PluginEntry:
+      type: object
+      description: Metadata of a plugin.
+      properties:
+        id:
+          type: string
+          description: Unique id of the plugin.
+        name:
+          type: string
+          description: Display name of the plugin.
+    Document:
+      type: object
+      description: Detailed information about a single document.
+      properties:
+        documentId:
+          type: string
+          description: A system-generated unique ID or path alias for retrieval.
+        fileName:
+          type: string
+          description: The full file name in the storage (YYYYMMDD_HHmmss_...).
+        personId:
+          type: string
+        type:
+          type: string
+          enum: [ DOC, MED, REF ]
+        creationDate:
+          type: string
+          format: date-time
+          description: Timestamp when the document was uploaded/stored.
+        documentDate:
+          type: string
+          format: date
+          description: The clinical date extracted from the file name.
+    DocumentListResponse:
+      type: object
+      description: Paginated response body for document listings.
+      properties:
+        totalItems:
+          type: integer
+          description: Total number of documents matching the filter.
+        pageSize:
+          type: integer
+        pageNumber:
+          type: integer
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+    BinaryFile:
+      type: string
+      format: binary
+      description: Representation of a binary file (e.g., image content).
   securitySchemes:
     bearerAuth:
       type: http
