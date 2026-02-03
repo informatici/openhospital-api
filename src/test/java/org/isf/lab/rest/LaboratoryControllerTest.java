@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.isf.exa.manager.ExamBrowsingManager;
@@ -42,7 +43,6 @@ import org.isf.lab.data.LaboratoryHelper;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.manager.LabManager;
-import org.isf.lab.mapper.LaboratoryForPrintMapper;
 import org.isf.lab.mapper.LaboratoryMapper;
 import org.isf.lab.mapper.LaboratoryRowMapper;
 import org.isf.lab.model.Laboratory;
@@ -53,6 +53,7 @@ import org.isf.patient.model.Patient;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -66,7 +67,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class LaboratoryControllerTest {
+class LaboratoryControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LaboratoryControllerTest.class);
 
@@ -83,26 +84,30 @@ public class LaboratoryControllerTest {
 
 	protected LaboratoryRowMapper laboratoryRowMapper = new LaboratoryRowMapper();
 
-	protected LaboratoryForPrintMapper laboratoryForPrintMapper = new LaboratoryForPrintMapper();
-
 	private MockMvc mockMvc;
 
+	private AutoCloseable closeable;
+
 	@BeforeEach
-	public void setup() {
-		MockitoAnnotations.initMocks(this);
+	void setup() {
+		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-						.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper,
-										laboratoryForPrintMapper))
-						.setControllerAdvice(new OHResponseEntityExceptionHandler())
-						.build();
+			.standaloneSetup(new LaboratoryController(laboratoryManager, patientBrowserManager, examManager, laboratoryMapper, laboratoryRowMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		ReflectionTestUtils.setField(laboratoryMapper, "modelMapper", modelMapper);
 	}
 
+	@AfterEach
+	void closeService() throws Exception {
+		closeable.close();
+	}
+
 	@Test
-	public void testNewLaboratory_201() throws Exception {
+	void testNewLaboratory_201() throws Exception {
 		String request = "/laboratories";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -125,19 +130,19 @@ public class LaboratoryControllerTest {
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
 		MvcResult result = this.mockMvc
-						.perform(post(request)
-										.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isCreated())
-						.andReturn();
+			.perform(post(request)
+				.content(Objects.requireNonNull(LaboratoryHelper.asJsonString(labWithRowsDTO)))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testUpdateLaboratory_200() throws Exception {
+	void testUpdateLaboratory_200() throws Exception {
 		String request = "/laboratories/{code}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -163,19 +168,19 @@ public class LaboratoryControllerTest {
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
 		MvcResult result = this.mockMvc
-						.perform(put(request, lab.getCode())
-										.content(LaboratoryHelper.asJsonString(labWithRowsDTO))
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andReturn();
+			.perform(put(request, lab.getCode())
+				.content(Objects.requireNonNull(LaboratoryHelper.asJsonString(labWithRowsDTO)))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetLaboratory_200() throws Exception {
+	void testGetLaboratory_200() throws Exception {
 		String request = "/laboratories/byPatientId/{patId}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -202,13 +207,13 @@ public class LaboratoryControllerTest {
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 		MvcResult result = this.mockMvc
-						.perform(get(request, patient.getCode())
-										.contentType(MediaType.APPLICATION_JSON))
-						.andDo(log())
-						.andExpect(status().is2xxSuccessful())
-						.andExpect(status().isOk())
-						.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
-						.andReturn();
+			.perform(get(request, patient.getCode())
+				.contentType(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

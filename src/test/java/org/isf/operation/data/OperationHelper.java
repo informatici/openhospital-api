@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.operation.TestOperation;
 import org.isf.operation.dto.OperationDTO;
 import org.isf.operation.model.Operation;
-import org.isf.operation.test.TestOperation;
+import org.isf.opetype.TestOperationType;
 import org.isf.opetype.model.OperationType;
-import org.isf.opetype.test.TestOperationType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

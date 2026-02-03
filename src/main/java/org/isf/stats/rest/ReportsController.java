@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -26,7 +26,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.poi.util.IOUtils;
 import org.isf.shared.exceptions.OHAPIException;
@@ -34,36 +34,43 @@ import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/reports")
+@RestController
 @Tag(name = "Reports")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class ReportsController {
-	@Autowired
-	private JasperReportsManager reportsManager;
 
-	@GetMapping(value = "/reports/exams-list", produces = MediaType.APPLICATION_JSON_VALUE)
+	private final JasperReportsManager reportsManager;
+
+	public ReportsController(JasperReportsManager reportsManager) {
+		this.reportsManager = reportsManager;
+	}
+
+	@GetMapping("/reports/exams-list")
 	public ResponseEntity<byte[]> printExamsListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getExamsListPdf(), request);
 	}
 
-	@GetMapping(value = "/reports/diseases-list", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/reports/diseases-list")
 	public ResponseEntity<byte[]> printDiseasesListPdf(HttpServletRequest request) throws OHServiceException, IOException {
 		return getReport(reportsManager.getDiseasesListPdf(), request);
 	}
 
-	private ResponseEntity<byte[]> getReport(JasperReportResultDto resultDto, HttpServletRequest request) throws OHServiceException, IOException {
+	private ResponseEntity<byte[]> getReport(
+		JasperReportResultDto resultDto, HttpServletRequest request
+	) throws OHServiceException, IOException {
 		Path report = Paths.get(resultDto.getFilename()).normalize();
 		Resource resource;
 		try {
@@ -90,9 +97,9 @@ public class ReportsController {
 		byte[] out = IOUtils.toByteArray(resource.getInputStream());
 
 		return ResponseEntity.ok()
-				.contentType(MediaType.parseMediaType(contentType))
-				.header(HttpHeaders.CONTENT_DISPOSITION,
-						"attachment; filename=\"" + resource.getFilename() + '"')
-				.body(out);
+			.contentType(MediaType.parseMediaType(contentType))
+			.header(HttpHeaders.CONTENT_DISPOSITION,
+				"attachment; filename=\"" + resource.getFilename() + '"')
+			.body(out);
 	}
 }

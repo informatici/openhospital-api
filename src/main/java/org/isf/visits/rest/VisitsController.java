@@ -21,7 +21,6 @@
  */
 package org.isf.visits.rest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.isf.shared.exceptions.OHAPIException;
@@ -33,33 +32,32 @@ import org.isf.visits.mapper.VisitMapper;
 import org.isf.visits.model.Visit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@RestController(value = "/visits")
+@RestController
 @Tag(name = "Visit")
 @SecurityRequirement(name = "bearerAuth")
+@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class VisitsController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(VisitsController.class);
 
-	@Autowired
-	protected VisitManager visitManager;
+	private final VisitManager visitManager;
 
-	@Autowired
-	protected VisitMapper mapper;
+	private final VisitMapper mapper;
 
 	public VisitsController(VisitManager visitManager, VisitMapper visitMapper) {
 		this.visitManager = visitManager;
@@ -71,55 +69,41 @@ public class VisitsController {
 	 *
 	 * @param patID the id of the patient
 	 * @return NO_CONTENT if there aren't visitors, {@code List<VaccineDTO>} otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to get patient visits
 	 */
-	@GetMapping(value = "/visits/patient/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<VisitDTO>> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
+	@GetMapping("/visits/patient/{patID}")
+	public List<VisitDTO> getVisit(@PathVariable("patID") int patID) throws OHServiceException {
 		LOGGER.info("Get visit related to patId: {}", patID);
-		List<Visit> visit = visitManager.getVisits(patID);
-		List<VisitDTO> listVisit = new ArrayList<>();
-		for (Visit visitP : visit) {
-			VisitDTO visitDTO = mapper.map2DTO(visitP);
-			listVisit.add(visitDTO);
-		}
-		if (listVisit.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-		} else {
-			return ResponseEntity.ok(listVisit);
-		}
+
+		return mapper.map2DTOList(visitManager.getVisits(patID));
 	}
 
 	/**
 	 * Create a new visitor.
 	 *
-	 * @param newVisit
+	 * @param newVisit Visit payload
 	 * @return an error if there are some problem, the visitor id (Integer) otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create visit
 	 */
-	@PostMapping(value = "/visits", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<VisitDTO> newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
+	@PostMapping("/visits")
+	@ResponseStatus(HttpStatus.CREATED)
+	public VisitDTO newVisit(@RequestBody VisitDTO newVisit) throws OHServiceException {
 		LOGGER.info("Create Visit: {}", newVisit);
-		Visit visitD = mapper.map2Model(newVisit);
-		Visit visit = visitManager.newVisit(visitD);
-		return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map2DTO(visit)); // TODO: verify if it's correct
+		return mapper.map2DTO(visitManager.newVisit(mapper.map2Model(newVisit)));
 	}
 
 	/**
-	 * Create new visitors.
-	 * 
+	 * Create new visits.
+	 *
 	 * @param newVisits a list with all the visitors
 	 * @return an error message if there are some problem, ok otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to create visits
 	 */
-	@PostMapping(value = "/visits/insertList", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
+	@PostMapping("/visits/insertList")
+	@ResponseStatus(HttpStatus.CREATED)
+	public boolean newVisits(@RequestBody List<VisitDTO> newVisits) throws OHServiceException {
 		LOGGER.info("Create Visits");
-		List<Visit> listVisits = mapper.map2ModelList(newVisits);
-		boolean areCreated = visitManager.newVisits(listVisits);
-		if (!areCreated) {
-			throw new OHAPIException(new OHExceptionMessage("Visits not created."));
-		}
-		return ResponseEntity.status(HttpStatus.CREATED).body(areCreated);
+		return visitManager.newVisits(mapper.map2ModelList(newVisits));
 	}
 
 	/**
@@ -127,35 +111,34 @@ public class VisitsController {
 	 *
 	 * @param patID the id of the patient
 	 * @return an error message if there are some problem, ok otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to delete patient visit
 	 */
-	@DeleteMapping(value = "/visits/delete/{patID}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Boolean> deleteVisitsRelatedToPatient(@PathVariable("patID") int patID) throws OHServiceException {
+	@DeleteMapping("/visits/delete/{patID}")
+	public boolean deleteVisitsRelatedToPatient(
+		@PathVariable("patID") int patID
+	) throws OHServiceException {
 		LOGGER.info("Delete Visit related to patId: {}", patID);
-		boolean areDeleted = visitManager.deleteAllVisits(patID);
-		if (!areDeleted) {
-			throw new OHAPIException(new OHExceptionMessage("Visits not deleted."));
-		}
-		return ResponseEntity.ok(true);
+
+		return visitManager.deleteAllVisits(patID);
 	}
 
 	/**
-	 * Create new visitors.
+	 * Update visit
 	 *
 	 * @param visitID the id of the visit
+	 * @param updateVisit Visit payload
 	 * @return an error message if there are some problem, ok otherwise
-	 * @throws OHServiceException
+	 * @throws OHServiceException When failed to update the visit
 	 */
-	@PutMapping(value = "/visits/{visitID}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<VisitDTO> updateVisit(@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit) throws OHServiceException {
+	@PutMapping("/visits/{visitID}")
+	public VisitDTO updateVisit(
+		@PathVariable("visitID") int visitID, @RequestBody VisitDTO updateVisit
+	) throws OHServiceException {
 		LOGGER.info("Create Visits");
-		Visit visit = visitManager.findVisit(visitID);
-		if (visit == null) {
-			throw new OHAPIException(new OHExceptionMessage("Visit not found."));
-		}
 
-		if (visit.getVisitID() != updateVisit.getVisitID()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		Visit visit = visitManager.findVisit(visitID);
+		if (visit == null || visit.getVisitID() != updateVisit.getVisitID()) {
+			throw new OHAPIException(new OHExceptionMessage("Visit not found."), HttpStatus.NOT_FOUND);
 		}
 
 		Visit visitUp = mapper.map2Model(updateVisit);
@@ -163,7 +146,7 @@ public class VisitsController {
 		if (visitUpdate == null) {
 			throw new OHAPIException(new OHExceptionMessage("Visit not updated."));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(mapper.map2DTO(visitUpdate));
-	}
 
+		return mapper.map2DTO(visitUpdate);
+	}
 }

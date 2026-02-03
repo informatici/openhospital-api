@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -23,7 +23,7 @@ package org.isf.visits.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.patient.dto.PatientDTO;
 import org.isf.ward.dto.WardDTO;
@@ -58,6 +58,9 @@ public class VisitDTO {
 
 	@Schema(description = "Service done during the visit", maxLength = 45)
 	private String service;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	// @ApiModelProperty(hidden=true)
 	public int getVisitID() {
@@ -124,6 +127,13 @@ public class VisitDTO {
 		this.sms = sms;
 	}
 
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
+	}
 	@Override
 	public String toString() {
 		return "VisitDTO{" + ", patient=" + patient + ", date=" + date + ", note='" + note + '\'' + ", sms=" + sms

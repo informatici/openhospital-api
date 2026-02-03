@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.exa.model.Exam;
+import org.isf.lab.TestLaboratory;
 import org.isf.lab.dto.LabWithRowsDTO;
 import org.isf.lab.dto.LaboratoryDTO;
 import org.isf.lab.model.Laboratory;
-import org.isf.lab.test.TestLaboratory;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 

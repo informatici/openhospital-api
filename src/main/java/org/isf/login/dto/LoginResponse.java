@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,18 +28,22 @@ public class LoginResponse {
 
 	@Schema(description = "Token")
 	private String token;
-	
+
+	@Schema(description = "RefreshToken")
+	private String refreshToken;
+
 	@Schema(description = "Type of Token", example = "Bearer")
 	private String type = "Bearer";
-	
+
 	@Schema(description = "User name", example = "admin")
 	private String username;
 
 	public LoginResponse() {
 	}
 
-	public LoginResponse(String token, String username) {
+	public LoginResponse(String token, String refreshToken, String username) {
 		this.token = token;
+		this.refreshToken = refreshToken;
 		this.username = username;
 	}
 
@@ -49,6 +53,14 @@ public class LoginResponse {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public String getType() {

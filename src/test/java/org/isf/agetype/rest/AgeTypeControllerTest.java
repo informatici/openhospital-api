@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,6 +22,8 @@
 package org.isf.agetype.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -29,8 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.agetype.data.AgeTypeHelper;
 import org.isf.agetype.dto.AgeTypeDTO;
@@ -54,26 +56,30 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class AgeTypeControllerTest {
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+class AgeTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeControllerTest.class);
 
 	@Mock
 	private AgeTypeBrowserManager ageTypeManagerMock;
 
-	private AgeTypeMapper ageTypeMapper = new AgeTypeMapper();
+	private final AgeTypeMapper ageTypeMapper = new AgeTypeMapper();
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new AgeTypeController(ageTypeManagerMock, ageTypeMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new AgeTypeController(ageTypeManagerMock, ageTypeMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -86,88 +92,88 @@ public class AgeTypeControllerTest {
 	}
 
 	@Test
-	public void testGetAllAgeTypes_200() throws Exception {
+	void testGetAllAgeTypes_200() throws Exception {
 		String request = "/agetypes";
 
 		List<AgeType> results = AgeTypeHelper.genArrayList(5);
 		List<AgeTypeDTO> parsedResults = ageTypeMapper.map2DTOList(results);
 
 		when(ageTypeManagerMock.getAgeType())
-				.thenReturn(results);
+			.thenReturn(results);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testUpdateAgeType_200() throws Exception {
+	void testUpdateAgeType_200() throws Exception {
 		String request = "/agetypes";
-		AgeTypeDTO body = ageTypeMapper.map2DTO(AgeTypeHelper.setup());
+		List<AgeType> ageTypes = AgeTypeHelper.genList(5);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
 
-		List<AgeType> ageTypes = new ArrayList<>();
-		ageTypes.add(AgeTypeHelper.setup());
-
-		when(ageTypeManagerMock.updateAgeType(ageTypes))
-				.thenReturn(ageTypes);
+		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(ageTypes.get(0));
+		when(ageTypeManagerMock.getTypeByCode(anyInt())).thenReturn(ageTypes.get(0));
+		when(ageTypeManagerMock.updateAgeType(ageTypes)).thenReturn(ageTypes);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(AgeTypeHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(body))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetAgeTypeCodeByAge_200() throws Exception {
+	void testGetAgeTypeCodeByAge_200() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 10;
 		String responseString = "resultString";
 
 		when(ageTypeManagerMock.getTypeByAge(age))
-				.thenReturn(responseString);
+			.thenReturn(responseString);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, age))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(responseString)))
-				.andExpect(content().string(containsString("code")))
-				.andReturn();
+			.perform(get(request, age))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(responseString)))
+			.andExpect(content().string(containsString("code")))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetAgeTypeByIndex_200() throws Exception {
+	void testGetAgeTypeByIndex_200() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
+		AgeTypeDTO ageTypeDTO = ageTypeMapper.map2DTO(ageType);
 
 		when(ageTypeManagerMock.getTypeByCode(index))
-				.thenReturn(ageType);
+			.thenReturn(ageType);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request, index))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageType))))
-				.andReturn();
+			.perform(get(request, index))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

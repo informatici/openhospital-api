@@ -22,9 +22,9 @@
 package org.isf.opd.data;
 
 import org.isf.disease.model.Disease;
+import org.isf.opd.TestOpd;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.model.Opd;
-import org.isf.opd.test.TestOpd;
 import org.isf.patient.model.Patient;
 import org.isf.utils.exception.OHException;
 import org.isf.visits.model.Visit;

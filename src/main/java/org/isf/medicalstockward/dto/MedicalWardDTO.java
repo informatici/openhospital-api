@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -34,6 +34,9 @@ public class MedicalWardDTO {
 	@Schema(description = "The out-quantity", example = "89")
 	private float out_quantity;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public MedicalWardDTO() {
 	}
 
@@ -65,5 +68,12 @@ public class MedicalWardDTO {
 
 	public void setOut_quantity(float out_quantity) {
 		this.out_quantity = out_quantity;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

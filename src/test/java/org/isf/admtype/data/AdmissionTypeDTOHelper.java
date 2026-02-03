@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.isf.admtype.TestAdmissionType;
 import org.isf.admtype.dto.AdmissionTypeDTO;
 import org.isf.admtype.mapper.AdmissionTypeMapper;
 import org.isf.admtype.model.AdmissionType;
-import org.isf.admtype.test.TestAdmissionType;
 import org.isf.utils.exception.OHException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

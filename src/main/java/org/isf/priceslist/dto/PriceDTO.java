@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,9 +21,7 @@
  */
 package org.isf.priceslist.dto;
 
-import javax.validation.constraints.NotNull;
-
-import org.isf.priceslist.model.PriceList;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
@@ -35,7 +33,7 @@ public class PriceDTO {
 
 	@NotNull
 	@Schema(description = "The price list")
-	private PriceList list;
+	private PriceListDTO list;
 
 	@NotNull
 	@Schema(description = "The group")
@@ -52,6 +50,9 @@ public class PriceDTO {
 	@NotNull
 	@Schema(description = "Price", example = "1500")
 	private Double price;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	private boolean editable;
 
@@ -76,7 +77,7 @@ public class PriceDTO {
 		return this.id;
 	}
 
-	public PriceList getList() {
+	public PriceListDTO getList() {
 		return this.list;
 	}
 
@@ -100,7 +101,7 @@ public class PriceDTO {
 		this.id = id;
 	}
 
-	public void setList(PriceList list) {
+	public void setList(PriceListDTO list) {
 		this.list = list;
 	}
 
@@ -126,5 +127,13 @@ public class PriceDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.isf.dlvrtype.data.DeliveryTypeHelper;
 import org.isf.dlvrtype.dto.DeliveryTypeDTO;
@@ -56,7 +57,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class DeliveryTypeControllerTest {
+class DeliveryTypeControllerTest {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
 
@@ -70,12 +71,12 @@ public class DeliveryTypeControllerTest {
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new DeliveryTypeController(deliveryTypeBrowserManagerMock, deliveryTypeMapper))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new DeliveryTypeController(deliveryTypeBrowserManagerMock, deliveryTypeMapper))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -88,7 +89,7 @@ public class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	public void testNewDeliveryType_201() throws Exception {
+	void testNewDeliveryType_201() throws Exception {
 		String request = "/deliverytypes";
 		int code = 123;
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
@@ -98,55 +99,53 @@ public class DeliveryTypeControllerTest {
 		results.add(deliveryType);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
-				.thenReturn(results);
+			.thenReturn(results);
 
-		boolean isCreated = true;
 		when(deliveryTypeBrowserManagerMock.newDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(deliveryType);
+			.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DeliveryTypeHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DeliveryTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testUpdateDeliveryTypet_200() throws Exception {
-		String request = "/deliverytypes/";
+	void testUpdateDeliveryTypet_200() throws Exception {
+		String request = "/deliverytypes";
 		int code = 456;
 
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(deliveryType);
 
 		when(deliveryTypeBrowserManagerMock.isCodePresent(body.getCode()))
-				.thenReturn(true);
+			.thenReturn(true);
 
-		boolean isUpdated = true;
 		when(deliveryTypeBrowserManagerMock.updateDeliveryType(deliveryTypeMapper.map2Model(body)))
-				.thenReturn(deliveryType);
+			.thenReturn(deliveryType);
 
 		MvcResult result = this.mockMvc
-				.perform(put(request, "ZZ" + code)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(DeliveryTypeHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andReturn();
+			.perform(put(request, "ZZ" + code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DeliveryTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testGetDeliveryTypes_200() throws Exception {
+	void testGetDeliveryTypes_200() throws Exception {
 		String request = "/deliverytypes";
 
 		List<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
@@ -154,40 +153,40 @@ public class DeliveryTypeControllerTest {
 		List<DeliveryTypeDTO> dlvrrestTypeDTOs = deliveryTypeMapper.map2DTOList(results);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
-				.thenReturn(results);
+			.thenReturn(results);
 
 		MvcResult result = this.mockMvc
-				.perform(get(request))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(DeliveryTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
-				.andReturn();
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(DeliveryTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 	@Test
-	public void testDeleteDeliveryType_200() throws Exception {
+	void testDeleteDeliveryType_200() throws Exception {
 		String request = "/deliverytypes/{code}";
 
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));
 		String code = body.getCode();
 
 		when(deliveryTypeBrowserManagerMock.isCodePresent(code))
-				.thenReturn(true);
+			.thenReturn(true);
 
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
-				.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
+			.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
 
 		String isDeleted = "true";
 		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(isDeleted)))
-				.andReturn();
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString(isDeleted)))
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}

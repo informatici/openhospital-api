@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,7 +21,7 @@
  */
 package org.isf.agetype.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -38,6 +38,9 @@ public class AgeTypeDTO {
 	@NotNull
 	@Schema(description = "The minimum value of the range", example = "0")
 	private int from;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	@NotNull
 	@Schema(description = "The maximum value of the range", example = "0")
@@ -73,5 +76,13 @@ public class AgeTypeDTO {
 
 	public void setTo(int to) {
 		this.to = to;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

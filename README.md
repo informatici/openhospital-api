@@ -9,6 +9,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
   * [How to build [WIP]](#how-to-build-wip)
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
+  * [How to build a war file](#how-to-build-a-war-file)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
   * [How to generate openapi specs](#how-to-generate-openapi-specs)
   * [Cleaning](#cleaning)
@@ -39,9 +40,9 @@ For the moment, to build this project you should
  
         rsc/application.properties <- set a SHA-256 jwt token
         rsc/database.properties
-        rsc/log4j.properties
+        rsc/log4j2-spring.properties
         rsc/...
- 
+        
  4. set target/rsc/database.properties
  
         DB can be created with `docker-compose up` from `openhospital-core` or using a dedicated MySQL server
@@ -49,18 +50,25 @@ For the moment, to build this project you should
  5. start openhospital-api (in `target` folder)
  
         # Windows
-        java -cp "openhospital-api-0.1.0.jar;rsc/;static/" org.springframework.boot.loader.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar;rsc/;static/" org.springframework.boot.loader.launch.JarLauncher
 
         # Linux
-        java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.JarLauncher
+        java -cp "openhospital-api-0.1.0.jar:rsc/:static/" org.springframework.boot.loader.launch.JarLauncher
         
  6. call services
     - URL base: http://localhost:8080
     - URL login: http://localhost:8080/auth/login
     - URL patients: http://localhost:8080/patients
-    - URL swagger: http://localhost:8080/swagger-ui.html
+    - URL swagger: http://localhost:8080/swagger-ui/index.html
 
 You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index.html
+
+ 7. enable LAN networking
+
+        # set in application.properties
+        ...
+        server.address=0.0.0.0 # or the machine server IP
+        ...
 
 ![image](https://github.com/informatici/openhospital-api/assets/2938553/ea855a4a-2a57-4b6e-aa62-f218d4937ed8)
 
@@ -87,6 +95,40 @@ You can see Swagger API Documentation at: http://localhost:8080/swagger-ui/index
 
  1. import postman_collection.json in your Postman installation
  
+## How to build a war file
+
+ 1. Prepare settings from each `rsc/*.dist` file 
+
+ ```
+ ### Note: 
+ ### server.address, server.port, server.servlet.context-path and server.tomcat.accesslog.* will be ignored
+ ### jwt.token.secret <- set a SHA-256 jwt token
+ ### api.host <- set and add /openhospital-api-0.1.0 (<artifactId>-<version>) or any /<appname> that will match <appname>.war
+ rsc/application.properties
+ 
+ ### note: if the DB is on the host, use 'host.docker.internal' as hostname
+ rsc/database.properties
+ 
+ ### note: if the DB is on the host, use 'host.docker.internal' as DBSERVER
+ rsc/log4j2-spring.properties
+ 
+ ### as required in [Admin Doc](https://github.com/informatici/openhospital-doc/blob/develop/doc_admin/AdminManual.adoc#settings-properties)
+ rsc/settings.properties
+ ```
+ 
+ 2. Build war file
+ 
+ ```
+ ### OH-core must have been built and available in .m2 (Maven) repo
+ ./mvnw clean install -DskipTests=true -P war
+ ```
+ 
+ 3. (Optional) rename war to the desired `<appname>.war`:
+ 
+ ```
+ mv /target/openhospital-api-0.1.0.war <appname>.war
+ ```
+ 
 ## How to deploy backend in Docker environment
 
 Make sure you have docker with docker-compose installed, then run the following commands:
@@ -94,12 +136,17 @@ Make sure you have docker with docker-compose installed, then run the following 
 - copy `dotenv` file into `.env` and set variables as needed (the SHA-256 jwt token is needed)
 - run `make`
 - run `docker compose up -d database` (wait for some seconds the very first time to build the DB)
-- (optional - demo data after set the database container) run `docker compose run --rm oh-database-init`
+- (optional - demo data after set the database container, English only) run `docker compose run --rm oh-database-init`
 - run `docker compose up backend`
 
-When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/
+When done successfully, head over at http://localhost:[API_PORT]/swagger-ui/index.html
 
-You can change the deployment branch using an .env file.
+You can change the deployment branch using the .env file.
+
+NOTE: 
+
+- API should be already available from LAN at http://your-server-ip:[API_PORT]
+- Swagger will be available at http://[API_HOST]:[API_PORT]/swagger-ui/index.html
 
 ## How to generate openapi specs
 
@@ -118,6 +165,7 @@ To redirect the output to another file, use:
 
 	docker compose rm --stop --volumes --force
 	make clean
+	make clean-all # remove deps/ folder
 
 
 ## How to contribute

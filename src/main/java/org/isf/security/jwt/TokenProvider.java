@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -30,8 +30,9 @@ import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
+import org.isf.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,117 +42,182 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
 @Component
 public class TokenProvider implements Serializable {
 
-    private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
-    
-    @Autowired
-    private Environment env;
+	private final Logger LOGGER = LoggerFactory.getLogger(TokenProvider.class);
 
-    private static final String AUTHORITIES_KEY = "auth";
+	@Autowired
+	private Environment env;
 
-    private Key key;
+	private static final String AUTHORITIES_KEY = "auth";
 
-    private long tokenValidityInMilliseconds;
+	private Key key;
 
-    private long tokenValidityInMillisecondsForRememberMe;
+	private long tokenValidityInMilliseconds;
 
-    @PostConstruct
-    public void init() {
-    	String secret = env.getProperty("jwt.token.secret");
-        log.info("Initializing JWT key with secret: {}", secret);
-        // byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-        
-        this.tokenValidityInMilliseconds = 1000L * 6000;
-        this.tokenValidityInMillisecondsForRememberMe = 1000L * 6000;
-    }
-    
-    public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
-    }
-    
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(this.key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-    
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
-    
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
-    }
-    
-    public Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
-    }
-    
-    public String generateJwtToken(Authentication authentication, boolean rememberMe) {
-    	final String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+	private long tokenValidityInMillisecondsForRememberMe;
 
-        long now = System.currentTimeMillis();
-        Date validity;
-        if (rememberMe) {
-            validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
-        } else {
-            validity = new Date(now + this.tokenValidityInMilliseconds);
-        }
+	private JwtParser jwtParser;
 
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(AUTHORITIES_KEY, authorities)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
-                .compact();
-    }
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
 
-    public Authentication getAuthentication(String token) {
-    	final Claims claims = getAllClaimsFromToken(token);
+	@PostConstruct
+	public void init() {
+		String secret = env.getProperty("jwt.token.secret");
+		LOGGER.debug("Initializing JWT key with secret: {}", secret);
+		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+		this.key = Keys.hmacShaKeyFor(keyBytes);
 
-        final Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+		// default 30 minutes (1800 milliseconds)
+		Long tokenValidityInSeconds = env.getProperty("jwt.token.validityInSeconds", Long.class, 60L * 30);
+		this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
 
-        User principal = new User(claims.getSubject(), "", authorities);
+		// default 3 days (259,200 seconds milliseconds)
+		Long validityInSecondsForRememberMe = env.getProperty("jwt.token.validityInSecondsForRememberMe", Long.class, 60L * 60 * 24 * 3);
+		this.tokenValidityInMillisecondsForRememberMe = validityInSecondsForRememberMe * 1000;
 
-        return new UsernamePasswordAuthenticationToken(principal, token, authorities);
-    }
+		LOGGER.debug("Setting token validity - tokenValidityInMilliseconds: {}, tokenValidityInMillisecondsForRememberMe: {}", this.tokenValidityInMilliseconds, this.tokenValidityInMillisecondsForRememberMe);
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
-        } catch (MalformedJwtException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            log.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty: {}", e.getMessage());
-        }
-        return false;
-    }
+		this.jwtParser = Jwts.parserBuilder().setSigningKey(this.key).build();
+	}
+
+	public long getTokenValidityInMillisecondsForRememberMe() {
+		return tokenValidityInMillisecondsForRememberMe;
+	}
+
+	public void setJwtParser(JwtParser jwtParser) {
+		this.jwtParser = jwtParser;
+	}
+
+	public String getUsernameFromToken(String token) {
+		return getClaimFromToken(token, Claims::getSubject);
+	}
+
+	public Claims getAllClaimsFromToken(String token) {
+		return this.jwtParser.parseClaimsJws(token).getBody();
+	}
+
+	public Date getExpirationDateFromToken(String token) {
+		return getClaimFromToken(token, Claims::getExpiration);
+	}
+
+	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = getAllClaimsFromToken(token);
+		return claimsResolver.apply(claims);
+	}
+
+	// needed because jwtParser.parseClaimsJws throws an exception when token is expired
+	public Boolean isTokenExpired(String token) {
+		try {
+			final Date expiration = getExpirationDateFromToken(token);
+			return expiration.before(new Date());
+		} catch (ExpiredJwtException e) {
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
+		final String authorities = authentication.getAuthorities().stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.joining(","));
+
+		long now = System.currentTimeMillis();
+		Date validity;
+		if (rememberMe) {
+			validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
+		} else {
+			validity = new Date(now + this.tokenValidityInMilliseconds);
+		}
+
+		return Jwts.builder()
+			.setSubject(authentication.getName())
+			.claim(AUTHORITIES_KEY, authorities)
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(validity)
+			.compact();
+	}
+
+	public String generateRefreshToken(Authentication authentication) {
+		return Jwts.builder()
+			.setSubject(authentication.getName())
+			.setIssuedAt(new Date())
+			.signWith(key, SignatureAlgorithm.HS512)
+			.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
+			.compact();
+	}
+
+	public Authentication getAuthentication(String token) {
+		final Claims claims = getAllClaimsFromToken(token);
+
+		/*
+		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string Left for security but not testable
+		 */
+		String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
+		if (authoritiesClaim.isEmpty()) {
+			LOGGER.error("JWT token does not contain any authorities");
+			throw new IllegalArgumentException("JWT token does not contain authorities.");
+		}
+
+		final Collection< ? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+			.map(SimpleGrantedAuthority::new)
+			.collect(Collectors.toList());
+
+		User principal = new User(claims.getSubject(), "", authorities);
+
+		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+	}
+
+	public Authentication getAuthenticationByUsername(String username) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+	}
+
+	public TokenValidationResult validateToken(String token) {
+		try {
+			Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+			/*
+			 * If claims.getSubject() not null for sure is not empy. Left here for security but not testable
+			 */
+			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
+				throw new IllegalArgumentException("JWT claims string is empty.");
+			}
+			return TokenValidationResult.VALID;
+		} catch (MalformedJwtException e) {
+			LOGGER.error("Invalid JWT token: {}", e.getMessage());
+			return TokenValidationResult.MALFORMED;
+		} catch (ExpiredJwtException e) {
+			LOGGER.error("JWT token is expired: {}", e.getMessage());
+			return TokenValidationResult.EXPIRED;
+		} catch (UnsupportedJwtException e) {
+			LOGGER.error("JWT token is unsupported: {}", e.getMessage());
+			return TokenValidationResult.UNSUPPORTED;
+		} catch (IllegalArgumentException e) {
+			LOGGER.error("JWT claims string is empty: {}", e.getMessage());
+			return TokenValidationResult.EMPTY_CLAIMS;
+		} catch (SignatureException e) {
+			LOGGER.error("JWT signature does not match locally computed signature: {}", e.getMessage());
+			return TokenValidationResult.INVALID_SIGNATURE;
+		} catch (Exception e) {
+			LOGGER.error("An unexpected error occurred while validating JWT token: {}", e.getMessage());
+			return TokenValidationResult.UNKNOWN;
+		}
+	}
 }

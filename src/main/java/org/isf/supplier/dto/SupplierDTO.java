@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,14 +21,13 @@
  */
 package org.isf.supplier.dto;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SupplierDTO {
 
 	@NotNull(message = "supplier's ID is required")
-	@Schema(description = "The supplier's ID", example = "111")
 	private Integer supId;
 
 	@NotNull(message = "supplier's name is required")
@@ -53,11 +52,14 @@ public class SupplierDTO {
 	@Schema(description = "The supplier's notes", example = "", maxLength = 200)
 	private String supNote;
 
+	@Schema(description = "Lock", example = "0")
+	private int lock;
+
 	public SupplierDTO() {
 	}
 
 	public SupplierDTO(Integer supId, String supName, String supAddress, String supTaxcode, String supPhone,
-			String supFax, String supEmail, String supNote) {
+					String supFax, String supEmail, String supNote) {
 		this.supId = supId;
 		this.supName = supName;
 		this.supAddress = supAddress;
@@ -130,5 +132,13 @@ public class SupplierDTO {
 
 	public void setSupNote(String supNote) {
 		this.supNote = supNote;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

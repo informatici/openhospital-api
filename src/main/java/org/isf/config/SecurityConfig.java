@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -24,44 +24,35 @@ package org.isf.config;
 import java.util.Arrays;
 
 import org.isf.permissions.manager.PermissionManager;
-import org.isf.security.CustomLogoutHandler;
 import org.isf.security.ApiAuditorAwareImpl;
+import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
-import org.isf.security.jwt.JWTConfigurer;
+import org.isf.security.jwt.JWTFilter;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.utils.db.AuditorAwareInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-
-	@Autowired
-	private UserDetailsService userDetailsService;
 
 	private final TokenProvider tokenProvider;
 
@@ -80,268 +71,276 @@ public class SecurityConfig {
 	private CustomLogoutHandler customLogoutHandler;
 
 	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userDetailsService);
-		authProvider.setPasswordEncoder(encoder());
-		return authProvider;
-	}
-
-	@Bean
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	@Value("${cors.allowed.origins}")
+	private String allowedOrigins;
 
-		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedHeader("*");
-		// config.setAllowedHeaders(Arrays.asList("Accept", "Accept-Encoding", "Accept-Language", "Authorization", "Content-Type", "Cache-Control",
-		// "Connection", "Cookie", "Host", "Pragma", "Referer, User-Agent"));
-		config.setAllowedMethods(Arrays.asList("*"));
-		// config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		config.setAllowCredentials(true);
-		config.addAllowedOriginPattern("*");
-		config.setMaxAge(3600L);
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		// Split the allowed origins string and add them to the configuration
+		for (String origin : allowedOrigins.split(",")) {
+			configuration.addAllowedOriginPattern(origin.trim());
+		}
+		configuration.setAllowedMethods(Arrays.asList("*")); // Allows all HTTP methods
+		configuration.addAllowedHeader("*"); // Allows all headers
+		configuration.setAllowCredentials(true); // Allows credentials (e.g., cookies)
+		configuration.setMaxAge(3600L); // Cache preflight responses for 1 hour
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration); // Apply configuration to all paths
+		return source;
 	}
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-						.and().cors()
-						.and().csrf().disable().authorizeRequests()
-						// .expressionHandler(webExpressionHandler())
-						.and().exceptionHandling()
-						// .accessDeniedHandler(accessDeniedHandler)
-						.authenticationEntryPoint(restAuthenticationEntryPoint)
-						.and().authorizeRequests().antMatchers("/auth/**").permitAll()
+		http
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(csrf -> csrf.disable()) // Disable CSRF protection
+			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/", "/healthcheck").permitAll()
+				.requestMatchers("/auth/login", "/auth/refresh-token").permitAll()
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+				// admissions
+				.requestMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
+				.requestMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admissions.read")
+				.requestMatchers(HttpMethod.PUT, "/admissions/**").hasAuthority("admissions.update")
+				.requestMatchers(HttpMethod.DELETE, "/admissions/**").hasAuthority("admissions.delete")
+				// admissiontypes
+				.requestMatchers(HttpMethod.POST, "/admissiontypes/**").hasAuthority("admissiontypes.create")
+				.requestMatchers(HttpMethod.GET, "/admissiontypes/**").hasAnyAuthority("admissiontypes.read")
+				.requestMatchers(HttpMethod.PUT, "/admissiontypes/**").hasAuthority("admissiontypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/admissiontypes/**").hasAuthority("admissiontypes.delete")
+				// age types
+				.requestMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("agetypes.read")
+				.requestMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("agetypes.update")
+				// dischargetypes
+				.requestMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("dischargetypes.create")
+				.requestMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("dischargetypes.read")
+				.requestMatchers(HttpMethod.PUT, "/dischargetypes/**").hasAuthority("dischargetypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/dischargetypes/**").hasAuthority("dischargetypes.delete")
+				// diseases
+				.requestMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("diseases.create")
+				.requestMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("diseases.read")
+				.requestMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("diseases.update")
+				.requestMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("diseases.delete")
+				// diseasetypes
+				.requestMatchers(HttpMethod.POST, "/diseasetypes/**").hasAuthority("diseasetypes.create")
+				.requestMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("diseasetypes.read")
+				.requestMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("diseasetypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("diseasetypes.delete")
+				// deliveryresulttype
+				.requestMatchers(HttpMethod.POST, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.create")
+				.requestMatchers(HttpMethod.GET, "/deliveryresulttypes/**").hasAnyAuthority("deliveryresulttypes.read")
+				.requestMatchers(HttpMethod.PUT, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.delete")
+				// deliverytypes
+				.requestMatchers(HttpMethod.POST, "/deliverytypes/**").hasAuthority("deliverytypes.create")
+				.requestMatchers(HttpMethod.GET, "/deliverytypes/**").hasAnyAuthority("deliverytypes.read")
+				.requestMatchers(HttpMethod.PUT, "/deliverytypes/**").hasAuthority("deliverytypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/deliverytypes/**").hasAuthority("deliverytypes.delete")
+				// exams
+				.requestMatchers(HttpMethod.POST, "/exams/**").hasAuthority("exams.create")
+				.requestMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("exams.read")
+				.requestMatchers(HttpMethod.PUT, "/exams/**")
+				.access((authentication, context) -> {
+					boolean hasCreateAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("exams.create"));
+					boolean hasUpdateAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("exams.update"));
+					boolean hasDeleteAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("examrows.create"));
+					return new AuthorizationDecision(hasCreateAuthority && hasUpdateAuthority && hasDeleteAuthority);
+				})
+				.requestMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("exams.delete")
+				// examrows
+				.requestMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("examrows.create")
+				.requestMatchers(HttpMethod.GET, "/examrows/**").hasAnyAuthority("examrows.read")
+				.requestMatchers(HttpMethod.PUT, "/examrows/**").hasAuthority("examrows.update")
+				.requestMatchers(HttpMethod.DELETE, "/examrows/**").hasAuthority("examrows.delete")
+				// examinations
+				.requestMatchers(HttpMethod.POST, "/examinations/**").hasAuthority("examinations.create")
+				.requestMatchers(HttpMethod.GET, "/examinations/**").hasAnyAuthority("examinations.read")
+				.requestMatchers(HttpMethod.PUT, "/examinations/**").hasAuthority("examinations.update")
+				.requestMatchers(HttpMethod.DELETE, "/examinations/**").hasAuthority("examinations.delete")
+				// examtypes
+				.requestMatchers(HttpMethod.POST, "/examtypes/**").hasAuthority("examtypes.create")
+				.requestMatchers(HttpMethod.GET, "/examtypes/**").hasAnyAuthority("examtypes.read")
+				.requestMatchers(HttpMethod.PUT, "/examtypes/**").hasAuthority("examtypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/examtypes/**").hasAuthority("examtypes.delete")
+				// hospitals
+				.requestMatchers(HttpMethod.POST, "/hospitals/**").hasAuthority("hospitals.create")
+				.requestMatchers(HttpMethod.GET, "/hospitals/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("hospitals.update")
+				.requestMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("hospitals.delete")
+				// laboratories
+				.requestMatchers(HttpMethod.POST, "/laboratories/**").hasAuthority("laboratories.create")
+				.requestMatchers(HttpMethod.GET, "/laboratories/**").hasAnyAuthority("laboratories.read")
+				.requestMatchers(HttpMethod.PUT, "/laboratories/**").hasAuthority("laboratories.update")
+				.requestMatchers(HttpMethod.DELETE, "/laboratories/**").hasAuthority("laboratories.delete")
+				// malnutrition
+				.requestMatchers(HttpMethod.POST, "/malnutritions/**").hasAuthority("malnutritions.create")
+				.requestMatchers(HttpMethod.GET, "/malnutritions/**").hasAuthority("malnutritions.read")
+				.requestMatchers(HttpMethod.PUT, "/malnutritions/**").hasAuthority("malnutritions.update")
+				.requestMatchers(HttpMethod.DELETE, "/malnutritions/**").hasAuthority("malnutritions.delete")
+				// medicals
+				.requestMatchers(HttpMethod.POST, "/medicals/**").hasAuthority("medicals.create")
+				.requestMatchers(HttpMethod.GET, "/medicals/**").hasAuthority("medicals.read")
+				.requestMatchers(HttpMethod.PUT, "/medicals/**").hasAuthority("medicals.update")
+				.requestMatchers(HttpMethod.DELETE, "/medicals/**").hasAuthority("medicals.delete")
+				// medicalstock
+				.requestMatchers(HttpMethod.POST, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.create")
+				.requestMatchers(HttpMethod.GET, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.read")
+				.requestMatchers(HttpMethod.PUT, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.update")
+				.requestMatchers(HttpMethod.DELETE, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.delete")
+				// medicalstockward
+				.requestMatchers(HttpMethod.POST, "/medicalstockward/**").hasAuthority("medicalstockward.create")
+				.requestMatchers(HttpMethod.GET, "/medicalstockward/**").hasAuthority("medicalstockward.read")
+				.requestMatchers(HttpMethod.PUT, "/medicalstockward/**").hasAuthority("medicalstockward.update")
+				.requestMatchers(HttpMethod.DELETE, "/medicalstockward/**").hasAuthority("medicalstockward.delete")
+				// medicalstockmovtype
+				.requestMatchers(HttpMethod.POST, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.create")
+				.requestMatchers(HttpMethod.GET, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.read")
+				.requestMatchers(HttpMethod.PUT, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.delete")
+				// medicaltype
+				.requestMatchers(HttpMethod.POST, "/medicaltypes/**").hasAuthority("medicaltypes.create")
+				.requestMatchers(HttpMethod.GET, "/medicaltypes/**").hasAuthority("medicaltypes.read")
+				.requestMatchers(HttpMethod.PUT, "/medicaltypes/**").hasAuthority("medicaltypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/medicaltypes/**").hasAuthority("medicaltypes.delete")
+				// opd
+				.requestMatchers(HttpMethod.POST, "/opds/**").hasAuthority("opds.create")
+				.requestMatchers(HttpMethod.GET, "/opds/**").hasAnyAuthority("opds.read")
+				.requestMatchers(HttpMethod.PUT, "/opds/**").hasAuthority("opds.update")
+				.requestMatchers(HttpMethod.DELETE, "/opds/**").hasAuthority("opds.delete")
+				// operations
+				.requestMatchers(HttpMethod.POST, "/operations/**").hasAuthority("operations.create")
+				.requestMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("operations.read")
+				.requestMatchers(HttpMethod.PUT, "/operations/**").hasAuthority("operations.update")
+				.requestMatchers(HttpMethod.DELETE, "/operations/**").hasAuthority("operations.delete")
+				// operation types
+				.requestMatchers(HttpMethod.POST, "/operationtypes/**").hasAuthority("operationtypes.create")
+				.requestMatchers(HttpMethod.GET, "/operationtypes/**").hasAnyAuthority("operationtypes.read")
+				.requestMatchers(HttpMethod.PUT, "/operationtypes/**").hasAuthority("operationtypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/operationtypes/**").hasAuthority("operationtypes.delete")
+				// patientconsensus
+				.requestMatchers(HttpMethod.POST, "/patientconsensus/**").hasAuthority("patientconsensus.create")
+				.requestMatchers(HttpMethod.GET, "/patientconsensus/**").hasAuthority("patientconsensus.read")
+				.requestMatchers(HttpMethod.PUT, "/patientconsensus/**").hasAuthority("patientconsensus.update")
+				.requestMatchers(HttpMethod.DELETE, "/patientconsensus/**").hasAuthority("patientconsensus.delete")
+				// patients
+				.requestMatchers(HttpMethod.POST, "/patients/**").hasAuthority("patients.create")
+				.requestMatchers(HttpMethod.GET, "/patients/**").hasAuthority("patients.read")
+				.requestMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("patients.update")
+				.requestMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("patients.delete")
+				// patientvaccines
+				.requestMatchers(HttpMethod.POST, "/patientvaccines/**").hasAuthority("patientvaccines.create")
+				.requestMatchers(HttpMethod.GET, "/patientvaccines/**").hasAnyAuthority("patientvaccines.read")
+				.requestMatchers(HttpMethod.PUT, "/patientvaccines/**").hasAuthority("patientvaccines.update")
+				.requestMatchers(HttpMethod.DELETE, "/patientvaccines/**").hasAuthority("patientvaccines.delete")
+				// permission
+				.requestMatchers(HttpMethod.POST, "/permissions/**").hasAuthority("permissions.create")
+				.requestMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
+				.requestMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
+				.requestMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
+				// grouppermission
+				.requestMatchers(HttpMethod.POST, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+				.requestMatchers(HttpMethod.GET, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.read")
+				.requestMatchers(HttpMethod.PUT, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.create")
+				.requestMatchers(HttpMethod.PATCH, "/usergroups/{group_code}/permissions/**")
+				.access((authentication, context) -> {
+					boolean hasCreateAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("grouppermission.create"));
+					boolean hasDeleteAuthority = authentication.get().getAuthorities().stream()
+						.anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("grouppermission.delete"));
 
-						// admissions
-						.antMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
-						.antMatchers(HttpMethod.GET, "/admissions/**").hasAnyAuthority("admissions.read")
-						.antMatchers(HttpMethod.PUT, "/admissions/**").hasAuthority("admissions.update")
-						.antMatchers(HttpMethod.DELETE, "/admissions/**").hasAuthority("admissions.delete")
-						// admissiontypes
-						.antMatchers(HttpMethod.POST, "/admissiontypes/**").hasAuthority("admissiontypes.create")
-						.antMatchers(HttpMethod.GET, "/admissiontypes/**").hasAnyAuthority("admissiontypes.read")
-						.antMatchers(HttpMethod.PUT, "/admissiontypes/**").hasAuthority("admissiontypes.update")
-						.antMatchers(HttpMethod.DELETE, "/admissiontypes/**").hasAuthority("admissiontypes.delete")
-						// age types
-						.antMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("agetypes.read")
-						.antMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("agetypes.update")
-						// dischargetypes
-						.antMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("dischargetypes.create")
-						.antMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("dischargetypes.read")
-						.antMatchers(HttpMethod.PUT, "/dischargetypes/**").hasAuthority("dischargetypes.update")
-						.antMatchers(HttpMethod.DELETE, "/dischargetypes/**").hasAuthority("dischargetypes.delete")
-						// diseases
-						.antMatchers(HttpMethod.POST, "/diseases/**").hasAuthority("diseases.create")
-						.antMatchers(HttpMethod.GET, "/diseases/**").hasAnyAuthority("diseases.read")
-						.antMatchers(HttpMethod.PUT, "/diseases/**").hasAuthority("diseases.update")
-						.antMatchers(HttpMethod.DELETE, "/diseases/**").hasAuthority("diseases.delete")
-						// diseasetypes
-						.antMatchers(HttpMethod.POST, "/diseasetypes/**").hasAuthority("diseasetypes.create")
-						.antMatchers(HttpMethod.GET, "/diseasetypes/**").hasAnyAuthority("diseasetypes.read")
-						.antMatchers(HttpMethod.PUT, "/diseasetypes/**").hasAuthority("diseasetypes.update")
-						.antMatchers(HttpMethod.DELETE, "/diseasetypes/**").hasAuthority("diseasetypes.delete")
-						// deliveryresulttype
-						.antMatchers(HttpMethod.POST, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.create")
-						.antMatchers(HttpMethod.GET, "/deliveryresulttypes/**").hasAnyAuthority("deliveryresulttypes.read")
-						.antMatchers(HttpMethod.PUT, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.update")
-						.antMatchers(HttpMethod.DELETE, "/deliveryresulttypes/**").hasAuthority("deliveryresulttypes.delete")
-						// deliverytypes
-						.antMatchers(HttpMethod.POST, "/deliverytypes/**").hasAuthority("deliverytypes.create")
-						.antMatchers(HttpMethod.GET, "/deliverytypes/**").hasAnyAuthority("deliverytypes.read")
-						.antMatchers(HttpMethod.PUT, "/deliverytypes/**").hasAuthority("deliverytypes.update")
-						.antMatchers(HttpMethod.DELETE, "/deliverytypes/**").hasAuthority("deliverytypes.delete")
-						// exams
-						.antMatchers(HttpMethod.POST, "/exams/**").hasAuthority("exams.create")
-						.antMatchers(HttpMethod.GET, "/exams/**").hasAnyAuthority("exams.read")
-						.antMatchers(HttpMethod.PUT, "/exams/**").hasAuthority("exams.update")
-						.antMatchers(HttpMethod.DELETE, "/exams/**").hasAuthority("exams.delete")
-						// examrows
-						.antMatchers(HttpMethod.POST, "/examrows/**").hasAuthority("examrows.create")
-						.antMatchers(HttpMethod.GET, "/examrows/**").hasAnyAuthority("examrows.read")
-						.antMatchers(HttpMethod.PUT, "/examrows/**").hasAuthority("examrows.update")
-						.antMatchers(HttpMethod.DELETE, "/examrows/**").hasAuthority("examrows.delete")
-						// examinations
-						.antMatchers(HttpMethod.POST, "/examinations/**").hasAuthority("examinations.create")
-						.antMatchers(HttpMethod.GET, "/examinations/**").hasAnyAuthority("examinations.read")
-						.antMatchers(HttpMethod.PUT, "/examinations/**").hasAuthority("examinations.update")
-						.antMatchers(HttpMethod.DELETE, "/examinations/**").hasAuthority("examinations.delete")
-						// examtypes
-						.antMatchers(HttpMethod.POST, "/examtypes/**").hasAuthority("examtypes.create")
-						.antMatchers(HttpMethod.GET, "/examtypes/**").hasAnyAuthority("examtypes.read")
-						.antMatchers(HttpMethod.PUT, "/examtypes/**").hasAuthority("examtypes.update")
-						.antMatchers(HttpMethod.DELETE, "/examtypes/**").hasAuthority("examtypes.delete")
-						// hospitals
-						.antMatchers(HttpMethod.POST, "/hospitals/**").hasAuthority("hospitals.create")
-						// .antMatchers(HttpMethod.GET, "/hospitals/**").hasAnyAuthority("hospital.read") to anyone
-						.antMatchers(HttpMethod.PUT, "/hospitals/**").hasAuthority("hospitals.update")
-						.antMatchers(HttpMethod.DELETE, "/hospitals/**").hasAuthority("hospitals.delete")
-						// laboratories
-						.antMatchers(HttpMethod.POST, "/laboratories/**").hasAuthority("laboratories.create")
-						.antMatchers(HttpMethod.GET, "/laboratories/**").hasAnyAuthority("laboratories.read")
-						.antMatchers(HttpMethod.PUT, "/laboratories/**").hasAuthority("laboratories.update")
-						.antMatchers(HttpMethod.DELETE, "/laboratories/**").hasAuthority("laboratories.delete")
-						// malnutrition
-						.antMatchers(HttpMethod.POST, "/malnutritions/**").hasAuthority("malnutritions.create")
-						.antMatchers(HttpMethod.GET, "/malnutritions/**").hasAuthority("malnutritions.read")
-						.antMatchers(HttpMethod.PUT, "/malnutritions/**").hasAuthority("malnutritions.update")
-						.antMatchers(HttpMethod.DELETE, "/malnutritions/**").hasAuthority("malnutritions.delete")
-						// medicals
-						.antMatchers(HttpMethod.POST, "/medicals/**").hasAuthority("medicals.create")
-						.antMatchers(HttpMethod.GET, "/medicals/**").hasAuthority("medicals.read")
-						.antMatchers(HttpMethod.PUT, "/medicals/**").hasAuthority("medicals.update")
-						.antMatchers(HttpMethod.DELETE, "/medicals/**").hasAuthority("medicals.delete")
-						// medicalstock
-						.antMatchers(HttpMethod.POST, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.create")
-						.antMatchers(HttpMethod.GET, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.read")
-						.antMatchers(HttpMethod.PUT, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.update")
-						.antMatchers(HttpMethod.DELETE, "/medicalstockmovements/**").hasAuthority("medicalstockmovements.delete")
-						// medicalstockward
-						.antMatchers(HttpMethod.POST, "/medicalstockward/**").hasAuthority("medicalstockward.create")
-						.antMatchers(HttpMethod.GET, "/medicalstockward/**").hasAuthority("medicalstockward.read")
-						.antMatchers(HttpMethod.PUT, "/medicalstockward/**").hasAuthority("medicalstockward.update")
-						.antMatchers(HttpMethod.DELETE, "/medicalstockward/**").hasAuthority("medicalstockward.delete")
-						// medicalstockmovtype
-						.antMatchers(HttpMethod.POST, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.create")
-						.antMatchers(HttpMethod.GET, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.read")
-						.antMatchers(HttpMethod.PUT, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.update")
-						.antMatchers(HttpMethod.DELETE, "/medstockmovementtypes/**").hasAuthority("medstockmovementtypes.delete")
-						// medicaltype
-						.antMatchers(HttpMethod.POST, "/medicaltypes/**").hasAuthority("medicaltypes.create")
-						.antMatchers(HttpMethod.GET, "/medicaltypes/**").hasAuthority("medicaltypes.read")
-						.antMatchers(HttpMethod.PUT, "/medicaltypes/**").hasAuthority("medicaltypes.update")
-						.antMatchers(HttpMethod.DELETE, "/medicaltypes/**").hasAuthority("medicaltypes.delete")
-						// opd
-						.antMatchers(HttpMethod.POST, "/opds/**").hasAuthority("opds.create")
-						.antMatchers(HttpMethod.GET, "/opds/**").hasAnyAuthority("opds.read")
-						.antMatchers(HttpMethod.PUT, "/opds/**").hasAuthority("opds.update")
-						.antMatchers(HttpMethod.DELETE, "/opds/**").hasAuthority("opds.delete")
-						// operations
-						.antMatchers(HttpMethod.POST, "/operations/**").hasAuthority("operations.create")
-						.antMatchers(HttpMethod.GET, "/operations/**").hasAnyAuthority("operations.read")
-						.antMatchers(HttpMethod.PUT, "/operations/**").hasAuthority("operations.update")
-						.antMatchers(HttpMethod.DELETE, "/operations/**").hasAuthority("operations.delete")
-						// operation types
-						.antMatchers(HttpMethod.POST, "/operationtypes/**").hasAuthority("operationtypes.create")
-						.antMatchers(HttpMethod.GET, "/operationtypes/**").hasAnyAuthority("operationtypes.read")
-						.antMatchers(HttpMethod.PUT, "/operationtypes/**").hasAuthority("operationtypes.update")
-						.antMatchers(HttpMethod.DELETE, "/operationtypes/**").hasAuthority("operationtypes.delete")
-						// patientconsensus
-						.antMatchers(HttpMethod.POST, "/patientconsensus/**").hasAuthority("patientconsensus.create")
-						.antMatchers(HttpMethod.GET, "/patientconsensus/**").hasAuthority("patientconsensus.read")
-						.antMatchers(HttpMethod.PUT, "/patientconsensus/**").hasAuthority("patientconsensus.update")
-						.antMatchers(HttpMethod.DELETE, "/patientconsensus/**").hasAuthority("patientconsensus.delete")
-						// patients
-						.antMatchers(HttpMethod.POST, "/patients/**").hasAuthority("patients.create")
-						.antMatchers(HttpMethod.GET, "/patients/**").hasAuthority("patients.read")
-						.antMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("patients.update")
-						.antMatchers(HttpMethod.DELETE, "/patients/**").hasAuthority("patients.delete")
-						// patientvaccines
-						.antMatchers(HttpMethod.POST, "/patientvaccines/**").hasAuthority("patientvaccines.create")
-						.antMatchers(HttpMethod.GET, "/patientvaccines/**").hasAnyAuthority("patientvaccines.read")
-						.antMatchers(HttpMethod.PUT, "/patientvaccines/**").hasAuthority("patientvaccines.update")
-						.antMatchers(HttpMethod.DELETE, "/patientvaccines/**").hasAuthority("patientvaccines.delete")
-						// permission
-						.antMatchers(HttpMethod.POST, "/permissions/**").hasAuthority("permissions.create")
-						.antMatchers(HttpMethod.GET, "/permissions/**").hasAuthority("permissions.read")
-						.antMatchers(HttpMethod.PUT, "/permissions/**").hasAuthority("permissions.update")
-						.antMatchers(HttpMethod.DELETE, "/permissions/**").hasAuthority("permissions.delete")
-						// grouppermission
-						.antMatchers(HttpMethod.POST, "/users/groups").hasAuthority("grouppermission.create")
-						.antMatchers(HttpMethod.GET, "/users/groups/**").hasAuthority("grouppermission.read")
-						.antMatchers(HttpMethod.PUT, "/users/groups").hasAuthority("grouppermission.update")
-						.antMatchers(HttpMethod.DELETE, "/users/groups/**").hasAuthority("grouppermission.delete")
-						// user
-						.antMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
-						.antMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
-						.antMatchers(HttpMethod.PUT, "/users").hasAuthority("users.update")
-						.antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
-						// user setting
-						.antMatchers(HttpMethod.GET, "/users/settings/**").hasAuthority("usersettings.read")
-						.antMatchers(HttpMethod.GET, "/users/{userName}/settings/{configName}").hasAuthority("usersettings.read")
-						.antMatchers(HttpMethod.POST, "/users/settings/**").hasAuthority("usersettings.create")
-						.antMatchers(HttpMethod.PUT, "/users/settings/**").hasAuthority("usersettings.update")
-						.antMatchers(HttpMethod.DELETE, "/users/settings/**").hasAuthority("usersettings.delete")
-						// pregnanttreatmenttypes
-						.antMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
-						.antMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")
-						.antMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.update")
-						.antMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.delete")
-						// pricelists
-						.antMatchers(HttpMethod.POST, "/pricelists/**").hasAuthority("pricelists.create")
-						.antMatchers(HttpMethod.GET, "/pricelists/**").hasAnyAuthority("pricelists.read")
-						.antMatchers(HttpMethod.PUT, "/pricelists/**").hasAuthority("pricelists.update")
-						.antMatchers(HttpMethod.DELETE, "/pricelists/**").hasAuthority("pricelists.delete")
-						// pricesothers
-						.antMatchers(HttpMethod.POST, "/pricesothers/**").hasAuthority("pricesothers.create")
-						.antMatchers(HttpMethod.GET, "/pricesothers/**").hasAnyAuthority("pricesothers.read")
-						.antMatchers(HttpMethod.PUT, "/pricesothers/**").hasAuthority("pricesothers.update")
-						.antMatchers(HttpMethod.DELETE, "/pricesothers/**").hasAuthority("pricesothers.delete")
-						// reports
-						.antMatchers(HttpMethod.POST, "/reports/**").hasAuthority("reports.create")
-						.antMatchers(HttpMethod.GET, "/reports/**").hasAnyAuthority("reports.read")
-						.antMatchers(HttpMethod.PUT, "/reports/**").hasAuthority("reports.update")
-						.antMatchers(HttpMethod.DELETE, "/reports/**").hasAuthority("reports.delete")
-						// sms
-						.antMatchers(HttpMethod.POST, "/sms/**").hasAuthority("sms.create")
-						.antMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
-						.antMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
-						.antMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
-						// suppliers
-						.antMatchers(HttpMethod.POST, "/suppliers/**").hasAuthority("suppliers.create")
-						.antMatchers(HttpMethod.GET, "/suppliers/**").hasAnyAuthority("suppliers.read")
-						.antMatchers(HttpMethod.PUT, "/suppliers/**").hasAuthority("suppliers.update")
-						.antMatchers(HttpMethod.DELETE, "/suppliers/**").hasAuthority("suppliers.delete")
-						// therapy
-						.antMatchers(HttpMethod.POST, "/therapies/**").hasAuthority("therapies.create")
-						.antMatchers(HttpMethod.GET, "/therapies/**").hasAnyAuthority("therapies.read")
-						.antMatchers(HttpMethod.PUT, "/therapies/**").hasAuthority("therapies.update")
-						.antMatchers(HttpMethod.DELETE, "/therapies/**").hasAuthority("therapies.delete")
-						// vaccines
-						.antMatchers(HttpMethod.POST, "/vaccines/**").hasAuthority("vaccines.create")
-						.antMatchers(HttpMethod.GET, "/vaccines/**").hasAnyAuthority("vaccines.read")
-						.antMatchers(HttpMethod.PUT, "/vaccines/**").hasAuthority("vaccines.update")
-						.antMatchers(HttpMethod.DELETE, "/vaccines/**").hasAuthority("vaccines.delete")
-						// vaccineType
-						.antMatchers(HttpMethod.POST, "/vaccinetypes/**").hasAuthority("vaccinetypes.create")
-						.antMatchers(HttpMethod.GET, "/vaccinetypes/**").hasAnyAuthority("vaccinetypes.read")
-						.antMatchers(HttpMethod.PUT, "/vaccinetypes/**").hasAuthority("vaccinetypes.update")
-						.antMatchers(HttpMethod.DELETE, "/vaccinetypes/**").hasAuthority("vaccinetypes.delete")
-						// visit
-						.antMatchers(HttpMethod.POST, "/visits/**").hasAuthority("visits.create")
-						.antMatchers(HttpMethod.GET, "/visits/**").hasAnyAuthority("visits.read")
-						.antMatchers(HttpMethod.PUT, "/visits/**").hasAuthority("visits.update")
-						.antMatchers(HttpMethod.DELETE, "/visits/**").hasAuthority("visits.delete")
-						// wards
-						.antMatchers(HttpMethod.POST, "/wards/**").hasAuthority("wards.create")
-						.antMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("wards.read")
-						.antMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("wards.update")
-						.antMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
+					return new AuthorizationDecision(hasCreateAuthority && hasDeleteAuthority);
+				})
+				.requestMatchers(HttpMethod.DELETE, "/usergroups/{group_code}/permissions/**").hasAuthority("grouppermission.delete")
+				// usergroups
+				.requestMatchers(HttpMethod.POST, "/usergroups/**").hasAuthority("usergroups.create")
+				.requestMatchers(HttpMethod.GET, "/usergroups/**").hasAuthority("usergroups.read")
+				.requestMatchers(HttpMethod.PUT, "/usergroups/**").hasAuthority("usergroups.update")
+				.requestMatchers(HttpMethod.DELETE, "/usergroups/**").hasAuthority("usergroups.delete")
+				// user
+				.requestMatchers("/users/me").authenticated()
+				.requestMatchers(HttpMethod.POST, "/users").hasAuthority("users.create")
+				.requestMatchers(HttpMethod.GET, "/users/**").hasAuthority("users.read")
+				.requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("users.update")
+				.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
+				// user setting
+				.requestMatchers("/usersettings/**").authenticated()
+				// pregnanttreatmenttypes
+				.requestMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
+				.requestMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")
+				.requestMatchers(HttpMethod.PUT, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.delete")
+				// pricelists
+				.requestMatchers(HttpMethod.POST, "/pricelists/**").hasAuthority("pricelists.create")
+				.requestMatchers(HttpMethod.GET, "/pricelists/**").hasAnyAuthority("pricelists.read")
+				.requestMatchers(HttpMethod.PUT, "/pricelists/**").hasAuthority("pricelists.update")
+				.requestMatchers(HttpMethod.DELETE, "/pricelists/**").hasAuthority("pricelists.delete")
+				// pricesothers
+				.requestMatchers(HttpMethod.POST, "/pricesothers/**").hasAuthority("pricesothers.create")
+				.requestMatchers(HttpMethod.GET, "/pricesothers/**").hasAnyAuthority("pricesothers.read")
+				.requestMatchers(HttpMethod.PUT, "/pricesothers/**").hasAuthority("pricesothers.update")
+				.requestMatchers(HttpMethod.DELETE, "/pricesothers/**").hasAuthority("pricesothers.delete")
+				// reports
+				.requestMatchers(HttpMethod.POST, "/reports/**").hasAuthority("reports.create")
+				.requestMatchers(HttpMethod.GET, "/reports/**").hasAnyAuthority("reports.read")
+				.requestMatchers(HttpMethod.PUT, "/reports/**").hasAuthority("reports.update")
+				.requestMatchers(HttpMethod.DELETE, "/reports/**").hasAuthority("reports.delete")
+				// sms
+				.requestMatchers(HttpMethod.POST, "/sms/**").hasAuthority("sms.create")
+				.requestMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
+				.requestMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
+				.requestMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
+				// suppliers
+				.requestMatchers(HttpMethod.POST, "/suppliers/**").hasAuthority("suppliers.create")
+				.requestMatchers(HttpMethod.GET, "/suppliers/**").hasAnyAuthority("suppliers.read")
+				.requestMatchers(HttpMethod.PUT, "/suppliers/**").hasAuthority("suppliers.update")
+				.requestMatchers(HttpMethod.DELETE, "/suppliers/**").hasAuthority("suppliers.delete")
+				// therapy
+				.requestMatchers(HttpMethod.POST, "/therapies/**").hasAuthority("therapies.create")
+				.requestMatchers(HttpMethod.GET, "/therapies/**").hasAnyAuthority("therapies.read")
+				.requestMatchers(HttpMethod.PUT, "/therapies/**").hasAuthority("therapies.update")
+				.requestMatchers(HttpMethod.DELETE, "/therapies/**").hasAuthority("therapies.delete")
+				// vaccines
+				.requestMatchers(HttpMethod.POST, "/vaccines/**").hasAuthority("vaccines.create")
+				.requestMatchers(HttpMethod.GET, "/vaccines/**").hasAnyAuthority("vaccines.read")
+				.requestMatchers(HttpMethod.PUT, "/vaccines/**").hasAuthority("vaccines.update")
+				.requestMatchers(HttpMethod.DELETE, "/vaccines/**").hasAuthority("vaccines.delete")
+				// vaccineType
+				.requestMatchers(HttpMethod.POST, "/vaccinetypes/**").hasAuthority("vaccinetypes.create")
+				.requestMatchers(HttpMethod.GET, "/vaccinetypes/**").hasAnyAuthority("vaccinetypes.read")
+				.requestMatchers(HttpMethod.PUT, "/vaccinetypes/**").hasAuthority("vaccinetypes.update")
+				.requestMatchers(HttpMethod.DELETE, "/vaccinetypes/**").hasAuthority("vaccinetypes.delete")
+				// visit
+				.requestMatchers(HttpMethod.POST, "/visits/**").hasAuthority("visits.create")
+				.requestMatchers(HttpMethod.GET, "/visits/**").hasAnyAuthority("visits.read")
+				.requestMatchers(HttpMethod.PUT, "/visits/**").hasAuthority("visits.update")
+				.requestMatchers(HttpMethod.DELETE, "/visits/**").hasAuthority("visits.delete")
+				// wards
+				.requestMatchers(HttpMethod.POST, "/wards/**").hasAuthority("wards.create")
+				.requestMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("wards.read")
+				.requestMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("wards.update")
+				.requestMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
 
-						// .antMatchers("/auth-needed/**").authenticated()
-						// .antMatchers("/noauth-public/**").permitAll()
-						// .antMatchers("/admin/**").hasAuthority("admin")
+				.anyRequest().authenticated()
 
-//			.and()
-//			.formLogin()
-//				 .loginPage("/auth/login")
-//				 .successHandler(successHandler())
-//				 .failureHandler(failureHandler())
-						.and().apply(securityConfigurerAdapter())
-						.and().httpBasic()
-						.and().logout().logoutUrl("/auth/logout").addLogoutHandler(customLogoutHandler).permitAll();
+			)
+			.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint))
+			.logout(logout -> logout.logoutUrl("/auth/logout")
+				.addLogoutHandler(customLogoutHandler)
+				.permitAll())
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+		http.addFilterBefore(new JWTFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
-	}
-
-	private JWTConfigurer securityConfigurerAdapter() {
-		return new JWTConfigurer(tokenProvider);
 	}
 
 	@Bean
@@ -352,20 +351,6 @@ public class SecurityConfig {
 	@Bean
 	public SimpleUrlAuthenticationSuccessHandler successHandler() {
 		return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
-	}
-
-	private SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
-		DefaultWebSecurityExpressionHandler defaultWebSecurityExpressionHandler = new DefaultWebSecurityExpressionHandler();
-		defaultWebSecurityExpressionHandler.setRoleHierarchy(roleHierarchy());
-		return defaultWebSecurityExpressionHandler;
-	}
-
-	@Bean
-	public RoleHierarchy roleHierarchy() {
-		RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-		String hierarchy = "ROLE_ADMIN > ROLE_FAMILYMANAGER \n ROLE_FAMILYMANAGER > ROLE_USER";
-		roleHierarchy.setHierarchy(hierarchy);
-		return roleHierarchy;
 	}
 
 	@Bean

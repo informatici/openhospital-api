@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -40,6 +40,9 @@ public class PriceListDTO {
 
 	@Schema(description = "The currency", example = "FCFA", maxLength = 10)
 	private String currency;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	private int hashCode;
 
@@ -90,5 +93,13 @@ public class PriceListDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

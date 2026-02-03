@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -23,7 +23,7 @@ package org.isf.examination.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.isf.examination.model.Ausculation;
 import org.isf.examination.model.Bowel;
@@ -90,6 +90,9 @@ public class PatientExaminationDTO {
 	@Nullable
 	@Schema(description = "Bowel Function", example = "regular")
 	private Bowel pex_bowel_desc;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	public int getPex_ID() {
 		return this.pex_ID;
@@ -225,5 +228,13 @@ public class PatientExaminationDTO {
 
 	public void setPex_note(String pex_note) {
 		this.pex_note = pex_note;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

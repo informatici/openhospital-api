@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,8 +21,8 @@
  */
 package org.isf.pricesothers.dto;
 
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.AccessMode;
@@ -39,6 +39,9 @@ public class PricesOthersDTO {
 	@NotNull
 	@Schema(description = "The description", maxLength = 100)
 	private String description;
+
+	@Schema(description = "Lock", example = "0")
+	private int lock;
 
 	@NotNull
 	private boolean opdInclude;
@@ -126,5 +129,13 @@ public class PricesOthersDTO {
 
 	public void setHashCode(int hashCode) {
 		this.hashCode = hashCode;
+	}
+
+	public int getLock() {
+		return lock;
+	}
+
+	public void setLock(int lock) {
+		this.lock = lock;
 	}
 }

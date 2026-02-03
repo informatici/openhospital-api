@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -26,7 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.isf.distype.manager.DiseaseTypeBrowserManager;
+import java.util.Objects;
+
 import org.isf.opd.data.OpdHelper;
 import org.isf.opd.dto.OpdDTO;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -55,37 +56,38 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class OpdControllerTest {
-	
+class OpdControllerTest {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(OpdControllerTest.class);
 
 	@Mock
 	protected OpdBrowserManager opdBrowserManagerMock;
-	
+
 	@Mock
 	protected PatientBrowserManager patientBrowserManagerMock;
 
 	protected OpdMapper opdMapper = new OpdMapper();
-	
-	protected OperationRowBrowserManager operationRowManager = new OperationRowBrowserManager();
-	
+
+	@Mock
+	protected OperationRowBrowserManager operationRowBrowserManagerMock;
+
 	protected OperationRowMapper opRowMapper = new OperationRowMapper();
-	
-	protected WardBrowserManager wardManager = new WardBrowserManager();
-	
-	protected DiseaseTypeBrowserManager diseaseType = new DiseaseTypeBrowserManager();
+
+	@Mock
+	protected WardBrowserManager wardBrowserManager;
 
 	private MockMvc mockMvc;
 
 	private AutoCloseable closeable;
 
 	@BeforeEach
-	public void setup() {
+	void setup() {
 		closeable = MockitoAnnotations.openMocks(this);
 		this.mockMvc = MockMvcBuilders
-				.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowManager, opRowMapper, wardManager, diseaseType))
-				.setControllerAdvice(new OHResponseEntityExceptionHandler())
-				.build();
+			.standaloneSetup(new OpdController(opdBrowserManagerMock, opdMapper, patientBrowserManagerMock, operationRowBrowserManagerMock,
+				opRowMapper, wardBrowserManager))
+			.setControllerAdvice(new OHResponseEntityExceptionHandler())
+			.build();
 		ModelMapper modelMapper = new ModelMapper();
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
@@ -98,33 +100,31 @@ public class OpdControllerTest {
 	}
 
 	@Test
-	public void testNewOpd_201() throws Exception {
+	void testNewOpd_201() throws Exception {
 		String request = "/opds";
 		Patient patient = PatientHelper.setup();
 		Integer patientCode = 1;
 		patient.setCode(patientCode);
-		
+
 		Opd opd = OpdHelper.setup();
 		opd.setPatient(patient);
-		
+
 		OpdDTO body = opdMapper.map2DTO(opd);
-		
+
 		when(patientBrowserManagerMock.getPatientById(patientCode)).thenReturn(patient);
 
 		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body))).thenReturn(opd);
-		
+
 		MvcResult result = this.mockMvc
-				.perform(post(request)
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(OpdHelper.asJsonString(body))
-				)
-				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OpdHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isCreated())
+			.andReturn();
 
 		LOGGER.debug("result: {}", result);
 	}
 
 }
-
