@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.maven.plugin.version>5.0.0</license.maven.plugin.version>
         <springdoc.outputFileName>oh.yaml</springdoc.outputFileName>
+        <oh-core.dir>../openhospital-core</oh-core.dir>
     </properties>
 
     <dependencies>
@@ -308,7 +309,7 @@
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
-			<build>
+            <build>
                 <resources>
                     <resource>
                         <directory>src/main/resources</directory>

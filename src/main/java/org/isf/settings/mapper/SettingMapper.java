@@ -19,8 +19,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.security.jwt;
+package org.isf.settings.mapper;
 
-public enum TokenValidationResult {
-	VALID, EXPIRED, MALFORMED, UNSUPPORTED, EMPTY_CLAIMS, INVALID_SIGNATURE, UNKNOWN;
+import org.isf.settings.dto.SettingDTO;
+import org.isf.settings.model.Setting;
+import org.isf.shared.GenericMapper;
+import org.springframework.stereotype.Component;
+
+/**
+ * Setting DTO
+ * @author Silevester D.
+ */
+@Component
+public class SettingMapper extends GenericMapper<Setting, SettingDTO> {
+
+	public SettingMapper() {
+		super(Setting.class, SettingDTO.class);
+	}
 }

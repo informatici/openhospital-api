@@ -50,7 +50,7 @@ public class JWTFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-					throws IOException, ServletException {
+		throws IOException, ServletException {
 
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;

@@ -19,8 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package org.isf.security.jwt;
+package org.isf.settings.dto;
 
-public enum TokenValidationResult {
-	VALID, EXPIRED, MALFORMED, UNSUPPORTED, EMPTY_CLAIMS, INVALID_SIGNATURE, UNKNOWN;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/**
+ * Specified DTO for Setting update
+ * @author Silevester D.
+ */
+public class UpdateSettingDTO {
+
+	@Schema(description = "The value of the setting", example = "FALSE")
+	private String value;
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

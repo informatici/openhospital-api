@@ -65,7 +65,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-					throws IOException {
+		throws IOException {
 
 		SavedRequest savedRequest = requestCache.getRequest(request, response);
 
@@ -79,7 +79,7 @@ public class OHSimpleUrlAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
-							sessionAuditManager.newSessionAudit(new SessionAudit(authentication.getName(), LocalDateTime.now(), null)));
+				sessionAuditManager.newSessionAudit(new SessionAudit(authentication.getName(), LocalDateTime.now(), null)));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
