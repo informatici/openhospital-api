@@ -55,9 +55,9 @@ jobs:
 
               if curl -s -o /dev/null -w "%{http_code}" "$CHECK_BRANCH_URL" | grep -q "200"; then
                 echo "Branch $BRANCH_NAME exists in $FORK_REPO."
-              # else
+              else
                 # Fallback to the main repository if the branch doesn’t exist in the fork
-                # FORK_REPO="informatici/openhospital-core"
+                FORK_REPO="informatici/openhospital-core"
               fi
             fi
           fi
