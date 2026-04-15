@@ -12,6 +12,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
   * [How to build a war file](#how-to-build-a-war-file)
   * [How to deploy backend in docker environment](#how-to-deploy-backend-in-docker-environment)
   * [How to generate openapi specs](#how-to-generate-openapi-specs)
+  * [Plugin gateway](#plugin-gateway)
   * [Cleaning](#cleaning)
   * [How to contribute](#how-to-contribute)
   * [Community](#community)
@@ -160,6 +161,19 @@ To redirect the output to another file, use:
 
 	mvn springdoc-openapi:generate -Dspringdoc.outputFileName=my_revision.yaml
 	
+
+## Plugin gateway
+
+The API includes a built-in gateway that proxies requests to external plugin services.
+Plugins are defined in `rsc/plugins.yaml` and health-checked at startup. Only reachable
+plugins are registered; unreachable plugins produce a startup warning and their routes
+return `404`.
+
+All plugin routes require a valid JWT. The gateway injects `X-User` and `X-Permissions`
+headers into every forwarded request so the upstream plugin can identify the caller.
+
+For full configuration reference, authorization model, MFE asset serving, and a
+step-by-step guide to adding a new plugin, see **[docs/plugins.md](docs/plugins.md)**.
 
 ## Cleaning
 

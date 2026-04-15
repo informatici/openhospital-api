@@ -1,6 +1,8 @@
 HELP.md
 /target/
 /rsc/*.properties
+/rsc/*.yaml
+/rsc/plugins/**/
 !.mvn/wrapper/maven-wrapper.jar
 /oh-rest-api.log.*.gz
 logs/
@@ -44,5 +46,7 @@ OH_API_PID
 /deps/
 OH_API_PID
 
-### Git ###
-/**/.gitkeep
+### Log files ###
+*.log
+logs/
+LOG_DEST

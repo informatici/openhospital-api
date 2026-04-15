@@ -47,9 +47,9 @@ jobs:
 
               if curl -s -o /dev/null -w "%{http_code}" "$CHECK_BRANCH_URL" | grep -q "200"; then
                 echo "Branch $BRANCH_NAME exists in $FORK_REPO."
-              else
+              # else
                 # Fallback to the main repository if the branch doesn’t exist in the fork
-                FORK_REPO="informatici/openhospital-core"
+                # FORK_REPO="informatici/openhospital-core"
               fi
             fi
           fi
@@ -63,11 +63,11 @@ jobs:
           echo "FORK_REPO: ${{ env.FORK_REPO }}"
           echo "BRANCH_NAME: ${{ env.BRANCH_NAME }}"
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: 17
+          java-version: 21
           java-package: jdk
 
       - name: Checkout core

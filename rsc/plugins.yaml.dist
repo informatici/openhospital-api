@@ -1,0 +1,60 @@
+# =============================================================================
+# Open Hospital — Plugin Gateway Configuration
+# =============================================================================
+#
+# This file defines the external plugins registered with the OH-API gateway.
+# On application startup each plugin's health endpoint is probed; only healthy
+# plugins are registered and their routes become available at:
+#
+#   /plugins/{id}/**  →  {url}/**
+#
+# Example: GET /plugins/smart-doc/document-types
+#          → GET http://localhost:8042/api/document-types
+#
+# Fields per plugin:
+#   id            Unique identifier used as the URL path segment.
+#                 Must be URL-safe (lowercase letters, digits, hyphens).
+#   url           Base URL of the upstream service. No trailing slash.
+#   health        Path on the upstream service used for the startup health probe.
+#                 A 2xx response marks the plugin as available.
+#   configuration
+#     permissions Restrictive access-control rules per user-group role.
+#                 Routes NOT listed here are blocked. A plugin with no permissions
+#                 configured is inaccessible to all users.
+#       role      The user-group name (UserGroup.code) that this entry applies to.
+#       routes    List of upstream path + method combinations the role may access.
+#         path    Path prefix on the upstream service (e.g. /documents).
+#                 Any sub-path is allowed (e.g. /documents/123 matches /documents).
+#         methods HTTP methods permitted on this path (e.g. GET, POST, DELETE).
+#
+# =============================================================================
+
+plugins:
+  definitions:
+
+    # -------------------------------------------------------------------------
+    # smart-doc — Documentation digitalization service
+    # -------------------------------------------------------------------------
+    - id: smart-doc
+      url: http://localhost:8042/api
+      health: /actuator/health
+      configuration:
+        bundle:
+          label: Smart Doc
+          manifest: mf-manifest.json
+          styles: assets/style.css
+          type: module
+          location: main
+        permissions:
+          - role: admin
+            routes:
+              - path: /documents
+                methods:
+                  - GET
+                  - POST
+                  - DELETE
+          - role: doctor
+            routes:
+              - path: /documents
+                methods:
+                  - GET
