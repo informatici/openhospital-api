@@ -79,7 +79,7 @@ public class TokenProvider implements Serializable {
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
-		LOGGER.debug("Initializing JWT key with secret: {}", secret);
+		LOGGER.debug("Initializing JWT signing key");
 		byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 
