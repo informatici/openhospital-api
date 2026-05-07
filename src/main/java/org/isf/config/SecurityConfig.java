@@ -24,13 +24,11 @@ package org.isf.config;
 import java.util.Arrays;
 
 import org.isf.permissions.manager.PermissionManager;
-import org.isf.security.ApiAuditorAwareImpl;
 import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTFilter;
 import org.isf.security.jwt.TokenProvider;
-import org.isf.utils.db.AuditorAwareInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -351,10 +349,5 @@ public class SecurityConfig {
 	@Bean
 	public SimpleUrlAuthenticationSuccessHandler successHandler() {
 		return new OHSimpleUrlAuthenticationSuccessHandler(tokenProvider);
-	}
-
-	@Bean
-	public AuditorAwareInterface auditorAwareCustomizer() {
-		return new ApiAuditorAwareImpl();
 	}
 }
