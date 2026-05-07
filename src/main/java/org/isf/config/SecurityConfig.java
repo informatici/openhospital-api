@@ -23,6 +23,8 @@ package org.isf.config;
 
 import java.util.Arrays;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.ApiAuditorAwareImpl;
 import org.isf.security.CustomLogoutHandler;
@@ -335,6 +337,7 @@ public class SecurityConfig {
 			.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restAuthenticationEntryPoint))
 			.logout(logout -> logout.logoutUrl("/auth/logout")
 				.addLogoutHandler(customLogoutHandler)
+				.logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
 				.permitAll())
 			.sessionManagement(session -> session
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
