@@ -151,6 +151,8 @@ public class UserController {
 		User user = userMapper.map2Model(userDTO);
 		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
+			// OP-896: a password set by an administrator must be changed by the user at next login
+			user.setPasswdMustChange(true);
 			updatedUser = userManager.updatePassword(user);
 		} else {
 			updatedUser = userManager.updateUser(user);
@@ -175,6 +177,8 @@ public class UserController {
 	public UserDTO newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
 		User user = userMapper.map2Model(userDTO);
+		// OP-896: the first password assigned by the administrator must be changed by the user at first access
+		user.setPasswdMustChange(true);
 		try {
 			LOGGER.info("User successfully created.");
 			return userMapper.map2DTO(userManager.newUser(user));
@@ -240,6 +244,8 @@ public class UserController {
 		user.setUserGroupName(entity.getUserGroupName());
 		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
+			// OP-896: the user is changing their own password, so clear any pending must-change flag
+			user.setPasswdMustChange(false);
 			updatedUser = userManager.updatePassword(user);
 		} else {
 			updatedUser = userManager.updateUser(user);

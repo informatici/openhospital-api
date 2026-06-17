@@ -98,7 +98,7 @@ public class LoginController {
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
 		String userDetails = (String) authentication.getPrincipal();
-		User user;
+		User user = null;
 		try {
 			user = userManager.getUserByName(loginRequest.getUsername());
 			UserSession.setUser(user);
@@ -113,7 +113,10 @@ public class LoginController {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
 
-		return new LoginResponse(jwt, refreshToken, userDetails);
+		// OP-896: tell the client whether the user must change the password (admin forced it or the lease expired)
+		boolean mustChangePassword = user != null && (user.isPasswdMustChange() || userManager.isPasswordExpired(user));
+
+		return new LoginResponse(jwt, refreshToken, userDetails, mustChangePassword);
 	}
 
 	@PostMapping("/auth/refresh-token")

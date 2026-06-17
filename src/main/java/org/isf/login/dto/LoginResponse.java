@@ -38,13 +38,21 @@ public class LoginResponse {
 	@Schema(description = "User name", example = "admin")
 	private String username;
 
+	@Schema(description = "Whether the user must change the password before using the application")
+	private boolean mustChangePassword;
+
 	public LoginResponse() {
 	}
 
 	public LoginResponse(String token, String refreshToken, String username) {
+		this(token, refreshToken, username, false);
+	}
+
+	public LoginResponse(String token, String refreshToken, String username, boolean mustChangePassword) {
 		this.token = token;
 		this.refreshToken = refreshToken;
 		this.username = username;
+		this.mustChangePassword = mustChangePassword;
 	}
 
 	public String getToken() {
@@ -77,6 +85,14 @@ public class LoginResponse {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public boolean isMustChangePassword() {
+		return mustChangePassword;
+	}
+
+	public void setMustChangePassword(boolean mustChangePassword) {
+		this.mustChangePassword = mustChangePassword;
 	}
 
 }
