@@ -148,6 +148,7 @@ public class UserController {
 			LOGGER.info("User with name '{}' has not been found.", userName);
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."), HttpStatus.NOT_FOUND);
 		}
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
@@ -176,6 +177,7 @@ public class UserController {
 	@PostMapping("/users")
 	public UserDTO newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		// OP-896: the first password assigned by the administrator must be changed by the user at first access
 		user.setPasswdMustChange(true);
@@ -240,6 +242,7 @@ public class UserController {
 		if (entity == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		user.setUserGroupName(entity.getUserGroupName());
 		User updatedUser;
@@ -255,6 +258,19 @@ public class UserController {
 			return retrieveProfile(currentUser);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));
+		}
+	}
+
+	/**
+	 * Rejects a password that does not meet the configured strength requirements (OP-896). No-op when no password is
+	 * provided, so that requests that only update other user fields are not affected.
+	 *
+	 * @param password the plain-text password to validate (may be {@code null} or empty)
+	 * @throws OHAPIException if a non-empty password does not meet the strength requirements
+	 */
+	private void validatePasswordStrength(String password) throws OHAPIException {
+		if (password != null && !password.isEmpty() && !userManager.isPasswordValid(password)) {
+			throw new OHAPIException(new OHExceptionMessage("The password does not meet the strength requirements."), HttpStatus.BAD_REQUEST);
 		}
 	}
 

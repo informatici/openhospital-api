@@ -93,6 +93,7 @@ class UserControllerTest {
 		User user = UserHelper.generateUser();
 		UserDTO userDTO = userMapper.map2DTO(user);
 
+		when(userManager.isPasswordValid(any())).thenReturn(true);
 		when(userManager.newUser(any())).thenReturn(user);
 
 		var result = mvc.perform(
@@ -337,6 +338,7 @@ class UserControllerTest {
 			when(userManager.updateUser(any())).thenReturn(user);
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
+			when(userManager.isPasswordValid(any())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -443,6 +445,7 @@ class UserControllerTest {
 			when(userManager.updateUser(any())).thenReturn(user);
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isPasswordValid(any())).thenReturn(true);
 
 			var result = mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
@@ -454,6 +457,24 @@ class UserControllerTest {
 
 			verify(userManager).updatePassword(any());
 			verify(userManager, never()).updateUser(any());
+		}
+
+		@Test
+		@DisplayName("Should reject a password that does not meet the strength requirements")
+		@WithMockUser(username = "doctor")
+		void shouldRejectWeakPassword() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "weak", "Simple user");
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isPasswordValid(any())).thenReturn(false);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+			verify(userManager, never()).updatePassword(any());
 		}
 
 		@Test
