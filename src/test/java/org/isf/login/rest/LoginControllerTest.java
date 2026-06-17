@@ -175,6 +175,42 @@ class LoginControllerTest {
 			.andReturn();
 	}
 
+	@Test
+	void testAuthenticateUser_PasswordLeaseExpired() throws Exception {
+		String username = "testUser";
+		String password = "testPassword";
+		String mockToken = "mockJwtToken";
+		String mockRefreshToken = "mockRefreshToken";
+
+		// The flag is off, but the password lease has expired (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswd(password);
+		user.setPasswdMustChange(false);
+
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+		LoginRequest loginRequest = new LoginRequest(username, password);
+
+		when(authenticationManager.authenticate(any())).thenReturn(authentication);
+		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+		when(userManager.isPasswordExpired(user)).thenReturn(true);
+
+		// Expected LoginResponse with mustChangePassword = true (driven by the expired lease)
+		LoginResponse loginResponse = new LoginResponse(mockToken, mockRefreshToken, username, true);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		mvc.perform(post("/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
 	// TODO testAuthenticateUser_Failure
 
 	@Test
