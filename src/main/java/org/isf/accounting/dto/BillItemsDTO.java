@@ -21,6 +21,8 @@
  */
 package org.isf.accounting.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,7 +49,7 @@ public class BillItemsDTO {
 
 	@NotNull
 	@Schema(description = "Item amount", example = "1000")
-	private double itemAmount;
+	private BigDecimal itemAmount;
 
 	@NotNull
 	@Schema(description = "Item quantity", example = "1")
@@ -88,7 +90,7 @@ public class BillItemsDTO {
 		return this.itemDescription;
 	}
 
-	public double getItemAmount() {
+	public BigDecimal getItemAmount() {
 		return this.itemAmount;
 	}
 
@@ -124,7 +126,7 @@ public class BillItemsDTO {
 		this.itemDescription = itemDescription;
 	}
 
-	public void setItemAmount(double itemAmount) {
+	public void setItemAmount(BigDecimal itemAmount) {
 		this.itemAmount = itemAmount;
 	}
 
