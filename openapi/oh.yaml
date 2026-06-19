@@ -3807,6 +3807,22 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  /reports:
+    get:
+      tags:
+      - Reports
+      operationId: getReportsList
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportLauncherDTO"
+      security:
+      - bearerAuth: []
   /reports/exams-list:
     get:
       tags:
@@ -8271,6 +8287,33 @@ components:
       required:
       - password
       - username
+    ReportLauncherDTO:
+      type: object
+      properties:
+        folder:
+          type: string
+          description: Folder holding the compiled report
+          example: rpt_stat
+          readOnly: true
+        fileName:
+          type: string
+          description: Name of the report file (without extension)
+          example: POI_ByAgeBySex
+          readOnly: true
+        title:
+          type: string
+          description: Localized title of the report
+          example: Patients by age and sex
+          readOnly: true
+        userInputParameters:
+          type: array
+          description: Names of the parameters the user is expected to provide
+          example:
+          - month
+          - year
+          items:
+            type: string
+          readOnly: true
     PriceDTO:
       type: object
       description: Class representing a prices
