@@ -32,6 +32,8 @@ import org.isf.utils.exception.OHInvalidSQLException;
 import org.isf.utils.exception.OHOperationNotAllowedException;
 import org.isf.utils.exception.OHReportException;
 import org.isf.utils.exception.OHServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
 public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OHResponseEntityExceptionHandler.class);
+
+    private static final String GENERIC_ERROR_MESSAGE = "An internal error occurred";
 
     @ExceptionHandler(value = {OHDataValidationException.class})
     protected ResponseEntity<Object> handleOHServiceValidationException(OHServiceException ex) {
@@ -92,6 +98,16 @@ public class OHResponseEntityExceptionHandler extends ResponseEntityExceptionHan
     @ExceptionHandler(value = {OHAPIException.class})
     protected ResponseEntity<Object> handleOHAPIException(OHAPIException ex) {
         return buildResponseEntity(new OHAPIError(ex.getStatus(), ex));
+    }
+
+    /**
+     * Catch-all handler for any unhandled exception. The full exception (including stack trace) is logged at error level for diagnostics, while the response
+     * body only exposes a generic message and the HTTP status, so that no stack trace, exception class name or internal/SQL detail is disclosed to the client.
+     */
+    @ExceptionHandler(value = {Exception.class})
+    protected ResponseEntity<Object> handleUnexpectedException(Exception ex) {
+        LOGGER.error("Unhandled exception while processing request", ex);
+        return buildResponseEntity(new OHAPIError(HttpStatus.INTERNAL_SERVER_ERROR, GENERIC_ERROR_MESSAGE));
     }
 
     private ResponseEntity<Object> buildResponseEntity(OHAPIError apiError) {
