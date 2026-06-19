@@ -56,6 +56,9 @@ public class WardDTO {
 	private boolean isPharmacy;
 
 	@NotNull
+	private boolean isVirtual;
+
+	@NotNull
 	private boolean isMale;
 
 	@NotNull
@@ -103,6 +106,10 @@ public class WardDTO {
 
 	public boolean isPharmacy() {
 		return this.isPharmacy;
+	}
+
+	public boolean isVirtual() {
+		return this.isVirtual;
 	}
 
 	public boolean isMale() {
@@ -155,6 +162,10 @@ public class WardDTO {
 
 	public void setPharmacy(boolean isPharmacy) {
 		this.isPharmacy = isPharmacy;
+	}
+
+	public void setVirtual(boolean isVirtual) {
+		this.isVirtual = isVirtual;
 	}
 
 	public void setMale(boolean isMale) {
