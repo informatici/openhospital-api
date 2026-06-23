@@ -6451,6 +6451,10 @@ components:
           type: boolean
           description: Consensus service flag
           example: true
+        consensusAdministrativeFlag:
+          type: boolean
+          description: Consensus administrative flag
+          example: true
       required:
       - age
       - bloodType
@@ -6855,6 +6859,9 @@ components:
         serviceFlag:
           type: boolean
           description: Service flag
+        administrativeFlag:
+          type: boolean
+          description: Administrative flag
         patientId:
           type: integer
           format: int32

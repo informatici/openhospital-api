@@ -34,6 +34,9 @@ public class PatientConsensusDTO {
 	@Schema(description = "Service flag")
 	private boolean serviceFlag;
 
+	@Schema(description = "Administrative flag")
+	private boolean administrativeFlag;
+
 	@NotNull
 	@Schema(description = "Patient id")
 	private Integer patientId;
@@ -52,6 +55,14 @@ public class PatientConsensusDTO {
 
 	public void setServiceFlag(boolean serviceFlag) {
 		this.serviceFlag = serviceFlag;
+	}
+
+	public boolean isAdministrativeFlag() {
+		return administrativeFlag;
+	}
+
+	public void setAdministrativeFlag(boolean administrativeFlag) {
+		this.administrativeFlag = administrativeFlag;
 	}
 
 	public Integer getPatientId() {

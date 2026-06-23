@@ -129,6 +129,9 @@ public class PatientDTO {
 	@Schema(description = "Consensus service flag", example = "true")
 	private boolean consensusServiceFlag;
 
+	@Schema(description = "Consensus administrative flag", example = "true")
+	private boolean consensusAdministrativeFlag;
+
 	public boolean isConsensusFlag() {
 		return consensusFlag;
 	}
@@ -143,6 +146,14 @@ public class PatientDTO {
 
 	public void setConsensusServiceFlag(boolean consensusServiceFlag) {
 		this.consensusServiceFlag = consensusServiceFlag;
+	}
+
+	public boolean isConsensusAdministrativeFlag() {
+		return consensusAdministrativeFlag;
+	}
+
+	public void setConsensusAdministrativeFlag(boolean consensusAdministrativeFlag) {
+		this.consensusAdministrativeFlag = consensusAdministrativeFlag;
 	}
 
 	public int getLock() {

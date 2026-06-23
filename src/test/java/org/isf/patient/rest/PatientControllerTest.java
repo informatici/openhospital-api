@@ -22,6 +22,7 @@
 package org.isf.patient.rest;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -617,4 +618,23 @@ class PatientControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(PatientHelper.asJsonString(patientMapper.map2DTOList(patientList)))));
     }
+
+	@Test
+	void when_mapping_patient_then_consensus_administrative_flag_round_trips_both_ways() throws Exception {
+		// Patient -> PatientDTO: the administrative consensus flag is carried and not swapped with the service flag
+		Patient patient = PatientHelper.setup();
+		patient.getPatientConsensus().setAdministrativeFlag(true);
+		patient.getPatientConsensus().setServiceFlag(false);
+		PatientDTO mappedDTO = patientMapper.map2DTO(patient);
+		assertThat(mappedDTO.isConsensusAdministrativeFlag(), is(true));
+		assertThat(mappedDTO.isConsensusServiceFlag(), is(false));
+
+		// PatientDTO -> Patient: the flag is carried back into the consensus model
+		PatientDTO patientDTO = PatientHelper.setup(patientMapper);
+		patientDTO.setConsensusAdministrativeFlag(true);
+		patientDTO.setConsensusServiceFlag(false);
+		Patient mappedModel = patientMapper.map2Model(patientDTO);
+		assertThat(mappedModel.getPatientConsensus().isAdministrativeFlag(), is(true));
+		assertThat(mappedModel.getPatientConsensus().isServiceFlag(), is(false));
+	}
 }
