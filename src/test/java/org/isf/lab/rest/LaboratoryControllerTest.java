@@ -125,7 +125,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
@@ -162,7 +162,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
@@ -201,7 +201,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
 		when(laboratoryManager.getLaboratory(any(Patient.class))).thenReturn(Collections.singletonList(lab));
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);

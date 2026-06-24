@@ -140,12 +140,14 @@ public class LaboratoryController {
 		labToInsert.setPatient(patient);
 		labToInsert.setLock(0);
 		labToInsert.setInOutPatient(laboratoryDTO.getInOutPatient().toString());
-		List<String> labRows = new ArrayList<>();
+		List<LaboratoryRow> labRows = new ArrayList<>();
 		if (labRow != null) {
-			labRows = new ArrayList<>(labRow);
+			for (String rowDescription : labRow) {
+				labRows.add(new LaboratoryRow(labToInsert, rowDescription));
+			}
 		}
 		try {
-			laboratoryManager.newLaboratory(labToInsert, labRows);
+			laboratoryManager.newLaboratory2(labToInsert, labRows);
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Laboratory not created."));
 		}
