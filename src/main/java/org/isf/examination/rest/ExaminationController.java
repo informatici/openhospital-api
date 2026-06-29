@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -161,6 +162,24 @@ public class ExaminationController {
 		}
 
 		return patientExaminationMapper.map2DTO(patientExamination);
+	}
+
+	@DeleteMapping("/examinations/{id}")
+	public boolean deletePatientExamination(@PathVariable Integer id) throws OHServiceException {
+		LOGGER.info("Delete patient examination id: {}.", id);
+		PatientExamination patientExamination = examinationBrowserManager.getByID(id);
+
+		if (patientExamination == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			examinationBrowserManager.remove(List.of(patientExamination));
+			return true;
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Delete patient examination: {} failed.", id);
+			throw new OHAPIException(new OHExceptionMessage("Patient examination not deleted."));
+		}
 	}
 
 	@GetMapping("/examinations/lastByPatientId/{patId}")

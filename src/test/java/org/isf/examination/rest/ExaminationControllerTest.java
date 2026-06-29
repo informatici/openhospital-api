@@ -24,7 +24,9 @@ package org.isf.examination.rest;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -248,5 +250,37 @@ class ExaminationControllerTest {
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(patientExaminationDTO))));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	@DisplayName("Should delete patient examination using ID")
+	void testDeletePatientExamination() throws Exception {
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+
+		when(manager.getByID(anyInt())).thenReturn(patientExamination);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")));
+
+		verify(manager).remove(List.of(patientExamination));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	@DisplayName("Should fail to delete patient examination with wrong ID")
+	void testDeletePatientExaminationWithWrongId() throws Exception {
+		when(manager.getByID(anyInt())).thenReturn(null);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound());
 	}
 }
