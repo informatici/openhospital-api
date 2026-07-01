@@ -94,8 +94,9 @@ public class LoginController {
 		Authentication authentication = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateJwtToken(authentication, false); // use the shorter validity
-		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+		String jwt = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId); // use the shorter validity
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 		String userDetails = (String) authentication.getPrincipal();
 		User user;
@@ -124,8 +125,13 @@ public class LoginController {
 			if (tokenProvider.validateToken(refreshToken) == TokenValidationResult.VALID) {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
-				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
-				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
+				String tokenFamilyId = tokenProvider.getJtiFromToken(refreshToken);
+				if (tokenFamilyId == null) {
+					// token minted before revocation support: adopt it into a new, revocable family
+					tokenFamilyId = tokenProvider.newTokenFamilyId();
+				}
+				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+				String newRefreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 				return new LoginResponse(newAccessToken, newRefreshToken, username);
 			} else {

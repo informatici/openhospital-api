@@ -38,12 +38,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.assertj.core.data.Offset;
 import org.isf.OpenHospitalApiApplication;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.permissions.model.Permission;
+import org.isf.security.jwt.TokenBlacklistService;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.security.jwt.TokenValidationResult;
 import org.isf.utils.exception.OHException;
@@ -60,15 +62,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 class TokenProviderTest {
 
 	@Autowired
 	private TokenProvider tokenProvider;
+
+	@Autowired
+	private TokenBlacklistService tokenBlacklistService;
 
 	@MockitoBean
 	private UserBrowsingManager userManager;
@@ -77,8 +84,10 @@ class TokenProviderTest {
 	protected PermissionManager permissionManager;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws NoSuchFieldException, IllegalAccessException {
 		tokenProvider.init();
+		// the singleton blacklist retains state across tests in the shared Spring context: reset it for determinism
+		clearBlacklist();
 	}
 
 	@Test
@@ -379,6 +388,131 @@ class TokenProviderTest {
 		assertThat(refreshToken.length()).isGreaterThan(0);
 	}
 
+	@Test
+	void testNewTokenFamilyId() {
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+		String anotherTokenFamilyId = tokenProvider.newTokenFamilyId();
+
+		assertThat(tokenFamilyId).isNotNull();
+		assertThat(anotherTokenFamilyId).isNotNull();
+		assertThat(tokenFamilyId).isNotEqualTo(anotherTokenFamilyId);
+	}
+
+	@Test
+	void testGenerateJwtToken_WithTokenFamilyId() throws Exception {
+		Authentication authentication = createAuthentication();
+		Key key = extractKeyFromTokenProvider();
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+
+		// Generate both tokens with the same explicit family id
+		String accessToken = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
+
+		// Get Claims from tokens
+		Claims accessClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+		Claims refreshClaims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
+
+		// Assert both tokens carry the family id as jti
+		assertThat(accessClaims.getId()).isEqualTo(tokenFamilyId);
+		assertThat(refreshClaims.getId()).isEqualTo(tokenFamilyId);
+	}
+
+	@Test
+	void testGenerateJwtToken_DefaultTokenFamilyId() {
+		Authentication authentication = createAuthentication();
+
+		// The delegating overloads must mint a fresh family id on their own
+		String accessToken = tokenProvider.generateJwtToken(authentication, false);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+
+		assertThat(tokenProvider.getJtiFromToken(accessToken)).isNotNull();
+		assertThat(tokenProvider.getJtiFromToken(refreshToken)).isNotNull();
+	}
+
+	@Test
+	void testGetJtiFromToken() {
+		Authentication authentication = createAuthentication();
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+
+		String token = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+
+		assertThat(tokenProvider.getJtiFromToken(token)).isEqualTo(tokenFamilyId);
+	}
+
+	@Test
+	void testRevokeToken() {
+		Authentication authentication = createAuthentication();
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+		String accessToken = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
+
+		assertThat(tokenProvider.validateToken(accessToken)).isEqualTo(TokenValidationResult.VALID);
+		assertThat(tokenProvider.validateToken(refreshToken)).isEqualTo(TokenValidationResult.VALID);
+
+		// Revoking one token of the family kills the whole family
+		tokenProvider.revokeToken(accessToken);
+
+		assertThat(tokenProvider.validateToken(accessToken)).isEqualTo(TokenValidationResult.REVOKED);
+		assertThat(tokenProvider.validateToken(refreshToken)).isEqualTo(TokenValidationResult.REVOKED);
+	}
+
+	@Test
+	void testRevokeToken_ExpiredAccessToken() throws Exception {
+		Authentication authentication = createAuthentication();
+		Key key = extractKeyFromTokenProvider();
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+
+		// Create an already-expired access token belonging to the same family as a still-live refresh token
+		String expiredAccessToken = Jwts.builder()
+						.setSubject("testuser")
+						.claim("auth", "ROLE_USER")
+						.setId(tokenFamilyId)
+						.signWith(key, SignatureAlgorithm.HS512)
+						.setExpiration(new Date(System.currentTimeMillis() - 1000))
+						.compact();
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
+
+		// Revoking with the expired access token must not throw and must still kill the live refresh token
+		tokenProvider.revokeToken(expiredAccessToken);
+
+		assertThat(tokenProvider.validateToken(refreshToken)).isEqualTo(TokenValidationResult.REVOKED);
+	}
+
+	@Test
+	void testRevokeToken_InvalidSignature() {
+		// Create a token signed with a different key
+		String badSignatureToken = Jwts.builder()
+						.setSubject("testuser")
+						.setId("some-family-id")
+						.signWith(Keys.secretKeyFor(SignatureAlgorithm.HS512), SignatureAlgorithm.HS512)
+						.setExpiration(new Date(System.currentTimeMillis() + 100000))
+						.compact();
+
+		assertThrows(JwtException.class, () -> tokenProvider.revokeToken(badSignatureToken));
+	}
+
+	@Test
+	void testValidateToken_LegacyTokenWithoutJti_NotRevoked() throws Exception {
+		Authentication authentication = createAuthentication();
+		Key key = extractKeyFromTokenProvider();
+
+		// Create a legacy token minted before revocation support, i.e. without a jti claim
+		String legacyToken = Jwts.builder()
+						.setSubject("testuser")
+						.claim("auth", "ROLE_USER")
+						.setIssuedAt(new Date())
+						.signWith(key, SignatureAlgorithm.HS512)
+						.setExpiration(new Date(System.currentTimeMillis() + 100000))
+						.compact();
+
+		// Revoke an unrelated token family
+		String unrelatedToken = tokenProvider.generateJwtToken(authentication, false);
+		tokenProvider.revokeToken(unrelatedToken);
+
+		// The legacy token must validate exactly as before
+		assertThat(tokenProvider.validateToken(legacyToken)).isEqualTo(TokenValidationResult.VALID);
+	}
+
 	// Helper method to generate RSA key pair
 	private KeyPair generateRsaKeyPair(String algorithm) throws NoSuchAlgorithmException {
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(algorithm);
@@ -400,5 +534,13 @@ class TokenProviderTest {
 		keyField.setAccessible(true);
 		Key key = (Key) keyField.get(tokenProvider);
 		return key;
+	}
+
+	// Helper method to reset the blacklist by reflection, needed to avoid exposing a public reset
+	@SuppressWarnings("unchecked")
+	private void clearBlacklist() throws NoSuchFieldException, IllegalAccessException {
+		Field mapField = TokenBlacklistService.class.getDeclaredField("revokedTokenFamilies");
+		mapField.setAccessible(true);
+		((Map<String, Long>) mapField.get(tokenBlacklistService)).clear();
 	}
 }

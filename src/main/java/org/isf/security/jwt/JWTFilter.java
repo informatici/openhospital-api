@@ -80,6 +80,10 @@ public class JWTFilter extends GenericFilterBean {
 				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_UNAUTHORIZED, "JWT token is expired.");
 				return;
 
+			case REVOKED:
+				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_UNAUTHORIZED, "JWT token has been revoked.");
+				return;
+
 			case MALFORMED:
 				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_BAD_REQUEST, "JWT token is malformed.");
 				return;

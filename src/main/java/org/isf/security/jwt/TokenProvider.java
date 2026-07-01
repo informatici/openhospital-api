@@ -27,6 +27,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,9 @@ public class TokenProvider implements Serializable {
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
 
+	@Autowired
+	private TokenBlacklistService tokenBlacklistService;
+
 	@PostConstruct
 	public void init() {
 		String secret = env.getProperty("jwt.token.secret");
@@ -108,6 +112,10 @@ public class TokenProvider implements Serializable {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
+	public String getJtiFromToken(String token) {
+		return getClaimFromToken(token, Claims::getId);
+	}
+
 	public Claims getAllClaimsFromToken(String token) {
 		return this.jwtParser.parseClaimsJws(token).getBody();
 	}
@@ -133,7 +141,18 @@ public class TokenProvider implements Serializable {
 		}
 	}
 
+	/**
+	 * Generates a new token family identifier, i.e. the {@code jti} claim shared by the access and the refresh token minted for the same login.
+	 */
+	public String newTokenFamilyId() {
+		return UUID.randomUUID().toString();
+	}
+
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
+		return generateJwtToken(authentication, rememberMe, newTokenFamilyId());
+	}
+
+	public String generateJwtToken(Authentication authentication, boolean rememberMe, String tokenFamilyId) {
 		final String authorities = authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
@@ -149,6 +168,7 @@ public class TokenProvider implements Serializable {
 		return Jwts.builder()
 			.setSubject(authentication.getName())
 			.claim(AUTHORITIES_KEY, authorities)
+			.setId(tokenFamilyId)
 			.setIssuedAt(new Date())
 			.signWith(key, SignatureAlgorithm.HS512)
 			.setExpiration(validity)
@@ -156,12 +176,39 @@ public class TokenProvider implements Serializable {
 	}
 
 	public String generateRefreshToken(Authentication authentication) {
+		return generateRefreshToken(authentication, newTokenFamilyId());
+	}
+
+	public String generateRefreshToken(Authentication authentication, String tokenFamilyId) {
 		return Jwts.builder()
 			.setSubject(authentication.getName())
+			.setId(tokenFamilyId)
 			.setIssuedAt(new Date())
 			.signWith(key, SignatureAlgorithm.HS512)
 			.setExpiration(new Date(System.currentTimeMillis() + this.tokenValidityInMillisecondsForRememberMe))
 			.compact();
+	}
+
+	/**
+	 * Revokes the token family the given token belongs to, invalidating every token minted for the same login. The token may be expired (its family is still
+	 * revoked, so the sibling refresh token dies too), but its signature must verify. Tokens minted before revocation support carry no family identifier and
+	 * are silently skipped.
+	 *
+	 * @param token a valid or expired token of the family to revoke
+	 * @throws io.jsonwebtoken.JwtException if the token is malformed or its signature does not verify
+	 */
+	public void revokeToken(String token) {
+		Claims claims;
+		try {
+			claims = getAllClaimsFromToken(token);
+		} catch (ExpiredJwtException e) {
+			// the signature has already been verified before the expiration check: claims are trustworthy
+			claims = e.getClaims();
+		}
+		if (claims.getId() != null) {
+			tokenBlacklistService.revoke(claims.getId(), Math.max(this.tokenValidityInMilliseconds, this.tokenValidityInMillisecondsForRememberMe));
+			LOGGER.info("JWT token family revoked for user {}", claims.getSubject());
+		}
 	}
 
 	public Authentication getAuthentication(String token) {
@@ -198,6 +245,10 @@ public class TokenProvider implements Serializable {
 			 */
 			if (claims.getSubject() == null || claims.getSubject().isEmpty()) {
 				throw new IllegalArgumentException("JWT claims string is empty.");
+			}
+			if (tokenBlacklistService.isRevoked(claims.getId())) {
+				LOGGER.error("JWT token has been revoked");
+				return TokenValidationResult.REVOKED;
 			}
 			return TokenValidationResult.VALID;
 		} catch (MalformedJwtException e) {

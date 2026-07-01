@@ -28,6 +28,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.isf.security.jwt.JWTFilter;
+import org.isf.security.jwt.TokenProvider;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.sessionaudit.model.SessionAudit;
 import org.isf.utils.exception.OHServiceException;
@@ -39,6 +41,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import io.jsonwebtoken.JwtException;
 
 @Service
 public class CustomLogoutHandler implements LogoutHandler {
@@ -49,10 +54,26 @@ public class CustomLogoutHandler implements LogoutHandler {
 	@Autowired
 	private SessionAuditManager sessionAuditManager;
 
+	@Autowired
+	private TokenProvider tokenProvider;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomLogoutHandler.class);
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		// revoke the token family first, independently of the session-audit and session-invalidation steps below
+		String bearerToken = request.getHeader(JWTFilter.AUTHORIZATION_HEADER);
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+			String token = bearerToken.substring(7);
+			if (StringUtils.hasText(token)) {
+				try {
+					tokenProvider.revokeToken(token);
+				} catch (JwtException | IllegalArgumentException e) {
+					LOGGER.warn("Unable to revoke the JWT token presented at logout: {}", e.getMessage());
+				}
+			}
+		}
+
 		try {
 			Optional<Object> sessionAuditIdOpt = Optional.ofNullable(httpSession.getAttribute("sessionAuditId"));
 			if (sessionAuditIdOpt.isPresent()) {
