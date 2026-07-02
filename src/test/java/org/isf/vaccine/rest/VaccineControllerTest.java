@@ -22,6 +22,7 @@
 package org.isf.vaccine.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,6 +38,9 @@ import java.util.Objects;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.vaccine.data.VaccineHelper;
 import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
@@ -154,6 +158,54 @@ public class VaccineControllerTest {
 	}
 
 	@Test
+	void testNewVaccine_VaccineTypeAlreadyPresent_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHDataIntegrityViolationException(new OHExceptionMessage("Duplicated vaccine type")));
+
+		MvcResult result = this.mockMvc
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Vaccine type already present.")))
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testNewVaccine_NotCreated_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		MvcResult result = this.mockMvc
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Vaccine not created.")))
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
 	void testUpdateVaccine_200() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
@@ -171,6 +223,30 @@ public class VaccineControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testUpdateVaccine_NotUpdated_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		MvcResult result = this.mockMvc
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Vaccine not updated.")))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
@@ -195,6 +271,48 @@ public class VaccineControllerTest {
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
 				.andExpect(content().string(containsString(isDeleted)))
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testDeleteVaccine_NotFound_404() throws Exception {
+		String request = "/vaccines/{code}";
+		String code = "0";
+
+		when(vaccineBrowserManagerMock.findVaccine(code))
+				.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(status().isNotFound())
+				.andExpect(content().string(containsString("Vaccine not found.")))
+				.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testDeleteVaccine_NotDeleted_400() throws Exception {
+		String request = "/vaccines/{code}";
+		String code = "0";
+
+		Vaccine vaccine = VaccineHelper.setup(code);
+
+		when(vaccineBrowserManagerMock.findVaccine(code))
+				.thenReturn(vaccine);
+		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
+				.when(vaccineBrowserManagerMock).deleteVaccine(vaccine);
+
+		MvcResult result = this.mockMvc
+				.perform(delete(request, code))
+				.andDo(log())
+				.andExpect(status().is4xxClientError())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Vaccine not deleted.")))
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
