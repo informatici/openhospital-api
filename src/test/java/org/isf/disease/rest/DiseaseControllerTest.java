@@ -22,6 +22,8 @@
 package org.isf.disease.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +44,8 @@ import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -188,12 +192,12 @@ class DiseaseControllerTest {
 
 	@Test
 	void testGetDiseasesIpdInByCode_200() throws Exception {
-		String request = "/diseases/ipd/out/{typecode}";
+		String request = "/diseases/ipd/in/{typecode}";
 
 		String typeCode = "1";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
-		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn(typeCode))
 			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
@@ -365,6 +369,356 @@ class DiseaseControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString("true")))
 
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesOpd_500() throws Exception {
+		String request = "/diseases/opd";
+
+		when(diseaseBrowserManagerMock.getDiseaseOpd())
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting OPD diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesOpdByCode_500() throws Exception {
+		String request = "/diseases/opd/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting OPD diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesIpdOut_500() throws Exception {
+		String request = "/diseases/ipd/out";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting IPD out diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesIpdOutByCode_500() throws Exception {
+		String request = "/diseases/ipd/out/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting IPD out diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesIpdIn_500() throws Exception {
+		String request = "/diseases/ipd/in";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting IPD-in diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesIpdInByCode_500() throws Exception {
+		String request = "/diseases/ipd/in/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn(typeCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting IPD-in diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseases_500() throws Exception {
+		String request = "/diseases/both";
+
+		when(diseaseBrowserManagerMock.getDisease())
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseasesString_500() throws Exception {
+		String request = "/diseases/both/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDisease(typeCode))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, typeCode))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting diseases by type code.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetAllDiseases_500() throws Exception {
+		String request = "/diseases/all";
+
+		when(diseaseBrowserManagerMock.getDiseaseAll())
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Error getting all diseases.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testGetDiseaseByCode_404() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(get(request, code))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(content().string(containsString("No disease found with the specified code.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testNewDisease_duplicatedCode_400() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(true);
+
+		MvcResult result = this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(content().string(containsString("Duplicated disease code.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testNewDisease_duplicatedDescription_400() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
+			.thenReturn(true);
+
+		MvcResult result = this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(content().string(containsString("Duplicated disease description for the same disease type.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testNewDisease_notCreated_500() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.newDisease(any(Disease.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
+
+		MvcResult result = this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Disease not created.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testUpdateDisease_404() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		MvcResult result = this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(content().string(containsString("Disease not found.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testUpdateDisease_notUpdated_500() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(true);
+
+		when(diseaseBrowserManagerMock.updateDisease(any(Disease.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
+
+		MvcResult result = this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(content().string(containsString("Disease not updated.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testDeleteDisease_404() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(null);
+
+		MvcResult result = this.mockMvc
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(content().string(containsString("No disease found with the specified code.")))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testDeleteDisease_notDeleted_200() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		Disease disease = DiseaseHelper.setup();
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(disease);
+
+		doThrow(new OHServiceException(new OHExceptionMessage("Failure")))
+			.when(diseaseBrowserManagerMock).deleteDisease(any(Disease.class));
+
+		MvcResult result = this.mockMvc
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("false")))
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
