@@ -1558,6 +1558,26 @@ paths:
                 $ref: "#/components/schemas/PatientExaminationDTO"
       security:
       - bearerAuth: []
+    delete:
+      tags:
+      - Examinations
+      operationId: deletePatientExamination
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - bearerAuth: []
   /diseasetypes:
     get:
       tags:
