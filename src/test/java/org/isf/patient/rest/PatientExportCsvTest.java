@@ -69,4 +69,18 @@ class PatientExportCsvTest {
 		assertThat(csv).contains("# billItems");
 		assertThat(csv).contains("# billPayments");
 	}
+
+	@Test
+	void neutralizesCsvFormulaInjection() throws Exception {
+		PatientDTO patientDTO = new PatientDTO();
+		patientDTO.setFirstName("=1+2");
+		patientDTO.setSecondName("+SUM(A1)");
+		PatientExportDTO export = new PatientExportDTO();
+		export.setPatient(patientDTO);
+
+		String csv = patientExportCsv.toCsv(export);
+
+		assertThat(csv).contains("'=1+2");
+		assertThat(csv).contains("'+SUM(A1)");
+	}
 }

@@ -108,9 +108,15 @@ public class PatientExportCsv {
 	}
 
 	private String escape(String value) {
-		if (value.contains(",") || value.contains("\"") || value.contains("\r") || value.contains("\n")) {
-			return '"' + value.replace("\"", "\"\"") + '"';
+		String sanitized = value;
+		// Neutralize CSV formula injection: spreadsheet applications interpret a cell starting with =, +, -,
+		// @, tab or carriage return as a formula, so such values are prefixed with a single quote.
+		if (!sanitized.isEmpty() && "=+-@\t\r".indexOf(sanitized.charAt(0)) >= 0) {
+			sanitized = "'" + sanitized;
 		}
-		return value;
+		if (sanitized.contains(",") || sanitized.contains("\"") || sanitized.contains("\r") || sanitized.contains("\n")) {
+			return '"' + sanitized.replace("\"", "\"\"") + '"';
+		}
+		return sanitized;
 	}
 }
