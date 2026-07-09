@@ -26,10 +26,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.isf.pregtreattype.TestPregnantTreatmentType;
+import org.isf.pregtreattype.dto.PregnantTreatmentTypeDTO;
 import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.utils.exception.OHException;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
+
 public class PregnantTreatmentTypeHelper {
+
+	private static ObjectMapper objectMapper;
 
 	public static PregnantTreatmentType setup() throws OHException {
 		TestPregnantTreatmentType testPregnantTreatmentType = new TestPregnantTreatmentType();
@@ -46,6 +55,25 @@ public class PregnantTreatmentTypeHelper {
 					}
 					return null;
 				}).collect(Collectors.toList());
+	}
+
+	public static String asJsonString(PregnantTreatmentTypeDTO body) {
+		try {
+			return getObjectMapper().writeValueAsString(body);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ObjectMapper getObjectMapper() {
+		if (objectMapper == null) {
+			objectMapper = new ObjectMapper()
+					.registerModule(new ParameterNamesModule())
+					.registerModule(new Jdk8Module())
+					.registerModule(new JavaTimeModule());
+		}
+		return objectMapper;
 	}
 
 }
