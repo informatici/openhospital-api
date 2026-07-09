@@ -617,4 +617,29 @@ class PatientControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().string(containsString(PatientHelper.asJsonString(patientMapper.map2DTOList(patientList)))));
     }
+
+	@Test
+	void when_delete_personal_data_with_existent_code_then_anonymized_OK() throws Exception {
+		int code = 123;
+		Patient patient = new Patient();
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(patient);
+		when(patientBrowserManagerMock.anonymizePatient(code)).thenReturn(patient);
+
+		this.mockMvc
+			.perform(delete("/patients/{code}/personal-data", code))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string("true"));
+	}
+
+	@Test
+	void when_delete_personal_data_with_unexistent_code_then_NotFound() throws Exception {
+		int code = 123;
+		when(patientBrowserManagerMock.getPatientById(code)).thenReturn(null);
+
+		this.mockMvc
+			.perform(delete("/patients/{code}/personal-data", code))
+			.andDo(log())
+			.andExpect(status().isNotFound());
+	}
 }
