@@ -181,8 +181,10 @@ public class UserController {
 		User user = userMapper.map2Model(userDTO);
 		// OP-896: core's UserBrowsingManager.newUser() forces the must-change-password flag on every new user
 		try {
+			UserDTO createdUser = userMapper.map2DTO(userManager.newUser(user));
+			createdUser.setPasswd(null);
 			LOGGER.info("User successfully created.");
-			return userMapper.map2DTO(userManager.newUser(user));
+			return createdUser;
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));

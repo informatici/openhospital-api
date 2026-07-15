@@ -36,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -139,6 +140,7 @@ class UserControllerTest {
 			.andExpect(status().isCreated())
 			.andExpect(content().string(containsString(user.getUserName())))
 			.andExpect(content().string(not(containsString("passwdMustChange"))))
+			.andExpect(jsonPath("$.passwd").doesNotExist())
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
