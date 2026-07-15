@@ -104,9 +104,10 @@ public class LoginController {
 			e.printStackTrace();
 		}
 
-		// OP-896: tell the client whether the user must change the password (admin forced it or the lease expired);
+		// OP-896: tell the client whether the user must change the password and why (an administrator forced it or the password lease expired);
 		// the flag is also embedded in the token for the client's convenience, while MustChangePasswordFilter checks the database on every request
-		boolean mustChangePassword = mustChangePassword(user);
+		boolean passwordExpired = isPasswordExpired(user);
+		boolean mustChangePassword = mustChangePassword(user, passwordExpired);
 		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword); // use the shorter validity
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
@@ -117,7 +118,7 @@ public class LoginController {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
 
-		return new LoginResponse(jwt, refreshToken, userDetails, mustChangePassword);
+		return new LoginResponse(jwt, refreshToken, userDetails, mustChangePassword, passwordExpired, passwordLeaseDays());
 	}
 
 	@PostMapping("/auth/refresh-token")
@@ -130,10 +131,15 @@ public class LoginController {
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
 
 				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction;
-				// fails closed when the check is not possible, and self-heals on the next refresh
+				// fails closed when the check is not possible (without a reason, so the client falls back to a generic message), and self-heals on the next refresh
 				boolean mustChangePassword = true;
+				boolean passwordExpired = false;
+				Integer passwordLeaseDays = null;
 				try {
-					mustChangePassword = mustChangePassword(userManager.getUserByName(username));
+					User user = userManager.getUserByName(username);
+					passwordExpired = isPasswordExpired(user);
+					mustChangePassword = mustChangePassword(user, passwordExpired);
+					passwordLeaseDays = passwordLeaseDays();
 				} catch (OHServiceException e) {
 					LOGGER.error("Unable to check the must-change-password flag for user {}, keeping the restriction in place", username, e);
 				}
@@ -141,7 +147,7 @@ public class LoginController {
 				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword);
 				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
 
-				return new LoginResponse(newAccessToken, newRefreshToken, username, mustChangePassword);
+				return new LoginResponse(newAccessToken, newRefreshToken, username, mustChangePassword, passwordExpired, passwordLeaseDays);
 			} else {
 				throw new OHAPIException(new OHExceptionMessage("Invalid Refresh Token"));
 			}
@@ -150,7 +156,19 @@ public class LoginController {
 		}
 	}
 
-	private boolean mustChangePassword(User user) {
-		return user != null && (user.isPasswdMustChange() || userManager.isPasswordExpired(user));
+	private boolean mustChangePassword(User user, boolean passwordExpired) {
+		return user != null && (user.isPasswdMustChange() || passwordExpired);
+	}
+
+	private boolean isPasswordExpired(User user) {
+		return user != null && userManager.isPasswordExpired(user);
+	}
+
+	/**
+	 * The configured password lease in days, or {@code null} when the lease policy is disabled.
+	 */
+	private Integer passwordLeaseDays() {
+		int passwordLeaseDays = userManager.getPasswordLeaseDays();
+		return passwordLeaseDays > 0 ? passwordLeaseDays : null;
 	}
 }

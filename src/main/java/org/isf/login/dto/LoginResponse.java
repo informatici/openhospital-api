@@ -41,6 +41,12 @@ public class LoginResponse {
 	@Schema(description = "Whether the user must change the password before using the application")
 	private boolean mustChangePassword;
 
+	@Schema(description = "Whether the password change is required because the password lease has expired")
+	private boolean passwordExpired;
+
+	@Schema(description = "The configured password lease in days, when the lease policy is active", example = "90")
+	private Integer passwordLeaseDays;
+
 	public LoginResponse() {
 	}
 
@@ -49,10 +55,16 @@ public class LoginResponse {
 	}
 
 	public LoginResponse(String token, String refreshToken, String username, boolean mustChangePassword) {
+		this(token, refreshToken, username, mustChangePassword, false, null);
+	}
+
+	public LoginResponse(String token, String refreshToken, String username, boolean mustChangePassword, boolean passwordExpired, Integer passwordLeaseDays) {
 		this.token = token;
 		this.refreshToken = refreshToken;
 		this.username = username;
 		this.mustChangePassword = mustChangePassword;
+		this.passwordExpired = passwordExpired;
+		this.passwordLeaseDays = passwordLeaseDays;
 	}
 
 	public String getToken() {
@@ -93,6 +105,22 @@ public class LoginResponse {
 
 	public void setMustChangePassword(boolean mustChangePassword) {
 		this.mustChangePassword = mustChangePassword;
+	}
+
+	public boolean isPasswordExpired() {
+		return passwordExpired;
+	}
+
+	public void setPasswordExpired(boolean passwordExpired) {
+		this.passwordExpired = passwordExpired;
+	}
+
+	public Integer getPasswordLeaseDays() {
+		return passwordLeaseDays;
+	}
+
+	public void setPasswordLeaseDays(Integer passwordLeaseDays) {
+		this.passwordLeaseDays = passwordLeaseDays;
 	}
 
 }
