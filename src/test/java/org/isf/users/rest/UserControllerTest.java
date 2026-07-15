@@ -23,6 +23,7 @@ package org.isf.users.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
@@ -66,6 +67,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
@@ -108,6 +110,66 @@ class UserControllerTest {
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = { "users.create" })
+	@DisplayName("Should let core drive the must-change-password flag when creating a user")
+	void shouldNotOverrideMustChangePasswordFlagOnUserCreation() throws Exception {
+		User user = UserHelper.generateUser();
+		UserDTO userDTO = userMapper.map2DTO(user);
+
+		// the core layer is the one flagging every new user for a password change
+		User createdUser = UserHelper.generateUser();
+		createdUser.setPasswdMustChange(true);
+
+		when(userManager.isPasswordValid(any())).thenReturn(true);
+		when(userManager.newUser(any())).thenReturn(createdUser);
+
+		// the extra property must be ignored: UserDTO intentionally doesn't expose the flag
+		ObjectNode payload = objectMapper.valueToTree(userDTO);
+		payload.put("passwdMustChange", true);
+
+		var result = mvc.perform(
+				post("/users")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(payload.toString())
+			)
+			.andDo(log())
+			.andExpect(status().isCreated())
+			.andExpect(content().string(containsString(user.getUserName())))
+			.andExpect(content().string(not(containsString("passwdMustChange"))))
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+
+		ArgumentCaptor<User> newUser = ArgumentCaptor.forClass(User.class);
+		verify(userManager).newUser(newUser.capture());
+		assertThat(newUser.getValue().isPasswdMustChange()).isFalse();
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = { "users.create" })
+	@DisplayName("Should reject a user creation when the password does not meet the strength requirements")
+	void shouldRejectWeakPasswordOnUserCreation() throws Exception {
+		User user = UserHelper.generateUser();
+		user.setPasswd("weak");
+		UserDTO userDTO = userMapper.map2DTO(user);
+
+		when(userManager.isPasswordValid(any())).thenReturn(false);
+
+		var result = mvc.perform(
+				post("/users")
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(userDTO))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andReturn();
+
+		LOGGER.debug("result: {}", result);
+
+		verify(userManager, never()).newUser(any());
 	}
 
 	@Test
@@ -332,7 +394,7 @@ class UserControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should update only password")
+		@DisplayName("Should update only the password and set the must-change-password flag")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void shouldUpdateOnlyPassword() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
@@ -350,7 +412,31 @@ class UserControllerTest {
 
 			LOGGER.debug("result: {}", result);
 
-			verify(userManager).updatePassword(any());
+			// OP-896: a password reset by an administrator must be changed by the user at next login
+			ArgumentCaptor<User> updatedUser = ArgumentCaptor.forClass(User.class);
+			verify(userManager).updatePassword(updatedUser.capture());
+			assertThat(updatedUser.getValue().isPasswdMustChange()).isTrue();
+			verify(userManager, never()).updateUser(any());
+		}
+
+		@Test
+		@DisplayName("Should reject a password reset that does not meet the strength requirements")
+		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
+		void shouldRejectWeakPasswordOnAdminPasswordReset() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "weak", "Simple user");
+
+			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
+			when(userManager.isPasswordValid(any())).thenReturn(false);
+
+			var result = mvc.perform(
+					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+			LOGGER.debug("result: {}", result);
+
+			verify(userManager, never()).updatePassword(any());
 			verify(userManager, never()).updateUser(any());
 		}
 
