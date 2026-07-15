@@ -39,9 +39,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 /**
- * Restricts users that must change their password (OP-896) to the endpoints needed to change it. The must-change-password claim embedded in the JWT token by
- * {@link TokenProvider} acts as a zero-cost gate: the database is checked again only when the claim is present, so that the restriction is lifted right after
- * the password change without waiting for a new token.
+ * Restricts users that must change their password (OP-896) to the endpoints needed to change it. The must-change-password state is deliberately checked
+ * against the database on every request carrying a bearer token: the claim embedded in the JWT token by {@link TokenProvider} only informs the client and is
+ * never trusted by the server, so a token issued before an administrator forced the change (or before the password lease expired) cannot be used to keep
+ * working until token invalidation (OP-1342) is available.
  */
 public class MustChangePasswordFilter extends GenericFilterBean {
 
@@ -72,8 +73,8 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 
 		String jwt = resolveToken(httpServletRequest);
 
-		if (StringUtils.hasText(jwt) && this.tokenProvider.getMustChangePasswordFromToken(jwt)
-			&& mustStillChangePassword(jwt) && !isAllowed(httpServletRequest)) {
+		// the whitelist is checked first so that the endpoints needed to change the password do not cost a database access
+		if (StringUtils.hasText(jwt) && !isAllowed(httpServletRequest) && mustChangePassword(jwt)) {
 			sendErrorResponse(httpServletResponse, HttpServletResponse.SC_FORBIDDEN,
 				"The password must be changed before using the API.");
 			return;
@@ -83,10 +84,10 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 	}
 
 	/**
-	 * Checks the database to confirm that the user still has to change the password: the claim may be stale when the password has just been changed with the
-	 * same token still in use.
+	 * Checks the database to determine whether the user has to change the password. Fails closed: the restriction is kept in place when the check cannot be
+	 * performed.
 	 */
-	private boolean mustStillChangePassword(String jwt) {
+	private boolean mustChangePassword(String jwt) {
 		try {
 			User user = this.userManager.getUserByName(this.tokenProvider.getUsernameFromToken(jwt));
 			return user != null && (user.isPasswdMustChange() || this.userManager.isPasswordExpired(user));

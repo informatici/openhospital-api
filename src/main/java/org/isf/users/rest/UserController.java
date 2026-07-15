@@ -241,6 +241,10 @@ public class UserController {
 		if (entity == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
+		// OP-896: while a password change is pending, the profile can only be used to change the password itself
+		if ((entity.isPasswdMustChange() || userManager.isPasswordExpired(entity)) && (userDTO.getPasswd() == null || userDTO.getPasswd().isEmpty())) {
+			throw new OHAPIException(new OHExceptionMessage("The password must be changed before updating the profile."), HttpStatus.FORBIDDEN);
+		}
 		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		user.setUserGroupName(entity.getUserGroupName());

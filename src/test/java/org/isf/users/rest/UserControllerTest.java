@@ -21,6 +21,7 @@
  */
 package org.isf.users.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
@@ -53,6 +54,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -456,6 +458,68 @@ class UserControllerTest {
 			LOGGER.debug("result: {}", result);
 
 			verify(userManager).updatePassword(any());
+			verify(userManager, never()).updateUser(any());
+		}
+
+		@Test
+		@DisplayName("Should reject a profile update without password change when the password must be changed")
+		@WithMockUser(username = "doctor")
+		void shouldRejectProfileUpdateWithoutPasswordWhenPasswordMustChange() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
+			user.setPasswdMustChange(true);
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andExpect(content().string(containsString("The password must be changed before updating the profile.")))
+				.andReturn();
+
+			verify(userManager, never()).updateUser(any());
+			verify(userManager, never()).updatePassword(any());
+		}
+
+		@Test
+		@DisplayName("Should reject a profile update without password change when the password lease has expired")
+		@WithMockUser(username = "doctor")
+		void shouldRejectProfileUpdateWithoutPasswordWhenPasswordLeaseExpired() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isPasswordExpired(any())).thenReturn(true);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isForbidden())
+				.andReturn();
+
+			verify(userManager, never()).updateUser(any());
+			verify(userManager, never()).updatePassword(any());
+		}
+
+		@Test
+		@DisplayName("Should allow the password change and clear the flag when the password must be changed")
+		@WithMockUser(username = "doctor")
+		void shouldAllowPasswordChangeWhenPasswordMustChange() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
+			user.setPasswdMustChange(true);
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.updatePassword(any())).thenReturn(user);
+			when(userManager.isPasswordValid(any())).thenReturn(true);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isOk())
+				.andReturn();
+
+			ArgumentCaptor<User> updatedUser = ArgumentCaptor.forClass(User.class);
+			verify(userManager).updatePassword(updatedUser.capture());
+			assertThat(updatedUser.getValue().isPasswdMustChange()).isFalse();
 			verify(userManager, never()).updateUser(any());
 		}
 

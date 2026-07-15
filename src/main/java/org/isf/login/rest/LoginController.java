@@ -105,7 +105,7 @@ public class LoginController {
 		}
 
 		// OP-896: tell the client whether the user must change the password (admin forced it or the lease expired);
-		// the flag is also embedded in the token so that MustChangePasswordFilter can restrict the API accordingly
+		// the flag is also embedded in the token for the client's convenience, while MustChangePasswordFilter checks the database on every request
 		boolean mustChangePassword = mustChangePassword(user);
 		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword); // use the shorter validity
 		String refreshToken = tokenProvider.generateRefreshToken(authentication);

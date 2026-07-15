@@ -22,6 +22,7 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -37,6 +38,7 @@ import org.isf.security.jwt.JWTFilter;
 import org.isf.security.jwt.MustChangePasswordFilter;
 import org.isf.security.jwt.TokenProvider;
 import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -81,21 +83,22 @@ class MustChangePasswordFilterTest {
 	}
 
 	@Test
-	void testDoFilter_NoMustChangePasswordClaim() throws ServletException, IOException {
+	void testDoFilter_StaleTokenWithoutClaim() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("GET", "/patients");
-		when(tokenProvider.getMustChangePasswordFromToken(TOKEN)).thenReturn(false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
-		// Ensure the filter chain continues without any database access
-		verify(filterChain).doFilter(request, response);
-		verifyNoInteractions(userManager);
+		// Ensure a token issued before the flag was raised cannot bypass the restriction: the claim is never trusted, only the database is
+		assertThat(response.getStatus()).isEqualTo(403);
+		verify(tokenProvider, never()).getMustChangePasswordFromToken(TOKEN);
+		verifyNoInteractions(filterChain);
 	}
 
 	@Test
 	void testDoFilter_MustChangePassword_OtherEndpoint() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("GET", "/patients");
-		mockMustChangePasswordUser(true, false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -107,7 +110,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_PasswordLeaseExpired() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("POST", "/admissions");
-		mockMustChangePasswordUser(false, true);
+		mockUserInDatabase(false, true);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -118,7 +121,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_UpdateProfileAllowed() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("PUT", "/users/me");
-		mockMustChangePasswordUser(true, false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -129,7 +132,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_RetrieveProfileAllowed() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("GET", "/users/me");
-		mockMustChangePasswordUser(true, false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -139,7 +142,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_LogoutAllowed() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("POST", "/auth/logout");
-		mockMustChangePasswordUser(true, false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -149,7 +152,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_RefreshTokenAllowed() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("POST", "/auth/refresh-token");
-		mockMustChangePasswordUser(true, false);
+		mockUserInDatabase(true, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -159,7 +162,7 @@ class MustChangePasswordFilterTest {
 	@Test
 	void testDoFilter_MustChangePassword_ClearedInDatabase() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("GET", "/patients");
-		mockMustChangePasswordUser(false, false);
+		mockUserInDatabase(false, false);
 
 		filter.doFilter(request, response, filterChain);
 
@@ -168,9 +171,21 @@ class MustChangePasswordFilterTest {
 	}
 
 	@Test
+	void testDoFilter_MustChangePassword_DatabaseError() throws ServletException, IOException, OHServiceException {
+		MockHttpServletRequest request = requestWithToken("GET", "/patients");
+		when(tokenProvider.getUsernameFromToken(TOKEN)).thenReturn(USERNAME);
+		when(userManager.getUserByName(USERNAME)).thenThrow(new OHServiceException(new OHExceptionMessage("Database error")));
+
+		filter.doFilter(request, response, filterChain);
+
+		// Ensure the filter fails closed when the flag cannot be checked
+		assertThat(response.getStatus()).isEqualTo(403);
+		verifyNoInteractions(filterChain);
+	}
+
+	@Test
 	void testDoFilter_MustChangePassword_UserNotFound() throws ServletException, IOException {
 		MockHttpServletRequest request = requestWithToken("GET", "/patients");
-		when(tokenProvider.getMustChangePasswordFromToken(TOKEN)).thenReturn(true);
 		when(tokenProvider.getUsernameFromToken(TOKEN)).thenReturn(USERNAME);
 
 		filter.doFilter(request, response, filterChain);
@@ -186,13 +201,12 @@ class MustChangePasswordFilterTest {
 		return request;
 	}
 
-	// Helper method to mock a user carrying the must-change-password claim, still flagged or not in the database
-	private void mockMustChangePasswordUser(boolean passwdMustChange, boolean passwordExpired) throws OHServiceException {
+	// Helper method to mock the persisted state of the user resolved from the token, flagged or not in the database
+	private void mockUserInDatabase(boolean passwdMustChange, boolean passwordExpired) throws OHServiceException {
 		User user = new User();
 		user.setUserName(USERNAME);
 		user.setPasswdMustChange(passwdMustChange);
 
-		when(tokenProvider.getMustChangePasswordFromToken(TOKEN)).thenReturn(true);
 		when(tokenProvider.getUsernameFromToken(TOKEN)).thenReturn(USERNAME);
 		when(userManager.getUserByName(USERNAME)).thenReturn(user);
 		when(userManager.isPasswordExpired(user)).thenReturn(passwordExpired);
