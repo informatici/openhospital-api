@@ -94,8 +94,6 @@ public class LoginController {
 		Authentication authentication = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateJwtToken(authentication, false); // use the shorter validity
-		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
 		String userDetails = (String) authentication.getPrincipal();
 		User user = null;
@@ -106,15 +104,18 @@ public class LoginController {
 			e.printStackTrace();
 		}
 
+		// OP-896: tell the client whether the user must change the password (admin forced it or the lease expired);
+		// the flag is also embedded in the token so that MustChangePasswordFilter can restrict the API accordingly
+		boolean mustChangePassword = mustChangePassword(user);
+		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword); // use the shorter validity
+		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
 				sessionAuditManager.newSessionAudit(new SessionAudit(userDetails, LocalDateTime.now(), null)));
 		} catch (OHServiceException e1) {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
-
-		// OP-896: tell the client whether the user must change the password (admin forced it or the lease expired)
-		boolean mustChangePassword = user != null && (user.isPasswdMustChange() || userManager.isPasswordExpired(user));
 
 		return new LoginResponse(jwt, refreshToken, userDetails, mustChangePassword);
 	}
@@ -127,15 +128,28 @@ public class LoginController {
 			if (tokenProvider.validateToken(refreshToken) == TokenValidationResult.VALID) {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
-				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
+
+				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction
+				boolean mustChangePassword = false;
+				try {
+					mustChangePassword = mustChangePassword(userManager.getUserByName(username));
+				} catch (OHServiceException e) {
+					LOGGER.error("Unable to check the must-change-password flag for user {}", username);
+				}
+
+				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword);
 				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
 
-				return new LoginResponse(newAccessToken, newRefreshToken, username);
+				return new LoginResponse(newAccessToken, newRefreshToken, username, mustChangePassword);
 			} else {
 				throw new OHAPIException(new OHExceptionMessage("Invalid Refresh Token"));
 			}
 		} catch (JwtException e) {
 			throw new OHAPIException(new OHExceptionMessage("Refresh token expired or invalid"));
 		}
+	}
+
+	private boolean mustChangePassword(User user) {
+		return user != null && (user.isPasswdMustChange() || userManager.isPasswordExpired(user));
 	}
 }

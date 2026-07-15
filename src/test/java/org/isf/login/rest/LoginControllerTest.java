@@ -123,7 +123,7 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(mockToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
@@ -159,7 +159,7 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
@@ -194,7 +194,7 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 		when(userManager.isPasswordExpired(user)).thenReturn(true);
@@ -223,17 +223,56 @@ class LoginControllerTest {
 		// Create a mock TokenRefreshRequest object
 		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
 
+		// A user that does not need to change the password
+		User user = new User();
+		user.setUserName(username);
+
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(newAccessToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(newAccessToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
 
 		// Expected LoginResponse object
 		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username);
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform POST request to refresh-token endpoint
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testRefreshToken_MustChangePassword() throws Exception {
+		String refreshToken = "validRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		// A user still flagged to change the password: the flag must be recomputed, not silently cleared (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswdMustChange(true);
+
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+
+		// Expected LoginResponse with mustChangePassword = true
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
 		mvc.perform(post("/auth/refresh-token")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)

@@ -179,8 +179,7 @@ public class UserController {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
 		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
-		// OP-896: the first password assigned by the administrator must be changed by the user at first access
-		user.setPasswdMustChange(true);
+		// OP-896: core's UserBrowsingManager.newUser() forces the must-change-password flag on every new user
 		try {
 			LOGGER.info("User successfully created.");
 			return userMapper.map2DTO(userManager.newUser(user));
