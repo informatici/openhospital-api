@@ -46,6 +46,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
+
 class MustChangePasswordFilterTest {
 
 	private static final String TOKEN = "must.change.token";
@@ -140,6 +142,28 @@ class MustChangePasswordFilterTest {
 	}
 
 	@Test
+	void testDoFilter_MustChangePassword_LoginAllowed() throws ServletException, IOException, OHServiceException {
+		MockHttpServletRequest request = requestWithToken("POST", "/auth/login");
+		mockUserInDatabase(true, false);
+
+		filter.doFilter(request, response, filterChain);
+
+		// Ensure a still-valid token attached by the client cannot lock the flagged user (or anyone sharing the client) out of the login endpoint
+		verify(filterChain).doFilter(request, response);
+	}
+
+	@Test
+	void testDoFilter_MustChangePassword_HealthcheckAllowed() throws ServletException, IOException, OHServiceException {
+		MockHttpServletRequest request = requestWithToken("GET", "/healthcheck");
+		mockUserInDatabase(true, false);
+
+		filter.doFilter(request, response, filterChain);
+
+		// Ensure the healthcheck never requires any authentication state
+		verify(filterChain).doFilter(request, response);
+	}
+
+	@Test
 	void testDoFilter_MustChangePassword_LogoutAllowed() throws ServletException, IOException, OHServiceException {
 		MockHttpServletRequest request = requestWithToken("POST", "/auth/logout");
 		mockUserInDatabase(true, false);
@@ -179,6 +203,18 @@ class MustChangePasswordFilterTest {
 		filter.doFilter(request, response, filterChain);
 
 		// Ensure the filter fails closed when the flag cannot be checked
+		assertThat(response.getStatus()).isEqualTo(403);
+		verifyNoInteractions(filterChain);
+	}
+
+	@Test
+	void testDoFilter_MustChangePassword_TokenExpiredDuringCheck() throws ServletException, IOException {
+		MockHttpServletRequest request = requestWithToken("GET", "/patients");
+		when(tokenProvider.getUsernameFromToken(TOKEN)).thenThrow(new ExpiredJwtException(null, null, "JWT expired"));
+
+		filter.doFilter(request, response, filterChain);
+
+		// Ensure a token expiring between the JWTFilter check and the re-parse fails closed instead of bubbling up as a 500
 		assertThat(response.getStatus()).isEqualTo(403);
 		verifyNoInteractions(filterChain);
 	}

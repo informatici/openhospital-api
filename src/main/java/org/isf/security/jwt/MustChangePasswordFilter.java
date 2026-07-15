@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+import io.jsonwebtoken.JwtException;
+
 /**
  * Restricts users that must change their password (OP-896) to the endpoints needed to change it. The must-change-password state is deliberately checked
  * against the database on every request carrying a bearer token: the claim embedded in the JWT token by {@link TokenProvider} only informs the client and is
@@ -51,8 +53,13 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 	private static final String[][] ALLOWED_ENDPOINTS = {
 		{ "GET", "/users/me" },
 		{ "PUT", "/users/me" },
+		// login re-authenticates and re-issues the token with a freshly recomputed flag, so a stale token attached by the client must never block it
+		{ "POST", "/auth/login" },
+		// normally consumed by Spring's LogoutFilter before this filter runs, kept as belt-and-braces
 		{ "POST", "/auth/logout" },
-		{ "POST", "/auth/refresh-token" }
+		{ "POST", "/auth/refresh-token" },
+		// the healthcheck must never require any authentication state
+		{ "GET", "/healthcheck" }
 	};
 
 	private final TokenProvider tokenProvider;
@@ -71,11 +78,11 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
-		String jwt = resolveToken(httpServletRequest);
+		String jwt = JWTFilter.resolveToken(httpServletRequest);
 
 		// the whitelist is checked first so that the endpoints needed to change the password do not cost a database access
 		if (StringUtils.hasText(jwt) && !isAllowed(httpServletRequest) && mustChangePassword(jwt)) {
-			sendErrorResponse(httpServletResponse, HttpServletResponse.SC_FORBIDDEN,
+			JWTFilter.sendErrorResponse(httpServletResponse, HttpServletResponse.SC_FORBIDDEN,
 				"The password must be changed before using the API.");
 			return;
 		}
@@ -91,8 +98,9 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 		try {
 			User user = this.userManager.getUserByName(this.tokenProvider.getUsernameFromToken(jwt));
 			return user != null && (user.isPasswdMustChange() || this.userManager.isPasswordExpired(user));
-		} catch (OHServiceException e) {
-			LOGGER.error("Unable to check the must-change-password flag, keeping the restriction in place");
+		} catch (OHServiceException | JwtException e) {
+			// JwtException covers a token expiring between the JWTFilter check and this re-parse
+			LOGGER.error("Unable to check the must-change-password flag, keeping the restriction in place", e);
 			return true;
 		}
 	}
@@ -105,19 +113,5 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 			}
 		}
 		return false;
-	}
-
-	private String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(JWTFilter.AUTHORIZATION_HEADER);
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
-		}
-		return null;
-	}
-
-	private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
-		response.setStatus(status);
-		response.setContentType("application/json");
-		response.getWriter().write(String.format("{\"error\": \"%s\"}", message));
 	}
 }

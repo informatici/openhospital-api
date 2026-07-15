@@ -129,12 +129,13 @@ public class LoginController {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
 
-				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction
-				boolean mustChangePassword = false;
+				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction;
+				// fails closed when the check is not possible, and self-heals on the next refresh
+				boolean mustChangePassword = true;
 				try {
 					mustChangePassword = mustChangePassword(userManager.getUserByName(username));
 				} catch (OHServiceException e) {
-					LOGGER.error("Unable to check the must-change-password flag for user {}", username);
+					LOGGER.error("Unable to check the must-change-password flag for user {}, keeping the restriction in place", username, e);
 				}
 
 				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword);

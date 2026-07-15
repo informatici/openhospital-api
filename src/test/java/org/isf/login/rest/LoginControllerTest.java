@@ -47,6 +47,8 @@ import org.isf.security.jwt.TokenValidationResult;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.users.data.UserHelper;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -268,6 +270,36 @@ class LoginControllerTest {
 		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
+
+		// Expected LoginResponse with mustChangePassword = true
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testRefreshToken_FlagCheckFails_FailsClosed() throws Exception {
+		String refreshToken = "validRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		// The database check fails: the flag must fail closed instead of silently dropping the restriction (OP-896)
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenThrow(new OHServiceException(new OHExceptionMessage("Database error")));
 
 		// Expected LoginResponse with mustChangePassword = true
 		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true);

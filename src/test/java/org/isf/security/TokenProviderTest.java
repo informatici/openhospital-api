@@ -124,7 +124,7 @@ class TokenProviderTest {
 	}
 
 	@Test
-	void testGetMustChangePasswordFromToken_TwoArgsOverload() {
+	void testGenerateJwtTokenTwoArgsNeverAddsClaim() {
 		Authentication authentication = createAuthentication();
 
 		// The two arguments overload must never add the claim (OP-896)

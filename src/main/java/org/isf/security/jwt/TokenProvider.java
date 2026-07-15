@@ -168,6 +168,9 @@ public class TokenProvider implements Serializable {
 		return builder.compact();
 	}
 
+	/**
+	 * Reads the must-change-password claim embedded for the client: the server never trusts it, {@link MustChangePasswordFilter} checks the database instead.
+	 */
 	public boolean getMustChangePasswordFromToken(String token) {
 		return Boolean.TRUE.equals(getClaimFromToken(token, claims -> claims.get(MUST_CHANGE_PASSWORD_KEY, Boolean.class)));
 	}
