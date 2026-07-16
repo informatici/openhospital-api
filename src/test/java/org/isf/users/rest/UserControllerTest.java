@@ -630,6 +630,24 @@ class UserControllerTest {
 		}
 
 		@Test
+		@DisplayName("Should reject reusing the current password on profile update")
+		@WithMockUser(username = "doctor")
+		void shouldRejectReusingCurrentPassword() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "SamePass1@", "Simple user");
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isSameAsCurrentPassword(any(), any())).thenReturn(true);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+			verify(userManager, never()).updatePassword(any());
+		}
+
+		@Test
 		@DisplayName("Should update user without updating password")
 		@WithMockUser(username = "doctor")
 		void shouldUpdateUserWithoutUpdatingPassword() throws Exception {
