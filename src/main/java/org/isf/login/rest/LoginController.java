@@ -131,7 +131,8 @@ public class LoginController {
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
 
 				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction;
-				// fails closed when the check is not possible (without a reason, so the client falls back to a generic message), and self-heals on the next refresh
+				// fails closed when the check is not possible (without a reason, so the client falls back to a generic
+				// message), and self-heals on the next refresh
 				boolean mustChangePassword = true;
 				boolean passwordExpired = false;
 				Integer passwordLeaseDays = null;
