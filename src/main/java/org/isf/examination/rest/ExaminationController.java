@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -105,7 +105,8 @@ public class ExaminationController {
 		if (dto.getPex_ID() != id) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination id mismatch."));
 		}
-		if (examinationBrowserManager.getByID(id) == null) {
+		PatientExamination old = examinationBrowserManager.getByID(id);
+		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
 		}
 
@@ -118,6 +119,10 @@ public class ExaminationController {
 		PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
 		patientExamination.setPatient(patient);
 		patientExamination.setPex_date(dto.getPex_date());
+		// OP-892: the sex/age snapshot is taken at insertion and is not part of the DTO, so carry it over
+		// from the stored examination or the mapped entity would overwrite it with null on update
+		patientExamination.setSex(old.getSex());
+		patientExamination.setAge(old.getAge());
 
 		return patientExaminationMapper.map2DTO(examinationBrowserManager.saveOrUpdate(patientExamination));
 	}
