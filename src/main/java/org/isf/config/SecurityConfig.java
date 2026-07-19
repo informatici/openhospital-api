@@ -309,7 +309,10 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
 				.requestMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
 				.requestMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
-				// stockmovements
+				// stockmovements: StockMovementController currently exposes only POST (charge/discharge) and GET, but the
+				// update/delete rules are declared on purpose (defense in depth) so that any mutating endpoint added under
+				// /stockmovements later is protected by default instead of silently falling through to
+				// anyRequest().authenticated() — which is exactly the gap this change fixes.
 				.requestMatchers(HttpMethod.POST, "/stockmovements/**").hasAuthority("stockmovements.create")
 				.requestMatchers(HttpMethod.GET, "/stockmovements/**").hasAuthority("stockmovements.read")
 				.requestMatchers(HttpMethod.PUT, "/stockmovements/**").hasAuthority("stockmovements.update")
