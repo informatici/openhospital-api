@@ -8071,11 +8071,11 @@ components:
         preparationDate:
           type: string
           description: The preparation date
-          example: 2020-06-24T10:00:00
+          example: 2020-06-24
         dueDate:
           type: string
           description: The due date
-          example: 2021-06-24T10:00:00
+          example: 2021-06-24
         cost:
           type: number
           description: The lot's code

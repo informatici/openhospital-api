@@ -22,13 +22,9 @@
 package org.isf.medicalstock.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.NotNull;
-
-import org.isf.shared.mapper.converter.DateOrDateTimeDeserializer;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -39,14 +35,12 @@ public class LotDTO {
 	private String code;
 
 	@NotNull(message = "The preparation date is required")
-	@Schema(description = "The preparation date", example = "2020-06-24T10:00:00", type = "string")
-	@JsonDeserialize(using = DateOrDateTimeDeserializer.class)
-	private LocalDateTime preparationDate;
+	@Schema(description = "The preparation date", example = "2020-06-24", type = "string")
+	private LocalDate preparationDate;
 
 	@NotNull(message = "The due date is required")
-	@Schema(description = "The due date", example = "2021-06-24T10:00:00", type = "string")
-	@JsonDeserialize(using = DateOrDateTimeDeserializer.class)
-	private LocalDateTime dueDate;
+	@Schema(description = "The due date", example = "2021-06-24", type = "string")
+	private LocalDate dueDate;
 
 	@Schema(description = "The lot's code", example = "750")
 	private BigDecimal cost;
@@ -54,7 +48,7 @@ public class LotDTO {
 	public LotDTO() {
 	}
 
-	public LotDTO(String code, LocalDateTime preparationDate, LocalDateTime dueDate, BigDecimal cost) {
+	public LotDTO(String code, LocalDate preparationDate, LocalDate dueDate, BigDecimal cost) {
 		this.code = code;
 		this.preparationDate = preparationDate;
 		this.dueDate = dueDate;
@@ -65,11 +59,11 @@ public class LotDTO {
 		return this.code;
 	}
 
-	public LocalDateTime getPreparationDate() {
+	public LocalDate getPreparationDate() {
 		return this.preparationDate;
 	}
 
-	public LocalDateTime getDueDate() {
+	public LocalDate getDueDate() {
 		return this.dueDate;
 	}
 
@@ -81,11 +75,11 @@ public class LotDTO {
 		this.code = code;
 	}
 
-	public void setPreparationDate(LocalDateTime preparationDate) {
+	public void setPreparationDate(LocalDate preparationDate) {
 		this.preparationDate = preparationDate;
 	}
 
-	public void setDueDate(LocalDateTime dueDate) {
+	public void setDueDate(LocalDate dueDate) {
 		this.dueDate = dueDate;
 	}
 

@@ -24,6 +24,7 @@ package org.isf.medicalstock.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.isf.medicalstockward.dto.MovementWardDTO;
@@ -33,39 +34,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
- * The stock movement dates carry a time, and used to be declared as plain dates.
+ * The dates this surface exposes are of two kinds, and the distinction is deliberate.
  * <p>
- * Callers that were written against the old declaration send a date with no time to the charge,
- * discharge and ward movement endpoints. Those requests have to keep working: they are the only
- * part of this surface that ever did, since every endpoint reading these DTOs answered 500.
+ * A movement is an event, so its date carries a time and is exposed as a date and time. A lot's
+ * preparation and due dates are dates: the time of day is never chosen, so they are exposed as
+ * plain dates and widened to the start and the end of the day when they reach the model.
  */
-class MovementDateCompatibilityTest {
+class MovementDateContractTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@Test
-	void aRequestSendingAPlainDateIsStillAccepted() throws Exception {
-		MovementDTO movement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24\"}", MovementDTO.class);
-		LotDTO lot = objectMapper.readValue(
-			"{\"code\":\"LOT1\",\"preparationDate\":\"2020-06-24\",\"dueDate\":\"2021-06-24\"}", LotDTO.class);
-		MovementWardDTO wardMovement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24\"}", MovementWardDTO.class);
-
-		assertThat(movement.getDate()).isEqualTo(LocalDateTime.of(2020, 6, 24, 0, 0));
-		assertThat(lot.getPreparationDate()).isEqualTo(LocalDateTime.of(2020, 6, 24, 0, 0));
-		assertThat(lot.getDueDate()).isEqualTo(LocalDateTime.of(2021, 6, 24, 0, 0));
-		assertThat(wardMovement.getDate()).isEqualTo(LocalDateTime.of(2020, 6, 24, 0, 0));
-	}
-
-	@Test
-	void aRequestSendingADateAndTimeKeepsIt() throws Exception {
+	void aMovementDateCarriesItsTime() throws Exception {
 		MovementDTO movement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24T10:15:30\"}", MovementDTO.class);
+		MovementWardDTO wardMovement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24T10:15:30\"}", MovementWardDTO.class);
 
 		assertThat(movement.getDate()).isEqualTo(LocalDateTime.of(2020, 6, 24, 10, 15, 30));
+		assertThat(wardMovement.getDate()).isEqualTo(LocalDateTime.of(2020, 6, 24, 10, 15, 30));
 	}
 
 	@Test
-	void aValueThatIsNeitherIsStillRejected() {
+	void aLotCarriesPlainDates() throws Exception {
+		LotDTO lot = objectMapper.readValue(
+			"{\"code\":\"LOT1\",\"preparationDate\":\"2020-06-24\",\"dueDate\":\"2021-06-24\"}", LotDTO.class);
+
+		assertThat(lot.getPreparationDate()).isEqualTo(LocalDate.of(2020, 6, 24));
+		assertThat(lot.getDueDate()).isEqualTo(LocalDate.of(2021, 6, 24));
+	}
+
+	@Test
+	void aValueThatIsNeitherIsRejected() {
 		assertThatThrownBy(() -> objectMapper.readValue("{\"code\":1,\"date\":\"not a date\"}", MovementDTO.class))
+			.isInstanceOf(Exception.class);
+		assertThatThrownBy(() -> objectMapper.readValue("{\"code\":\"LOT1\",\"dueDate\":\"not a date\"}", LotDTO.class))
 			.isInstanceOf(Exception.class);
 	}
 }

@@ -25,13 +25,10 @@ import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
 
-import org.isf.shared.mapper.converter.DateOrDateTimeDeserializer;
 import org.isf.medical.dto.MedicalDTO;
 import org.isf.medstockmovtype.dto.MovementTypeDTO;
 import org.isf.supplier.dto.SupplierDTO;
 import org.isf.ward.dto.WardDTO;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -56,7 +53,6 @@ public class MovementDTO {
 
 	@NotNull(message = "the movement's date is required")
 	@Schema(description = "The movement date", example = "2020-06-24T10:00:00", type = "string")
-	@JsonDeserialize(using = DateOrDateTimeDeserializer.class)
 	private LocalDateTime date;
 
 	@NotNull(message = "the movement's medical quantity is required")

@@ -43,6 +43,7 @@ import org.isf.medicalstock.model.Movement;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.LotMapping;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,6 +94,9 @@ class StockMovementControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		modelMapper.registerModule(new Jsr310Module());
+		// the lot date conversions live in LotMapping, which the application registers from
+		// LotMapper's @PostConstruct: nothing calls it when the mapper is built by hand here
+		LotMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(movementMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(lotMapper, "modelMapper", modelMapper);
 	}
@@ -115,10 +119,12 @@ class StockMovementControllerTest {
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$", hasSize(movements.size())))
-			// the movement and its lot are recorded with a time of day: it has to survive the mapping,
+			// a movement is an event: its time of day is meaningful and has to survive the mapping,
 			// which is what a date-only field on the DTO both truncated and made the mapper reject
 			.andExpect(jsonPath("$[0].date").value(movementDate.toString()))
-			.andExpect(jsonPath("$[0].lot.dueDate").value(dueDate.toString()));
+			// a lot's due date is a date: the model stores it as the last second of the day, and the
+			// API exposes the day itself rather than that artificial time
+			.andExpect(jsonPath("$[0].lot.dueDate").value(dueDate.toLocalDate().toString()));
 
 		assertThat(movementDate.toLocalTime()).isNotEqualTo(LocalTime.MIDNIGHT);
 	}
