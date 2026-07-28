@@ -107,6 +107,42 @@ class TokenProviderTest {
 	}
 
 	@Test
+	void testGenerateJwtToken_MustChangePassword() {
+		Authentication authentication = createAuthentication();
+
+		// Generate token for a user that must change the password (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false, true);
+
+		// The claim is present and the dedicated getter reads it back
+		Claims claims = tokenProvider.getAllClaimsFromToken(token);
+		assertThat(claims.get("mustChangePassword", Boolean.class)).isTrue();
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isTrue();
+	}
+
+	@Test
+	void testGenerateJwtToken_MustChangePasswordClaimAbsent() {
+		Authentication authentication = createAuthentication();
+
+		// Generate token for a user that does not need to change the password (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false, false);
+
+		// The claim is not added at all and the dedicated getter returns false
+		Claims claims = tokenProvider.getAllClaimsFromToken(token);
+		assertThat(claims).doesNotContainKey("mustChangePassword");
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isFalse();
+	}
+
+	@Test
+	void testGenerateJwtTokenTwoArgsNeverAddsClaim() {
+		Authentication authentication = createAuthentication();
+
+		// The two arguments overload must never add the claim (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false);
+
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isFalse();
+	}
+
+	@Test
 	void testValidateToken_Valid() {
 		Authentication authentication = createAuthentication();
 
@@ -405,7 +441,7 @@ class TokenProviderTest {
 		String tokenFamilyId = tokenProvider.newTokenFamilyId();
 
 		// Generate both tokens with the same explicit family id
-		String accessToken = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+		String accessToken = tokenProvider.generateJwtToken(authentication, false, false, tokenFamilyId);
 		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 		// Get Claims from tokens
@@ -434,7 +470,7 @@ class TokenProviderTest {
 		Authentication authentication = createAuthentication();
 		String tokenFamilyId = tokenProvider.newTokenFamilyId();
 
-		String token = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+		String token = tokenProvider.generateJwtToken(authentication, false, false, tokenFamilyId);
 
 		assertThat(tokenProvider.getJtiFromToken(token)).isEqualTo(tokenFamilyId);
 	}
@@ -443,7 +479,7 @@ class TokenProviderTest {
 	void testRevokeToken() {
 		Authentication authentication = createAuthentication();
 		String tokenFamilyId = tokenProvider.newTokenFamilyId();
-		String accessToken = tokenProvider.generateJwtToken(authentication, false, tokenFamilyId);
+		String accessToken = tokenProvider.generateJwtToken(authentication, false, false, tokenFamilyId);
 		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 		assertThat(tokenProvider.validateToken(accessToken)).isEqualTo(TokenValidationResult.VALID);

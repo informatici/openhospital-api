@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -65,6 +66,8 @@ public class TokenProvider implements Serializable {
 	private Environment env;
 
 	private static final String AUTHORITIES_KEY = "auth";
+
+	private static final String MUST_CHANGE_PASSWORD_KEY = "mustChangePassword";
 
 	private Key key;
 
@@ -149,10 +152,14 @@ public class TokenProvider implements Serializable {
 	}
 
 	public String generateJwtToken(Authentication authentication, boolean rememberMe) {
-		return generateJwtToken(authentication, rememberMe, newTokenFamilyId());
+		return generateJwtToken(authentication, rememberMe, false);
 	}
 
-	public String generateJwtToken(Authentication authentication, boolean rememberMe, String tokenFamilyId) {
+	public String generateJwtToken(Authentication authentication, boolean rememberMe, boolean mustChangePassword) {
+		return generateJwtToken(authentication, rememberMe, mustChangePassword, newTokenFamilyId());
+	}
+
+	public String generateJwtToken(Authentication authentication, boolean rememberMe, boolean mustChangePassword, String tokenFamilyId) {
 		final String authorities = authentication.getAuthorities().stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
@@ -165,14 +172,27 @@ public class TokenProvider implements Serializable {
 			validity = new Date(now + this.tokenValidityInMilliseconds);
 		}
 
-		return Jwts.builder()
+		JwtBuilder builder = Jwts.builder()
 			.setSubject(authentication.getName())
 			.claim(AUTHORITIES_KEY, authorities)
 			.setId(tokenFamilyId)
 			.setIssuedAt(new Date())
 			.signWith(key, SignatureAlgorithm.HS512)
-			.setExpiration(validity)
-			.compact();
+			.setExpiration(validity);
+
+		// OP-896: the claim is added only when the password must be changed, so regular tokens are unaffected
+		if (mustChangePassword) {
+			builder.claim(MUST_CHANGE_PASSWORD_KEY, true);
+		}
+
+		return builder.compact();
+	}
+
+	/**
+	 * Reads the must-change-password claim embedded for the client: the server never trusts it, {@link MustChangePasswordFilter} checks the database instead.
+	 */
+	public boolean getMustChangePasswordFromToken(String token) {
+		return Boolean.TRUE.equals(getClaimFromToken(token, claims -> claims.get(MUST_CHANGE_PASSWORD_KEY, Boolean.class)));
 	}
 
 	public String generateRefreshToken(Authentication authentication) {

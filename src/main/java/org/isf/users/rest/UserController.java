@@ -148,9 +148,12 @@ public class UserController {
 			LOGGER.info("User with name '{}' has not been found.", userName);
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."), HttpStatus.NOT_FOUND);
 		}
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
+			// OP-896: a password set by an administrator must be changed by the user at next login
+			user.setPasswdMustChange(true);
 			updatedUser = userManager.updatePassword(user);
 		} else {
 			updatedUser = userManager.updateUser(user);
@@ -174,10 +177,14 @@ public class UserController {
 	@PostMapping("/users")
 	public UserDTO newUser(@Valid @RequestBody UserDTO userDTO) throws OHServiceException {
 		LOGGER.info("Attempting to create user {}.", userDTO.getUserName());
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
+		// OP-896: core's UserBrowsingManager.newUser() forces the must-change-password flag on every new user
 		try {
+			UserDTO createdUser = userMapper.map2DTO(userManager.newUser(user));
+			createdUser.setPasswd(null);
 			LOGGER.info("User successfully created.");
-			return userMapper.map2DTO(userManager.newUser(user));
+			return createdUser;
 		} catch (OHServiceException serviceException) {
 			LOGGER.info("User is not created.");
 			throw new OHAPIException(new OHExceptionMessage("User not created."));
@@ -236,10 +243,17 @@ public class UserController {
 		if (entity == null) {
 			throw new OHAPIException(new OHExceptionMessage("The specified user does not exist."));
 		}
+		// OP-896: while a password change is pending, the profile can only be used to change the password itself
+		if ((entity.isPasswdMustChange() || userManager.isPasswordExpired(entity)) && (userDTO.getPasswd() == null || userDTO.getPasswd().isEmpty())) {
+			throw new OHAPIException(new OHExceptionMessage("The password must be changed before updating the profile."), HttpStatus.FORBIDDEN);
+		}
+		validatePasswordStrength(userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		user.setUserGroupName(entity.getUserGroupName());
 		User updatedUser;
 		if (!user.getPasswd().isEmpty()) {
+			// OP-896: the user is changing their own password, so clear any pending must-change flag
+			user.setPasswdMustChange(false);
 			updatedUser = userManager.updatePassword(user);
 		} else {
 			updatedUser = userManager.updateUser(user);
@@ -249,6 +263,19 @@ public class UserController {
 			return retrieveProfile(currentUser);
 		} else {
 			throw new OHAPIException(new OHExceptionMessage("User not updated."));
+		}
+	}
+
+	/**
+	 * Rejects a password that does not meet the configured strength requirements (OP-896). No-op when no password is
+	 * provided, so that requests that only update other user fields are not affected.
+	 *
+	 * @param password the plain-text password to validate (may be {@code null} or empty)
+	 * @throws OHAPIException if a non-empty password does not meet the strength requirements
+	 */
+	private void validatePasswordStrength(String password) throws OHAPIException {
+		if (password != null && !password.isEmpty() && !userManager.isPasswordValid(password)) {
+			throw new OHAPIException(new OHExceptionMessage("The password does not meet the strength requirements."), HttpStatus.BAD_REQUEST);
 		}
 	}
 

@@ -109,7 +109,8 @@ public class JWTFilter extends GenericFilterBean {
 		filterChain.doFilter(servletRequest, servletResponse);
 	}
 
-	private String resolveToken(HttpServletRequest request) {
+	// package-private so that MustChangePasswordFilter can share the same token resolution and error rendering
+	static String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
 			return bearerToken.substring(7);
@@ -117,7 +118,7 @@ public class JWTFilter extends GenericFilterBean {
 		return null;
 	}
 
-	private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+	static void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
 		response.setStatus(status);
 		response.setContentType("application/json");
 		response.getWriter().write(String.format("{\"error\": \"%s\"}", message));
