@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,9 +22,13 @@
 package org.isf.medicalstock.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
+
+import org.isf.shared.mapper.converter.DateOrDateTimeDeserializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -35,12 +39,14 @@ public class LotDTO {
 	private String code;
 
 	@NotNull(message = "The preparation date is required")
-	@Schema(description = "The preparation date", example = "2020-06-24", type = "string")
-	private LocalDate preparationDate;
+	@Schema(description = "The preparation date", example = "2020-06-24T10:00:00", type = "string")
+	@JsonDeserialize(using = DateOrDateTimeDeserializer.class)
+	private LocalDateTime preparationDate;
 
 	@NotNull(message = "The due date is required")
-	@Schema(description = "The due date", example = "2021-06-24", type = "string")
-	private LocalDate dueDate;
+	@Schema(description = "The due date", example = "2021-06-24T10:00:00", type = "string")
+	@JsonDeserialize(using = DateOrDateTimeDeserializer.class)
+	private LocalDateTime dueDate;
 
 	@Schema(description = "The lot's code", example = "750")
 	private BigDecimal cost;
@@ -48,7 +54,7 @@ public class LotDTO {
 	public LotDTO() {
 	}
 
-	public LotDTO(String code, LocalDate preparationDate, LocalDate dueDate, BigDecimal cost) {
+	public LotDTO(String code, LocalDateTime preparationDate, LocalDateTime dueDate, BigDecimal cost) {
 		this.code = code;
 		this.preparationDate = preparationDate;
 		this.dueDate = dueDate;
@@ -59,11 +65,11 @@ public class LotDTO {
 		return this.code;
 	}
 
-	public LocalDate getPreparationDate() {
+	public LocalDateTime getPreparationDate() {
 		return this.preparationDate;
 	}
 
-	public LocalDate getDueDate() {
+	public LocalDateTime getDueDate() {
 		return this.dueDate;
 	}
 
@@ -75,11 +81,11 @@ public class LotDTO {
 		this.code = code;
 	}
 
-	public void setPreparationDate(LocalDate preparationDate) {
+	public void setPreparationDate(LocalDateTime preparationDate) {
 		this.preparationDate = preparationDate;
 	}
 
-	public void setDueDate(LocalDate dueDate) {
+	public void setDueDate(LocalDateTime dueDate) {
 		this.dueDate = dueDate;
 	}
 
