@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -137,7 +137,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testNewVaccineTypeAlreadyPresent_400() throws Exception {
+	void newVaccineTypeAlreadyPresent_400() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -160,7 +160,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testNewVaccineTypeNotCreated_400() throws Exception {
+	void newVaccineTypeNotCreated_400() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -206,7 +206,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateVaccineTypeNotUpdated_400() throws Exception {
+	void updateVaccineTypeNotUpdated_400() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -253,7 +253,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccineTypeNotFound_404() throws Exception {
+	void deleteVaccineTypeNotFound_404() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String code = "0";
 
@@ -272,7 +272,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccineTypeNotDeleted_400() throws Exception {
+	void deleteVaccineTypeNotDeleted_400() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String code = "0";
 
