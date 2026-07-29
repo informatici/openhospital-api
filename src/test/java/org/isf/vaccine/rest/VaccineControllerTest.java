@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -158,7 +158,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testNewVaccine_VaccineTypeAlreadyPresent_400() throws Exception {
+	void newVaccine_VaccineTypeAlreadyPresent_400() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -182,7 +182,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testNewVaccine_NotCreated_400() throws Exception {
+	void newVaccine_NotCreated_400() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -229,7 +229,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testUpdateVaccine_NotUpdated_400() throws Exception {
+	void updateVaccine_NotUpdated_400() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -277,7 +277,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccine_NotFound_404() throws Exception {
+	void deleteVaccine_NotFound_404() throws Exception {
 		String request = "/vaccines/{code}";
 		String code = "0";
 
@@ -296,7 +296,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccine_NotDeleted_400() throws Exception {
+	void deleteVaccine_NotDeleted_400() throws Exception {
 		String request = "/vaccines/{code}";
 		String code = "0";
 
