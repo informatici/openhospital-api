@@ -21,7 +21,7 @@
  */
 package org.isf.medtype.rest;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -48,17 +49,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class MedicalTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(MedicalTypeControllerTest.class);
 
 	@Mock
 	protected MedicalTypeBrowserManager medicalTypeBrowserManager;
@@ -93,20 +89,16 @@ class MedicalTypeControllerTest {
 
 		List<MedicalType> results = MedicalTypeHelper.setupMedicalTypeList(3);
 
-		List<MedicalTypeDTO> parsedResults = medicalTypeMapper.map2DTOList(results);
-
 		when(medicalTypeBrowserManager.getMedicalType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(MedicalTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$[0].code").value("Z0"))
+			.andExpect(jsonPath("$[0].description").value("TestDescription"));
 	}
 
 	@Test
@@ -118,17 +110,15 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.newMedicalType(medicalTypeMapper.map2Model(body)))
 			.thenReturn(medicalType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(MedicalTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("Z1"))
+			.andExpect(jsonPath("$.description").value("TestDescription"));
 	}
 
 	@Test
@@ -143,17 +133,15 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.updateMedicalType(medicalTypeMapper.map2Model(body)))
 			.thenReturn(medicalType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(MedicalTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("Z2"))
+			.andExpect(jsonPath("$.description").value("TestDescription"));
 	}
 
 	@Test
@@ -165,16 +153,15 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.isCodePresent(body.getCode()))
 			.thenReturn(false);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(MedicalTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Medical type not found."));
 	}
 
 	@Test
@@ -186,15 +173,11 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.isCodePresent(code))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("true")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("true"));
 	}
 
 	@Test
@@ -206,16 +189,11 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.getMedicalType())
 			.thenReturn(List.of(medicalType));
 
-		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("true"));
 	}
 
 	@Test
@@ -227,13 +205,11 @@ class MedicalTypeControllerTest {
 		when(medicalTypeBrowserManager.getMedicalType())
 			.thenReturn(List.of(MedicalTypeHelper.setup(7)));
 
-		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Medical type not found."));
 	}
 
 }
