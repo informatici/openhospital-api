@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -88,7 +88,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testGetAllMedicalTypes_200() throws Exception {
+	void getAllMedicalTypes_200() throws Exception {
 		String request = "/medicaltypes";
 
 		List<MedicalType> results = MedicalTypeHelper.setupMedicalTypeList(3);
@@ -110,7 +110,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testNewMedicalType_201() throws Exception {
+	void newMedicalType_201() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(1);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -132,7 +132,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateMedicalType_200() throws Exception {
+	void updateMedicalType_200() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(2);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -157,7 +157,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateMedicalType_404() throws Exception {
+	void updateMedicalType_404() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(3);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -178,7 +178,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testIsCodeUsed_200() throws Exception {
+	void isCodeUsed_200() throws Exception {
 		String request = "/medicaltypes/check/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(4);
 		String code = medicalType.getCode();
@@ -198,7 +198,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteMedicalType_200() throws Exception {
+	void deleteMedicalType_200() throws Exception {
 		String request = "/medicaltypes/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(5);
 		String code = medicalType.getCode();
@@ -219,7 +219,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteMedicalType_404() throws Exception {
+	void deleteMedicalType_404() throws Exception {
 		String request = "/medicaltypes/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(6);
 		String code = medicalType.getCode();
