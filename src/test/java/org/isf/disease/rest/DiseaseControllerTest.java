@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -381,14 +382,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request))
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting OPD diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting OPD diseases."));
 	}
 
 	@Test
@@ -400,14 +398,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, typeCode))
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting OPD diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting OPD diseases."));
 	}
 
 	@Test
@@ -417,14 +412,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request))
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting IPD out diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting IPD out diseases."));
 	}
 
 	@Test
@@ -436,14 +428,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, typeCode))
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting IPD out diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting IPD out diseases."));
 	}
 
 	@Test
@@ -453,14 +442,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request))
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting IPD-in diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting IPD-in diseases."));
 	}
 
 	@Test
@@ -472,14 +458,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn(typeCode))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, typeCode))
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting IPD-in diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting IPD-in diseases."));
 	}
 
 	@Test
@@ -489,14 +472,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDisease())
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request))
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting diseases."));
 	}
 
 	@Test
@@ -508,14 +488,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDisease(typeCode))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, typeCode))
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting diseases by type code.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting diseases by type code."));
 	}
 
 	@Test
@@ -525,14 +502,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseAll())
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request))
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Error getting all diseases.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Error getting all diseases."));
 	}
 
 	@Test
@@ -544,14 +518,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, code))
+		this.mockMvc
+			.perform(get(request, code).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("No disease found with the specified code.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("No disease found with the specified code."));
 	}
 
 	@Test
@@ -564,17 +535,15 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("Duplicated disease code.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Duplicated disease code."));
 	}
 
 	@Test
@@ -590,17 +559,15 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("Duplicated disease description for the same disease type.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Duplicated disease description for the same disease type."));
 	}
 
 	@Test
@@ -619,17 +586,15 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.newDisease(any(Disease.class)))
 			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Disease not created.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Disease not created."));
 	}
 
 	@Test
@@ -642,17 +607,15 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
 			.thenReturn(false);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("Disease not found.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Disease not found."));
 	}
 
 	@Test
@@ -668,17 +631,15 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.updateDisease(any(Disease.class)))
 			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Disease not updated.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Disease not updated."));
 	}
 
 	@Test
@@ -690,14 +651,11 @@ class DiseaseControllerTest {
 		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("No disease found with the specified code.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("No disease found with the specified code."));
 	}
 
 	@Test
@@ -713,15 +671,11 @@ class DiseaseControllerTest {
 		doThrow(new OHServiceException(new OHExceptionMessage("Failure")))
 			.when(diseaseBrowserManagerMock).deleteDisease(any(Disease.class));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("false")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("false"));
 	}
 
 }
