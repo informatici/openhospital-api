@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -145,18 +146,15 @@ class VaccineTypeControllerTest {
 		when(vaccineTypeBrowserManagerMock.newVaccineType(vaccineTypeMapper.map2Model(body)))
 				.thenThrow(new OHDataIntegrityViolationException(new OHExceptionMessage("Duplicated key.")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VaccineTypeHelper.asJsonString(body)))
 				)
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Vaccine Type already present.")))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(jsonPath("$.message").value("Vaccine Type already present."));
 	}
 
 	@Test
@@ -168,18 +166,15 @@ class VaccineTypeControllerTest {
 		when(vaccineTypeBrowserManagerMock.newVaccineType(vaccineTypeMapper.map2Model(body)))
 				.thenThrow(new OHServiceException(new OHExceptionMessage("Validation failed.")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VaccineTypeHelper.asJsonString(body)))
 				)
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Vaccine Type not created.")))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(jsonPath("$.message").value("Vaccine Type not created."));
 	}
 
 	@Test
@@ -214,18 +209,15 @@ class VaccineTypeControllerTest {
 		when(vaccineTypeBrowserManagerMock.updateVaccineType(vaccineTypeMapper.map2Model(body)))
 				.thenThrow(new OHServiceException(new OHExceptionMessage("Validation failed.")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(put(request)
 						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VaccineTypeHelper.asJsonString(body)))
 				)
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Vaccine Type not updated.")))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(jsonPath("$.message").value("Vaccine Type not updated."));
 	}
 
 	@Test
@@ -260,15 +252,11 @@ class VaccineTypeControllerTest {
 		when(vaccineTypeBrowserManagerMock.findVaccineType(code))
 				.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
+		this.mockMvc
+				.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
 				.andExpect(status().isNotFound())
-				.andExpect(content().string(containsString("Vaccine Type not found.")))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(jsonPath("$.message").value("Vaccine Type not found."));
 	}
 
 	@Test
@@ -283,15 +271,11 @@ class VaccineTypeControllerTest {
 		doThrow(new OHServiceException(new OHExceptionMessage("Delete failed.")))
 				.when(vaccineTypeBrowserManagerMock).deleteVaccineType(vaccineType);
 
-		MvcResult result = this.mockMvc
-				.perform(delete(request, code))
+		this.mockMvc
+				.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(containsString("Vaccine Type not deleted.")))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(jsonPath("$.message").value("Vaccine Type not deleted."));
 	}
 
 	@Test
