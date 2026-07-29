@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -141,7 +141,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testNewDiseaseType_400() throws Exception {
+	void newDiseaseType_400() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -165,7 +165,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testNewDiseaseType_500() throws Exception {
+	void newDiseaseType_500() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -219,7 +219,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateDiseaseType_404() throws Exception {
+	void updateDiseaseType_404() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -244,7 +244,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateDiseaseType_500() throws Exception {
+	void updateDiseaseType_500() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -294,7 +294,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteDiseaseType_404() throws Exception {
+	void deleteDiseaseType_404() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		when(diseaseTypeBrowserManager.getDiseaseType(anyString()))
@@ -312,7 +312,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteDiseaseType_200_NotDeleted() throws Exception {
+	void deleteDiseaseType_200_NotDeleted() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
