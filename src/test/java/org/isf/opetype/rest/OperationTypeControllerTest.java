@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -87,7 +87,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void testNewOperationType_201() throws Exception {
+	void newOperationType_201() throws Exception {
 		String request = "/operationtypes";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 
@@ -110,7 +110,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateOperationType_200() throws Exception {
+	void updateOperationType_200() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
@@ -136,7 +136,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void testGetOperationTypes_200() throws Exception {
+	void getOperationTypes_200() throws Exception {
 		String request = "/operationtypes";
 
 		OperationType operationType = new OperationType("ZZ", "TestDescription");
@@ -156,7 +156,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteOperationType_200() throws Exception {
+	void deleteOperationType_200() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
