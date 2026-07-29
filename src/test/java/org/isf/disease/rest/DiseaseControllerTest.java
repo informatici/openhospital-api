@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -375,7 +375,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesOpd_500() throws Exception {
+	void getDiseasesOpd_500() throws Exception {
 		String request = "/diseases/opd";
 
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
@@ -392,7 +392,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesOpdByCode_500() throws Exception {
+	void getDiseasesOpdByCode_500() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -411,7 +411,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdOut_500() throws Exception {
+	void getDiseasesIpdOut_500() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
@@ -428,7 +428,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdOutByCode_500() throws Exception {
+	void getDiseasesIpdOutByCode_500() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -447,7 +447,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdIn_500() throws Exception {
+	void getDiseasesIpdIn_500() throws Exception {
 		String request = "/diseases/ipd/in";
 
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
@@ -464,7 +464,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdInByCode_500() throws Exception {
+	void getDiseasesIpdInByCode_500() throws Exception {
 		String request = "/diseases/ipd/in/{typecode}";
 
 		String typeCode = "1";
@@ -483,7 +483,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseases_500() throws Exception {
+	void getDiseases_500() throws Exception {
 		String request = "/diseases/both";
 
 		when(diseaseBrowserManagerMock.getDisease())
@@ -500,7 +500,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesString_500() throws Exception {
+	void getDiseasesString_500() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -519,7 +519,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetAllDiseases_500() throws Exception {
+	void getAllDiseases_500() throws Exception {
 		String request = "/diseases/all";
 
 		when(diseaseBrowserManagerMock.getDiseaseAll())
@@ -536,7 +536,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseaseByCode_404() throws Exception {
+	void getDiseaseByCode_404() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -555,7 +555,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testNewDisease_duplicatedCode_400() throws Exception {
+	void newDisease_duplicatedCode_400() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -578,7 +578,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testNewDisease_duplicatedDescription_400() throws Exception {
+	void newDisease_duplicatedDescription_400() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -604,7 +604,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testNewDisease_notCreated_500() throws Exception {
+	void newDisease_notCreated_500() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -633,7 +633,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testUpdateDisease_404() throws Exception {
+	void updateDisease_404() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -656,7 +656,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testUpdateDisease_notUpdated_500() throws Exception {
+	void updateDisease_notUpdated_500() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -682,7 +682,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testDeleteDisease_404() throws Exception {
+	void deleteDisease_404() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -701,7 +701,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testDeleteDisease_notDeleted_200() throws Exception {
+	void deleteDisease_notDeleted_200() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
