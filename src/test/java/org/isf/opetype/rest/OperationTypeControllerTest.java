@@ -21,12 +21,15 @@
  */
 package org.isf.opetype.rest;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -47,17 +50,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class OperationTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(OperationTypeControllerTest.class);
 
 	@Mock
 	protected OperationTypeBrowserManager operationTypeManagerMock;
@@ -96,17 +94,15 @@ class OperationTypeControllerTest {
 		when(operationTypeManagerMock.newOperationType(operationType))
 			.thenReturn(operationType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(OperationTypeDTOHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("ZZ"))
+			.andExpect(jsonPath("$.description").value("TestDescription"));
 	}
 
 	@Test
@@ -122,17 +118,15 @@ class OperationTypeControllerTest {
 		when(operationTypeManagerMock.updateOperationType(operationType))
 			.thenReturn(operationType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, code)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(OperationTypeDTOHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("ZZ"))
+			.andExpect(jsonPath("$.description").value("TestDescription"));
 	}
 
 	@Test
@@ -145,14 +139,13 @@ class OperationTypeControllerTest {
 		when(operationTypeManagerMock.getOperationType())
 			.thenReturn(operationTypesFound);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$", hasSize(1)))
+			.andExpect(jsonPath("$[0].code").value("ZZ"))
+			.andExpect(jsonPath("$[0].description").value("TestDescription"));
 	}
 
 	@Test
@@ -167,14 +160,11 @@ class OperationTypeControllerTest {
 		when(operationTypeManagerMock.getOperationType())
 			.thenReturn(operationTypesFound);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("true"));
 	}
 
 }
