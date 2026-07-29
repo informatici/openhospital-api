@@ -8111,7 +8111,7 @@ components:
         date:
           type: string
           description: The movement date
-          example: 2020-06-24
+          example: 2020-06-24T10:00:00
         quantity:
           type: integer
           format: int32
@@ -8195,9 +8195,9 @@ components:
           description: The ward
         date:
           type: string
-          format: LocalDate
+          format: LocalDateTime
           description: The movement ward's date
-          example: 2020-06-07
+          example: 2020-06-07T10:00:00
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: The patient in case the movement is associated to a patient
