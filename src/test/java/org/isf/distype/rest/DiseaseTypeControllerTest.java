@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -150,18 +151,15 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is4xxClientError())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("Specified Disease Type code is already used.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Specified Disease Type code is already used."));
 	}
 
 	@Test
@@ -177,18 +175,15 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.newDiseaseType(any(DiseaseType.class)))
 			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is5xxServerError())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Failed to create disease type.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Failed to create disease type."));
 	}
 
 	@Test
@@ -229,18 +224,15 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
 			.thenReturn(false);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is4xxClientError())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("Disease Type not found.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Disease Type not found."));
 	}
 
 	@Test
@@ -257,18 +249,15 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.updateDiseaseType(any(DiseaseType.class)))
 			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is5xxServerError())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Disease Type not updated.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Disease Type not updated."));
 	}
 
 	@Test
@@ -300,15 +289,11 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.getDiseaseType(anyString()))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(delete(request, "notThere"))
+		this.mockMvc
+			.perform(delete(request, "notThere").accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
-			.andExpect(status().is4xxClientError())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("No Disease Type found with the given code.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("No Disease Type found with the given code."));
 	}
 
 	@Test
@@ -324,16 +309,11 @@ class DiseaseTypeControllerTest {
 		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
 			.when(diseaseTypeBrowserManager).deleteDiseaseType(any(DiseaseType.class));
 
-		String isDeleted = "false";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("false"));
 	}
 
 }
