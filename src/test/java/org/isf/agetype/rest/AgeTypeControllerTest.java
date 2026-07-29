@@ -30,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -145,17 +146,15 @@ class AgeTypeControllerTest {
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
 		body.get(0).setCode(null);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("The age type with code null is not valid.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("The age type with code null is not valid."));
 	}
 
 	@Test
@@ -163,19 +162,18 @@ class AgeTypeControllerTest {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
-		body.get(0).setCode("   ");
+		String code = "   ";
+		body.get(0).setCode(code);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("is not valid.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("The age type with code " + code + " is not valid."));
 	}
 
 	@Test
@@ -186,17 +184,15 @@ class AgeTypeControllerTest {
 
 		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(null);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isBadRequest())
-			.andExpect(content().string(containsString("is not valid.")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("The age type with code " + body.get(0).getCode() + " is not valid."));
 	}
 
 	@Test
@@ -207,17 +203,15 @@ class AgeTypeControllerTest {
 
 		when(ageTypeManagerMock.getTypeByCode(anyString())).thenThrow(new OHServiceException(new OHExceptionMessage("Unable to get age type")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Unable to get age type")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Unable to get age type"));
 	}
 
 	@Test
@@ -229,17 +223,15 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(ageTypes.get(0));
 		when(ageTypeManagerMock.updateAgeType(anyList())).thenThrow(new OHServiceException(new OHExceptionMessage("Update failed")));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isInternalServerError())
-			.andExpect(content().string(containsString("Unable to update age types")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Unable to update age types. Please check that you've correctly set values"));
 	}
 
 	@Test
@@ -273,15 +265,11 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByAge(age))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, age))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().json("{}"))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("{}"));
 	}
 
 	@Test
@@ -313,14 +301,11 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(index))
 			.thenReturn(null);
 
-		MvcResult result = this.mockMvc
-			.perform(get(request, index))
+		this.mockMvc
+			.perform(get(request, index).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andExpect(content().string(containsString("Age type not found with index :" + index)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Age type not found with index :" + index));
 	}
 
 }
