@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -139,7 +139,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_nullCode_400() throws Exception {
+	void updateAgeType_nullCode_400() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -159,7 +159,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_emptyCode_400() throws Exception {
+	void updateAgeType_emptyCode_400() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -179,7 +179,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_unknownCode_400() throws Exception {
+	void updateAgeType_unknownCode_400() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -200,7 +200,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_getTypeByCodeFails_500() throws Exception {
+	void updateAgeType_getTypeByCodeFails_500() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -221,7 +221,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_500() throws Exception {
+	void updateAgeType_500() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(3);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -265,7 +265,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAgeTypeCodeByAge_200_noMatchingCode() throws Exception {
+	void getAgeTypeCodeByAge_200_noMatchingCode() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 200;
@@ -306,7 +306,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAgeTypeByIndex_404() throws Exception {
+	void getAgeTypeByIndex_404() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 25;
 
