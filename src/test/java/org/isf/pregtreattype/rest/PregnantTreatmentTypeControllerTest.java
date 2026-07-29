@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,6 +22,7 @@
 package org.isf.pregtreattype.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -48,17 +50,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class PregnantTreatmentTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(PregnantTreatmentTypeControllerTest.class);
 
 	@Mock
 	protected PregnantTreatmentTypeBrowserManager pregnantTreatmentTypeManager;
@@ -88,7 +85,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void testGetAllPregnantTreatmentTypes_200() throws Exception {
+	void getAllPregnantTreatmentTypes_200() throws Exception {
 		String request = "/pregnanttreatmenttypes";
 
 		List<PregnantTreatmentType> results = PregnantTreatmentTypeHelper.setupPregnantTreatmentTypeList(3);
@@ -98,19 +95,18 @@ class PregnantTreatmentTypeControllerTest {
 		when(pregnantTreatmentTypeManager.getPregnantTreatmentType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(PregnantTreatmentTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$", hasSize(3)))
+			.andExpect(jsonPath("$[0].code").value("ZZ"))
+			.andExpect(jsonPath("$[0].description").value("TestDescription"));
 	}
 
 	@Test
-	void testNewPregnantTreatmentType_201() throws Exception {
+	void newPregnantTreatmentType_201() throws Exception {
 		String request = "/pregnanttreatmenttypes";
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
@@ -118,21 +114,40 @@ class PregnantTreatmentTypeControllerTest {
 		when(pregnantTreatmentTypeManager.newPregnantTreatmentType(pregnantTreatmentTypeMapper.map2Model(body)))
 			.thenReturn(pregnantTreatmentType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(PregnantTreatmentTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("ZZ"))
+			.andExpect(jsonPath("$.description").value("TestDescription"))
+			.andExpect(jsonPath("$.hashCode").value(0));
 	}
 
 	@Test
-	void testUpdatePregnantTreatmentType_200() throws Exception {
+	void newPregnantTreatmentType_400() throws Exception {
+		String request = "/pregnanttreatmenttypes";
+		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
+		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
+
+		when(pregnantTreatmentTypeManager.newPregnantTreatmentType(pregnantTreatmentTypeMapper.map2Model(body)))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(PregnantTreatmentTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Pregnant Treatment Type not created."));
+	}
+
+	@Test
+	void updatePregnantTreatmentType_200() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -144,21 +159,20 @@ class PregnantTreatmentTypeControllerTest {
 		when(pregnantTreatmentTypeManager.updatePregnantTreatmentType(pregnantTreatmentTypeMapper.map2Model(body)))
 			.thenReturn(pregnantTreatmentType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, code)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(PregnantTreatmentTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value("ZZ"))
+			.andExpect(jsonPath("$.description").value("TestDescription"))
+			.andExpect(jsonPath("$.hashCode").value(0));
 	}
 
 	@Test
-	void testUpdatePregnantTreatmentType_404() throws Exception {
+	void updatePregnantTreatmentType_404() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -167,20 +181,19 @@ class PregnantTreatmentTypeControllerTest {
 		when(pregnantTreatmentTypeManager.isCodePresent(code))
 			.thenReturn(false);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, code)
 				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(PregnantTreatmentTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Pregnant Treatment Type not found."));
 	}
 
 	@Test
-	void testDeletePregnantTreatmentType_200() throws Exception {
+	void deletePregnantTreatmentType_200() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		String request = "/pregnanttreatmenttypes/{code}";
 		String code = pregnantTreatmentType.getCode();
@@ -188,33 +201,26 @@ class PregnantTreatmentTypeControllerTest {
 		when(pregnantTreatmentTypeManager.getPregnantTreatmentType())
 			.thenReturn(List.of(pregnantTreatmentType));
 
-		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string("true"));
 	}
 
 	@Test
-	void testDeletePregnantTreatmentType_404() throws Exception {
+	void deletePregnantTreatmentType_404() throws Exception {
 		String request = "/pregnanttreatmenttypes/{code}";
 		String code = "nonExistingCode";
 
 		when(pregnantTreatmentTypeManager.getPregnantTreatmentType())
 			.thenReturn(List.of());
 
-		MvcResult result = this.mockMvc
-			.perform(delete(request, code))
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNotFound())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.message").value("Pregnant Treatment Type not found."));
 	}
 
 }
