@@ -22,7 +22,6 @@
 package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -35,6 +34,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -238,8 +238,11 @@ class TokenProviderTest {
 	}
 
 	@Test
-	void testGetAuthentication() {
-		Authentication authentication = createAuthentication();
+	void testGetAuthenticationIgnoresTokenAuthorities() throws Exception {
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			"testuser", "password", List.of(new SimpleGrantedAuthority("users.delete"))
+		);
+		mockDatabaseAuthorities("testuser", "patients.read");
 
 		// Generate token
 		String token = tokenProvider.generateJwtToken(authentication, false);
@@ -257,25 +260,27 @@ class TokenProviderTest {
 
 		// Check authorities
 		Collection< ? extends GrantedAuthority> resultAuthorities = authToken.getAuthorities();
-		assertThat(resultAuthorities).extracting(GrantedAuthority::getAuthority).contains("ROLE_USER");
+		assertThat(resultAuthorities).extracting(GrantedAuthority::getAuthority)
+			.containsExactly("patients.read")
+			.doesNotContain("users.delete");
 
 		// Check credentials
 		assertThat(authToken.getCredentials()).isEqualTo(token);
 	}
 
 	@Test
-	void testGetAuthentication_EmptyAuthorities() {
-		// Create an Authentication with empty authorities
-		List<GrantedAuthority> authorities = List.of();
-		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
+	void testGetAuthenticationDoesNotRequireAuthoritiesClaim() throws Exception {
+		Key key = extractKeyFromTokenProvider();
+		String token = Jwts.builder()
+			.setSubject("testuser")
+			.signWith(key, SignatureAlgorithm.HS512)
+			.compact();
+		mockDatabaseAuthorities("testuser", "patients.read");
 
-		// Generate token
-		String token = tokenProvider.generateJwtToken(authentication, false);
+		Authentication result = tokenProvider.getAuthentication(token);
 
-		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			tokenProvider.getAuthentication(token);
-		});
-		assertThat(exception.getMessage()).contains("JWT token does not contain authorities.");
+		assertThat(result.getAuthorities()).extracting(GrantedAuthority::getAuthority)
+			.containsExactly("patients.read");
 	}
 
 	@Test
@@ -428,6 +433,20 @@ class TokenProviderTest {
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
 		Authentication authentication = new UsernamePasswordAuthenticationToken("testuser", "password", authorities);
 		return authentication;
+	}
+
+	private void mockDatabaseAuthorities(String username, String... authorityNames) throws Exception {
+		org.isf.menu.model.User user = new org.isf.menu.model.User();
+		user.setUserName(username);
+		user.setPasswd("password");
+		when(userManager.getUserByName(username)).thenReturn(user);
+
+		List<Permission> permissions = Arrays.stream(authorityNames).map(authorityName -> {
+			Permission permission = new Permission();
+			permission.setName(authorityName);
+			return permission;
+		}).toList();
+		when(permissionManager.retrievePermissionsByUsername(username)).thenReturn(permissions);
 	}
 
 	// Helper method to extract key by reflection, needed to avoid getters
