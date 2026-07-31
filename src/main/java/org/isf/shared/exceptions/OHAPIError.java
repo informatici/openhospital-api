@@ -21,10 +21,7 @@
  */
 package org.isf.shared.exceptions;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.ErrorDescription;
@@ -36,25 +33,22 @@ import org.springframework.http.HttpStatus;
  * @author antonio
  */
 public class OHAPIError {
+    private static final String INTERNAL_ERROR_MESSAGE = "The request could not be completed.";
+
     private HttpStatus status;
     private String message;
-    private String debugMessage;
-    private String stackTrace;
     private LocalDateTime timestamp;
     private ErrorDescription description;
 
     public OHAPIError(HttpStatus status, OHServiceException ex) {
         this.timestamp = LocalDateTime.now();
         this.status = status;
-        this.message = ex.getMessages().get(0).getMessage();
-        this.debugMessage = ex.getMessages()
-                .stream()
-                .map(em -> em.getMessage())
-                .collect(Collectors.joining(","));
-        StringWriter sw = new StringWriter();
-        ex.printStackTrace(new PrintWriter(sw));
-        this.stackTrace = sw.toString();
-        this.description = ex.getMessages().get(0).getDescription();
+        if (status.is5xxServerError()) {
+            this.message = INTERNAL_ERROR_MESSAGE;
+        } else {
+            this.message = ex.getMessages().get(0).getMessage();
+            this.description = ex.getMessages().get(0).getDescription();
+        }
     }
 
 	public HttpStatus getStatus() {
@@ -63,14 +57,6 @@ public class OHAPIError {
 
 	public String getMessage() {
 		return this.message;
-	}
-
-	public String getDebugMessage() {
-		return this.debugMessage;
-	}
-
-	public String getStackTrace() {
-		return this.stackTrace;
 	}
 
 	public LocalDateTime getTimestamp() {
@@ -83,14 +69,6 @@ public class OHAPIError {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public void setDebugMessage(String debugMessage) {
-		this.debugMessage = debugMessage;
-	}
-
-	public void setStackTrace(String stackTrace) {
-		this.stackTrace = stackTrace;
 	}
 
 	public void setTimestamp(LocalDateTime timestamp) {
