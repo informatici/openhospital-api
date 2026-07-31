@@ -23,12 +23,15 @@ package org.isf.login.rest;
 
 import java.time.LocalDateTime;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.login.dto.TokenRefreshRequest;
+import org.isf.login.security.LoginAttemptService;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.security.CustomAuthenticationManager;
@@ -42,9 +45,12 @@ import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +77,8 @@ public class LoginController {
 
 	private final UserBrowsingManager userManager;
 
+	private final LoginAttemptService loginAttemptService;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
 	public LoginController(
@@ -78,21 +86,42 @@ public class LoginController {
 		SessionAuditManager sessionAuditManager,
 		TokenProvider tokenProvider,
 		CustomAuthenticationManager authenticationManager,
-		UserBrowsingManager userManager
+		UserBrowsingManager userManager,
+		LoginAttemptService loginAttemptService
 	) {
 		this.httpSession = httpSession;
 		this.sessionAuditManager = sessionAuditManager;
 		this.tokenProvider = tokenProvider;
 		this.authenticationManager = authenticationManager;
 		this.userManager = userManager;
+		this.loginAttemptService = loginAttemptService;
 	}
 
 	@PostMapping(value = "/auth/login")
 	public LoginResponse authenticateUser(
-		@Valid @RequestBody LoginRequest loginRequest
-	) {
-		Authentication authentication = authenticationManager.authenticate(
-			new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		@Valid @RequestBody LoginRequest loginRequest,
+		HttpServletRequest request,
+		HttpServletResponse response
+	) throws OHAPIException {
+		String clientAddress = request.getRemoteAddr();
+		long retryAfterSeconds = loginAttemptService.retryAfterSeconds(loginRequest.getUsername(), clientAddress);
+		if (retryAfterSeconds > 0) {
+			response.setHeader(HttpHeaders.RETRY_AFTER, Long.toString(retryAfterSeconds));
+			throw new OHAPIException(
+				new OHExceptionMessage("Too many login attempts. Try again later."),
+				HttpStatus.TOO_MANY_REQUESTS
+			);
+		}
+
+		Authentication authentication;
+		try {
+			authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+		} catch (AuthenticationException exception) {
+			loginAttemptService.loginFailed(loginRequest.getUsername(), clientAddress);
+			throw exception;
+		}
+		loginAttemptService.loginSucceeded(loginRequest.getUsername(), clientAddress);
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		String userDetails = (String) authentication.getPrincipal();
