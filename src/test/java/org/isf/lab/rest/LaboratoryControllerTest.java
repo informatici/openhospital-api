@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -125,7 +125,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
@@ -162,7 +162,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
@@ -201,7 +201,7 @@ class LaboratoryControllerTest {
 		labWithRowsDTO.setLaboratoryDTO(body);
 		labWithRowsDTO.setLaboratoryRowList(labRows);
 
-		when(laboratoryManager.newLaboratory(any(Laboratory.class), anyList())).thenReturn(lab);
+		when(laboratoryManager.newLaboratory2(any(Laboratory.class), anyList())).thenReturn(lab);
 		when(laboratoryManager.getLaboratory(anyInt())).thenReturn(Optional.of(lab));
 		when(laboratoryManager.getLaboratory(any(Patient.class))).thenReturn(Collections.singletonList(lab));
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
