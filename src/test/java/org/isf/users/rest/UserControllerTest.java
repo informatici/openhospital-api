@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -619,6 +619,24 @@ class UserControllerTest {
 
 			when(userManager.getUserByName(any())).thenReturn(user);
 			when(userManager.isPasswordValid(any())).thenReturn(false);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andReturn();
+
+			verify(userManager, never()).updatePassword(any());
+		}
+
+		@Test
+		@DisplayName("Should reject reusing the current password on profile update")
+		@WithMockUser(username = "doctor")
+		void shouldRejectReusingCurrentPassword() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "SamePass1@", "Simple user");
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isSameAsCurrentPassword(any(), any())).thenReturn(true);
 
 			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))

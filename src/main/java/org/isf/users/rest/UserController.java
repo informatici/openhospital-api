@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -248,6 +248,8 @@ public class UserController {
 			throw new OHAPIException(new OHExceptionMessage("The password must be changed before updating the profile."), HttpStatus.FORBIDDEN);
 		}
 		validatePasswordStrength(userDTO.getPasswd());
+		// OP-1431: a forced/self password change must not reuse the current password
+		validatePasswordNotReused(entity, userDTO.getPasswd());
 		User user = userMapper.map2Model(userDTO);
 		user.setUserGroupName(entity.getUserGroupName());
 		User updatedUser;
@@ -276,6 +278,20 @@ public class UserController {
 	private void validatePasswordStrength(String password) throws OHAPIException {
 		if (password != null && !password.isEmpty() && !userManager.isPasswordValid(password)) {
 			throw new OHAPIException(new OHExceptionMessage("The password does not meet the strength requirements."), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	/**
+	 * Rejects a new password that is the same as the user's current one (OP-1431). No-op when no password is
+	 * provided, so that requests that only update other user fields are not affected.
+	 *
+	 * @param currentUser the user whose current password to compare against
+	 * @param newPassword the plain-text candidate password (may be {@code null} or empty)
+	 * @throws OHAPIException if the new password matches the user's current one
+	 */
+	private void validatePasswordNotReused(User currentUser, String newPassword) throws OHAPIException {
+		if (newPassword != null && !newPassword.isEmpty() && userManager.isSameAsCurrentPassword(currentUser, newPassword)) {
+			throw new OHAPIException(new OHExceptionMessage("The new password must be different from the current one."), HttpStatus.BAD_REQUEST);
 		}
 	}
 
