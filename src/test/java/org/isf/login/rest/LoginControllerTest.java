@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +39,7 @@ import jakarta.servlet.http.HttpSession;
 import org.isf.OpenHospitalApiApplication;
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.login.dto.PasswordPolicyDTO;
 import org.isf.login.dto.TokenRefreshRequest;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
@@ -137,6 +139,21 @@ class LoginControllerTest {
 		mvc.perform(post("/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testGetPasswordPolicy() throws Exception {
+		when(userManager.isStrongPasswordEnabled()).thenReturn(true);
+		when(userManager.getPasswordMinLength()).thenReturn(6);
+		when(userManager.getPasswordStrengthRegex()).thenReturn("^(?=.*[0-9]).+$");
+
+		PasswordPolicyDTO expected = new PasswordPolicyDTO(true, 6, "^(?=.*[0-9]).+$");
+		String expectedJson = UserHelper.asJsonString(expected);
+
+		mvc.perform(get("/auth/password-policy"))
 			.andExpect(status().isOk())
 			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
 			.andReturn();
