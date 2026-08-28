@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -122,6 +122,12 @@ public class SecurityConfig {
 				// age types
 				.requestMatchers(HttpMethod.GET, "/agetypes/**").hasAnyAuthority("agetypes.read")
 				.requestMatchers(HttpMethod.PUT, "/agetypes/**").hasAuthority("agetypes.update")
+				// bills (the search endpoints use POST but are read operations, so they require the read authority)
+				.requestMatchers(HttpMethod.POST, "/bills/search/**").hasAuthority("bills.read")
+				.requestMatchers(HttpMethod.POST, "/bills/**").hasAuthority("bills.create")
+				.requestMatchers(HttpMethod.GET, "/bills/**").hasAuthority("bills.read")
+				.requestMatchers(HttpMethod.PUT, "/bills/**").hasAuthority("bills.update")
+				.requestMatchers(HttpMethod.DELETE, "/bills/**").hasAuthority("bills.delete")
 				// dischargetypes
 				.requestMatchers(HttpMethod.POST, "/dischargetypes/**").hasAuthority("dischargetypes.create")
 				.requestMatchers(HttpMethod.GET, "/dischargetypes/**").hasAnyAuthority("dischargetypes.read")
@@ -303,6 +309,14 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/sms/**").hasAnyAuthority("sms.read")
 				.requestMatchers(HttpMethod.PUT, "/sms/**").hasAuthority("sms.update")
 				.requestMatchers(HttpMethod.DELETE, "/sms/**").hasAuthority("sms.delete")
+				// stockmovements: StockMovementController currently exposes only POST (charge/discharge) and GET, but the
+				// update/delete rules are declared on purpose (defense in depth) so that any mutating endpoint added under
+				// /stockmovements later is protected by default instead of silently falling through to
+				// anyRequest().authenticated() — which is exactly the gap this change fixes.
+				.requestMatchers(HttpMethod.POST, "/stockmovements/**").hasAuthority("stockmovements.create")
+				.requestMatchers(HttpMethod.GET, "/stockmovements/**").hasAuthority("stockmovements.read")
+				.requestMatchers(HttpMethod.PUT, "/stockmovements/**").hasAuthority("stockmovements.update")
+				.requestMatchers(HttpMethod.DELETE, "/stockmovements/**").hasAuthority("stockmovements.delete")
 				// suppliers
 				.requestMatchers(HttpMethod.POST, "/suppliers/**").hasAuthority("suppliers.create")
 				.requestMatchers(HttpMethod.GET, "/suppliers/**").hasAnyAuthority("suppliers.read")
@@ -333,6 +347,8 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/wards/**").hasAnyAuthority("wards.read")
 				.requestMatchers(HttpMethod.PUT, "/wards/**").hasAuthority("wards.update")
 				.requestMatchers(HttpMethod.DELETE, "/wards/**").hasAuthority("wards.delete")
+				// wardsNoMaternity is a wards read endpoint that does not match /wards/** and otherwise falls through
+				.requestMatchers(HttpMethod.GET, "/wardsNoMaternity").hasAuthority("wards.read")
 
 				.anyRequest().authenticated()
 
