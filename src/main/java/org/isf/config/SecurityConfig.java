@@ -237,6 +237,7 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.PUT, "/patientconsensus/**").hasAuthority("patientconsensus.update")
 				.requestMatchers(HttpMethod.DELETE, "/patientconsensus/**").hasAuthority("patientconsensus.delete")
 				// patients
+				.requestMatchers(HttpMethod.DELETE, "/patients/{code}/personal-data").hasAuthority("patient.anonymize")
 				.requestMatchers(HttpMethod.POST, "/patients/**").hasAuthority("patients.create")
 				.requestMatchers(HttpMethod.GET, "/patients/**").hasAuthority("patients.read")
 				.requestMatchers(HttpMethod.PUT, "/patients/**").hasAuthority("patients.update")
