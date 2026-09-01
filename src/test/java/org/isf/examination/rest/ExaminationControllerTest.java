@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,10 +21,13 @@
  */
 package org.isf.examination.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -45,6 +48,7 @@ import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -248,5 +252,66 @@ class ExaminationControllerTest {
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(patientExaminationDTO))));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.update"})
+	@DisplayName("Should preserve the sex/age snapshot on update")
+	void testUpdateExaminationPreservesSexAgeSnapshot() throws Exception {
+		Patient patient = PatientHelper.setup();
+		patient.setCode(2);
+		// the stored examination carries the OP-892 sex/age snapshot, which is not part of the DTO
+		PatientExamination stored = new TestPatientExamination().setup(patient, false);
+		stored.setPex_ID(1);
+		stored.setPex_sat(100.0);
+		stored.setSex("F");
+		stored.setAge(34);
+		PatientExaminationDTO dto = mapper.map2DTO(stored);
+		dto.setPatientCode(patient.getCode());
+
+		when(manager.getByID(anyInt())).thenReturn(stored);
+		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
+		ArgumentCaptor<PatientExamination> saved = ArgumentCaptor.forClass(PatientExamination.class);
+		when(manager.saveOrUpdate(saved.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+		mvc.perform(put("/examinations/{id}", "1")
+				.content(objectMapper.writeValueAsString(dto))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		assertThat(saved.getValue().getSex()).isEqualTo("F");
+		assertThat(saved.getValue().getAge()).isEqualTo(34);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	@DisplayName("Should delete patient examination using ID")
+	void testDeletePatientExamination() throws Exception {
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+
+		when(manager.getByID(anyInt())).thenReturn(patientExamination);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")));
+
+		verify(manager).remove(List.of(patientExamination));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	@DisplayName("Should fail to delete patient examination with wrong ID")
+	void testDeletePatientExaminationWithWrongId() throws Exception {
+		when(manager.getByID(anyInt())).thenReturn(null);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound());
 	}
 }

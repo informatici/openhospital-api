@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -104,7 +105,8 @@ public class ExaminationController {
 		if (dto.getPex_ID() != id) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination id mismatch."));
 		}
-		if (examinationBrowserManager.getByID(id) == null) {
+		PatientExamination old = examinationBrowserManager.getByID(id);
+		if (old == null) {
 			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
 		}
 
@@ -117,6 +119,10 @@ public class ExaminationController {
 		PatientExamination patientExamination = patientExaminationMapper.map2Model(dto);
 		patientExamination.setPatient(patient);
 		patientExamination.setPex_date(dto.getPex_date());
+		// OP-892: the sex/age snapshot is taken at insertion and is not part of the DTO, so carry it over
+		// from the stored examination or the mapped entity would overwrite it with null on update
+		patientExamination.setSex(old.getSex());
+		patientExamination.setAge(old.getAge());
 
 		return patientExaminationMapper.map2DTO(examinationBrowserManager.saveOrUpdate(patientExamination));
 	}
@@ -161,6 +167,24 @@ public class ExaminationController {
 		}
 
 		return patientExaminationMapper.map2DTO(patientExamination);
+	}
+
+	@DeleteMapping("/examinations/{id}")
+	public boolean deletePatientExamination(@PathVariable Integer id) throws OHServiceException {
+		LOGGER.info("Delete patient examination id: {}.", id);
+		PatientExamination patientExamination = examinationBrowserManager.getByID(id);
+
+		if (patientExamination == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient examination not found."), HttpStatus.NOT_FOUND);
+		}
+
+		try {
+			examinationBrowserManager.remove(List.of(patientExamination));
+			return true;
+		} catch (OHServiceException serviceException) {
+			LOGGER.error("Delete patient examination: {} failed.", id);
+			throw new OHAPIException(new OHExceptionMessage("Patient examination not deleted."));
+		}
 	}
 
 	@GetMapping("/examinations/lastByPatientId/{patId}")

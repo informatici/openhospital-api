@@ -47,6 +47,8 @@ import org.isf.security.jwt.TokenValidationResult;
 import org.isf.sessionaudit.manager.SessionAuditManager;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.users.data.UserHelper;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,7 +125,7 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(mockToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(mockToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
@@ -132,6 +134,79 @@ class LoginControllerTest {
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform the login request
+		mvc.perform(post("/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testAuthenticateUser_MustChangePassword() throws Exception {
+		String username = "testUser";
+		String password = "testPassword";
+		String mockToken = "mockJwtToken";
+		String mockRefreshToken = "mockRefreshToken";
+
+		// A user flagged to change the password at next login (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswd(password);
+		user.setPasswdMustChange(true);
+
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+		LoginRequest loginRequest = new LoginRequest(username, password);
+
+		when(authenticationManager.authenticate(any())).thenReturn(authentication);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+		when(userManager.getPasswordLeaseDays()).thenReturn(90);
+
+		// Expected LoginResponse with mustChangePassword = true but passwordExpired = false: the change was forced by an administrator, not by the lease
+		LoginResponse loginResponse = new LoginResponse(mockToken, mockRefreshToken, username, true, false, 90);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		mvc.perform(post("/auth/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testAuthenticateUser_PasswordLeaseExpired() throws Exception {
+		String username = "testUser";
+		String password = "testPassword";
+		String mockToken = "mockJwtToken";
+		String mockRefreshToken = "mockRefreshToken";
+
+		// The flag is off, but the password lease has expired (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswd(password);
+		user.setPasswdMustChange(false);
+
+		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+		Authentication authentication = new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+		LoginRequest loginRequest = new LoginRequest(username, password);
+
+		when(authenticationManager.authenticate(any())).thenReturn(authentication);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+		when(userManager.isPasswordExpired(user)).thenReturn(true);
+		when(userManager.getPasswordLeaseDays()).thenReturn(90);
+
+		// Expected LoginResponse with mustChangePassword = true driven by the expired lease: passwordExpired = true and the configured lease is reported
+		LoginResponse loginResponse = new LoginResponse(mockToken, mockRefreshToken, username, true, true, 90);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
 		mvc.perform(post("/auth/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
@@ -152,17 +227,124 @@ class LoginControllerTest {
 		// Create a mock TokenRefreshRequest object
 		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
 
+		// A user that does not need to change the password
+		User user = new User();
+		user.setUserName(username);
+
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false))).thenReturn(newAccessToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(newAccessToken);
 		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
 
 		// Expected LoginResponse object
 		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username);
 		String expectedJson = UserHelper.asJsonString(loginResponse);
 
 		// Perform POST request to refresh-token endpoint
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testRefreshToken_MustChangePassword() throws Exception {
+		String refreshToken = "validRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		// A user still flagged to change the password: the flag must be recomputed, not silently cleared (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswdMustChange(true);
+
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+
+		// Expected LoginResponse with mustChangePassword = true
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testRefreshToken_PasswordLeaseExpired() throws Exception {
+		String refreshToken = "validRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		// The flag is off, but the password lease has expired: the refresh must recompute the reason as well (OP-896)
+		User user = new User();
+		user.setUserName(username);
+		user.setPasswdMustChange(false);
+
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenReturn(user);
+		when(userManager.isPasswordExpired(user)).thenReturn(true);
+		when(userManager.getPasswordLeaseDays()).thenReturn(90);
+
+		// Expected LoginResponse with mustChangePassword = true driven by the expired lease: passwordExpired = true and the configured lease is reported
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true, true, 90);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+	}
+
+	@Test
+	void testRefreshToken_FlagCheckFails_FailsClosed() throws Exception {
+		String refreshToken = "validRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		// The database check fails: the flag must fail closed instead of silently dropping the restriction (OP-896)
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(userManager.getUserByName(username)).thenThrow(new OHServiceException(new OHExceptionMessage("Database error")));
+		when(userManager.getPasswordLeaseDays()).thenReturn(90);
+
+		// Expected LoginResponse with mustChangePassword = true but no reason: passwordExpired stays false and no lease is reported
+		// even though the lease policy is active, so the client falls back to a generic message
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username, true, false, null);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
 		mvc.perform(post("/auth/refresh-token")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)

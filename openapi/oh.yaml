@@ -1558,6 +1558,26 @@ paths:
                 $ref: "#/components/schemas/PatientExaminationDTO"
       security:
       - bearerAuth: []
+    delete:
+      tags:
+      - Examinations
+      operationId: deletePatientExamination
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - bearerAuth: []
   /diseasetypes:
     get:
       tags:
@@ -7093,12 +7113,10 @@ components:
           example: O
         amount:
           type: number
-          format: double
           description: Bill Amount
           example: 1000
         balance:
           type: number
-          format: double
           description: Bill balance
           example: 1500
         user:
@@ -7452,18 +7470,18 @@ components:
           description: The number of pieces per packet
           example: 100
         inqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The input quantity of the medical
           example: 340
         outqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The out quantity of the medical
           example: 8
         minqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The min quantity of the medical
           example: 15
         lock:
@@ -7812,7 +7830,6 @@ components:
           example: Acetone 99 % 1ltr
         itemAmount:
           type: number
-          format: double
           description: Item amount
           example: 1000
         itemQuantity:
@@ -7859,7 +7876,6 @@ components:
           example: 2020-03-19T14:58:00.000Z
         amount:
           type: number
-          format: double
           description: The payment amount
           example: 500
         user:
@@ -8098,7 +8114,7 @@ components:
         date:
           type: string
           description: The movement date
-          example: 2020-06-24
+          example: 2020-06-24T10:00:00
         quantity:
           type: integer
           format: int32
@@ -8182,9 +8198,9 @@ components:
           description: The ward
         date:
           type: string
-          format: LocalDate
+          format: LocalDateTime
           description: The movement ward's date
-          example: 2020-06-07
+          example: 2020-06-07T10:00:00
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: The patient in case the movement is associated to a patient
@@ -8208,7 +8224,6 @@ components:
           description: The medical concerned by the movement
         quantity:
           type: number
-          format: double
           description: The quantity of the medical concerned by the movement
           example: 145
         units:
@@ -8264,6 +8279,17 @@ components:
           type: string
           description: User name
           example: admin
+        mustChangePassword:
+          type: boolean
+          description: Whether the user must change the password before using the application
+        passwordExpired:
+          type: boolean
+          description: Whether the password change is required because the password lease has expired
+        passwordLeaseDays:
+          type: integer
+          format: int32
+          description: The configured password lease in days, when the lease policy is active
+          example: 90
     LoginRequest:
       type: object
       properties:
@@ -8301,7 +8327,6 @@ components:
           maxLength: 100
         price:
           type: number
-          format: double
           description: Price
           example: 1500
         lock:
@@ -8370,13 +8395,12 @@ components:
           description: The medical ward's id
           example: 1
         in_quantity:
-          type: number
-          format: float
+          type: integer
+          format: int32
           description: The in-quantity
           example: 150
         out_quantity:
           type: number
-          format: float
           description: The out-quantity
           example: 89
         lock:

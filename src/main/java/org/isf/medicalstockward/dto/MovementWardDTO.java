@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,7 +21,8 @@
  */
 package org.isf.medicalstockward.dto;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -41,8 +42,8 @@ public class MovementWardDTO {
 	private WardDTO ward;
 
 	@NotNull
-	@Schema(description = "The movement ward's date", example = "2020-06-07", format = "LocalDate")
-	private LocalDate date;
+	@Schema(description = "The movement ward's date", example = "2020-06-07T10:00:00", format = "LocalDateTime")
+	private LocalDateTime date;
 
 	@NotNull
 	@Schema(description = "Indicates if the movement is associated to a patient or no ", example = "false")
@@ -66,7 +67,7 @@ public class MovementWardDTO {
 
 	@NotNull
 	@Schema(description = "The quantity of the medical concerned by the movement", example = "145")
-	private Double quantity;
+	private BigDecimal quantity;
 
 	@NotNull
 	@Schema(description = "The measure's unit of the medical concerned by the movement", example = "pct")
@@ -81,8 +82,8 @@ public class MovementWardDTO {
 	public MovementWardDTO() {
 	}
 
-	public MovementWardDTO(int code, WardDTO ward, LocalDate date, boolean isPatient, PatientDTO patient, int age,
-			float weight, String description, MedicalDTO medical, Double quantity, String units, WardDTO wardTo,
+	public MovementWardDTO(int code, WardDTO ward, LocalDateTime date, boolean isPatient, PatientDTO patient, int age,
+			float weight, String description, MedicalDTO medical, BigDecimal quantity, String units, WardDTO wardTo,
 			WardDTO wardFrom) {
 		this.code = code;
 		this.ward = ward;
@@ -107,7 +108,7 @@ public class MovementWardDTO {
 		return this.ward;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 
@@ -135,7 +136,7 @@ public class MovementWardDTO {
 		return this.medical;
 	}
 
-	public Double getQuantity() {
+	public BigDecimal getQuantity() {
 		return this.quantity;
 	}
 
@@ -159,7 +160,7 @@ public class MovementWardDTO {
 		this.ward = ward;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 
@@ -187,7 +188,7 @@ public class MovementWardDTO {
 		this.medical = medical;
 	}
 
-	public void setQuantity(Double quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 
