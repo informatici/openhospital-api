@@ -132,6 +132,9 @@ public class PatientDTO {
 	@Schema(description = "Consensus administrative flag", example = "true")
 	private boolean consensusAdministrativeFlag;
 
+	@Schema(description = "Reason why the administration flagged the patient", maxLength = 255)
+	private String consensusAdministrativeReason;
+
 	public boolean isConsensusFlag() {
 		return consensusFlag;
 	}
@@ -154,6 +157,14 @@ public class PatientDTO {
 
 	public void setConsensusAdministrativeFlag(boolean consensusAdministrativeFlag) {
 		this.consensusAdministrativeFlag = consensusAdministrativeFlag;
+	}
+
+	public String getConsensusAdministrativeReason() {
+		return consensusAdministrativeReason;
+	}
+
+	public void setConsensusAdministrativeReason(String consensusAdministrativeReason) {
+		this.consensusAdministrativeReason = consensusAdministrativeReason;
 	}
 
 	public int getLock() {

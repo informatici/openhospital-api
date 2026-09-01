@@ -620,21 +620,27 @@ class PatientControllerTest {
     }
 
 	@Test
-	void when_mapping_patient_then_consensus_administrative_flag_round_trips_both_ways() throws Exception {
-		// Patient -> PatientDTO: the administrative consensus flag is carried and not swapped with the service flag
+	void when_mapping_patient_then_administrative_consensus_fields_round_trip() throws Exception {
+		String reason = "Missing insurance documents";
+
+		// Patient -> PatientDTO: the administrative fields are carried and the flag is not swapped with the service flag
 		Patient patient = PatientHelper.setup();
 		patient.getPatientConsensus().setAdministrativeFlag(true);
+		patient.getPatientConsensus().setAdministrativeReason(reason);
 		patient.getPatientConsensus().setServiceFlag(false);
 		PatientDTO mappedDTO = patientMapper.map2DTO(patient);
 		assertThat(mappedDTO.isConsensusAdministrativeFlag(), is(true));
+		assertThat(mappedDTO.getConsensusAdministrativeReason(), is(reason));
 		assertThat(mappedDTO.isConsensusServiceFlag(), is(false));
 
-		// PatientDTO -> Patient: the flag is carried back into the consensus model
+		// PatientDTO -> Patient: the fields are carried back into the consensus model
 		PatientDTO patientDTO = PatientHelper.setup(patientMapper);
 		patientDTO.setConsensusAdministrativeFlag(true);
+		patientDTO.setConsensusAdministrativeReason(reason);
 		patientDTO.setConsensusServiceFlag(false);
 		Patient mappedModel = patientMapper.map2Model(patientDTO);
 		assertThat(mappedModel.getPatientConsensus().isAdministrativeFlag(), is(true));
+		assertThat(mappedModel.getPatientConsensus().getAdministrativeReason(), is(reason));
 		assertThat(mappedModel.getPatientConsensus().isServiceFlag(), is(false));
 	}
 }

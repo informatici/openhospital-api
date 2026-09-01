@@ -34,6 +34,7 @@ public class PatientMapping {
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isConsensusFlag(), PatientDTO::setConsensusFlag);
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isServiceFlag(), PatientDTO::setConsensusServiceFlag);
 			mapper.<Boolean> map(src -> src.getPatientConsensus().isAdministrativeFlag(), PatientDTO::setConsensusAdministrativeFlag);
+			mapper.<String> map(src -> src.getPatientConsensus().getAdministrativeReason(), PatientDTO::setConsensusAdministrativeReason);
 			mapper.map(src -> src.getPatientProfilePhoto().getPhoto(), PatientDTO::setBlobPhoto);
 		});
 
@@ -41,6 +42,7 @@ public class PatientMapping {
 			mapper.<Boolean> map(src -> src.isConsensusFlag(), (db, value) -> db.getPatientConsensus().setConsensusFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusServiceFlag(), (db, value) -> db.getPatientConsensus().setServiceFlag(value));
 			mapper.<Boolean> map(src -> src.isConsensusAdministrativeFlag(), (db, value) -> db.getPatientConsensus().setAdministrativeFlag(value));
+			mapper.<String> map(src -> src.getConsensusAdministrativeReason(), (db, value) -> db.getPatientConsensus().setAdministrativeReason(value));
 			mapper.<Patient> map(src -> src, (db, value) -> {
 				db.getPatientConsensus().setPatient(value);
 			});

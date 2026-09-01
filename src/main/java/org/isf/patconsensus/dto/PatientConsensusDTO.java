@@ -37,6 +37,9 @@ public class PatientConsensusDTO {
 	@Schema(description = "Administrative flag")
 	private boolean administrativeFlag;
 
+	@Schema(description = "Reason why the administration flagged the patient", maxLength = 255)
+	private String administrativeReason;
+
 	@NotNull
 	@Schema(description = "Patient id")
 	private Integer patientId;
@@ -63,6 +66,14 @@ public class PatientConsensusDTO {
 
 	public void setAdministrativeFlag(boolean administrativeFlag) {
 		this.administrativeFlag = administrativeFlag;
+	}
+
+	public String getAdministrativeReason() {
+		return administrativeReason;
+	}
+
+	public void setAdministrativeReason(String administrativeReason) {
+		this.administrativeReason = administrativeReason;
 	}
 
 	public Integer getPatientId() {
