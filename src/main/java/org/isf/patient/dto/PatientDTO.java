@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -129,6 +129,12 @@ public class PatientDTO {
 	@Schema(description = "Consensus service flag", example = "true")
 	private boolean consensusServiceFlag;
 
+	@Schema(description = "Consensus administrative flag", example = "true")
+	private boolean consensusAdministrativeFlag;
+
+	@Schema(description = "Reason why the administration flagged the patient", maxLength = 255)
+	private String consensusAdministrativeReason;
+
 	public boolean isConsensusFlag() {
 		return consensusFlag;
 	}
@@ -143,6 +149,22 @@ public class PatientDTO {
 
 	public void setConsensusServiceFlag(boolean consensusServiceFlag) {
 		this.consensusServiceFlag = consensusServiceFlag;
+	}
+
+	public boolean isConsensusAdministrativeFlag() {
+		return consensusAdministrativeFlag;
+	}
+
+	public void setConsensusAdministrativeFlag(boolean consensusAdministrativeFlag) {
+		this.consensusAdministrativeFlag = consensusAdministrativeFlag;
+	}
+
+	public String getConsensusAdministrativeReason() {
+		return consensusAdministrativeReason;
+	}
+
+	public void setConsensusAdministrativeReason(String consensusAdministrativeReason) {
+		this.consensusAdministrativeReason = consensusAdministrativeReason;
 	}
 
 	public int getLock() {
