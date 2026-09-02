@@ -21,6 +21,7 @@
  */
 package org.isf.medicalstockward.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
@@ -66,7 +67,7 @@ public class MovementWardDTO {
 
 	@NotNull
 	@Schema(description = "The quantity of the medical concerned by the movement", example = "145")
-	private Double quantity;
+	private BigDecimal quantity;
 
 	@NotNull
 	@Schema(description = "The measure's unit of the medical concerned by the movement", example = "pct")
@@ -82,8 +83,8 @@ public class MovementWardDTO {
 	}
 
 	public MovementWardDTO(int code, WardDTO ward, LocalDateTime date, boolean isPatient, PatientDTO patient, int age,
-		float weight, String description, MedicalDTO medical, Double quantity, String units, WardDTO wardTo,
-		WardDTO wardFrom) {
+			float weight, String description, MedicalDTO medical, BigDecimal quantity, String units, WardDTO wardTo,
+			WardDTO wardFrom) {
 		this.code = code;
 		this.ward = ward;
 		this.date = date;
@@ -135,7 +136,7 @@ public class MovementWardDTO {
 		return this.medical;
 	}
 
-	public Double getQuantity() {
+	public BigDecimal getQuantity() {
 		return this.quantity;
 	}
 
@@ -187,7 +188,7 @@ public class MovementWardDTO {
 		this.medical = medical;
 	}
 
-	public void setQuantity(Double quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		this.quantity = quantity;
 	}
 

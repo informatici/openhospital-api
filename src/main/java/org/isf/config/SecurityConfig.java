@@ -25,11 +25,13 @@ import java.util.Arrays;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTFilter;
+import org.isf.security.jwt.MustChangePasswordFilter;
 import org.isf.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,9 +64,12 @@ public class SecurityConfig {
 	@Autowired
 	protected PermissionManager permissionManager;
 
-	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager) {
+	private final UserBrowsingManager userManager;
+
+	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager, UserBrowsingManager userManager) {
 		this.tokenProvider = tokenProvider;
 		this.permissionManager = permissionManager;
+		this.userManager = userManager;
 	}
 
 	@Autowired
@@ -341,6 +346,8 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.addFilterBefore(new JWTFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+		// OP-896: users flagged to change their password are restricted to the password change endpoints
+		http.addFilterAfter(new MustChangePasswordFilter(tokenProvider, userManager), JWTFilter.class);
 		return http.build();
 	}
 

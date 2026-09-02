@@ -37,3 +37,14 @@ jwt.token.validityInSecondsForRememberMe=259200
 # needed to start application even without DB connection
 spring.jpa.database-platform=org.hibernate.dialect.MariaDBDialect
 spring.jpa.hibernate.ddl-auto=none
+
+### Security hardening - do not disclose technical/version information (OP-890, STRIDE I03)
+# Error responses must not leak messages, stack traces or exception class names
+server.error.include-message=never
+server.error.include-stacktrace=never
+server.error.include-exception=false
+server.error.include-binding-errors=never
+# Return a clean 404 for unknown paths instead of a detailed error page
+spring.mvc.throw-exception-if-no-handler-found=true
+# Suppress the server identification (version) header
+server.server-header=
