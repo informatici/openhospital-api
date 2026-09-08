@@ -3,7 +3,13 @@
 
 name: OpenAPI breaking changes check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  pull_request:
 
 env:
   MAVEN_ARGS: '-B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn'
@@ -48,7 +54,7 @@ jobs:
               if curl -s -o /dev/null -w "%{http_code}" "$CHECK_BRANCH_URL" | grep -q "200"; then
                 echo "Branch $BRANCH_NAME exists in $FORK_REPO."
               else
-                # Fallback to the main repository if the branch doesn’t exist in the fork
+                # Fallback to the main repository if the branch doesn't exist in the fork
                 FORK_REPO="informatici/openhospital-core"
               fi
             fi
@@ -74,7 +80,11 @@ jobs:
         run: |
           git clone --depth=1 --no-single-branch https://github.com/${{ env.FORK_REPO }}.git openhospital-core
           pushd openhospital-core
-          git checkout -B ${{ env.BRANCH_NAME }} origin/${{ env.BRANCH_NAME }} || git checkout develop
+          # a branch of the same name comes first, as before; a pull request against a release
+          # branch then builds core from that same branch, and anything else falls back to develop
+          git checkout -B ${{ env.BRANCH_NAME }} origin/${{ env.BRANCH_NAME }} \
+            || git checkout "${{ github.base_ref }}" \
+            || git checkout develop
           popd
       
       - name: Install core
@@ -92,7 +102,9 @@ jobs:
           cp rsc/database.properties.dist rsc/database.properties
           cp rsc/log4j2-spring.properties.dist rsc/log4j2-spring.properties
           cp rsc/settings.properties.dist rsc/settings.properties
-          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" -e "s/API_HOST/localhost/g" -e "s/API_PORT/8080/g" rsc/application.properties.dist > rsc/application.properties
+          # api.host carries /API_URL on this branch, which the launcher fills in at install time:
+          # left in place it would end up in the generated spec and never match the committed one
+          sed -e "s/JWT_TOKEN_SECRET/${{ steps.jwt.outputs.token }}/g" -e "s/API_HOST/localhost/g" -e "s/API_PORT/8080/g" -e "s&/API_URL&&g" rsc/application.properties.dist > rsc/application.properties
           mvn install -DskipTests=true
           
       - name: Run API

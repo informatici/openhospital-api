@@ -18,7 +18,7 @@
 
     <properties>
         <packaging.type>jar</packaging.type>
-        <oh-core.version>1.15.0</oh-core.version>
+        <oh-core.version>1.16.0-SNAPSHOT</oh-core.version>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <license.maven.plugin.version>5.0.0</license.maven.plugin.version>
