@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -23,6 +23,7 @@ package org.isf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,6 +91,20 @@ class JWTFilterTest {
 		jwtFilter.doFilter(request, response, filterChain);
 
 		assertThat(response.getStatus()).isEqualTo(401); // Ensure response status is 401 for expired token
+	}
+
+	@Test
+	void testDoFilter_RevokedToken() throws ServletException, IOException {
+		String revokedToken = "revoked.token";
+		when(tokenProvider.validateToken(revokedToken)).thenReturn(TokenValidationResult.REVOKED);
+
+		request.addHeader(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + revokedToken);
+
+		jwtFilter.doFilter(request, response, filterChain);
+
+		assertThat(response.getStatus()).isEqualTo(401); // Ensure response status is 401 for revoked token
+		assertThat(response.getContentAsString()).isEqualTo("{\"error\": \"JWT token has been revoked.\"}");
+		verify(filterChain, never()).doFilter(request, response); // Ensure the filter chain does not continue
 	}
 
 	@Test

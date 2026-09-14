@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,5 +22,5 @@
 package org.isf.security.jwt;
 
 public enum TokenValidationResult {
-	VALID, EXPIRED, MALFORMED, UNSUPPORTED, EMPTY_CLAIMS, INVALID_SIGNATURE, UNKNOWN;
+	VALID, EXPIRED, MALFORMED, UNSUPPORTED, EMPTY_CLAIMS, INVALID_SIGNATURE, REVOKED, UNKNOWN;
 }
