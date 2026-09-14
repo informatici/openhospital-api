@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,6 +22,7 @@
 package org.isf.vaccine.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +30,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -37,6 +39,9 @@ import java.util.Objects;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHDataIntegrityViolationException;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.isf.vaccine.data.VaccineHelper;
 import org.isf.vaccine.dto.VaccineDTO;
 import org.isf.vaccine.manager.VaccineBrowserManager;
@@ -146,11 +151,53 @@ public class VaccineControllerTest {
 						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
 				)
 				.andDo(log())
-				//.andDo(print())
+				//.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isCreated())
 				.andReturn();
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void newVaccine_VaccineTypeAlreadyPresent_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHDataIntegrityViolationException(new OHExceptionMessage("Duplicated vaccine type")));
+
+		this.mockMvc
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Vaccine type already present."));
+	}
+
+	@Test
+	void newVaccine_NotCreated_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+				.perform(post(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Vaccine not created."));
 	}
 
 	@Test
@@ -177,6 +224,27 @@ public class VaccineControllerTest {
 	}
 
 	@Test
+	void updateVaccine_NotUpdated_400() throws Exception {
+		String request = "/vaccines";
+		String code = "ZZ";
+		Vaccine vaccine = VaccineHelper.setup(code);
+		VaccineDTO body = vaccineMapper.map2DTO(vaccine);
+
+		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
+				.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+				.perform(put(request)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
+				)
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Vaccine not updated."));
+	}
+
+	@Test
 	void testDeleteVaccine_200() throws Exception {
 		String request = "/vaccines/{code}";
 		String basecode = "0";
@@ -198,6 +266,40 @@ public class VaccineControllerTest {
 				.andReturn();
 
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void deleteVaccine_NotFound_404() throws Exception {
+		String request = "/vaccines/{code}";
+		String code = "0";
+
+		when(vaccineBrowserManagerMock.findVaccine(code))
+				.thenReturn(null);
+
+		this.mockMvc
+				.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message").value("Vaccine not found."));
+	}
+
+	@Test
+	void deleteVaccine_NotDeleted_400() throws Exception {
+		String request = "/vaccines/{code}";
+		String code = "0";
+
+		Vaccine vaccine = VaccineHelper.setup(code);
+
+		when(vaccineBrowserManagerMock.findVaccine(code))
+				.thenReturn(vaccine);
+		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
+				.when(vaccineBrowserManagerMock).deleteVaccine(vaccine);
+
+		this.mockMvc
+				.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message").value("Vaccine not deleted."));
 	}
 
 	@Test
