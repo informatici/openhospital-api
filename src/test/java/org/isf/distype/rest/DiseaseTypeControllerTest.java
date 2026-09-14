@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,7 +22,9 @@
 package org.isf.distype.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -43,6 +46,8 @@ import org.isf.distype.model.DiseaseType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,6 +142,51 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
+	void newDiseaseType_400() throws Exception {
+		String request = "/diseasetypes";
+		int code = 123;
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
+
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
+			.thenReturn(true);
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Specified Disease Type code is already used."));
+	}
+
+	@Test
+	void newDiseaseType_500() throws Exception {
+		String request = "/diseasetypes";
+		int code = 123;
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
+
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
+			.thenReturn(false);
+
+		when(diseaseTypeBrowserManager.newDiseaseType(any(DiseaseType.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Failed to create disease type."));
+	}
+
+	@Test
 	void testUpdateDiseaseType_200() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
@@ -164,6 +214,53 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
+	void updateDiseaseType_404() throws Exception {
+		String request = "/diseasetypes";
+		int code = 456;
+
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
+
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
+			.thenReturn(false);
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("Disease Type not found."));
+	}
+
+	@Test
+	void updateDiseaseType_500() throws Exception {
+		String request = "/diseasetypes";
+		int code = 456;
+
+		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(diseaseType);
+
+		when(diseaseTypeBrowserManager.isCodePresent(body.getCode()))
+			.thenReturn(true);
+
+		when(diseaseTypeBrowserManager.updateDiseaseType(any(DiseaseType.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Disease Type not updated."));
+	}
+
+	@Test
 	void testDeleteDiseaseType_200() throws Exception {
 		String request = "/diseasetypes/{code}";
 
@@ -183,6 +280,40 @@ class DiseaseTypeControllerTest {
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void deleteDiseaseType_404() throws Exception {
+		String request = "/diseasetypes/{code}";
+
+		when(diseaseTypeBrowserManager.getDiseaseType(anyString()))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(delete(request, "notThere").accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("No Disease Type found with the given code."));
+	}
+
+	@Test
+	void deleteDiseaseType_200_NotDeleted() throws Exception {
+		String request = "/diseasetypes/{code}";
+
+		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
+		String code = body.getCode();
+
+		when(diseaseTypeBrowserManager.getDiseaseType(anyString()))
+			.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1).get(0));
+
+		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
+			.when(diseaseTypeBrowserManager).deleteDiseaseType(any(DiseaseType.class));
+
+		this.mockMvc
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string("false"));
 	}
 
 }
