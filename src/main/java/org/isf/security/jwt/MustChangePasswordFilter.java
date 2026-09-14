@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -58,6 +58,8 @@ public class MustChangePasswordFilter extends GenericFilterBean {
 		// normally consumed by Spring's LogoutFilter before this filter runs, kept as belt-and-braces
 		{ "POST", "/auth/logout" },
 		{ "POST", "/auth/refresh-token" },
+		// the password policy is public configuration the client may need before it can present a valid session
+		{ "GET", "/auth/password-policy" },
 		// the healthcheck must never require any authentication state
 		{ "GET", "/healthcheck" }
 	};
