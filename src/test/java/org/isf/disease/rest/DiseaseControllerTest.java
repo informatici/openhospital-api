@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,6 +22,8 @@
 package org.isf.disease.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -42,6 +45,8 @@ import org.isf.disease.model.Disease;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -188,12 +193,12 @@ class DiseaseControllerTest {
 
 	@Test
 	void testGetDiseasesIpdInByCode_200() throws Exception {
-		String request = "/diseases/ipd/out/{typecode}";
+		String request = "/diseases/ipd/in/{typecode}";
 
 		String typeCode = "1";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
-		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn(typeCode))
 			.thenReturn(diseases);
 
 		MvcResult result = this.mockMvc
@@ -368,6 +373,309 @@ class DiseaseControllerTest {
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void getDiseasesOpd_500() throws Exception {
+		String request = "/diseases/opd";
+
+		when(diseaseBrowserManagerMock.getDiseaseOpd())
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting OPD diseases."));
+	}
+
+	@Test
+	void getDiseasesOpdByCode_500() throws Exception {
+		String request = "/diseases/opd/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseOpd(typeCode))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting OPD diseases."));
+	}
+
+	@Test
+	void getDiseasesIpdOut_500() throws Exception {
+		String request = "/diseases/ipd/out";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting IPD out diseases."));
+	}
+
+	@Test
+	void getDiseasesIpdOutByCode_500() throws Exception {
+		String request = "/diseases/ipd/out/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdOut(typeCode))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting IPD out diseases."));
+	}
+
+	@Test
+	void getDiseasesIpdIn_500() throws Exception {
+		String request = "/diseases/ipd/in";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting IPD-in diseases."));
+	}
+
+	@Test
+	void getDiseasesIpdInByCode_500() throws Exception {
+		String request = "/diseases/ipd/in/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDiseaseIpdIn(typeCode))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting IPD-in diseases."));
+	}
+
+	@Test
+	void getDiseases_500() throws Exception {
+		String request = "/diseases/both";
+
+		when(diseaseBrowserManagerMock.getDisease())
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting diseases."));
+	}
+
+	@Test
+	void getDiseasesString_500() throws Exception {
+		String request = "/diseases/both/{typecode}";
+
+		String typeCode = "1";
+
+		when(diseaseBrowserManagerMock.getDisease(typeCode))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, typeCode).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting diseases by type code."));
+	}
+
+	@Test
+	void getAllDiseases_500() throws Exception {
+		String request = "/diseases/all";
+
+		when(diseaseBrowserManagerMock.getDiseaseAll())
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Error getting all diseases."));
+	}
+
+	@Test
+	void getDiseaseByCode_404() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, code).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("No disease found with the specified code."));
+	}
+
+	@Test
+	void newDisease_duplicatedCode_400() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(true);
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Duplicated disease code."));
+	}
+
+	@Test
+	void newDisease_duplicatedDescription_400() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
+			.thenReturn(true);
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Duplicated disease description for the same disease type."));
+	}
+
+	@Test
+	void newDisease_notCreated_500() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.descriptionControl(disease.getDescription(), disease.getType().getCode()))
+			.thenReturn(false);
+
+		when(diseaseBrowserManagerMock.newDisease(any(Disease.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Disease not created."));
+	}
+
+	@Test
+	void updateDisease_404() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(false);
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("Disease not found."));
+	}
+
+	@Test
+	void updateDisease_notUpdated_500() throws Exception {
+		String request = "/diseases";
+
+		Disease disease = DiseaseHelper.setup();
+		DiseaseDTO body = diseaseMapper.map2DTO(disease);
+
+		when(diseaseBrowserManagerMock.isCodePresent(disease.getCode()))
+			.thenReturn(true);
+
+		when(diseaseBrowserManagerMock.updateDisease(any(Disease.class)))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Failure")));
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(DiseaseHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Disease not updated."));
+	}
+
+	@Test
+	void deleteDisease_404() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("No disease found with the specified code."));
+	}
+
+	@Test
+	void deleteDisease_notDeleted_200() throws Exception {
+		String request = "/diseases/{code}";
+
+		String code = "999";
+
+		Disease disease = DiseaseHelper.setup();
+		when(diseaseBrowserManagerMock.getDiseaseByCode(code))
+			.thenReturn(disease);
+
+		doThrow(new OHServiceException(new OHExceptionMessage("Failure")))
+			.when(diseaseBrowserManagerMock).deleteDisease(any(Disease.class));
+
+		this.mockMvc
+			.perform(delete(request, code))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string("false"));
 	}
 
 }
