@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,6 +21,8 @@
  */
 package org.isf.patvac.mapper;
 
+import jakarta.annotation.PostConstruct;
+
 import org.isf.patvac.dto.PatientVaccineDTO;
 import org.isf.patvac.model.PatientVaccine;
 import org.isf.shared.GenericMapper;
@@ -30,5 +32,13 @@ import org.springframework.stereotype.Component;
 public class PatVacMapper extends GenericMapper<PatientVaccine, PatientVaccineDTO> {
 	public PatVacMapper() {
 		super(PatientVaccine.class, PatientVaccineDTO.class);
+	}
+
+	@PostConstruct
+	private void postConstruct() {
+		// pin the mapping of the "vaccine" property: implicit matching resolves it to the
+		// LocalDateTime "vaccineDate" property and fails at map time
+		modelMapper.typeMap(PatientVaccine.class, PatientVaccineDTO.class)
+			.addMappings(mapper -> mapper.map(PatientVaccine::getVaccine, PatientVaccineDTO::setVaccine));
 	}
 }
