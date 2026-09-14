@@ -6309,6 +6309,8 @@ components:
           type: boolean
         pharmacy:
           type: boolean
+        virtual:
+          type: boolean
       required:
       - beds
       - description
@@ -6727,6 +6729,8 @@ components:
           type: string
           description: The supplier's notes
           maxLength: 200
+        virtual:
+          type: boolean
         lock:
           type: integer
           format: int32
