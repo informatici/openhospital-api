@@ -83,7 +83,7 @@ class UserSettingControllerTest {
 	private UserSettingManager userSettingManager;
 
 	@Test
-	@WithMockUser(username = "contrib")
+	@WithMockUser(username = "contrib", authorities = "usersettings.read")
 	@DisplayName("Get logged-in user's setting")
 	void getCurrentUserSettings() throws Exception {
 		List<UserSetting> userSettings = UserSettingHelper.generateMany(5);
@@ -101,7 +101,7 @@ class UserSettingControllerTest {
 		LOGGER.debug("result: {}", result);
 	}
 	@Test
-	@WithMockUser(username = "admin")
+	@WithMockUser(username = "admin", authorities = "usersettings.read")
 	@DisplayName("Should get user setting by setting name")
 	void shouldGetUserSettingBySettingName() throws Exception {
 		UserSetting userSetting = UserSettingHelper.generate();
@@ -129,7 +129,7 @@ class UserSettingControllerTest {
 	class SaveUserSettings {
 
 		@Test
-		@WithMockUser(username = "oh user")
+		@WithMockUser(username = "oh user", authorities = "usersettings.create")
 		@DisplayName("Should create own user setting")
 		void shouldCreateOwnUserSetting() throws Exception {
 			User user = UserHelper.generateUser();
@@ -155,7 +155,7 @@ class UserSettingControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "oh user")
+		@WithMockUser(username = "oh user", authorities = "usersettings.create")
 		@DisplayName("Should fail to create user setting for another user")
 		void shouldFailToCreateUserSettingForOtherUser() throws Exception {
 			User user = UserHelper.generateUser();
@@ -181,7 +181,7 @@ class UserSettingControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "oh user")
+		@WithMockUser(username = "oh user", authorities = "usersettings.update")
 		@DisplayName("Should update own user setting")
 		void shouldUpdateOwnUserSetting() throws Exception {
 			User user = UserHelper.generateUser();
@@ -208,7 +208,7 @@ class UserSettingControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "oh user")
+		@WithMockUser(username = "oh user", authorities = "usersettings.update")
 		@DisplayName("Should fail to update user setting for another user")
 		void shouldFailToUpdateUserSettingForOtherUser() throws Exception {
 			User user = UserHelper.generateUser();
@@ -240,7 +240,7 @@ class UserSettingControllerTest {
 	class DeleteUserSettings {
 
 		@Test
-		@WithMockUser(username = "contrib")
+		@WithMockUser(username = "contrib", authorities = "usersettings.delete")
 		@DisplayName("Should delete own user setting by id")
 		void shouldDeleteOwnUserSettingById() throws Exception {
 			UserSetting userSetting = UserSettingHelper.generate();
@@ -262,7 +262,22 @@ class UserSettingControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "oh user")
+		@WithMockUser(
+			username = "contrib",
+			authorities = { "usersettings.create", "usersettings.read", "usersettings.update" }
+		)
+		@DisplayName("Should require delete authority")
+		void shouldRequireDeleteAuthority() throws Exception {
+			mvc.perform(
+					delete("/usersettings/{id}", 1)
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isForbidden());
+		}
+
+		@Test
+		@WithMockUser(username = "oh user", authorities = "usersettings.delete")
 		@DisplayName("Should fail to delete user setting for another user")
 		void shouldFailToDeleteUserSettingForOtherUser() throws Exception {
 			UserSetting userSetting = UserSettingHelper.generate();
