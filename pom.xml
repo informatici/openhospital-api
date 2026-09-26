@@ -11,7 +11,7 @@
 
     <groupId>org.isf</groupId>
     <artifactId>openhospital-api</artifactId>
-    <version>1.15.2</version>
+    <version>0.1.0</version>
     <packaging>${packaging.type}</packaging>
     <name>openhospital-api</name>
     <description>Open Hospital Spring Boot REST API</description>
