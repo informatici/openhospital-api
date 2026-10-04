@@ -21,7 +21,6 @@
  */
 package org.isf.vaccine.rest;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -53,17 +52,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class VaccineControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(VaccineControllerTest.class);
 
 	@Mock
 	protected VaccineBrowserManager vaccineBrowserManagerMock;
@@ -103,15 +97,11 @@ public class VaccineControllerTest {
 
 		List<VaccineDTO> expectedVaccineDTOs = vaccineMapper.map2DTOList(vaccinesList);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(get(request))
 				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(VaccineHelper.getObjectMapper().writeValueAsString(expectedVaccineDTOs))))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(expectedVaccineDTOs)));
 	}
 
 	@Test
@@ -124,15 +114,11 @@ public class VaccineControllerTest {
 		when(vaccineBrowserManagerMock.getVaccine(vaccineTypeCode))
 				.thenReturn(vaccinesList);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(get(request, vaccineTypeCode))
 				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(vaccineMapper.map2DTOList(vaccinesList))));
 	}
 
 	@Test
@@ -145,17 +131,15 @@ public class VaccineControllerTest {
 		when(vaccineBrowserManagerMock.newVaccine(vaccineMapper.map2Model(body)))
 				.thenReturn(vaccine);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				//.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isCreated())
-				.andReturn();
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(body)));
 	}
 
 	@Test
@@ -210,17 +194,14 @@ public class VaccineControllerTest {
 		when(vaccineBrowserManagerMock.updateVaccine(vaccineMapper.map2Model(body)))
 				.thenReturn(vaccine);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(put(request)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VaccineHelper.asJsonString(body)))
 				)
 				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(VaccineHelper.getObjectMapper().writeValueAsString(body)));
 	}
 
 	@Test
@@ -257,15 +238,11 @@ public class VaccineControllerTest {
 				.thenReturn(vaccine);
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(delete(request, code))
 				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(isDeleted)))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(isDeleted));
 	}
 
 	@Test
@@ -312,15 +289,11 @@ public class VaccineControllerTest {
 		when(vaccineBrowserManagerMock.isCodePresent(vaccine.getCode()))
 				.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(get(request, code))
 				.andDo(log())
-				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string("true"))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string("true"));
 	}
 
 }
