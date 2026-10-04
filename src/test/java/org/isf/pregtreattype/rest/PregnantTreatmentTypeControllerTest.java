@@ -23,6 +23,7 @@ package org.isf.pregtreattype.rest;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,6 +45,8 @@ import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -193,6 +196,30 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
+	void updatePregnantTreatmentType_400() throws Exception {
+		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
+		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
+		String request = "/pregnanttreatmenttypes/{code}";
+		String code = body.getCode();
+
+		when(pregnantTreatmentTypeManager.isCodePresent(code))
+			.thenReturn(true);
+
+		when(pregnantTreatmentTypeManager.updatePregnantTreatmentType(pregnantTreatmentTypeMapper.map2Model(body)))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(put(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(PregnantTreatmentTypeHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Pregnant Treatment Type not updated."));
+	}
+
+	@Test
 	void deletePregnantTreatmentType_200() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -221,6 +248,24 @@ class PregnantTreatmentTypeControllerTest {
 			.andDo(log())
 			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.message").value("Pregnant Treatment Type not found."));
+	}
+
+	@Test
+	void deletePregnantTreatmentType_400() throws Exception {
+		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
+		String request = "/pregnanttreatmenttypes/{code}";
+		String code = pregnantTreatmentType.getCode();
+
+		when(pregnantTreatmentTypeManager.getPregnantTreatmentType())
+			.thenReturn(List.of(pregnantTreatmentType));
+		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
+			.when(pregnantTreatmentTypeManager).deletePregnantTreatmentType(pregnantTreatmentType);
+
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("PregnantTreatment Type not deleted."));
 	}
 
 }
