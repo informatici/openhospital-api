@@ -21,6 +21,7 @@
  */
 package org.isf.vaccine.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -294,6 +295,14 @@ public class VaccineControllerTest {
 				.andDo(log())
 				.andExpect(status().isOk())
 				.andExpect(content().string("true"));
+	}
+
+	@Test
+	void toString_VaccineDTO() throws Exception {
+		VaccineDTO vaccineDTO = vaccineMapper.map2DTO(VaccineHelper.setup("AA"));
+
+		assertThat(vaccineDTO).hasToString("VaccineDTO{code='" + vaccineDTO.getCode() + "', description='" + vaccineDTO.getDescription()
+				+ "', vaccineType=" + vaccineDTO.getVaccineType() + '}');
 	}
 
 }
