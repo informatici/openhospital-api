@@ -21,7 +21,6 @@
  */
 package org.isf.agetype.rest;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -52,19 +51,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class AgeTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeControllerTest.class);
 
 	@Mock
 	private AgeTypeBrowserManager ageTypeManagerMock;
@@ -105,15 +99,11 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getAgeType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults)));
 	}
 
 	@Test
@@ -126,17 +116,14 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(anyInt())).thenReturn(ageTypes.get(0));
 		when(ageTypeManagerMock.updateAgeType(ageTypes)).thenReturn(ageTypes);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(body))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(objectMapper.writeValueAsString(body)));
 	}
 
 	@Test
@@ -244,16 +231,11 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByAge(age))
 			.thenReturn(responseString);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, age))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(responseString)))
-			.andExpect(content().string(containsString("code")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value(responseString));
 	}
 
 	@Test
@@ -282,15 +264,11 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(index))
 			.thenReturn(ageType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, index))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO)));
 	}
 
 	@Test
