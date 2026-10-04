@@ -21,7 +21,6 @@
  */
 package org.isf.distype.rest;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -54,17 +53,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class DiseaseTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DiseaseTypeControllerTest.class);
 
 	@Mock
 	protected DiseaseTypeBrowserManager diseaseTypeBrowserManager;
@@ -104,15 +98,11 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.getDiseaseType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(DiseaseTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(DiseaseTypeHelper.getObjectMapper().writeValueAsString(parsedResults)));
 	}
 
 	@Test
@@ -128,17 +118,14 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.newDiseaseType(diseaseTypeMapper.map2Model(body)))
 			.thenReturn(diseaseType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(DiseaseTypeHelper.getObjectMapper().writeValueAsString(body)));
 	}
 
 	@Test
@@ -200,17 +187,14 @@ class DiseaseTypeControllerTest {
 		when(diseaseTypeBrowserManager.updateDiseaseType(diseaseTypeMapper.map2Model(body)))
 			.thenReturn(diseaseType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DiseaseTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(DiseaseTypeHelper.getObjectMapper().writeValueAsString(body)));
 	}
 
 	@Test
@@ -271,15 +255,11 @@ class DiseaseTypeControllerTest {
 			.thenReturn(DiseaseTypeHelper.setupDiseaseTypeList(1).get(0));
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(isDeleted));
 	}
 
 	@Test
