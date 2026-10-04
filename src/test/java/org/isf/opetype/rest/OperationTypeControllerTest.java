@@ -22,6 +22,7 @@
 package org.isf.opetype.rest;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,6 +45,8 @@ import org.isf.opetype.model.OperationType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -106,6 +109,27 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
+	void newOperationType_NotCreated_400() throws Exception {
+		String request = "/operationtypes";
+		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
+
+		OperationType operationType = new OperationType("ZZ", "TestDescription");
+
+		when(operationTypeManagerMock.newOperationType(operationType))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+			.perform(post(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OperationTypeDTOHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Operation Type not created."));
+	}
+
+	@Test
 	void updateOperationType_200() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
@@ -127,6 +151,50 @@ class OperationTypeControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.code").value("ZZ"))
 			.andExpect(jsonPath("$.description").value("TestDescription"));
+	}
+
+	@Test
+	void updateOperationType_NotFound_404() throws Exception {
+		String request = "/operationtypes/{code}";
+		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
+		String code = body.getCode();
+
+		when(operationTypeManagerMock.isCodePresent(code))
+			.thenReturn(false);
+
+		this.mockMvc
+			.perform(put(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OperationTypeDTOHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("Operation Type not found."));
+	}
+
+	@Test
+	void updateOperationType_NotUpdated_400() throws Exception {
+		String request = "/operationtypes/{code}";
+		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
+		String code = body.getCode();
+		OperationType operationType = new OperationType("ZZ", "TestDescription");
+
+		when(operationTypeManagerMock.isCodePresent(code))
+			.thenReturn(true);
+
+		when(operationTypeManagerMock.updateOperationType(operationType))
+			.thenThrow(new OHServiceException(new OHExceptionMessage("Error")));
+
+		this.mockMvc
+			.perform(put(request, code)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(OperationTypeDTOHelper.asJsonString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Operation Type not updated."));
 	}
 
 	@Test
@@ -165,6 +233,42 @@ class OperationTypeControllerTest {
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string("true"));
+	}
+
+	@Test
+	void deleteOperationType_NotFound_404() throws Exception {
+		String request = "/operationtypes/{code}";
+		String code = "ZZ";
+
+		when(operationTypeManagerMock.getOperationType())
+			.thenReturn(new ArrayList<>());
+
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("Operation Type not found."));
+	}
+
+	@Test
+	void deleteOperationType_NotDeleted_400() throws Exception {
+		String request = "/operationtypes/{code}";
+		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
+		String code = body.getCode();
+
+		OperationType operationType = new OperationType("ZZ", "TestDescription");
+		ArrayList<OperationType> operationTypesFound = new ArrayList<>();
+		operationTypesFound.add(operationType);
+		when(operationTypeManagerMock.getOperationType())
+			.thenReturn(operationTypesFound);
+		doThrow(new OHServiceException(new OHExceptionMessage("Error")))
+			.when(operationTypeManagerMock).deleteOperationType(operationType);
+
+		this.mockMvc
+			.perform(delete(request, code).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("Operation Type not deleted."));
 	}
 
 }
