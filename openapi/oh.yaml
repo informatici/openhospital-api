@@ -514,6 +514,60 @@ paths:
                 $ref: "#/components/schemas/SupplierDTO"
       security:
       - bearerAuth: []
+  /professions:
+    get:
+      tags:
+      - Professions
+      operationId: getProfessions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProfessionDTO"
+      security:
+      - bearerAuth: []
+    put:
+      tags:
+      - Professions
+      operationId: updateProfession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfessionDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfessionDTO"
+      security:
+      - bearerAuth: []
+    post:
+      tags:
+      - Professions
+      operationId: newProfession
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfessionDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfessionDTO"
+      security:
+      - bearerAuth: []
   /pricesothers/{id}:
     put:
       tags:
@@ -6095,6 +6149,26 @@ paths:
                 type: boolean
       security:
       - bearerAuth: []
+  /professions/{code}:
+    delete:
+      tags:
+      - Professions
+      operationId: deleteProfession
+      parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - bearerAuth: []
   /operations/rows/{code}:
     delete:
       tags:
@@ -6301,13 +6375,13 @@ components:
           format: int32
           description: lock
           example: 0
-        female:
-          type: boolean
-        male:
+        pharmacy:
           type: boolean
         opd:
           type: boolean
-        pharmacy:
+        female:
+          type: boolean
+        male:
           type: boolean
       required:
       - beds
@@ -6735,6 +6809,21 @@ components:
       required:
       - supId
       - supName
+    ProfessionDTO:
+      type: object
+      description: Class representing a profession
+      properties:
+        code:
+          type: string
+          description: Profession code
+          maxLength: 50
+        description:
+          type: string
+          description: Profession description
+          maxLength: 50
+      required:
+      - code
+      - description
     PricesOthersDTO:
       type: object
       description: Class representing a price others
