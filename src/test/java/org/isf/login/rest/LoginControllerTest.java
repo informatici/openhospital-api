@@ -22,12 +22,16 @@
 package org.isf.login.rest;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -39,6 +43,7 @@ import org.isf.OpenHospitalApiApplication;
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
 import org.isf.login.dto.TokenRefreshRequest;
+import org.isf.login.security.LoginAttemptService;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
 import org.isf.security.CustomAuthenticationManager;
@@ -54,8 +59,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -85,14 +93,19 @@ class LoginControllerTest {
 	@Mock
 	private UserBrowsingManager userManager;
 
+	@Mock
+	private LoginAttemptService loginAttemptService;
+
+	private LoginController loginController;
+
 	private AutoCloseable closeable;
 
 	@BeforeEach
 	void setUp() {
 		closeable = MockitoAnnotations.openMocks(this);
 
-		LoginController loginController = new LoginController(
-			httpSession, sessionAuditManager, tokenProvider, authenticationManager, userManager
+		loginController = new LoginController(
+			httpSession, sessionAuditManager, tokenProvider, authenticationManager, userManager, loginAttemptService
 		);
 
 		this.mvc = MockMvcBuilders
@@ -135,11 +148,52 @@ class LoginControllerTest {
 
 		// Perform the login request
 		mvc.perform(post("/auth/login")
+				.with(request -> {
+					request.setRemoteAddr("192.0.2.1");
+					return request;
+				})
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
 			.andExpect(status().isOk())
 			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
 			.andReturn();
+
+		verify(loginAttemptService).loginSucceeded(username, "192.0.2.1");
+	}
+
+	@Test
+	void testAuthenticateUser_RateLimited() throws Exception {
+		LoginRequest loginRequest = new LoginRequest("testUser", "testPassword");
+		when(loginAttemptService.retryAfterSeconds("testUser", "192.0.2.1")).thenReturn(30L);
+
+		mvc.perform(post("/auth/login")
+				.with(request -> {
+					request.setRemoteAddr("192.0.2.1");
+					return request;
+				})
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(loginRequest))))
+			.andExpect(status().isTooManyRequests())
+			.andExpect(header().string("Retry-After", "30"))
+			.andExpect(content().string(containsString("Too many login attempts")));
+
+		verifyNoInteractions(authenticationManager);
+	}
+
+	@Test
+	void testAuthenticateUser_FailureIsRecorded() {
+		LoginRequest loginRequest = new LoginRequest("testUser", "wrongPassword");
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRemoteAddr("192.0.2.1");
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Wrong password"));
+
+		assertThrows(
+			BadCredentialsException.class,
+			() -> loginController.authenticateUser(loginRequest, request, response)
+		);
+
+		verify(loginAttemptService).loginFailed("testUser", "192.0.2.1");
 	}
 
 	@Test

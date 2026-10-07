@@ -33,6 +33,11 @@ jwt.token.validityInSeconds=1800
 ### JWT token validity for remember me, 3 days (259,200 seconds)
 jwt.token.validityInSecondsForRememberMe=259200
 
+### Login rate limiting (per client address and username/client-address pair)
+security.login-rate-limit.max-attempts=5
+security.login-rate-limit.window-seconds=60
+security.login-rate-limit.max-entries=10000
+
 # Hibernate properties
 # needed to start application even without DB connection
 spring.jpa.database-platform=org.hibernate.dialect.MariaDBDialect
