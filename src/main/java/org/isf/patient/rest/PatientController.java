@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -27,9 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.isf.admission.manager.AdmissionBrowserManager;
 import org.isf.admission.model.Admission;
+import org.isf.patadminissue.manager.PatientAdminIssueBrowserManager;
+import org.isf.patadminissue.mapper.PatientAdminIssueMapper;
+import org.isf.patadminissue.model.PatientAdminIssue;
 import org.isf.patconsensus.manager.PatientConsensusBrowserManager;
 import org.isf.patconsensus.model.PatientConsensus;
 import org.isf.patient.dto.PatientDTO;
@@ -77,18 +81,26 @@ public class PatientController {
 
 	private final PatientConsensusBrowserManager patientConsensusManager;
 
+	private final PatientAdminIssueBrowserManager patientAdminIssueManager;
+
 	private final PatientMapper patientMapper;
+
+	private final PatientAdminIssueMapper patientAdminIssueMapper;
 
 	public PatientController(
 		PatientBrowserManager patientManager,
 		AdmissionBrowserManager admissionManager,
 		PatientMapper patientMapper,
-		PatientConsensusBrowserManager patientConsensusManager
+		PatientConsensusBrowserManager patientConsensusManager,
+		PatientAdminIssueBrowserManager patientAdminIssueManager,
+		PatientAdminIssueMapper patientAdminIssueMapper
 	) {
 		this.patientManager = patientManager;
 		this.admissionManager = admissionManager;
 		this.patientMapper = patientMapper;
 		this.patientConsensusManager = patientConsensusManager;
+		this.patientAdminIssueManager = patientAdminIssueManager;
+		this.patientAdminIssueMapper = patientAdminIssueMapper;
 	}
 
 	/**
@@ -116,7 +128,9 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage("Patient not created."));
 		}
 
-		return patientMapper.map2DTO(patient);
+		PatientDTO createdPatient = patientMapper.map2DTO(patient);
+		createdPatient.setAdministrativeIssues(List.of());
+		return createdPatient;
 	}
 
 	@PutMapping(value = "/patients/{code}")
@@ -146,7 +160,7 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage("Patient not updated."));
 		}
 
-		return patientMapper.map2DTO(patient);
+		return withOpenAdministrativeIssues(patientMapper.map2DTO(patient));
 	}
 
 	@GetMapping(value = "/patients")
@@ -158,7 +172,7 @@ public class PatientController {
 		PagedResponse<Patient> patients = patientManager.getPatientsPageable(page, size);
 
 		Page<PatientDTO> patientPageableDTO = new Page<>();
-		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients.getData());
+		List<PatientDTO> patientsDTO = withOpenAdministrativeIssues(patientMapper.map2DTOList(patients.getData()));
 		patientPageableDTO.setData(patientsDTO);
 		patientPageableDTO.setPageInfo(patientMapper.setParameterPageInfo(patients.getPageInfo()));
 
@@ -179,7 +193,7 @@ public class PatientController {
 		LOGGER.debug("Admission retrieved: {}.", admission);
 		Boolean status = admission != null;
 
-		return patientMapper.map2DTOWS(patient, status);
+		return withOpenAdministrativeIssues(patientMapper.map2DTOWS(patient, status));
 	}
 
 	@GetMapping(value = "/patients/search")
@@ -212,11 +226,11 @@ public class PatientController {
 			patientList = patientManager.getPatients(params);
 		}
 
-		return patientList.stream().map(patient -> {
+		return withOpenAdministrativeIssues(patientList.stream().map(patient -> {
 			Admission admission = admissionManager.getCurrentAdmission(patient);
 			Boolean status = admission != null;
 			return patientMapper.map2DTOWS(patient, status);
-		}).toList();
+		}).toList());
 	}
 
 	@GetMapping(value = "/patients/all")
@@ -227,7 +241,7 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
 
-		return patientMapper.map2DTO(patient);
+		return withOpenAdministrativeIssues(patientMapper.map2DTO(patient));
 	}
 
 	@GetMapping(value = "/patients/nextcode")
@@ -287,6 +301,31 @@ public class PatientController {
 			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
 		}
 		List<PatientDTO> patientsDTO = patientMapper.map2DTOList(patients);
-        return patientsDTO;
+        return withOpenAdministrativeIssues(patientsDTO);
     }
+
+	/**
+	 * Carry the open administrative issues of the patient on its DTO.
+	 */
+	private PatientDTO withOpenAdministrativeIssues(PatientDTO patientDTO) throws OHServiceException {
+		patientDTO.setAdministrativeIssues(patientAdminIssueMapper.map2DTOList(patientAdminIssueManager.getOpenIssues(patientDTO.getCode())));
+		return patientDTO;
+	}
+
+	/**
+	 * Carry the open administrative issues of each patient on its DTO, read with a single query.
+	 */
+	private List<PatientDTO> withOpenAdministrativeIssues(List<PatientDTO> patientsDTO) throws OHServiceException {
+		if (patientsDTO.isEmpty()) {
+			return patientsDTO;
+		}
+		Map<Integer, List<PatientAdminIssue>> openIssues = patientAdminIssueManager
+			.getOpenIssues(patientsDTO.stream().map(PatientDTO::getCode).toList())
+			.stream()
+			.collect(Collectors.groupingBy(issue -> issue.getPatient().getCode()));
+		for (PatientDTO patientDTO : patientsDTO) {
+			patientDTO.setAdministrativeIssues(patientAdminIssueMapper.map2DTOList(openIssues.getOrDefault(patientDTO.getCode(), List.of())));
+		}
+		return patientsDTO;
+	}
 }
