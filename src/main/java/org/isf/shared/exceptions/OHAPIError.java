@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,41 +21,41 @@
  */
 package org.isf.shared.exceptions;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
 
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.ErrorDescription;
 import org.springframework.http.HttpStatus;
 
 /**
- * Exception DTO
+ * Exception DTO returned to API clients.
+ *
+ * <p>
+ * Only the HTTP {@code status} and a clean, user-facing {@code message} are exposed. Stack traces, exception class names and raw internal/SQL details are
+ * never serialized: they would disclose information about the server internals. Full exception details must be written to the application log only.
+ * </p>
  *
  * @author antonio
  */
 public class OHAPIError {
-    private HttpStatus status;
-    private String message;
-    private String debugMessage;
-    private String stackTrace;
-    private LocalDateTime timestamp;
-    private ErrorDescription description;
 
-    public OHAPIError(HttpStatus status, OHServiceException ex) {
-        this.timestamp = LocalDateTime.now();
-        this.status = status;
-        this.message = ex.getMessages().get(0).getMessage();
-        this.debugMessage = ex.getMessages()
-                .stream()
-                .map(em -> em.getMessage())
-                .collect(Collectors.joining(","));
-        StringWriter sw = new StringWriter();
-        ex.printStackTrace(new PrintWriter(sw));
-        this.stackTrace = sw.toString();
-        this.description = ex.getMessages().get(0).getDescription();
-    }
+	private HttpStatus status;
+	private String message;
+	private LocalDateTime timestamp;
+	private ErrorDescription description;
+
+	public OHAPIError(HttpStatus status, OHServiceException ex) {
+		this.timestamp = LocalDateTime.now();
+		this.status = status;
+		this.message = ex.getMessages().get(0).getMessage();
+		this.description = ex.getMessages().get(0).getDescription();
+	}
+
+	public OHAPIError(HttpStatus status, String message) {
+		this.timestamp = LocalDateTime.now();
+		this.status = status;
+		this.message = message;
+	}
 
 	public HttpStatus getStatus() {
 		return this.status;
@@ -63,14 +63,6 @@ public class OHAPIError {
 
 	public String getMessage() {
 		return this.message;
-	}
-
-	public String getDebugMessage() {
-		return this.debugMessage;
-	}
-
-	public String getStackTrace() {
-		return this.stackTrace;
 	}
 
 	public LocalDateTime getTimestamp() {
@@ -85,14 +77,6 @@ public class OHAPIError {
 		this.message = message;
 	}
 
-	public void setDebugMessage(String debugMessage) {
-		this.debugMessage = debugMessage;
-	}
-
-	public void setStackTrace(String stackTrace) {
-		this.stackTrace = stackTrace;
-	}
-
 	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -104,5 +88,5 @@ public class OHAPIError {
 	public void setDescription(ErrorDescription description) {
 		this.description = description;
 	}
-	
+
 }
