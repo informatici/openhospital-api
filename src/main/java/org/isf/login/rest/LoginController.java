@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -108,8 +108,9 @@ public class LoginController {
 		// the flag is also embedded in the token for the client's convenience, while MustChangePasswordFilter checks the database on every request
 		boolean passwordExpired = isPasswordExpired(user);
 		boolean mustChangePassword = mustChangePassword(user, passwordExpired);
-		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword); // use the shorter validity
-		String refreshToken = tokenProvider.generateRefreshToken(authentication);
+		String tokenFamilyId = tokenProvider.newTokenFamilyId();
+		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword, tokenFamilyId); // use the shorter validity
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
@@ -129,6 +130,11 @@ public class LoginController {
 			if (tokenProvider.validateToken(refreshToken) == TokenValidationResult.VALID) {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
+				String tokenFamilyId = tokenProvider.getJtiFromToken(refreshToken);
+				if (tokenFamilyId == null) {
+					// token minted before revocation support: adopt it into a new, revocable family
+					tokenFamilyId = tokenProvider.newTokenFamilyId();
+				}
 
 				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction;
 				// fails closed when the check is not possible (without a reason, so the client falls back to a generic
@@ -145,8 +151,8 @@ public class LoginController {
 					LOGGER.error("Unable to check the must-change-password flag for user {}, keeping the restriction in place", username, e);
 				}
 
-				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword);
-				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
+				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword, tokenFamilyId);
+				String newRefreshToken = tokenProvider.generateRefreshToken(authentication, tokenFamilyId);
 
 				return new LoginResponse(newAccessToken, newRefreshToken, username, mustChangePassword, passwordExpired, passwordLeaseDays);
 			} else {
