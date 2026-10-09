@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,6 +28,7 @@ import jakarta.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.login.dto.PasswordPolicyDTO;
 import org.isf.login.dto.TokenRefreshRequest;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
@@ -46,6 +47,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -155,6 +157,17 @@ public class LoginController {
 		} catch (JwtException e) {
 			throw new OHAPIException(new OHExceptionMessage("Refresh token expired or invalid"));
 		}
+	}
+
+	/**
+	 * Exposes the server-side password policy so that clients can validate passwords consistently with the backend,
+	 * instead of hardcoding their own rules. Public, because a client may need it before it has a valid session
+	 * (for example on a forced change-password screen reached with a stale token).
+	 */
+	@GetMapping("/auth/password-policy")
+	public PasswordPolicyDTO getPasswordPolicy() {
+		return new PasswordPolicyDTO(userManager.isStrongPasswordEnabled(), userManager.getPasswordMinLength(),
+			userManager.getPasswordStrengthRegex());
 	}
 
 	private boolean mustChangePassword(User user, boolean passwordExpired) {
