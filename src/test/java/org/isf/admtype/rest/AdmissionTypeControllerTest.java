@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -47,17 +47,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class AdmissionTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdmissionTypeControllerTest.class);
 
 	@Mock
 	protected AdmissionTypeBrowserManager admissionTypeManagerMock;
@@ -87,7 +82,7 @@ class AdmissionTypeControllerTest {
 	}
 
 	@Test
-	void testNewAdmissionType_201() throws Exception {
+	void newAdmissionType_shouldReturnCreated() throws Exception {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 
@@ -99,21 +94,18 @@ class AdmissionTypeControllerTest {
 		when(admissionTypeManagerMock.isCodePresent(body.getCode()))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(AdmissionTypeDTOHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateAdmissionType_200() throws Exception {
+	void updateAdmissionTypes_shouldReturnOk_whenCodeExists() throws Exception {
 		String request = "/admissiontypes";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
@@ -124,21 +116,18 @@ class AdmissionTypeControllerTest {
 		when(admissionTypeManagerMock.updateAdmissionType(admissionType))
 			.thenReturn(admissionType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(AdmissionTypeDTOHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetAdmissionTypes_200() throws Exception {
+	void getAdmissionTypes_shouldReturnOk() throws Exception {
 		String request = "/admissiontypes";
 
 		AdmissionType admissionType = new AdmissionType("ZZ", "aDescription");
@@ -147,18 +136,15 @@ class AdmissionTypeControllerTest {
 		when(admissionTypeManagerMock.getAdmissionType())
 			.thenReturn(admissionTypesFound);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testDeleteAdmissionType_200() throws Exception {
+	void deleteAdmissionType_shouldReturnOk_whenCodeExists() throws Exception {
 		String request = "/admissiontypes/{code}";
 		AdmissionTypeDTO body = AdmissionTypeDTOHelper.setup(admissionTypemapper);
 		String code = body.getCode();
@@ -172,14 +158,11 @@ class AdmissionTypeControllerTest {
 		when(admissionTypeManagerMock.getAdmissionType())
 			.thenReturn(admissionTypesFound);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 }
