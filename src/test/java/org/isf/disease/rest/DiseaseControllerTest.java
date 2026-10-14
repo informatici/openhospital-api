@@ -87,7 +87,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesOpd_200() throws Exception {
+	void getDiseasesOpd_shouldReturnOpdDiseases() throws Exception {
 		String request = "/diseases/opd";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -102,7 +102,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesOpdByCode_200() throws Exception {
+	void getDiseasesOpdByCode_shouldReturnOpdDiseasesOfType() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -119,7 +119,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdOut_200() throws Exception {
+	void getDiseasesIpdOut_shouldReturnIpdOutDiseases() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -134,7 +134,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdOutByCode_200() throws Exception {
+	void getDiseasesIpdOutByCode_shouldReturnIpdOutDiseasesOfType() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -151,7 +151,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdIn_200() throws Exception {
+	void getDiseasesIpdIn_shouldReturnIpdInDiseases() throws Exception {
 
 		String request = "/diseases/ipd/in";
 
@@ -167,7 +167,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesIpdInByCode_200() throws Exception {
+	void getDiseasesIpdInByCode_shouldReturnIpdInDiseasesOfType() throws Exception {
 		String request = "/diseases/ipd/in/{typecode}";
 
 		String typeCode = "1";
@@ -184,7 +184,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseases_200() throws Exception {
+	void getDiseases_shouldReturnOpdAndIpdDiseases() throws Exception {
 		String request = "/diseases/both";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -199,7 +199,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseasesString_200() throws Exception {
+	void getDiseases_shouldReturnOpdAndIpdDiseasesOfType() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -217,7 +217,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetAllDiseases_200() throws Exception {
+	void getAllDiseases_shouldReturnAllDiseases() throws Exception {
 		String request = "/diseases/all";
 
 		List<Disease> diseases = DiseaseHelper.setupDiseaseList(3);
@@ -232,7 +232,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testGetDiseaseByCode() throws Exception {
+	void getDiseaseByCode_shouldReturnDisease() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -249,7 +249,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testNewDisease_200() throws Exception {
+	void newDisease_shouldReturnCreatedDisease() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -275,7 +275,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testUpdateDisease_201() throws Exception {
+	void updateDisease_shouldReturnUpdatedDisease() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -298,7 +298,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void testDeleteDisease() throws Exception {
+	void deleteDisease_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -321,7 +321,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesOpd_500() throws Exception {
+	void getDiseasesOpd_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/opd";
 
 		when(diseaseBrowserManagerMock.getDiseaseOpd())
@@ -335,7 +335,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesOpdByCode_500() throws Exception {
+	void getDiseasesOpdByCode_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/opd/{typecode}";
 
 		String typeCode = "1";
@@ -351,7 +351,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesIpdOut_500() throws Exception {
+	void getDiseasesIpdOut_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/ipd/out";
 
 		when(diseaseBrowserManagerMock.getDiseaseIpdOut())
@@ -365,7 +365,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesIpdOutByCode_500() throws Exception {
+	void getDiseasesIpdOutByCode_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/ipd/out/{typecode}";
 
 		String typeCode = "1";
@@ -381,7 +381,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesIpdIn_500() throws Exception {
+	void getDiseasesIpdIn_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/ipd/in";
 
 		when(diseaseBrowserManagerMock.getDiseaseIpdIn())
@@ -395,7 +395,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesIpdInByCode_500() throws Exception {
+	void getDiseasesIpdInByCode_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/ipd/in/{typecode}";
 
 		String typeCode = "1";
@@ -411,7 +411,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseases_500() throws Exception {
+	void getDiseases_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/both";
 
 		when(diseaseBrowserManagerMock.getDisease())
@@ -425,7 +425,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseasesString_500() throws Exception {
+	void getDiseases_shouldReturnInternalServerError_whenManagerReturnsNullForType() throws Exception {
 		String request = "/diseases/both/{typecode}";
 
 		String typeCode = "1";
@@ -441,7 +441,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getAllDiseases_500() throws Exception {
+	void getAllDiseases_shouldReturnInternalServerError_whenManagerReturnsNull() throws Exception {
 		String request = "/diseases/all";
 
 		when(diseaseBrowserManagerMock.getDiseaseAll())
@@ -455,7 +455,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void getDiseaseByCode_404() throws Exception {
+	void getDiseaseByCode_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -471,7 +471,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void newDisease_duplicatedCode_400() throws Exception {
+	void newDisease_shouldReturnBadRequest_whenCodeAlreadyExists() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -492,7 +492,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void newDisease_duplicatedDescription_400() throws Exception {
+	void newDisease_shouldReturnBadRequest_whenDescriptionAlreadyExistsForType() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -516,7 +516,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void newDisease_notCreated_500() throws Exception {
+	void newDisease_shouldReturnInternalServerError_whenCreationFails() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -543,7 +543,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void updateDisease_404() throws Exception {
+	void updateDisease_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -564,7 +564,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void updateDisease_notUpdated_500() throws Exception {
+	void updateDisease_shouldReturnInternalServerError_whenUpdateFails() throws Exception {
 		String request = "/diseases";
 
 		Disease disease = DiseaseHelper.setup();
@@ -588,7 +588,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void deleteDisease_404() throws Exception {
+	void deleteDisease_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
@@ -604,7 +604,7 @@ class DiseaseControllerTest {
 	}
 
 	@Test
-	void deleteDisease_notDeleted_200() throws Exception {
+	void deleteDisease_shouldReturnFalse_whenDeletionFails() throws Exception {
 		String request = "/diseases/{code}";
 
 		String code = "999";
