@@ -107,7 +107,7 @@ class StockMovementControllerTest {
 	}
 
 	@Test
-	void testGetMovements_200() throws Exception {
+	void getMovements_shouldKeepMovementTimeAndDropLotDueTime() throws Exception {
 		List<Movement> movements = MovementHelper.genList(2);
 		LocalDateTime movementDate = movements.get(0).getDate();
 		LocalDateTime dueDate = movements.get(0).getLot().getDueDate();
