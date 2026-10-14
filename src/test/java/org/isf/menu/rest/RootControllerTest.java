@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -52,7 +52,7 @@ class RootControllerTest {
 	}
 
 	@Test
-	void testRootEndpoint() throws Exception {
+	void root_shouldReturnServiceInfo() throws Exception {
 		// Mock the VersionService to return a specific version
 		when(versionService.getVersion()).thenReturn("X.Y.Z");
 
@@ -65,7 +65,7 @@ class RootControllerTest {
 	}
 
 	@Test
-	void testHealthcheckEndpoint() throws Exception {
+	void healthcheck_shouldReturnStatusUp() throws Exception {
 		mockMvc.perform(get("/healthcheck"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.status").value("UP"));
