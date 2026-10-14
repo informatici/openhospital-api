@@ -98,6 +98,42 @@ class TokenProviderTest {
 	}
 
 	@Test
+	void testGenerateJwtToken_MustChangePassword() {
+		Authentication authentication = createAuthentication();
+
+		// Generate token for a user that must change the password (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false, true);
+
+		// The claim is present and the dedicated getter reads it back
+		Claims claims = tokenProvider.getAllClaimsFromToken(token);
+		assertThat(claims.get("mustChangePassword", Boolean.class)).isTrue();
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isTrue();
+	}
+
+	@Test
+	void testGenerateJwtToken_MustChangePasswordClaimAbsent() {
+		Authentication authentication = createAuthentication();
+
+		// Generate token for a user that does not need to change the password (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false, false);
+
+		// The claim is not added at all and the dedicated getter returns false
+		Claims claims = tokenProvider.getAllClaimsFromToken(token);
+		assertThat(claims).doesNotContainKey("mustChangePassword");
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isFalse();
+	}
+
+	@Test
+	void testGenerateJwtTokenTwoArgsNeverAddsClaim() {
+		Authentication authentication = createAuthentication();
+
+		// The two arguments overload must never add the claim (OP-896)
+		String token = tokenProvider.generateJwtToken(authentication, false);
+
+		assertThat(tokenProvider.getMustChangePasswordFromToken(token)).isFalse();
+	}
+
+	@Test
 	void testValidateToken_Valid() {
 		Authentication authentication = createAuthentication();
 

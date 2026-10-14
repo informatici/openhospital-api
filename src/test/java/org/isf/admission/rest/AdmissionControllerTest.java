@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,6 +22,7 @@
 package org.isf.admission.rest;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -65,6 +66,7 @@ import org.isf.pregtreattype.model.PregnantTreatmentType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.shared.mapper.mappings.AdmissionMapping;
 import org.isf.shared.mapper.mappings.PatientMapping;
 import org.isf.ward.data.WardHelper;
 import org.isf.ward.manager.WardBrowserManager;
@@ -72,6 +74,7 @@ import org.isf.ward.model.Ward;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
@@ -143,6 +146,7 @@ class AdmissionControllerTest {
 		modelMapper.addConverter(new BlobToByteArrayConverter());
 		modelMapper.addConverter(new ByteArrayToBlobConverter());
 		PatientMapping.addMapping(modelMapper);
+		AdmissionMapping.addMapping(modelMapper);
 		ReflectionTestUtils.setField(admissionMapper, "modelMapper", modelMapper);
 		ReflectionTestUtils.setField(admittedMapper, "modelMapper", modelMapper);
 	}
@@ -482,6 +486,66 @@ class AdmissionControllerTest {
 			.andReturn();
 
 		LOGGER.debug("result: {}", result);
+	}
+
+	@Test
+	void testUpdateAdmissionsPreservesSexAgeSnapshot() throws Exception {
+		String request = "/admissions";
+
+		AdmissionDTO body = AdmissionHelper.setup(admissionMapper);
+		Integer code = 10;
+		body.getPatient().setCode(code);
+
+		// the stored admission carries the OP-892 sex/age snapshot, which is not part of the DTO
+		Admission old = admissionMapper.map2Model(body);
+		old.setSex("F");
+		old.setAge(34);
+
+		when(admissionManagerMock.getAdmission(body.getId()))
+			.thenReturn(old);
+
+		List<Ward> wardList = WardHelper.setupWardList(2);
+		when(wardManagerMock.getWards())
+			.thenReturn(wardList);
+
+		List<AdmissionType> admissionTypeList = AdmissionTypeDTOHelper.setupAdmissionTypeList(3);
+		when(admissionManagerMock.getAdmissionType())
+			.thenReturn(admissionTypeList);
+
+		Patient patient = PatientHelper.setup();
+		patient.setCode(code);
+		when(patientManagerMock.getPatientById(body.getPatient().getCode()))
+			.thenReturn(patient);
+
+		List<Disease> diseaseList = DiseaseHelper.setupDiseaseList(3);
+		when(diseaseManagerMock.getDiseaseAll())
+			.thenReturn(diseaseList);
+
+		List<Operation> operationsList = OperationHelper.setupOperationList(3);
+		when(operationManagerMock.getOperation())
+			.thenReturn(operationsList);
+
+		List<DischargeType> disTypes = DischargeTypeHelper.setupDischargeTypeList(3);
+		when(admissionManagerMock.getDischargeType())
+			.thenReturn(disTypes);
+
+		List<PregnantTreatmentType> pregnancyTreatmentTypes = PregnantTreatmentTypeHelper.setupPregnantTreatmentTypeList(3);
+		when(pregnancyTreatmentTypeManagerMock.getPregnantTreatmentType())
+			.thenReturn(pregnancyTreatmentTypes);
+
+		ArgumentCaptor<Admission> savedAdmission = ArgumentCaptor.forClass(Admission.class);
+		when(admissionManagerMock.updateAdmission(savedAdmission.capture()))
+			.thenAnswer(invocation -> invocation.getArgument(0));
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(AdmissionHelper.asJsonString(body))))
+			.andDo(log())
+			.andExpect(status().isOk());
+
+		assertThat(savedAdmission.getValue().getSex()).isEqualTo("F");
+		assertThat(savedAdmission.getValue().getAge()).isEqualTo(34);
 	}
 
 }
