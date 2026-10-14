@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -49,17 +49,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class DeliveryResultTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryResultTypeControllerTest.class);
 
 	@Mock
 	protected DeliveryResultTypeBrowserManager deliveryResultTypeBrowserManagerMock;
@@ -89,7 +84,7 @@ class DeliveryResultTypeControllerTest {
 	}
 
 	@Test
-	void testNewDeliveryResultType_201() throws Exception {
+	void newDeliveryResultType_shouldReturnCreated() throws Exception {
 		String request = "/deliveryresulttypes";
 		int code = 123;
 		DeliveryResultType deliveryResultType = DeliveryResultTypeHelper.setup(code);
@@ -104,21 +99,18 @@ class DeliveryResultTypeControllerTest {
 		when(deliveryResultTypeBrowserManagerMock.newDeliveryResultType(deliveryResultTypeMapper.map2Model(body)))
 			.thenReturn(deliveryResultType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DeliveryResultTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateDeliveryResultTypet_200() throws Exception {
+	void updateDeliveryResultTypes_shouldReturnOk_whenCodeExists() throws Exception {
 		String request = "/deliveryresulttypes";
 		int code = 456;
 
@@ -131,21 +123,18 @@ class DeliveryResultTypeControllerTest {
 		when(deliveryResultTypeBrowserManagerMock.updateDeliveryResultType(deliveryResultTypeMapper.map2Model(body)))
 			.thenReturn(deliveryResultType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DeliveryResultTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetDeliveryResultTypes_200() throws Exception {
+	void getDeliveryResultTypes_shouldReturnAllTypes() throws Exception {
 		String request = "/deliveryresulttypes";
 
 		List<DeliveryResultType> results = DeliveryResultTypeHelper.setupDeliveryResultTypeList(3);
@@ -155,19 +144,16 @@ class DeliveryResultTypeControllerTest {
 		when(deliveryResultTypeBrowserManagerMock.getDeliveryResultType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(DeliveryResultTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(DeliveryResultTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))));
 	}
 
 	@Test
-	void testDeleteDeliveryResultType() throws Exception {
+	void deleteDeliveryResultType_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/deliveryresulttypes/{code}";
 
 		DeliveryResultTypeDTO body = deliveryResultTypeMapper.map2DTO(DeliveryResultTypeHelper.setup(0));
@@ -180,15 +166,12 @@ class DeliveryResultTypeControllerTest {
 			.thenReturn(DeliveryResultTypeHelper.setupDeliveryResultTypeList(1));
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(isDeleted)));
 	}
 
 }
