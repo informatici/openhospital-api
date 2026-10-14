@@ -84,7 +84,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void getAllMedicalTypes_200() throws Exception {
+	void getMedicalTypes_shouldReturnAllTypes() throws Exception {
 		String request = "/medicaltypes";
 
 		List<MedicalType> results = MedicalTypeHelper.setupMedicalTypeList(3);
@@ -102,7 +102,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void newMedicalType_201() throws Exception {
+	void createMedicalType_shouldReturnCreatedType() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(1);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -122,7 +122,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void updateMedicalType_200() throws Exception {
+	void updateMedicalType_shouldReturnUpdatedType() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(2);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -145,7 +145,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void updateMedicalType_404() throws Exception {
+	void updateMedicalType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/medicaltypes";
 		MedicalType medicalType = MedicalTypeHelper.setup(3);
 		MedicalTypeDTO body = medicalTypeMapper.map2DTO(medicalType);
@@ -165,7 +165,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void isCodeUsed_200() throws Exception {
+	void isCodeUsed_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/medicaltypes/check/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(4);
 		String code = medicalType.getCode();
@@ -181,7 +181,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void deleteMedicalType_200() throws Exception {
+	void deleteMedicalType_shouldReturnTrue() throws Exception {
 		String request = "/medicaltypes/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(5);
 		String code = medicalType.getCode();
@@ -197,7 +197,7 @@ class MedicalTypeControllerTest {
 	}
 
 	@Test
-	void deleteMedicalType_404() throws Exception {
+	void deleteMedicalType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/medicaltypes/{code}";
 		MedicalType medicalType = MedicalTypeHelper.setup(6);
 		String code = medicalType.getCode();
