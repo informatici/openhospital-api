@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -49,17 +49,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class DischargeTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DischargeTypeControllerTest.class);
 
 	@Mock
 	protected DischargeTypeBrowserManager discTypeManagerMock;
@@ -89,7 +84,7 @@ class DischargeTypeControllerTest {
 	}
 
 	@Test
-	void testNewDischargeType_201() throws Exception {
+	void newDischargeType_shouldReturnCreated() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
 		DischargeType dischargeType = DischargeTypeHelper.setup(code);
@@ -101,21 +96,18 @@ class DischargeTypeControllerTest {
 		when(discTypeManagerMock.isCodePresent(dischargeType.getCode()))
 			.thenReturn(true);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DischargeTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateDischargeType_200() throws Exception {
+	void updateDischargeType_shouldReturnOk_whenCodeExists() throws Exception {
 		String request = "/dischargetypes";
 		String code = "ZZ";
 		DischargeType dischargeType = DischargeTypeHelper.setup(code);
@@ -127,21 +119,18 @@ class DischargeTypeControllerTest {
 		when(discTypeManagerMock.updateDischargeType(dischargeTypeMapper.map2Model(body)))
 			.thenReturn(dischargeType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DischargeTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetDischargeTypes_200() throws Exception {
+	void getDischargeTypes_shouldReturnAllDischargeTypes() throws Exception {
 		String request = "/dischargetypes";
 
 		DischargeType dischargeType = new DischargeType("ZZ", "aDescription");
@@ -152,19 +141,16 @@ class DischargeTypeControllerTest {
 
 		List<DischargeTypeDTO> expectedDischargeTypeDTOs = dischargeTypeMapper.map2DTOList(dischargeTypes);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(DischargeTypeHelper.getObjectMapper().writeValueAsString(expectedDischargeTypeDTOs))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(DischargeTypeHelper.getObjectMapper().writeValueAsString(expectedDischargeTypeDTOs))));
 	}
 
 	@Test
-	void testDeleteDischargeType_200() throws Exception {
+	void deleteDischargeType_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/dischargetypes/{code}";
 		String code = "ZZ";
 		DischargeTypeDTO body = dischargeTypeMapper.map2DTO(DischargeTypeHelper.setup(code));
@@ -179,15 +165,12 @@ class DischargeTypeControllerTest {
 			.thenReturn(dischargeTypeFounds);
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(isDeleted)));
 	}
 
 }
