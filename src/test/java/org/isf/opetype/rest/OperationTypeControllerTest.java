@@ -88,7 +88,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void newOperationType_201() throws Exception {
+	void newOperationType_shouldReturnCreatedType() throws Exception {
 		String request = "/operationtypes";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 
@@ -109,7 +109,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void newOperationType_NotCreated_400() throws Exception {
+	void newOperationType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/operationtypes";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 
@@ -130,7 +130,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void updateOperationType_200() throws Exception {
+	void updateOperationTypes_shouldReturnUpdatedType() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
@@ -154,7 +154,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void updateOperationType_NotFound_404() throws Exception {
+	void updateOperationTypes_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
@@ -174,7 +174,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void updateOperationType_NotUpdated_400() throws Exception {
+	void updateOperationTypes_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
@@ -198,7 +198,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void getOperationTypes_200() throws Exception {
+	void getOperationTypes_shouldReturnAllTypes() throws Exception {
 		String request = "/operationtypes";
 
 		OperationType operationType = new OperationType("ZZ", "TestDescription");
@@ -217,7 +217,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void deleteOperationType_200() throws Exception {
+	void deleteOperationType_shouldReturnTrue() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
@@ -236,7 +236,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void deleteOperationType_NotFound_404() throws Exception {
+	void deleteOperationType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/operationtypes/{code}";
 		String code = "ZZ";
 
@@ -251,7 +251,7 @@ class OperationTypeControllerTest {
 	}
 
 	@Test
-	void deleteOperationType_NotDeleted_400() throws Exception {
+	void deleteOperationType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/operationtypes/{code}";
 		OperationTypeDTO body = OperationTypeDTOHelper.setup(operationTypemapper);
 		String code = body.getCode();
