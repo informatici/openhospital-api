@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -76,7 +76,7 @@ class ExamTypeControllerTest {
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.read"})
 	@DisplayName("Get all exam types")
-	void testGetAll() throws Exception {
+	void getExamTypes_shouldReturnAllTypes() throws Exception {
 		List<ExamType> examTypes = generateExamTypes(5);
 		List<ExamTypeDTO> examTypeDTOs = mapper.map2DTOList(examTypes);
 
@@ -94,7 +94,7 @@ class ExamTypeControllerTest {
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.create"})
 	@DisplayName("Add new exam type")
-	void testNewExamType() throws Exception {
+	void newExamType_shouldReturnCreatedType() throws Exception {
 		ExamType examType = generateExamTypes(1).get(0);
 		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
 
@@ -113,7 +113,7 @@ class ExamTypeControllerTest {
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.update"})
 	@DisplayName("Update exam type")
-	void testUpdateExamType() throws Exception {
+	void updateExamType_shouldReturnUpdatedType() throws Exception {
 		ExamType examType = generateExamTypes(1).get(0);
 		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
 
@@ -133,7 +133,7 @@ class ExamTypeControllerTest {
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.delete"})
 	@DisplayName("Delete exam type")
-	void testDelete() throws Exception {
+	void deleteExamType_shouldReturnTrue() throws Exception {
 		List<ExamType> examTypes = generateExamTypes(1);
 
 		when(manager.isCodePresent(anyString())).thenReturn(true);
