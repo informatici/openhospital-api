@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -44,8 +44,6 @@ import org.isf.exatype.mapper.ExamTypeMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,8 +57,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
 class ExamControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ExamControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;
@@ -91,7 +87,7 @@ class ExamControllerTest {
 		@Test
 		@DisplayName("Should create a new exam with associated examrows")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "examrows.create" })
-		void shouldCreateExamWithRows() throws Exception {
+		void newExam_shouldReturnCreatedExam() throws Exception {
 			ExamWithRowsDTO payload = ExamHelper.generateExamWithRowsDTO();
 
 			when(examManager.create(any(), any())).thenReturn(examMapper.map2Model(payload.exam()));
@@ -103,14 +99,12 @@ class ExamControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("description", equalTo(payload.exam().getDescription())))
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to create exam procedure 1 with rows when default result doesn't match")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "examrows.create" })
-		void shouldFailToCreateExamWithInvalidDefaultResult() throws Exception {
+		void newExam_shouldReturnBadRequest_whenDefaultResultMatchesNoRow() throws Exception {
 			ExamDTO examDTO = ExamHelper.generateExam();
 			examDTO.setDefaultResult("IRES");
 
@@ -121,21 +115,17 @@ class ExamControllerTest {
 				.andDo(log())
 				.andExpect(status().isBadRequest())
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to create exam when user doesn't have required permissions")
 		@WithMockUser(username = "admin", authorities = { "examrows.create" })
-		void shouldFailToCreateExamWhenInsufficientPermissions() throws Exception {
+		void newExam_shouldReturnForbidden_whenUserLacksCreateAuthority() throws Exception {
 			var result = mvc.perform(
 					post("/exams").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(ExamHelper.generateExamWithRowsDTO())))
 				.andDo(log())
 				.andExpect(status().isForbidden())
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 	}
 
@@ -146,7 +136,7 @@ class ExamControllerTest {
 		@Test
 		@DisplayName("Should update an exam with associated examrows")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
-		void shouldUpdateExamWithRows() throws Exception {
+		void updateExam_shouldReturnUpdatedExam() throws Exception {
 			ExamWithRowsDTO payload = ExamHelper.generateExamWithRowsDTO();
 			Exam exam = examMapper.map2Model(payload.exam());
 
@@ -161,14 +151,12 @@ class ExamControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("description", equalTo(payload.exam().getDescription())))
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to update exam procedure 1 with rows when default result doesn't match")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
-		void shouldFailToUpdateExamWithInvalidDefaultResult() throws Exception {
+		void updateExam_shouldReturnBadRequest_whenDefaultResultMatchesNoRow() throws Exception {
 			ExamDTO examDTO = ExamHelper.generateExam();
 			examDTO.setDefaultResult("IRES");
 			Exam exam = examMapper.map2Model(examDTO);
@@ -184,35 +172,29 @@ class ExamControllerTest {
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("message", containsString("Exam default result doesn't match")))
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to update exam code in body doesn't match")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "exams.update", "examrows.create", "examrows.delete" })
-		void shouldFailToUpdateExamWhenCodeInBodyDoesntMatch() throws Exception {
+		void updateExam_shouldReturnBadRequest_whenPathCodeDiffersFromBodyCode() throws Exception {
 			var result = mvc.perform(
 					put("/exams/{code}", "DD").contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(ExamHelper.generateExamWithRowsDTO())))
 				.andDo(log())
 				.andExpect(status().isBadRequest())
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 
 		@Test
 		@DisplayName("Should fail to update exam when user doesn't have required permissions")
 		@WithMockUser(username = "admin", authorities = { "exams.create", "examrows.create", "examrows.delete" })
-		void shouldFailToUpdateExamWhenInsufficientPermissions() throws Exception {
+		void updateExam_shouldReturnForbidden_whenUserLacksUpdateAuthority() throws Exception {
 			var result = mvc.perform(
 					put("/exams/hd").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(ExamHelper.generateExamWithRowsDTO())))
 				.andDo(log())
 				.andExpect(status().isForbidden())
 				.andReturn();
-
-			LOGGER.debug("result: {}", result);
 		}
 	}
 }
