@@ -90,7 +90,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAllAgeTypes_200() throws Exception {
+	void getAllAgeTypes_shouldReturnAllAgeTypes() throws Exception {
 		String request = "/agetypes";
 
 		List<AgeType> results = AgeTypeHelper.genArrayList(5);
@@ -107,7 +107,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateAgeType_200() throws Exception {
+	void updateAgeType_shouldReturnUpdatedAgeTypes() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(5);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -127,7 +127,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void updateAgeType_nullCode_400() throws Exception {
+	void updateAgeType_shouldReturnBadRequest_whenCodeIsNull() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -145,7 +145,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void updateAgeType_emptyCode_400() throws Exception {
+	void updateAgeType_shouldReturnBadRequest_whenCodeIsBlank() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -164,7 +164,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void updateAgeType_unknownCode_400() throws Exception {
+	void updateAgeType_shouldReturnBadRequest_whenCodeDoesNotExist() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -183,7 +183,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void updateAgeType_getTypeByCodeFails_500() throws Exception {
+	void updateAgeType_shouldReturnInternalServerError_whenGetTypeByCodeFails() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -202,7 +202,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void updateAgeType_500() throws Exception {
+	void updateAgeType_shouldReturnInternalServerError_whenUpdateFails() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(3);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -222,7 +222,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAgeTypeCodeByAge_200() throws Exception {
+	void getAgeTypeCodeByAge_shouldReturnMatchingCode() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 10;
@@ -239,7 +239,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void getAgeTypeCodeByAge_200_noMatchingCode() throws Exception {
+	void getAgeTypeCodeByAge_shouldReturnEmptyObject_whenNoAgeTypeMatches() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 200;
@@ -255,7 +255,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAgeTypeByIndex_200() throws Exception {
+	void getAgeTypeByIndex_shouldReturnAgeType() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
@@ -272,7 +272,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void getAgeTypeByIndex_404() throws Exception {
+	void getAgeTypeByIndex_shouldReturnNotFound_whenIndexDoesNotExist() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 25;
 
