@@ -57,6 +57,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -251,6 +252,29 @@ public class PatientController {
 		} catch (OHServiceException serviceException) {
 			throw new OHAPIException(new OHExceptionMessage("Patient not deleted."));
 		}
+	}
+
+	/**
+	 * Irreversibly anonymize the personal identification data of a {@link Patient} (GDPR Art. 17 — Right to
+	 * erasure). The clinical records are preserved for statistical use. Requires the {@code patient.anonymize}
+	 * permission.
+	 *
+	 * @param code the code of the patient to anonymize.
+	 * @return {@code true} if the patient has been anonymized.
+	 * @throws OHServiceException When failed to anonymize the patient.
+	 */
+	@DeleteMapping(value = "/patients/{code}/personal-data")
+	@Operation(summary = "GDPR Art. 17 — Right to erasure. Irreversibly anonymize a patient's personal data.")
+	public boolean anonymizePatient(@PathVariable int code) throws OHServiceException {
+		LOGGER.info("Anonymize personal data of patient code: '{}'.", code);
+		Patient patient = patientManager.getPatientById(code);
+
+		if (patient == null) {
+			throw new OHAPIException(new OHExceptionMessage("Patient not found."), HttpStatus.NOT_FOUND);
+		}
+
+		patientManager.anonymizePatient(code);
+		return true;
 	}
 
 	@GetMapping(value = "/patients/merge")

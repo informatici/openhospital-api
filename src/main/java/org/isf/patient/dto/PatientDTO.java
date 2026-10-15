@@ -120,6 +120,9 @@ public class PatientDTO {
 	@Schema(description = "Current anamnesis", maxLength = 255)
 	private String anamnesis;
 
+	@Schema(description = "Whether the patient has been anonymized (GDPR right to erasure)", accessMode = AccessMode.READ_ONLY)
+	private boolean anonymized;
+
 	@Schema(description = "Status", example = "I")
 	private PatientSTATUS status;
 
@@ -183,6 +186,14 @@ public class PatientDTO {
 	@Schema(accessMode = AccessMode.READ_ONLY)
 	public int getHashCode() {
 		return hashCode;
+	}
+
+	public boolean isAnonymized() {
+		return anonymized;
+	}
+
+	public void setAnonymized(boolean anonymized) {
+		this.anonymized = anonymized;
 	}
 
 	public String getFirstName() {
