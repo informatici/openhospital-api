@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,6 +33,8 @@ import org.apache.poi.util.IOUtils;
 import org.isf.shared.exceptions.OHAPIException;
 import org.isf.stat.dto.JasperReportResultDto;
 import org.isf.stat.manager.JasperReportsManager;
+import org.isf.stats.dto.ReportLauncherDTO;
+import org.isf.stats.mapper.ReportLauncherMapper;
 import org.isf.utils.exception.OHServiceException;
 import org.isf.utils.exception.model.OHExceptionMessage;
 import org.springframework.core.io.Resource;
@@ -54,8 +57,21 @@ public class ReportsController {
 
 	private final JasperReportsManager reportsManager;
 
-	public ReportsController(JasperReportsManager reportsManager) {
+	private final ReportLauncherMapper reportLauncherMapper;
+
+	public ReportsController(JasperReportsManager reportsManager, ReportLauncherMapper reportLauncherMapper) {
 		this.reportsManager = reportsManager;
+		this.reportLauncherMapper = reportLauncherMapper;
+	}
+
+	/**
+	 * Returns the list of the stat reports the user can launch (formerly built in the GUI report launcher).
+	 *
+	 * @return the available reports
+	 */
+	@GetMapping("/reports")
+	public List<ReportLauncherDTO> getReportsList() {
+		return reportLauncherMapper.map2DTOList(reportsManager.getReportsList());
 	}
 
 	@GetMapping("/reports/exams-list")
