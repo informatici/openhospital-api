@@ -6,6 +6,7 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
 
 ## Summary
 
+  * [Authorization model](#authorization-model)
   * [How to build [WIP]](#how-to-build-wip)
     + [Using Swagger-UI](#using-swagger-ui)
     + [Using Postman](#using-postman)
@@ -19,6 +20,22 @@ This is the API project of [Open Hospital][openhospital]: it exposes a REST API 
 
 <small>Table of contents generated with <i><a href='http://ecotrust-canada.github.io/markdown-toc/'>markdown-toc</a></i></small>
 
+
+## Authorization model
+
+> **Experimental API.** This REST API is experimental and is not yet an officially supported, production-ready interface. Endpoints, payloads and the authorization rules described here may still change.
+
+Every request must be authenticated with a valid JWT (obtained from `/auth/login`), except the public endpoints: `/`, `/healthcheck`, `/auth/login`, `/auth/refresh-token` and the Swagger UI / OpenAPI documents.
+
+Beyond authentication, each endpoint namespace requires an operation-specific **authority** named `<namespace>.<action>`, where the action is one of `create`, `read`, `update` or `delete`, mapped respectively to the `POST`, `GET`, `PUT` and `DELETE` methods. For example `/patients` requires `patients.read` to list and `patients.create` to create; `/bills` requires the `bills.*` authorities; `/stockmovements` requires the `stockmovements.*` authorities. A few read operations are exposed over `POST` because they take a request body (for example the `/bills/search/**` endpoints); these require the corresponding `read` authority.
+
+A user's authorities come from the permissions granted to the user's group. The `admin` group is granted every permission by default; other groups must be configured with the permissions they need.
+
+The API answers:
+
+* `401 Unauthorized` when the request is not authenticated (missing or invalid token);
+* `403 Forbidden` when the user is authenticated but lacks the required authority;
+* the endpoint's normal response when the user holds the required authority.
 
 ## How to build [WIP]
 
