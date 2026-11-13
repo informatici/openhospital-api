@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -22,8 +22,11 @@
 package org.isf.patient.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
+
+import org.isf.patadminissue.dto.PatientAdminIssueDTO;
 
 import com.drew.lang.annotations.Nullable;
 
@@ -129,6 +132,9 @@ public class PatientDTO {
 	@Schema(description = "Consensus service flag", example = "true")
 	private boolean consensusServiceFlag;
 
+	@Schema(description = "Administrative issues still open on the patient", accessMode = AccessMode.READ_ONLY)
+	private List<PatientAdminIssueDTO> administrativeIssues;
+
 	public boolean isConsensusFlag() {
 		return consensusFlag;
 	}
@@ -143,6 +149,14 @@ public class PatientDTO {
 
 	public void setConsensusServiceFlag(boolean consensusServiceFlag) {
 		this.consensusServiceFlag = consensusServiceFlag;
+	}
+
+	public List<PatientAdminIssueDTO> getAdministrativeIssues() {
+		return administrativeIssues;
+	}
+
+	public void setAdministrativeIssues(List<PatientAdminIssueDTO> administrativeIssues) {
+		this.administrativeIssues = administrativeIssues;
 	}
 
 	public int getLock() {
