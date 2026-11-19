@@ -95,14 +95,13 @@ class UserGroupControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "usergroups.read" })
-	@DisplayName("Get all user groups")
 	void getUserGroups_shouldReturnAllUserGroups() throws Exception {
 		List<UserGroup> userGroups = List.of(UserGroupHelper.generateUserGroup());
 		List<UserGroupDTO> userGroupDTOS = userGroups.stream().map(userGroup -> userGroupMapper.map2DTO(userGroup)).toList();
 
 		when(userManager.getUserGroup()).thenReturn(userGroups);
 
-		var result = mvc.perform(
+		mvc.perform(
 				get("/usergroups").contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
@@ -111,7 +110,6 @@ class UserGroupControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "usergroups.create" })
-	@DisplayName("Create user group")
 	void newUserGroup_shouldReturnCreated() throws Exception {
 		List<Permission> permissions = TestPermission.generatePermissions(4);
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
@@ -123,7 +121,7 @@ class UserGroupControllerTest {
 		when(userManager.newUserGroup(any(), any())).thenReturn(userGroup);
 		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 
-		var result = mvc.perform(
+		mvc.perform(
 				post("/usergroups").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userGroupDTO)))
 			.andDo(log())
 			.andExpect(status().isCreated());
@@ -131,7 +129,6 @@ class UserGroupControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "usergroups.read" })
-	@DisplayName("Get user group")
 	void getUserGroup_shouldReturnUserGroupWithPermissions() throws Exception {
 		List<Permission> permissions = TestPermission.generatePermissions(4);
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
@@ -151,7 +148,7 @@ class UserGroupControllerTest {
 		when(userManager.findUserGroupByCode(userGroup.getCode(), true)).thenReturn(userGroup);
 		when(groupPermissionManager.findUserGroupPermissions(any())).thenReturn(groupPermissions);
 
-		var result = mvc.perform(
+		mvc.perform(
 				get("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
@@ -160,14 +157,13 @@ class UserGroupControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "usergroups.delete" })
-	@DisplayName("Delete user groups")
 	void deleteGroup_shouldReturnNoContent() throws Exception {
 		UserGroup userGroup = UserGroupHelper.generateUserGroup();
 
 		when(userManager.getUserGroup()).thenReturn(List.of(userGroup));
 		doNothing().when(userManager).deleteGroup(any());
 
-		var result = mvc.perform(
+		mvc.perform(
 				delete("/usergroups/{group_code}", userGroup.getCode()).contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNoContent());
@@ -179,7 +175,6 @@ class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.update" })
-		@DisplayName("Should update user group")
 		void updateUserGroup_shouldReturnOk() throws Exception {
 			List<Permission> permissions = TestPermission.generatePermissions(4);
 			UserGroup userGroup = UserGroupHelper.generateUserGroup();
@@ -192,50 +187,45 @@ class UserGroupControllerTest {
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(userManager.updateUserGroup(any(), any())).thenReturn(userGroup);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/usergroups/{group_code}", userGroupDTO.getCode())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userGroupDTO))
 				)
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.update" })
-		@DisplayName("Should fail to update user group when invalid payload")
 		void updateUserGroup_shouldReturnBadRequest_whenPathCodeDiffersFromBodyCode() throws Exception {
 			UserGroup userGroup = UserGroupHelper.generateUserGroup();
 
 			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/usergroups/{group_code}", "DD")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userGroupDTO))
 				)
 				.andDo(log())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
 		@WithMockUser(username = "admin")
-		@DisplayName("Should throw forbidden error when updating user group")
 		void updateUserGroup_shouldReturnForbidden_whenUserLacksUpdateAuthority() throws Exception {
 			UserGroup userGroup = UserGroupHelper.generateUserGroup();
 
 			UserGroupDTO userGroupDTO = userGroupMapper.map2DTO(userGroup);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/usergroups/{group_code}", userGroupDTO.getCode())
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userGroupDTO))
 				)
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 	}
 
@@ -245,7 +235,6 @@ class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
-		@DisplayName("Assign a permission to a user group")
 		void assignPermission_shouldReturnCreated() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -257,18 +246,16 @@ class UserGroupControllerTest {
 			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
 			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
 
-			var result = mvc.perform(
+			mvc.perform(
 					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().isCreated())
-				.andReturn();
+				.andExpect(status().isCreated());
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
-		@DisplayName("Assign already assigned permission to a user group")
 		void assignPermission_shouldReturnClientError_whenManagerThrowsDataValidation() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -293,7 +280,6 @@ class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
-		@DisplayName("Assign non existing permission to a user group")
 		void assignPermission_shouldReturnClientError_whenUserGroupAndPermissionDoNotExist() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -316,7 +302,6 @@ class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
-		@DisplayName("Revoke a permission from a user group")
 		void revokePermission_shouldReturnNoContent() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -328,18 +313,16 @@ class UserGroupControllerTest {
 			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
 			doNothing().when(groupPermissionManager).delete(any(), any());
 
-			var result = mvc.perform(
+			mvc.perform(
 					delete("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().isNoContent())
-				.andReturn();
+				.andExpect(status().isNoContent());
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
-		@DisplayName("Revoke not assigned permission to a user group")
 		void assignPermission_shouldReturnClientError_whenUserGroupDoesNotExist() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -362,7 +345,6 @@ class UserGroupControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.create", "grouppermission.delete" })
-		@DisplayName("Should replace user group permissions")
 		void replaceGroupPermissions_shouldReturnGroupPermissions() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -370,35 +352,31 @@ class UserGroupControllerTest {
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(groupPermissionManager.update(any(), any(), any())).thenReturn(List.of(permission));
 
-			var result = mvc.perform(
+			mvc.perform(
 					patch("/usergroups/{group_code}/permissions", userGroup.getCode())
 						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(permission.getId()))))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.[0].id").value(permission.getId()))
-				.andReturn();
+				.andExpect(jsonPath("$.[0].id").value(permission.getId()));
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
-		@DisplayName("Should fail to replace user group permissions when insufficient permissions")
 		void replaceGroupPermissions_shouldReturnForbidden_whenUserLacksCreateAuthority() throws Exception {
 
-			var result = mvc.perform(
+			mvc.perform(
 					patch("/usergroups/{group_code}/permissions", "12")
 						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(44))))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
-		@DisplayName("Should update user group permissions")
 		void updateGroupPermissions_shouldReturnGroupPermissions() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
@@ -406,30 +384,27 @@ class UserGroupControllerTest {
 			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
 			when(groupPermissionManager.update(any(), any(), any())).thenReturn(List.of(permission));
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/usergroups/{group_code}/permissions", userGroup.getCode())
 						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(permission.getId()))))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.[0].id").value(permission.getId()))
-				.andReturn();
+				.andExpect(jsonPath("$.[0].id").value(permission.getId()));
 		}
 
 		@Test
 		@WithMockUser(username = "admin")
-		@DisplayName("Should fail to update user group permissions when insufficient permissions")
 		void updateGroupPermissions_shouldReturnForbidden_whenUserLacksCreateAuthority() throws Exception {
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/usergroups/{group_code}/permissions", "12")
 						.content(objectMapper.writeValueAsString(new GroupPermissionsDTO(List.of(44))))
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 	}
 }
