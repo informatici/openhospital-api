@@ -46,7 +46,6 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +82,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient examination using ID")
 	void getByID_shouldReturnExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -101,7 +99,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should fail to get patient examination with wrong ID")
 	void getByID_shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
 		when(manager.getByID(anyInt())).thenReturn(null);
 
@@ -114,7 +111,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient default examination")
 	void getDefaultPatientExamination_shouldReturnDefaultExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -134,7 +130,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should fail to get patient default examination with wrong patient ID")
 	void getDefaultPatientExamination_shouldReturnNotFound_whenPatientDoesNotExist() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -152,7 +147,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient default examination")
 	void getFromLastPatientExamination_shouldReturnExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -172,7 +166,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get last examination by patient ID")
 	void getLastByPatientId_shouldReturnLastExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -190,7 +183,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get examination by patient ID")
 	void getByPatientId_shouldReturnPatientExaminations() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -208,7 +200,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.create"})
-	@DisplayName("Should add patient examination")
 	void newPatientExamination_shouldReturnCreatedExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
@@ -231,7 +222,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.update"})
-	@DisplayName("Should update patient examination")
 	void updateExamination_shouldReturnUpdatedExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
@@ -256,7 +246,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.update"})
-	@DisplayName("Should preserve the sex/age snapshot on update")
 	void updateExamination_shouldKeepStoredSexAndAge() throws Exception {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
@@ -285,7 +274,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
-	@DisplayName("Should delete patient examination using ID")
 	void deletePatientExamination_shouldRemoveExaminationAndReturnTrue() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -304,7 +292,6 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
-	@DisplayName("Should fail to delete patient examination with wrong ID")
 	void deletePatientExamination_shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
 		when(manager.getByID(anyInt())).thenReturn(null);
 
