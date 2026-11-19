@@ -89,7 +89,6 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "users.create" })
-	@DisplayName("Create user")
 	void newUser_shouldReturnCreated() throws Exception {
 		User user = UserHelper.generateUser();
 		UserDTO userDTO = userMapper.map2DTO(user);
@@ -97,7 +96,7 @@ class UserControllerTest {
 		when(userManager.isPasswordValid(any())).thenReturn(true);
 		when(userManager.newUser(any())).thenReturn(user);
 
-		var result = mvc.perform(
+		mvc.perform(
 				post("/users")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(userDTO))
@@ -108,7 +107,6 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "users.create" })
-	@DisplayName("Should let core drive the must-change-password flag when creating a user")
 	void newUser_shouldIgnoreMustChangePasswordFlag_whenSentInPayload() throws Exception {
 		User user = UserHelper.generateUser();
 		UserDTO userDTO = userMapper.map2DTO(user);
@@ -124,7 +122,7 @@ class UserControllerTest {
 		ObjectNode payload = objectMapper.valueToTree(userDTO);
 		payload.put("passwdMustChange", true);
 
-		var result = mvc.perform(
+		mvc.perform(
 				post("/users")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(payload.toString())
@@ -142,7 +140,6 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "users.create" })
-	@DisplayName("Should reject a user creation when the password does not meet the strength requirements")
 	void newUser_shouldReturnBadRequest_whenPasswordIsWeak() throws Exception {
 		User user = UserHelper.generateUser();
 		user.setPasswd("weak");
@@ -150,7 +147,7 @@ class UserControllerTest {
 
 		when(userManager.isPasswordValid(any())).thenReturn(false);
 
-		var result = mvc.perform(
+		mvc.perform(
 				post("/users")
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(userDTO))
@@ -163,21 +160,19 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "users.delete" })
-	@DisplayName("Delete user")
 	void deleteUser_shouldReturnNoContent() throws Exception {
 		User user = UserHelper.generateUser();
 
 		when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 		doNothing().when(userManager).deleteUser(any());
 
-		var result = mvc.perform(
+		mvc.perform(
 				delete("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isNoContent());
 	}
 	@Test
 	@WithMockUser(username = "john")
-	@DisplayName("Should get user profile")
 	void retrieveProfileByCurrentLoggedInUser_shouldReturnOk() throws Exception {
 		User user = UserHelper.generateUsers(1).get(0);
 		user.setUserName("john");
@@ -185,7 +180,7 @@ class UserControllerTest {
 		when(permissionManager.retrievePermissionsByUsername(user.getUserName())).thenReturn(Collections.emptyList());
 		when(userManager.getUserByName(user.getUserName())).thenReturn(user);
 
-		var result = mvc.perform(
+		mvc.perform(
 				get("/users/me").contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk());
@@ -197,41 +192,35 @@ class UserControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.read" })
-		@DisplayName("Should get user by name")
 		void getUserByName_shouldReturnOk() throws Exception {
 			User user = UserHelper.generateUsers(1).get(0);
 
 			when(userManager.getUserByName(user.getUserName(), true)).thenReturn(user);
 
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users/{username}", user.getUserName()).contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 		}
 
 		@Test
 		@WithMockUser(username = "user")
-		@DisplayName("Should throw forbidden error when insufficient permissions")
 		void getUserByName_shouldReturnForbidden_whenUserLacksReadAuthority() throws Exception {
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users/user").contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
 		@WithMockUser(username = "user", authorities = { "users.read" })
-		@DisplayName("Should throw not found error when user not found")
 		void getUserByName_shouldReturnNotFound_whenUserDoesNotExist() throws Exception {
 			when(userManager.getUserByName(any())).thenReturn(null);
 
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users/user").contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
-				.andExpect(status().isNotFound())
-				.andReturn();
+				.andExpect(status().isNotFound());
 		}
 	}
 
@@ -241,24 +230,21 @@ class UserControllerTest {
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.read" })
-		@DisplayName("Get all users")
 		void getUser_shouldReturnAllUsers() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
 			List<UserDTO> userDTOS = userMapper.map2DTOList(users);
 
 			when(userManager.getUser()).thenReturn(users);
 
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users").contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
-				.andReturn();
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))));
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.read" })
-		@DisplayName("Get users by group code")
 		void getUser_shouldReturnGroupUsers_whenGroupIdIsGiven() throws Exception {
 			List<User> users = UserHelper.generateUsers(3);
 			List<UserDTO> userDTOS = userMapper.map2DTOList(users);
@@ -266,17 +252,15 @@ class UserControllerTest {
 
 			when(userManager.getUser(any())).thenReturn(users);
 
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users").queryParam("group_id", groupCode).contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))))
-				.andReturn();
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTOS.stream().peek(user -> user.setPasswd(null)).toList()))));
 		}
 
 		@Test
 		@WithMockUser(username = "admin", authorities = { "users.read" })
-		@DisplayName("Get user by name")
 		void getUserByName_shouldReturnUserWithoutPassword() throws Exception {
 			User user = UserHelper.generateUser();
 			UserDTO userDTO = userMapper.map2DTO(user);
@@ -286,12 +270,11 @@ class UserControllerTest {
 
 			userDTO.setPasswd(null);
 
-			var result = mvc.perform(
+			mvc.perform(
 					get("/users/{username}", username).contentType(MediaType.APPLICATION_JSON))
 				.andDo(log())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))))
-				.andReturn();
+				.andExpect(content().string(containsString(UserHelper.asJsonString(userDTO))));
 		}
 	}
 
@@ -300,7 +283,6 @@ class UserControllerTest {
 	class UpdateUserTests {
 
 		@Test
-		@DisplayName("Should update the user")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldReturnOk() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -309,55 +291,47 @@ class UserControllerTest {
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 		}
 
 		@Test
-		@DisplayName("Should fail to update when username in the patch doesn't match")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldReturnBadRequest_whenPathUsernameDoesNotMatchPayload() throws Exception {
 			var user = new User("laboratorist", new UserGroup("doctor", "Doctor group"), "", "Simple user");
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+				.andExpect(status().isBadRequest());
 		}
 
 		@Test
-		@DisplayName("Should fail to update user when insufficient permissions")
 		@WithMockUser(username = "admin", authorities = { "roles.read" })
 		void updateUser_shouldReturnForbidden_whenUserLacksUpdateAuthority() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
-		@DisplayName("Should fail when user to update doesn't exist")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldReturnNotFound_whenUserDoesNotExist() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
 			when(userManager.getUserByName(any())).thenReturn(null);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isNotFound())
-				.andReturn();
+				.andExpect(status().isNotFound());
 		}
 
 		@Test
-		@DisplayName("Should update only the password and set the must-change-password flag")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldUpdateOnlyPasswordAndSetMustChangePasswordFlag_whenPasswordIsGiven() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
@@ -367,11 +341,10 @@ class UserControllerTest {
 			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 			when(userManager.isPasswordValid(any())).thenReturn(true);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
 			// OP-896: a password reset by an administrator must be changed by the user at next login
 			ArgumentCaptor<User> updatedUser = ArgumentCaptor.forClass(User.class);
@@ -381,7 +354,6 @@ class UserControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should reject a password reset that does not meet the strength requirements")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldReturnBadRequest_whenPasswordIsWeak() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "weak", "Simple user");
@@ -389,18 +361,16 @@ class UserControllerTest {
 			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 			when(userManager.isPasswordValid(any())).thenReturn(false);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+				.andExpect(status().isBadRequest());
 
 			verify(userManager, never()).updatePassword(any());
 			verify(userManager, never()).updateUser(any());
 		}
 
 		@Test
-		@DisplayName("Should update user without updating password")
 		@WithMockUser(username = "admin", authorities = { "users.read", "users.update" })
 		void updateUser_shouldUpdateFieldsButNotPassword_whenPasswordIsEmpty() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -409,11 +379,10 @@ class UserControllerTest {
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.isUserNamePresent(user.getUserName())).thenReturn(true);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/doctor").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
 			verify(userManager, never()).updatePassword(any());
 			verify(userManager).updateUser(any());
@@ -433,7 +402,6 @@ class UserControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should update user profile")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnOk() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -442,41 +410,35 @@ class UserControllerTest {
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 		}
 
 		@Test
-		@DisplayName("Should fail when trying to update another user's profile")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnForbidden_whenProfileBelongsToAnotherUser() throws Exception {
 			var user = new User("laboratorist", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
 			when(userManager.getUserByName(any())).thenReturn(user);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 		}
 
 		@Test
-		@DisplayName("Should fail to update when not authenticated")
 		void updateProfile_shouldReturnUnauthorized_whenNotAuthenticated() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isUnauthorized())
-				.andReturn();
+				.andExpect(status().isUnauthorized());
 		}
 
 		@Test
-		@DisplayName("Should update only password")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldUpdateOnlyPassword_whenPasswordIsGiven() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
@@ -486,18 +448,16 @@ class UserControllerTest {
 			when(userManager.getUserByName(any())).thenReturn(user);
 			when(userManager.isPasswordValid(any())).thenReturn(true);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
 			verify(userManager).updatePassword(any());
 			verify(userManager, never()).updateUser(any());
 		}
 
 		@Test
-		@DisplayName("Should reject a profile update without password change when the password must be changed")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnForbidden_whenPasswordMustChangeAndNewPasswordIsEmpty() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -509,15 +469,13 @@ class UserControllerTest {
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
 				.andExpect(status().isForbidden())
-				.andExpect(content().string(containsString("The password must be changed before updating the profile.")))
-				.andReturn();
+				.andExpect(content().string(containsString("The password must be changed before updating the profile.")));
 
 			verify(userManager, never()).updateUser(any());
 			verify(userManager, never()).updatePassword(any());
 		}
 
 		@Test
-		@DisplayName("Should reject a profile update without password change when the password lease has expired")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnForbidden_whenPasswordIsExpiredAndNewPasswordIsEmpty() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -528,15 +486,13 @@ class UserControllerTest {
 			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isForbidden())
-				.andReturn();
+				.andExpect(status().isForbidden());
 
 			verify(userManager, never()).updateUser(any());
 			verify(userManager, never()).updatePassword(any());
 		}
 
 		@Test
-		@DisplayName("Should allow the password change and clear the flag when the password must be changed")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldUpdatePasswordAndClearMustChangePasswordFlag_whenPasswordMustChange() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "?..passwordAA", "Simple user");
@@ -549,8 +505,7 @@ class UserControllerTest {
 			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
 			ArgumentCaptor<User> updatedUser = ArgumentCaptor.forClass(User.class);
 			verify(userManager).updatePassword(updatedUser.capture());
@@ -559,7 +514,6 @@ class UserControllerTest {
 		}
 
 		@Test
-		@DisplayName("Should reject a password that does not meet the strength requirements")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnBadRequest_whenPasswordIsWeak() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "weak", "Simple user");
@@ -570,14 +524,12 @@ class UserControllerTest {
 			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+				.andExpect(status().isBadRequest());
 
 			verify(userManager, never()).updatePassword(any());
 		}
 
 		@Test
-		@DisplayName("Should reject reusing the current password on profile update")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldReturnBadRequest_whenPasswordIsWeakAndSameAsCurrent() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "SamePass1@", "Simple user");
@@ -588,14 +540,12 @@ class UserControllerTest {
 			mvc.perform(
 					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
 				.andDo(log())
-				.andExpect(status().isBadRequest())
-				.andReturn();
+				.andExpect(status().isBadRequest());
 
 			verify(userManager, never()).updatePassword(any());
 		}
 
 		@Test
-		@DisplayName("Should update user without updating password")
 		@WithMockUser(username = "doctor")
 		void updateProfile_shouldUpdateFieldsButNotPassword_whenPasswordIsEmpty() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
@@ -604,15 +554,14 @@ class UserControllerTest {
 			when(userManager.updatePassword(any())).thenReturn(user);
 			when(userManager.getUserByName(any())).thenReturn(user);
 
-			var result = mvc.perform(
+			mvc.perform(
 					put("/users/me")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(userMapper.map2DTO(user)))
 						.with(user("doctor").roles("exams.read"))
 				)
 				.andDo(log())
-				.andExpect(status().isOk())
-				.andReturn();
+				.andExpect(status().isOk());
 
 			verify(userManager, never()).updatePassword(any());
 			verify(userManager).updateUser(any());
