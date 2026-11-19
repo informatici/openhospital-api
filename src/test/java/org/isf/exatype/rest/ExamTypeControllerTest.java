@@ -42,7 +42,6 @@ import org.isf.exatype.dto.ExamTypeDTO;
 import org.isf.exatype.manager.ExamTypeBrowserManager;
 import org.isf.exatype.mapper.ExamTypeMapper;
 import org.isf.exatype.model.ExamType;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -75,7 +74,6 @@ class ExamTypeControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.read"})
-	@DisplayName("Get all exam types")
 	void getExamTypes_shouldReturnAllTypes() throws Exception {
 		List<ExamType> examTypes = generateExamTypes(5);
 		List<ExamTypeDTO> examTypeDTOs = mapper.map2DTOList(examTypes);
@@ -87,13 +85,11 @@ class ExamTypeControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTOs))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTOs))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.create"})
-	@DisplayName("Add new exam type")
 	void newExamType_shouldReturnCreatedType() throws Exception {
 		ExamType examType = generateExamTypes(1).get(0);
 		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
@@ -106,13 +102,11 @@ class ExamTypeControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.update"})
-	@DisplayName("Update exam type")
 	void updateExamType_shouldReturnUpdatedType() throws Exception {
 		ExamType examType = generateExamTypes(1).get(0);
 		ExamTypeDTO examTypeDTO = mapper.map2DTO(examType);
@@ -126,13 +120,11 @@ class ExamTypeControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examTypeDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examtypes.delete"})
-	@DisplayName("Delete exam type")
 	void deleteExamType_shouldReturnTrue() throws Exception {
 		List<ExamType> examTypes = generateExamTypes(1);
 
@@ -145,8 +137,7 @@ class ExamTypeControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(true))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(true))));
 	}
 
 	private List<ExamType> generateExamTypes(int size) {
