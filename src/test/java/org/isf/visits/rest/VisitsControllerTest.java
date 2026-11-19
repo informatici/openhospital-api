@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -48,17 +48,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class VisitsControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(VisitsControllerTest.class);
 
 	@Mock
 	protected VisitManager visitManagerMock;
@@ -89,7 +84,7 @@ class VisitsControllerTest {
 	}
 
 	@Test
-	void testGetVisit_200() throws Exception {
+	void getVisit_shouldReturnPatientVisits() throws Exception {
 		String request = "/visits/patient/{patID}";
 
 		int patID = 0;
@@ -100,19 +95,16 @@ class VisitsControllerTest {
 
 		List<VisitDTO> expectedVisitsDTOs = visitMapper.map2DTOList(visitsList);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(get(request, patID))
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(VisitHelper.getObjectMapper().writeValueAsString(expectedVisitsDTOs))))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(containsString(VisitHelper.getObjectMapper().writeValueAsString(expectedVisitsDTOs))));
 	}
 
 	@Test
-	void testNewVisit_201() throws Exception {
+	void newVisit_shouldReturnCreated() throws Exception {
 		String request = "/visits";
 		int id = 1;
 		VisitDTO body = visitMapper.map2DTO(VisitHelper.setup(id));
@@ -120,21 +112,18 @@ class VisitsControllerTest {
 		when(visitManagerMock.newVisit(visitMapper.map2Model(body)))
 				.thenReturn(visitMapper.map2Model(body));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VisitHelper.asJsonString(body)))
 				)
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
-				.andExpect(status().isCreated())
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testNewVisits_201() throws Exception {
+	void newVisits_shouldReturnTrue() throws Exception {
 		String request = "/visits/insertList";
 
 		List<Visit> visitsList = VisitHelper.setupVisitList(4);
@@ -145,7 +134,7 @@ class VisitsControllerTest {
 		when(visitManagerMock.newVisits(visitsList))
 				.thenReturn(isCreated);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(post(request)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(Objects.requireNonNull(VisitHelper.asJsonString(body)))
@@ -153,13 +142,11 @@ class VisitsControllerTest {
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isCreated())
-				.andExpect(content().string(containsString(isCreated.toString())))
-				.andReturn();
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(containsString(isCreated.toString())));
 	}
 
 	@Test
-	void testDeleteVisitsRelatedToPatient_200() throws Exception {
+	void deleteVisitsRelatedToPatient_shouldReturnTrue() throws Exception {
 		String request = "/visits/delete/{patId}";
 
 		int id = 1;
@@ -168,15 +155,12 @@ class VisitsControllerTest {
 		when(visitManagerMock.deleteAllVisits(id))
 				.thenReturn(isDeleted);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 				.perform(delete(request, id))
 				.andDo(log())
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString(isDeleted.toString())))
-				.andReturn();
-
-		LOGGER.debug("result: {}", result);
+				.andExpect(content().string(containsString(isDeleted.toString())));
 	}
 
 }
