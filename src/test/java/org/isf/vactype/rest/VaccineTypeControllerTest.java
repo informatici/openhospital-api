@@ -87,7 +87,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testGetVaccineType_200() throws Exception {
+	void getVaccineType_shouldReturnAllVaccineTypes() throws Exception {
 		String request = "/vaccinetypes";
 
 		List<VaccineType> vaccinesTypeList = VaccineTypeHelper.setupVaccineList(4);
@@ -105,7 +105,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testNewVaccineType_200() throws Exception {
+	void newVaccineType_shouldReturnCreatedVaccineType() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -125,7 +125,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void newVaccineTypeAlreadyPresent_400() throws Exception {
+	void newVaccineType_shouldReturnBadRequest_whenManagerThrowsDataIntegrityViolation() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -145,7 +145,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void newVaccineTypeNotCreated_400() throws Exception {
+	void newVaccineType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -165,7 +165,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateVaccineType_200() throws Exception {
+	void updateVaccineType_shouldReturnUpdatedVaccineType() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -185,7 +185,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void updateVaccineTypeNotUpdated_400() throws Exception {
+	void updateVaccineType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccinetypes";
 		String code = "ZZ";
 		VaccineTypeDTO body = vaccineTypeMapper.map2DTO(VaccineTypeHelper.setup(code));
@@ -205,7 +205,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccineType_200() throws Exception {
+	void deleteVaccineType_shouldReturnTrue_whenVaccineTypeExists() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String basecode = "0";
 
@@ -225,7 +225,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void deleteVaccineTypeNotFound_404() throws Exception {
+	void deleteVaccineType_shouldReturnNotFound_whenVaccineTypeDoesNotExist() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String code = "0";
 
@@ -240,7 +240,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void deleteVaccineTypeNotDeleted_400() throws Exception {
+	void deleteVaccineType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccinetypes/{code}";
 		String code = "0";
 
@@ -259,7 +259,7 @@ class VaccineTypeControllerTest {
 	}
 
 	@Test
-	void testCheckVaccineTypeCode_200() throws Exception {
+	void checkVaccineTypeCode_shouldReturnTrue_whenCodeIsPresent() throws Exception {
 		String request = "/vaccinetypes/check/{code}";
 
 		String code = "AA";
