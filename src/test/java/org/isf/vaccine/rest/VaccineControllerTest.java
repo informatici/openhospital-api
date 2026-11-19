@@ -88,7 +88,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testGetVaccines_200() throws Exception {
+	void getVaccines_shouldReturnAllVaccines() throws Exception {
 		String request = "/vaccines";
 
 		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
@@ -106,7 +106,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testGetVaccinesByVaccineTypeCode_200() throws Exception {
+	void getVaccinesByVaccineTypeCode_shouldReturnVaccinesOfType() throws Exception {
 		String request = "/vaccines/type-code/{vaccineTypeCode}";
 
 		List<Vaccine> vaccinesList = VaccineHelper.setupVaccineList(4);
@@ -123,7 +123,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testNewVaccine_201() throws Exception {
+	void newVaccine_shouldReturnCreatedVaccine() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -144,7 +144,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void newVaccine_VaccineTypeAlreadyPresent_400() throws Exception {
+	void newVaccine_shouldReturnBadRequest_whenManagerThrowsDataIntegrityViolation() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -165,7 +165,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void newVaccine_NotCreated_400() throws Exception {
+	void newVaccine_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -186,7 +186,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testUpdateVaccine_200() throws Exception {
+	void updateVaccine_shouldReturnUpdatedVaccine() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -206,7 +206,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void updateVaccine_NotUpdated_400() throws Exception {
+	void updateVaccine_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccines";
 		String code = "ZZ";
 		Vaccine vaccine = VaccineHelper.setup(code);
@@ -227,7 +227,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testDeleteVaccine_200() throws Exception {
+	void deleteVaccine_shouldReturnTrue_whenVaccineExists() throws Exception {
 		String request = "/vaccines/{code}";
 		String basecode = "0";
 
@@ -247,7 +247,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void deleteVaccine_NotFound_404() throws Exception {
+	void deleteVaccine_shouldReturnNotFound_whenVaccineDoesNotExist() throws Exception {
 		String request = "/vaccines/{code}";
 		String code = "0";
 
@@ -262,7 +262,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void deleteVaccine_NotDeleted_400() throws Exception {
+	void deleteVaccine_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		String request = "/vaccines/{code}";
 		String code = "0";
 
@@ -281,7 +281,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void testCheckVaccineCode_200() throws Exception {
+	void checkVaccineCode_shouldReturnTrue_whenCodeIsPresent() throws Exception {
 		String request = "/vaccines/check/{code}";
 
 		String code = "AA";
@@ -298,7 +298,7 @@ public class VaccineControllerTest {
 	}
 
 	@Test
-	void toString_VaccineDTO() throws Exception {
+	void toString_shouldUseCodeDescriptionAndVaccineType() throws Exception {
 		VaccineDTO vaccineDTO = vaccineMapper.map2DTO(VaccineHelper.setup("AA"));
 
 		assertThat(vaccineDTO).hasToString("VaccineDTO{code='" + vaccineDTO.getCode() + "', description='" + vaccineDTO.getDescription()
