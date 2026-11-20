@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -296,8 +297,26 @@ class UserGroupControllerTest {
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(content().string(containsString("not found")));
+				.andExpect(status().isNotFound())
+				.andExpect(content().string(containsString("User group not found.")));
+		}
+
+		@Test
+		@WithMockUser(username = "admin", authorities = { "usergroups.create", "grouppermission.create" })
+		void assignPermission_shouldReturnBadRequest_whenPermissionDoesNotExist() throws Exception {
+			UserGroup userGroup = new TestUserGroup().setup(false);
+			Permission permission = TestPermission.generatePermission();
+
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(null);
+
+			mvc.perform(
+					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+						.contentType(MediaType.APPLICATION_JSON)
+				)
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Permission not found.")));
 		}
 
 		@Test
@@ -322,25 +341,22 @@ class UserGroupControllerTest {
 		}
 
 		@Test
-		@WithMockUser(username = "admin", authorities = { "grouppermission.create" })
-		void assignPermission_shouldReturnClientError_whenUserGroupDoesNotExist() throws Exception {
+		@WithMockUser(username = "admin", authorities = { "grouppermission.delete" })
+		void revokePermission_shouldReturnBadRequest_whenPermissionIsNotAssigned() throws Exception {
 			UserGroup userGroup = new TestUserGroup().setup(false);
 			Permission permission = TestPermission.generatePermission();
-			GroupPermission groupPermission = new GroupPermission();
-			groupPermission.setUserGroup(userGroup);
-			groupPermission.setPermission(permission);
 
-			when(userManager.findUserGroupByCode(any())).thenReturn(null);
-			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(null);
-			when(groupPermissionManager.create(any(), any())).thenReturn(groupPermission);
+			when(userManager.findUserGroupByCode(any())).thenReturn(userGroup);
+			when(permissionManager.retrievePermissionById(anyInt())).thenReturn(permission);
+			doThrow(new OHDataValidationException(new OHExceptionMessage(""))).when(groupPermissionManager).delete(any(), any());
 
 			mvc.perform(
-					post("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
+					delete("/usergroups/{group_code}/permissions/{id}", userGroup.getCode(), permission.getId())
 						.contentType(MediaType.APPLICATION_JSON)
 				)
 				.andDo(log())
-				.andExpect(status().is4xxClientError())
-				.andExpect(content().string(containsString("not found")));
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Failed to revoke permission")));
 		}
 
 		@Test
