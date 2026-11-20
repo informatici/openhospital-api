@@ -277,7 +277,10 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.PUT, "/users/{username}").hasAuthority("users.update")
 				.requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("users.delete")
 				// user setting
-				.requestMatchers("/usersettings/**").authenticated()
+				.requestMatchers(HttpMethod.POST, "/usersettings/**").hasAuthority("usersettings.create")
+				.requestMatchers(HttpMethod.GET, "/usersettings/**").hasAuthority("usersettings.read")
+				.requestMatchers(HttpMethod.PUT, "/usersettings/**").hasAuthority("usersettings.update")
+				.requestMatchers(HttpMethod.DELETE, "/usersettings/**").hasAuthority("usersettings.delete")
 				// pregnanttreatmenttypes
 				.requestMatchers(HttpMethod.POST, "/pregnanttreatmenttypes/**").hasAuthority("pregnanttreatmenttypes.create")
 				.requestMatchers(HttpMethod.GET, "/pregnanttreatmenttypes/**").hasAnyAuthority("pregnanttreatmenttypes.read")
