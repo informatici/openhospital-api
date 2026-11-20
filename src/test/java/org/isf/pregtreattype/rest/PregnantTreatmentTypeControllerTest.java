@@ -88,7 +88,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void getAllPregnantTreatmentTypes_200() throws Exception {
+	void getPregnantTreatmentTypes_shouldReturnAllTypes() throws Exception {
 		String request = "/pregnanttreatmenttypes";
 
 		List<PregnantTreatmentType> results = PregnantTreatmentTypeHelper.setupPregnantTreatmentTypeList(3);
@@ -109,7 +109,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void newPregnantTreatmentType_201() throws Exception {
+	void newPregnantTreatmentType_shouldReturnCreatedType() throws Exception {
 		String request = "/pregnanttreatmenttypes";
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
@@ -130,7 +130,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void newPregnantTreatmentType_400() throws Exception {
+	void newPregnantTreatmentType_shouldReturnBadRequest_whenManagerReturnsNull() throws Exception {
 		String request = "/pregnanttreatmenttypes";
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
@@ -150,7 +150,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void updatePregnantTreatmentType_200() throws Exception {
+	void updatePregnantTreatmentTypes_shouldReturnUpdatedType() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -175,7 +175,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void updatePregnantTreatmentType_404() throws Exception {
+	void updatePregnantTreatmentTypes_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -196,7 +196,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void updatePregnantTreatmentType_400() throws Exception {
+	void updatePregnantTreatmentTypes_shouldReturnBadRequest_whenManagerReturnsNull() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		PregnantTreatmentTypeDTO body = pregnantTreatmentTypeMapper.map2DTO(pregnantTreatmentType);
 		String request = "/pregnanttreatmenttypes/{code}";
@@ -220,7 +220,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void deletePregnantTreatmentType_200() throws Exception {
+	void deletePregnantTreatmentType_shouldReturnTrue() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		String request = "/pregnanttreatmenttypes/{code}";
 		String code = pregnantTreatmentType.getCode();
@@ -236,7 +236,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void deletePregnantTreatmentType_404() throws Exception {
+	void deletePregnantTreatmentType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/pregnanttreatmenttypes/{code}";
 		String code = "nonExistingCode";
 
@@ -251,7 +251,7 @@ class PregnantTreatmentTypeControllerTest {
 	}
 
 	@Test
-	void deletePregnantTreatmentType_400() throws Exception {
+	void deletePregnantTreatmentType_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		PregnantTreatmentType pregnantTreatmentType = PregnantTreatmentTypeHelper.setup();
 		String request = "/pregnanttreatmenttypes/{code}";
 		String code = pregnantTreatmentType.getCode();
