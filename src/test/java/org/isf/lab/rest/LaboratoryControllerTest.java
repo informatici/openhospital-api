@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2024 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -59,17 +59,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class LaboratoryControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(LaboratoryControllerTest.class);
 
 	@Mock
 	protected LabManager laboratoryManager;
@@ -107,7 +102,7 @@ class LaboratoryControllerTest {
 	}
 
 	@Test
-	void testNewLaboratory_201() throws Exception {
+	void newLaboratory_shouldReturnCreated() throws Exception {
 		String request = "/laboratories";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -129,20 +124,17 @@ class LaboratoryControllerTest {
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.content(Objects.requireNonNull(LaboratoryHelper.asJsonString(labWithRowsDTO)))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateLaboratory_200() throws Exception {
+	void updateLaboratory_shouldReturnOk() throws Exception {
 		String request = "/laboratories/{code}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -167,20 +159,17 @@ class LaboratoryControllerTest {
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, lab.getCode())
 				.content(Objects.requireNonNull(LaboratoryHelper.asJsonString(labWithRowsDTO)))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetLaboratory_200() throws Exception {
+	void getLaboratory_shouldReturnPatientLaboratories() throws Exception {
 		String request = "/laboratories/byPatientId/{patId}";
 
 		LabWithRowsDTO labWithRowsDTO = new LabWithRowsDTO();
@@ -206,16 +195,13 @@ class LaboratoryControllerTest {
 		when(laboratoryManager.getLaboratory(any(Patient.class))).thenReturn(Collections.singletonList(lab));
 		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
 		when(examManager.getExams()).thenReturn(Collections.singletonList(lab.getExam()));
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, patient.getCode())
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$[0].laboratoryDTO.exam.code").value(lab.getExam().getCode()));
 	}
 
 }
