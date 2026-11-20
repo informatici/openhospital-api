@@ -24,8 +24,6 @@ package org.isf.security.jwt;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,8 +38,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -185,24 +181,9 @@ public class TokenProvider implements Serializable {
 	}
 
 	public Authentication getAuthentication(String token) {
-		final Claims claims = getAllClaimsFromToken(token);
-
-		/*
-		 * claims.get(AUTHORITIES_KEY) cannot be null, at least an empty string Left for security but not testable
-		 */
-		String authoritiesClaim = claims.get(AUTHORITIES_KEY) != null ? claims.get(AUTHORITIES_KEY).toString() : "";
-		if (authoritiesClaim.isEmpty()) {
-			LOGGER.error("JWT token does not contain any authorities");
-			throw new IllegalArgumentException("JWT token does not contain authorities.");
-		}
-
-		final Collection< ? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-			.map(SimpleGrantedAuthority::new)
-			.collect(Collectors.toList());
-
-		User principal = new User(claims.getSubject(), "", authorities);
-
-		return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+		String username = getUsernameFromToken(token);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
 	}
 
 	public Authentication getAuthenticationByUsername(String username) {
