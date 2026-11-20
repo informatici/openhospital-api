@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -46,7 +46,6 @@ import org.isf.exam.data.ExamHelper;
 import org.isf.exam.dto.ExamRowDTO;
 import org.isf.exam.mapper.ExamMapper;
 import org.isf.exam.mapper.ExamRowMapper;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -85,8 +84,7 @@ class ExamRowControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
-	@DisplayName("Should get all exam rows")
-	void testGetAll() throws Exception {
+	void getExamRows_shouldReturnAllRows() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		List<ExamRow> examRows = generateExamRows(exam, 5);
 		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
@@ -98,14 +96,12 @@ class ExamRowControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
-	@DisplayName("Should return exam rows when is performed")
-	void testSearchExamRows() throws Exception {
+	void getExamRowsByCodeAndDescription_shouldReturnFoundRows() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		List<ExamRow> examRows = generateExamRows(exam, 5);
 		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
@@ -119,14 +115,12 @@ class ExamRowControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
-	@DisplayName("Should get exam rows using the code")
-	void testGetExamRowsByCode() throws Exception {
+	void getExamRowsByCode_shouldReturnFoundRows() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		List<ExamRow> examRows = generateExamRows(exam, 4);
 		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
@@ -138,14 +132,12 @@ class ExamRowControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.read"})
-	@DisplayName("Should get all exam rows related to the given exam code")
-	void testGetExamRowsByExamCode() throws Exception {
+	void getExamRowsByExamCode_shouldReturnFoundRows() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		List<ExamRow> examRows = generateExamRows(exam, 4);
 		List<ExamRowDTO> examRowDTOS = mapper.map2DTOList(examRows);
@@ -157,14 +149,12 @@ class ExamRowControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTOS))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.create"})
-	@DisplayName("Should add a new exam row")
-	void testAddExamRow() throws Exception {
+	void newExamRow_shouldReturnCreatedRow() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		ExamRow examRow = generateExamRows(exam, 1).get(0);
 		ExamRowDTO examRowDTO = mapper.map2DTO(examRow);
@@ -178,14 +168,12 @@ class ExamRowControllerTest {
 			)
 			.andDo(log())
 			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTO))))
-			.andReturn();
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(examRowDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.create"})
-	@DisplayName("Should fail to add new exam row with wrong exam code")
-	void testAddExamRowWithWrongExam() throws Exception {
+	void newExamRow_shouldReturnNotFound_whenExamDoesNotExist() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		ExamRow examRow = generateExamRows(exam, 1).get(0);
 		ExamRowDTO examRowDTO = mapper.map2DTO(examRow);
@@ -204,8 +192,7 @@ class ExamRowControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.delete"})
-	@DisplayName("Should delete exam row")
-	void testDeleteExamRow() throws Exception {
+	void deleteExam_shouldReturnTrue() throws Exception {
 		Exam exam = examMapper.map2Model(ExamHelper.generateExam());
 		ExamRow examRow = generateExamRows(exam, 1).get(0);
 
@@ -222,8 +209,7 @@ class ExamRowControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examrows.delete"})
-	@DisplayName("Should fail to delete exam row with wrong code")
-	void testDeleteExamRowWithWrongCode() throws Exception {
+	void deleteExam_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		when(manager.getExamRow(anyInt())).thenReturn(List.of());
 		doNothing().when(manager).deleteExamRow(any());
 

@@ -21,6 +21,8 @@
  */
 package org.isf.priceslist.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotNull;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -49,7 +51,7 @@ public class PriceDTO {
 
 	@NotNull
 	@Schema(description = "Price", example = "1500")
-	private Double price;
+	private BigDecimal price;
 
 	@Schema(description = "Lock", example = "0")
 	private int lock;
@@ -93,7 +95,7 @@ public class PriceDTO {
 		return this.description;
 	}
 
-	public Double getPrice() {
+	public BigDecimal getPrice() {
 		return this.price;
 	}
 
@@ -117,7 +119,7 @@ public class PriceDTO {
 		this.description = description;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 

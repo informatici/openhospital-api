@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,7 +21,7 @@
  */
 package org.isf.medicalstock.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -52,8 +52,8 @@ public class MovementDTO {
 	private LotDTO lot;
 
 	@NotNull(message = "the movement's date is required")
-	@Schema(description = "The movement date", example = "2020-06-24", type = "string")
-	private LocalDate date;
+	@Schema(description = "The movement date", example = "2020-06-24T10:00:00", type = "string")
+	private LocalDateTime date;
 
 	@NotNull(message = "the movement's medical quantity is required")
 	@Schema(description = "The movement's medical quantity", example = "50")
@@ -69,7 +69,7 @@ public class MovementDTO {
 	public MovementDTO() {
 	}
 
-	public MovementDTO(int code, MedicalDTO medical, MovementTypeDTO type, WardDTO ward, LotDTO lot, LocalDate date,
+	public MovementDTO(int code, MedicalDTO medical, MovementTypeDTO type, WardDTO ward, LotDTO lot, LocalDateTime date,
 			int quantity, SupplierDTO supplier, String refNo) {
 		this.code = code;
 		this.medical = medical;
@@ -102,7 +102,7 @@ public class MovementDTO {
 		return this.lot;
 	}
 
-	public LocalDate getDate() {
+	public LocalDateTime getDate() {
 		return this.date;
 	}
 
@@ -138,7 +138,7 @@ public class MovementDTO {
 		this.lot = lot;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(LocalDateTime date) {
 		this.date = date;
 	}
 

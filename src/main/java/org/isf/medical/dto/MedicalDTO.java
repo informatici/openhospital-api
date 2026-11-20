@@ -46,13 +46,13 @@ public class MedicalDTO {
 	private Integer pcsperpck;
 
 	@Schema(description = "The input quantity of the medical", example = "340")
-	private double inqty;
+	private int inqty;
 
 	@Schema(description = "The out quantity of the medical", example = "8")
-	private double outqty;
+	private int outqty;
 
 	@Schema(description = "The min quantity of the medical", example = "15")
-	private double minqty;
+	private int minqty;
 
 	@Schema(description = "Lock", example = "0")
 	private int lock;
@@ -64,7 +64,7 @@ public class MedicalDTO {
 	 * Constructor
 	 */
 	public MedicalDTO(Integer code, MedicalTypeDTO type, String prod_code, String description, double initialqty,
-			Integer pcsperpck, double minqty, double inqty, double outqty) {
+			Integer pcsperpck, int minqty, int inqty, int outqty) {
 		this.code = code;
 		this.type = type;
 		this.prod_code = prod_code;
@@ -108,15 +108,15 @@ public class MedicalDTO {
 		return this.pcsperpck;
 	}
 
-	public double getInqty() {
+	public int getInqty() {
 		return this.inqty;
 	}
 
-	public double getOutqty() {
+	public int getOutqty() {
 		return this.outqty;
 	}
 
-	public double getMinqty() {
+	public int getMinqty() {
 		return this.minqty;
 	}
 
@@ -144,15 +144,15 @@ public class MedicalDTO {
 		this.pcsperpck = pcsperpck;
 	}
 
-	public void setInqty(double inqty) {
+	public void setInqty(int inqty) {
 		this.inqty = inqty;
 	}
 
-	public void setOutqty(double outqty) {
+	public void setOutqty(int outqty) {
 		this.outqty = outqty;
 	}
 
-	public void setMinqty(double minqty) {
+	public void setMinqty(int minqty) {
 		this.minqty = minqty;
 	}
 }

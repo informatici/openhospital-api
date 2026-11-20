@@ -1558,6 +1558,26 @@ paths:
                 $ref: "#/components/schemas/PatientExaminationDTO"
       security:
       - bearerAuth: []
+    delete:
+      tags:
+      - Examinations
+      operationId: deletePatientExamination
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+      security:
+      - bearerAuth: []
   /diseasetypes:
     get:
       tags:
@@ -5765,6 +5785,20 @@ paths:
                   $ref: "#/components/schemas/BillItemsDTO"
       security:
       - bearerAuth: []
+  /auth/password-policy:
+    get:
+      tags:
+      - Login
+      operationId: getPasswordPolicy
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PasswordPolicyDTO"
+      security:
+      - bearerAuth: []
   /agetypes/{index}:
     get:
       tags:
@@ -6295,6 +6329,27 @@ components:
       - docs
       - nurs
       - visitDuration
+    PatientAdminIssueDTO:
+      type: object
+      description: An administrative issue the hospital raised on a patient
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Issue id
+          example: 1
+          readOnly: true
+        reason:
+          type: string
+          description: Why the patient was flagged
+          example: Identity document still to be verified
+          maxLength: 255
+        fromDate:
+          type: string
+          description: When the issue was opened
+        toDate:
+          type: string
+          description: "When the issue was resolved, null while it is still open"
     PatientDTO:
       type: object
       description: Class representing a patient
@@ -6451,6 +6506,12 @@ components:
           type: boolean
           description: Consensus service flag
           example: true
+        administrativeIssues:
+          type: array
+          description: Administrative issues still open on the patient
+          items:
+            $ref: "#/components/schemas/PatientAdminIssueDTO"
+          readOnly: true
       required:
       - age
       - bloodType
@@ -7086,12 +7147,10 @@ components:
           example: O
         amount:
           type: number
-          format: double
           description: Bill Amount
           example: 1000
         balance:
           type: number
-          format: double
           description: Bill balance
           example: 1500
         user:
@@ -7445,18 +7504,18 @@ components:
           description: The number of pieces per packet
           example: 100
         inqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The input quantity of the medical
           example: 340
         outqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The out quantity of the medical
           example: 8
         minqty:
-          type: number
-          format: double
+          type: integer
+          format: int32
           description: The min quantity of the medical
           example: 15
         lock:
@@ -7805,7 +7864,6 @@ components:
           example: Acetone 99 % 1ltr
         itemAmount:
           type: number
-          format: double
           description: Item amount
           example: 1000
         itemQuantity:
@@ -7852,7 +7910,6 @@ components:
           example: 2020-03-19T14:58:00.000Z
         amount:
           type: number
-          format: double
           description: The payment amount
           example: 500
         user:
@@ -8091,7 +8148,7 @@ components:
         date:
           type: string
           description: The movement date
-          example: 2020-06-24
+          example: 2020-06-24T10:00:00
         quantity:
           type: integer
           format: int32
@@ -8175,9 +8232,9 @@ components:
           description: The ward
         date:
           type: string
-          format: LocalDate
+          format: LocalDateTime
           description: The movement ward's date
-          example: 2020-06-07
+          example: 2020-06-07T10:00:00
         patient:
           $ref: "#/components/schemas/PatientDTO"
           description: The patient in case the movement is associated to a patient
@@ -8201,7 +8258,6 @@ components:
           description: The medical concerned by the movement
         quantity:
           type: number
-          format: double
           description: The quantity of the medical concerned by the movement
           example: 145
         units:
@@ -8257,6 +8313,17 @@ components:
           type: string
           description: User name
           example: admin
+        mustChangePassword:
+          type: boolean
+          description: Whether the user must change the password before using the application
+        passwordExpired:
+          type: boolean
+          description: Whether the password change is required because the password lease has expired
+        passwordLeaseDays:
+          type: integer
+          format: int32
+          description: The configured password lease in days, when the lease policy is active
+          example: 90
     LoginRequest:
       type: object
       properties:
@@ -8294,7 +8361,6 @@ components:
           maxLength: 100
         price:
           type: number
-          format: double
           description: Price
           example: 1500
         lock:
@@ -8363,13 +8429,12 @@ components:
           description: The medical ward's id
           example: 1
         in_quantity:
-          type: number
-          format: float
+          type: integer
+          format: int32
           description: The in-quantity
           example: 150
         out_quantity:
           type: number
-          format: float
           description: The out-quantity
           example: 89
         lock:
@@ -8407,6 +8472,26 @@ components:
             $ref: "#/components/schemas/PatientExaminationDTO"
         pageInfo:
           $ref: "#/components/schemas/PageInfoDTO"
+    PasswordPolicyDTO:
+      type: object
+      description: "The password policy enforced by the server, so clients can validate\
+        \ passwords consistently"
+      properties:
+        strongPasswordEnabled:
+          type: boolean
+          description: Whether the strong-password policy (character requirements)
+            is enforced
+          example: true
+        minLength:
+          type: integer
+          format: int32
+          description: "The minimum password length, or 0 when no minimum-length policy\
+            \ is enforced"
+          example: 6
+        regex:
+          type: string
+          description: The regular expression a password must match when the strong-password
+            policy is enabled
     PageAdmissionDTO:
       type: object
       properties:

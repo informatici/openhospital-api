@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -53,19 +53,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class OperationControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(OperationControllerTest.class);
 
 	@Mock
 	protected OperationBrowserManager operationBrowserManagerMock;
@@ -118,7 +113,7 @@ class OperationControllerTest {
 	}
 
 	@Test
-	void testNewOperation_201() throws Exception {
+	void newOperation_shouldReturnCreated() throws Exception {
 		String request = "/operations";
 
 		Operation operation = OperationHelper.setup();
@@ -134,21 +129,18 @@ class OperationControllerTest {
 		when(operationBrowserManagerMock.getOperationByCode(code))
 			.thenReturn(operation);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(OperationHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateOperation_200() throws Exception {
+	void updateOperation_shouldReturnOk() throws Exception {
 		String request = "/operations/{code}";
 		String code = "25";
 
@@ -161,21 +153,18 @@ class OperationControllerTest {
 		when(operationBrowserManagerMock.updateOperation(operation))
 			.thenReturn(operation);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, code)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(OperationHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetOperation_200() throws Exception {
+	void getOperations_shouldReturnAllOperations() throws Exception {
 		String request = "/operations";
 
 		List<Operation> results = OperationHelper.setupOperationList(3);
@@ -185,19 +174,16 @@ class OperationControllerTest {
 		when(operationBrowserManagerMock.getOperation())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(operationDTOs))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(new ObjectMapper().writeValueAsString(operationDTOs))));
 	}
 
 	@Test
-	void testDeleteOperation_200() throws Exception {
+	void deleteOperation_shouldReturnTrue() throws Exception {
 		String request = "/operations/{code}";
 		Operation deleteOperation = OperationHelper.setup();
 		OperationDTO body = operationMapper.map2DTO(deleteOperation);
@@ -207,14 +193,11 @@ class OperationControllerTest {
 			.thenReturn(OperationHelper.setup());
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(isDeleted)));
 	}
 }

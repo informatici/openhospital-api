@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,14 +21,15 @@
  */
 package org.isf.agetype.rest;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -42,25 +43,22 @@ import org.isf.agetype.model.AgeType;
 import org.isf.shared.exceptions.OHResponseEntityExceptionHandler;
 import org.isf.shared.mapper.converter.BlobToByteArrayConverter;
 import org.isf.shared.mapper.converter.ByteArrayToBlobConverter;
+import org.isf.utils.exception.OHServiceException;
+import org.isf.utils.exception.model.OHExceptionMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class AgeTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(AgeTypeControllerTest.class);
 
 	@Mock
 	private AgeTypeBrowserManager ageTypeManagerMock;
@@ -92,7 +90,7 @@ class AgeTypeControllerTest {
 	}
 
 	@Test
-	void testGetAllAgeTypes_200() throws Exception {
+	void getAllAgeTypes_shouldReturnAllAgeTypes() throws Exception {
 		String request = "/agetypes";
 
 		List<AgeType> results = AgeTypeHelper.genArrayList(5);
@@ -101,19 +99,15 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getAgeType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(AgeTypeHelper.getObjectMapper().writeValueAsString(parsedResults)));
 	}
 
 	@Test
-	void testUpdateAgeType_200() throws Exception {
+	void updateAgeType_shouldReturnUpdatedAgeTypes() throws Exception {
 		String request = "/agetypes";
 		List<AgeType> ageTypes = AgeTypeHelper.genList(5);
 		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
@@ -122,21 +116,113 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(anyInt())).thenReturn(ageTypes.get(0));
 		when(ageTypeManagerMock.updateAgeType(ageTypes)).thenReturn(ageTypes);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(body))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(objectMapper.writeValueAsString(body)));
 	}
 
 	@Test
-	void testGetAgeTypeCodeByAge_200() throws Exception {
+	void updateAgeType_shouldReturnBadRequest_whenCodeIsNull() throws Exception {
+		String request = "/agetypes";
+		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
+		body.get(0).setCode(null);
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("The age type with code null is not valid."));
+	}
+
+	@Test
+	void updateAgeType_shouldReturnBadRequest_whenCodeIsBlank() throws Exception {
+		String request = "/agetypes";
+		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
+		String code = "   ";
+		body.get(0).setCode(code);
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("The age type with code " + code + " is not valid."));
+	}
+
+	@Test
+	void updateAgeType_shouldReturnBadRequest_whenCodeDoesNotExist() throws Exception {
+		String request = "/agetypes";
+		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
+
+		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(null);
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.message").value("The age type with code " + body.get(0).getCode() + " is not valid."));
+	}
+
+	@Test
+	void updateAgeType_shouldReturnInternalServerError_whenGetTypeByCodeFails() throws Exception {
+		String request = "/agetypes";
+		List<AgeType> ageTypes = AgeTypeHelper.genList(1);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
+
+		when(ageTypeManagerMock.getTypeByCode(anyString())).thenThrow(new OHServiceException(new OHExceptionMessage("Unable to get age type")));
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Unable to get age type"));
+	}
+
+	@Test
+	void updateAgeType_shouldReturnInternalServerError_whenUpdateFails() throws Exception {
+		String request = "/agetypes";
+		List<AgeType> ageTypes = AgeTypeHelper.genList(3);
+		List<AgeTypeDTO> body = ageTypeMapper.map2DTOList(ageTypes);
+
+		when(ageTypeManagerMock.getTypeByCode(anyString())).thenReturn(ageTypes.get(0));
+		when(ageTypeManagerMock.updateAgeType(anyList())).thenThrow(new OHServiceException(new OHExceptionMessage("Update failed")));
+
+		this.mockMvc
+			.perform(put(request)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(objectMapper.writeValueAsString(body)))
+			)
+			.andDo(log())
+			.andExpect(status().isInternalServerError())
+			.andExpect(jsonPath("$.message").value("Unable to update age types. Please check that you've correctly set values"));
+	}
+
+	@Test
+	void getAgeTypeCodeByAge_shouldReturnMatchingCode() throws Exception {
 
 		String request = "/agetypes/code?age={age}";
 		int age = 10;
@@ -145,20 +231,31 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByAge(age))
 			.thenReturn(responseString);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, age))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(responseString)))
-			.andExpect(content().string(containsString("code")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$.code").value(responseString));
 	}
 
 	@Test
-	void testGetAgeTypeByIndex_200() throws Exception {
+	void getAgeTypeCodeByAge_shouldReturnEmptyObject_whenNoAgeTypeMatches() throws Exception {
+
+		String request = "/agetypes/code?age={age}";
+		int age = 200;
+
+		when(ageTypeManagerMock.getTypeByAge(age))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, age))
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string("{}"));
+	}
+
+	@Test
+	void getAgeTypeByIndex_shouldReturnAgeType() throws Exception {
 		String request = "/agetypes/{index}";
 		int index = 10;
 		AgeType ageType = AgeTypeHelper.setup(index);
@@ -167,15 +264,26 @@ class AgeTypeControllerTest {
 		when(ageTypeManagerMock.getTypeByCode(index))
 			.thenReturn(ageType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request, index))
 			.andDo(log())
-			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO))))
-			.andReturn();
+			.andExpect(content().string(AgeTypeHelper.getObjectMapper().writeValueAsString(ageTypeDTO)));
+	}
 
-		LOGGER.debug("result: {}", result);
+	@Test
+	void getAgeTypeByIndex_shouldReturnNotFound_whenIndexDoesNotExist() throws Exception {
+		String request = "/agetypes/{index}";
+		int index = 25;
+
+		when(ageTypeManagerMock.getTypeByCode(index))
+			.thenReturn(null);
+
+		this.mockMvc
+			.perform(get(request, index).accept(MediaType.APPLICATION_JSON))
+			.andDo(log())
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.message").value("Age type not found with index :" + index));
 	}
 
 }

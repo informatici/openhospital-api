@@ -21,6 +21,7 @@
  */
 package org.isf.accounting.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
@@ -68,11 +69,11 @@ public class BillDTO {
 
 	@NotNull
 	@Schema(description = "Bill Amount", example = "1000")
-	private Double amount;
+	private BigDecimal amount;
 
 	@NotNull
 	@Schema(description = "Bill balance", example = "1500")
-	private Double balance;
+	private BigDecimal balance;
 
 	@NotNull
 	@Schema(description = "user name who create the bill", example = "admin")
@@ -121,11 +122,11 @@ public class BillDTO {
 		return this.status;
 	}
 
-	public Double getAmount() {
+	public BigDecimal getAmount() {
 		return this.amount;
 	}
 
-	public Double getBalance() {
+	public BigDecimal getBalance() {
 		return this.balance;
 	}
 
@@ -173,11 +174,11 @@ public class BillDTO {
 		this.status = status;
 	}
 
-	public void setAmount(Double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
-	public void setBalance(Double balance) {
+	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
 	}
 

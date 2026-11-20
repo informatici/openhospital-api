@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -21,10 +21,13 @@
  */
 package org.isf.examination.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -43,8 +46,8 @@ import org.isf.examination.model.PatientExamination;
 import org.isf.patient.data.PatientHelper;
 import org.isf.patient.manager.PatientBrowserManager;
 import org.isf.patient.model.Patient;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,8 +82,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient examination using ID")
-	void testGetPatientExaminationById() throws Exception {
+	void getByID_shouldReturnExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
@@ -97,8 +99,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should fail to get patient examination with wrong ID")
-	void testGetPatientExaminationWithWrongId() throws Exception {
+	void getByID_shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
 		when(manager.getByID(anyInt())).thenReturn(null);
 
 		mvc.perform(get("/examinations/{code}", "1")
@@ -110,8 +111,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient default examination")
-	void testGetDefaultPatientExamination() throws Exception {
+	void getDefaultPatientExamination_shouldReturnDefaultExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
@@ -130,8 +130,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should fail to get patient default examination with wrong patient ID")
-	void testGetDefaultPatientExaminationWithWrongPatientID() throws Exception {
+	void getDefaultPatientExamination_shouldReturnNotFound_whenPatientDoesNotExist() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 
@@ -148,8 +147,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get patient default examination")
-	void testGetFromLastPatientExamination() throws Exception {
+	void getFromLastPatientExamination_shouldReturnExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
@@ -168,8 +166,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get last examination by patient ID")
-	void testGetLastByPatientId() throws Exception {
+	void getLastByPatientId_shouldReturnLastExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
@@ -186,8 +183,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.read"})
-	@DisplayName("Should get examination by patient ID")
-	void testGetByPatientId() throws Exception {
+	void getByPatientId_shouldReturnPatientExaminations() throws Exception {
 		Patient patient = PatientHelper.setup();
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
 		PatientExaminationDTO patientExaminationDTO = mapper.map2DTO(patientExamination);
@@ -204,8 +200,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.create"})
-	@DisplayName("Should add patient examination")
-	void testNewExamination() throws Exception {
+	void newPatientExamination_shouldReturnCreatedExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -227,8 +222,7 @@ class ExaminationControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"examinations.update"})
-	@DisplayName("Should update patient examination")
-	void testUpdateExamination() throws Exception {
+	void updateExamination_shouldReturnUpdatedExamination() throws Exception {
 		Patient patient = PatientHelper.setup();
 		patient.setCode(2);
 		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
@@ -248,5 +242,63 @@ class ExaminationControllerTest {
 			.andDo(log())
 			.andExpect(status().isOk())
 			.andExpect(content().string(containsString(objectMapper.writeValueAsString(patientExaminationDTO))));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.update"})
+	void updateExamination_shouldKeepStoredSexAndAge() throws Exception {
+		Patient patient = PatientHelper.setup();
+		patient.setCode(2);
+		// the stored examination carries the OP-892 sex/age snapshot, which is not part of the DTO
+		PatientExamination stored = new TestPatientExamination().setup(patient, false);
+		stored.setPex_ID(1);
+		stored.setPex_sat(100.0);
+		stored.setSex("F");
+		stored.setAge(34);
+		PatientExaminationDTO dto = mapper.map2DTO(stored);
+		dto.setPatientCode(patient.getCode());
+
+		when(manager.getByID(anyInt())).thenReturn(stored);
+		when(patientBrowserManager.getPatientById(anyInt())).thenReturn(patient);
+		ArgumentCaptor<PatientExamination> saved = ArgumentCaptor.forClass(PatientExamination.class);
+		when(manager.saveOrUpdate(saved.capture())).thenAnswer(invocation -> invocation.getArgument(0));
+
+		mvc.perform(put("/examinations/{id}", "1")
+				.content(objectMapper.writeValueAsString(dto))
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk());
+
+		assertThat(saved.getValue().getSex()).isEqualTo("F");
+		assertThat(saved.getValue().getAge()).isEqualTo(34);
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	void deletePatientExamination_shouldRemoveExaminationAndReturnTrue() throws Exception {
+		Patient patient = PatientHelper.setup();
+		PatientExamination patientExamination = new TestPatientExamination().setup(patient, false);
+
+		when(manager.getByID(anyInt())).thenReturn(patientExamination);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isOk())
+			.andExpect(content().string(containsString("true")));
+
+		verify(manager).remove(List.of(patientExamination));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = {"examinations.delete"})
+	void deletePatientExamination_shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
+		when(manager.getByID(anyInt())).thenReturn(null);
+
+		mvc.perform(delete("/examinations/{id}", "1")
+				.contentType(MediaType.APPLICATION_JSON)
+			)
+			.andDo(log())
+			.andExpect(status().isNotFound());
 	}
 }

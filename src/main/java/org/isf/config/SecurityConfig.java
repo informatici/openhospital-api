@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -25,11 +25,13 @@ import java.util.Arrays;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.permissions.manager.PermissionManager;
 import org.isf.security.CustomLogoutHandler;
 import org.isf.security.OHSimpleUrlAuthenticationSuccessHandler;
 import org.isf.security.RestAuthenticationEntryPoint;
 import org.isf.security.jwt.JWTFilter;
+import org.isf.security.jwt.MustChangePasswordFilter;
 import org.isf.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,9 +64,12 @@ public class SecurityConfig {
 	@Autowired
 	protected PermissionManager permissionManager;
 
-	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager) {
+	private final UserBrowsingManager userManager;
+
+	public SecurityConfig(TokenProvider tokenProvider, PermissionManager permissionManager, UserBrowsingManager userManager) {
 		this.tokenProvider = tokenProvider;
 		this.permissionManager = permissionManager;
+		this.userManager = userManager;
 	}
 
 	@Autowired
@@ -102,7 +107,7 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable()) // Disable CSRF protection
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/healthcheck").permitAll()
-				.requestMatchers("/auth/login", "/auth/refresh-token").permitAll()
+				.requestMatchers("/auth/login", "/auth/refresh-token", "/auth/password-policy").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
 				// admissions
 				.requestMatchers(HttpMethod.POST, "/admissions/**").hasAuthority("admissions.create")
@@ -341,6 +346,8 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.addFilterBefore(new JWTFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
+		// OP-896: users flagged to change their password are restricted to the password change endpoints
+		http.addFilterAfter(new MustChangePasswordFilter(tokenProvider, userManager), JWTFilter.class);
 		return http.build();
 	}
 

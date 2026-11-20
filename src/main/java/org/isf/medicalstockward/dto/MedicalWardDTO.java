@@ -21,6 +21,8 @@
  */
 package org.isf.medicalstockward.dto;
 
+import java.math.BigDecimal;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class MedicalWardDTO {
@@ -29,10 +31,10 @@ public class MedicalWardDTO {
 	private MedicalWardIdDTO id;
 
 	@Schema(description = "The in-quantity", example = "150")
-	private float in_quantity;
+	private int in_quantity;
 
 	@Schema(description = "The out-quantity", example = "89")
-	private float out_quantity;
+	private BigDecimal out_quantity;
 
 	@Schema(description = "Lock", example = "0")
 	private int lock;
@@ -40,7 +42,7 @@ public class MedicalWardDTO {
 	public MedicalWardDTO() {
 	}
 
-	public MedicalWardDTO(MedicalWardIdDTO id, float in_quantity, float out_quantity) {
+	public MedicalWardDTO(MedicalWardIdDTO id, int in_quantity, BigDecimal out_quantity) {
 		this.id = id;
 		this.in_quantity = in_quantity;
 		this.out_quantity = out_quantity;
@@ -50,11 +52,11 @@ public class MedicalWardDTO {
 		return this.id;
 	}
 
-	public float getIn_quantity() {
+	public int getIn_quantity() {
 		return this.in_quantity;
 	}
 
-	public float getOut_quantity() {
+	public BigDecimal getOut_quantity() {
 		return this.out_quantity;
 	}
 
@@ -62,11 +64,11 @@ public class MedicalWardDTO {
 		this.id = id;
 	}
 
-	public void setIn_quantity(float in_quantity) {
+	public void setIn_quantity(int in_quantity) {
 		this.in_quantity = in_quantity;
 	}
 
-	public void setOut_quantity(float out_quantity) {
+	public void setOut_quantity(BigDecimal out_quantity) {
 		this.out_quantity = out_quantity;
 	}
 

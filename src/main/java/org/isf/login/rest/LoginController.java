@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -28,6 +28,7 @@ import jakarta.validation.Valid;
 
 import org.isf.login.dto.LoginRequest;
 import org.isf.login.dto.LoginResponse;
+import org.isf.login.dto.PasswordPolicyDTO;
 import org.isf.login.dto.TokenRefreshRequest;
 import org.isf.menu.manager.UserBrowsingManager;
 import org.isf.menu.model.User;
@@ -46,6 +47,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,17 +96,22 @@ public class LoginController {
 		Authentication authentication = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = tokenProvider.generateJwtToken(authentication, false); // use the shorter validity
-		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
 		String userDetails = (String) authentication.getPrincipal();
-		User user;
+		User user = null;
 		try {
 			user = userManager.getUserByName(loginRequest.getUsername());
 			UserSession.setUser(user);
 		} catch (OHServiceException e) {
 			e.printStackTrace();
 		}
+
+		// OP-896: tell the client whether the user must change the password and why (an administrator forced it or the password lease expired);
+		// the flag is also embedded in the token for the client's convenience, while MustChangePasswordFilter checks the database on every request
+		boolean passwordExpired = isPasswordExpired(user);
+		boolean mustChangePassword = mustChangePassword(user, passwordExpired);
+		String jwt = tokenProvider.generateJwtToken(authentication, false, mustChangePassword); // use the shorter validity
+		String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
 		try {
 			this.httpSession.setAttribute("sessionAuditId",
@@ -113,7 +120,7 @@ public class LoginController {
 			LOGGER.error("Unable to log user login in the session_audit table");
 		}
 
-		return new LoginResponse(jwt, refreshToken, userDetails);
+		return new LoginResponse(jwt, refreshToken, userDetails, mustChangePassword, passwordExpired, passwordLeaseDays());
 	}
 
 	@PostMapping("/auth/refresh-token")
@@ -124,15 +131,58 @@ public class LoginController {
 			if (tokenProvider.validateToken(refreshToken) == TokenValidationResult.VALID) {
 				String username = tokenProvider.getUsernameFromToken(refreshToken);
 				Authentication authentication = tokenProvider.getAuthenticationByUsername(username);
-				String newAccessToken = tokenProvider.generateJwtToken(authentication, false);
+
+				// OP-896: recompute the flag so that a refreshed token cannot silently drop the must-change-password restriction;
+				// fails closed when the check is not possible (without a reason, so the client falls back to a generic
+				// message), and self-heals on the next refresh
+				boolean mustChangePassword = true;
+				boolean passwordExpired = false;
+				Integer passwordLeaseDays = null;
+				try {
+					User user = userManager.getUserByName(username);
+					passwordExpired = isPasswordExpired(user);
+					mustChangePassword = mustChangePassword(user, passwordExpired);
+					passwordLeaseDays = passwordLeaseDays();
+				} catch (OHServiceException e) {
+					LOGGER.error("Unable to check the must-change-password flag for user {}, keeping the restriction in place", username, e);
+				}
+
+				String newAccessToken = tokenProvider.generateJwtToken(authentication, false, mustChangePassword);
 				String newRefreshToken = tokenProvider.generateRefreshToken(authentication);
 
-				return new LoginResponse(newAccessToken, newRefreshToken, username);
+				return new LoginResponse(newAccessToken, newRefreshToken, username, mustChangePassword, passwordExpired, passwordLeaseDays);
 			} else {
 				throw new OHAPIException(new OHExceptionMessage("Invalid Refresh Token"));
 			}
 		} catch (JwtException e) {
 			throw new OHAPIException(new OHExceptionMessage("Refresh token expired or invalid"));
 		}
+	}
+
+	/**
+	 * Exposes the server-side password policy so that clients can validate passwords consistently with the backend,
+	 * instead of hardcoding their own rules. Public, because a client may need it before it has a valid session
+	 * (for example on a forced change-password screen reached with a stale token).
+	 */
+	@GetMapping("/auth/password-policy")
+	public PasswordPolicyDTO getPasswordPolicy() {
+		return new PasswordPolicyDTO(userManager.isStrongPasswordEnabled(), userManager.getPasswordMinLength(),
+			userManager.getPasswordStrengthRegex());
+	}
+
+	private boolean mustChangePassword(User user, boolean passwordExpired) {
+		return user != null && (user.isPasswdMustChange() || passwordExpired);
+	}
+
+	private boolean isPasswordExpired(User user) {
+		return user != null && userManager.isPasswordExpired(user);
+	}
+
+	/**
+	 * The configured password lease in days, or {@code null} when the lease policy is disabled.
+	 */
+	private Integer passwordLeaseDays() {
+		int passwordLeaseDays = userManager.getPasswordLeaseDays();
+		return passwordLeaseDays > 0 ? passwordLeaseDays : null;
 	}
 }

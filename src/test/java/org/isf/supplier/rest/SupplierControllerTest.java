@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -41,11 +41,7 @@ import org.isf.OpenHospitalApiApplication;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.mapper.SupplierMapper;
 import org.isf.supplier.model.Supplier;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -63,7 +59,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest(classes = OpenHospitalApiApplication.class)
 @AutoConfigureMockMvc
 class SupplierControllerTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SupplierControllerTest.class);
 
 	@Autowired
 	private MockMvc mvc;
@@ -79,106 +74,86 @@ class SupplierControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.create"})
-	@DisplayName("Successfully create a supplier")
-	void testCreateSupplier() throws Exception {
+	void saveSupplier_shouldReturnCreatedSupplier() throws Exception {
 		var supplier = generateSuppliers().stream().findFirst().orElse(null);
 		var supplierDTO = supplierMapper.map2DTO(supplier);
 
 		when(supplierBrowserManager.saveOrUpdate(any())).thenReturn(supplier);
 
-		var result = mvc.perform(post("/suppliers")
+		mvc.perform(post("/suppliers")
 				.content(objectMapper.writeValueAsString(supplierDTO))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isCreated())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.update"})
-	@DisplayName("Successfully update a supplier")
-	@Disabled("Is throwing 404 and nothing indicates why")
-	void testUpdateSupplier() throws Exception {
+	void updateSupplier_shouldReturnUpdatedSupplier() throws Exception {
 		var supplier = generateSuppliers().get(0);
 		var supplierDTO = supplierMapper.map2DTO(supplier);
 
+		when(supplierBrowserManager.getByID(anyInt())).thenReturn(supplier);
 		when(supplierBrowserManager.saveOrUpdate(any())).thenReturn(supplier);
 
-		var result = mvc.perform(put("/suppliers")
+		mvc.perform(put("/suppliers")
 				.content(objectMapper.writeValueAsString(supplierDTO))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(supplierDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.read"})
-	@DisplayName("Get all suppliers, deleted ones included")
-	void testGetAllSuppliers() throws Exception {
+	void getSuppliers_shouldReturnAllSuppliers_whenExcludeDeletedIsFalse() throws Exception {
 		var suppliers = generateSuppliers();
 		var suppliersDTO = supplierMapper.map2DTOList(suppliers);
 
 		when(supplierBrowserManager.getAll()).thenReturn(suppliers);
 
-		var result = mvc.perform(get("/suppliers")
+		mvc.perform(get("/suppliers")
 				.queryParam("exclude_deleted", String.valueOf(false))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.read"})
-	@DisplayName("Get all suppliers, deleted ones excluded")
-	void testGetNonDeletedSuppliers() throws Exception {
+	void getSuppliers_shouldReturnNonDeletedSuppliers_whenExcludeDeletedIsOmitted() throws Exception {
 		var suppliers = generateSuppliers().stream().filter(sup -> !sup.getSupDeleted().equals('Y')).toList();
 		var suppliersDTO = supplierMapper.map2DTOList(suppliers);
 
 		when(supplierBrowserManager.getList()).thenReturn(suppliers);
 
-		var result = mvc.perform(get("/suppliers")
+		mvc.perform(get("/suppliers")
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(objectMapper.writeValueAsString(suppliersDTO))));
 	}
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.delete"})
-	@DisplayName("Successfully delete a supplier")
-	void testDeleteSupplier() throws Exception {
+	void deleteSupplier_shouldReturnNoContent() throws Exception {
 		var supplier = generateSuppliers().stream().findFirst().orElse(null);
 		var supplierDTO = supplierMapper.map2DTO(supplier);
 
 		when(supplierBrowserManager.getByID(anyInt())).thenReturn(supplier);
 
-		var result = mvc.perform(delete("/suppliers/{id}", 1)
+		mvc.perform(delete("/suppliers/{id}", 1)
 				.content(objectMapper.writeValueAsString(supplierDTO))
 				.contentType(MediaType.APPLICATION_JSON)
 			)
 			.andDo(log())
-			.andExpect(status().isNoContent())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isNoContent());
 	}
 
 	private List<Supplier> generateSuppliers() {
