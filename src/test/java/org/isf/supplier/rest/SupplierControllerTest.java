@@ -41,7 +41,6 @@ import org.isf.OpenHospitalApiApplication;
 import org.isf.supplier.manager.SupplierBrowserManager;
 import org.isf.supplier.mapper.SupplierMapper;
 import org.isf.supplier.model.Supplier;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -92,11 +91,11 @@ class SupplierControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = {"suppliers.update"})
-	@Disabled("Is throwing 404 and nothing indicates why")
 	void updateSupplier_shouldReturnUpdatedSupplier() throws Exception {
 		var supplier = generateSuppliers().get(0);
 		var supplierDTO = supplierMapper.map2DTO(supplier);
 
+		when(supplierBrowserManager.getByID(anyInt())).thenReturn(supplier);
 		when(supplierBrowserManager.saveOrUpdate(any())).thenReturn(supplier);
 
 		mvc.perform(put("/suppliers")
