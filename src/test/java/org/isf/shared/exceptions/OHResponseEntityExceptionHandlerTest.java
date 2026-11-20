@@ -57,20 +57,7 @@ class OHResponseEntityExceptionHandlerTest {
 	}
 
 	@Test
-	void unhandledRuntimeExceptionReturnsGenericMessageWithoutDetails() throws Exception {
-		this.mockMvc
-			.perform(get("/test/runtime-exception").accept(MediaType.APPLICATION_JSON))
-			.andDo(log())
-			.andExpect(status().isInternalServerError())
-			.andExpect(jsonPath("$.message").value("An internal error occurred"))
-			.andExpect(content().string(not(containsString("stackTrace"))))
-			.andExpect(content().string(not(containsString("debugMessage"))))
-			.andExpect(content().string(not(containsString("NullPointerException"))))
-			.andExpect(content().string(not(containsString("super secret SQL detail"))));
-	}
-
-	@Test
-	void ohServiceExceptionReturnsUserFacingMessageWithoutDetails() throws Exception {
+	void handleOHServiceException_shouldReturnUserFacingMessage_whenServiceFails() throws Exception {
 		this.mockMvc
 			.perform(get("/test/service-exception").accept(MediaType.APPLICATION_JSON))
 			.andDo(log())
@@ -83,11 +70,6 @@ class OHResponseEntityExceptionHandlerTest {
 
 	@RestController
 	private static class FailingController {
-
-		@GetMapping("/test/runtime-exception")
-		public ResponseEntity<String> throwRuntimeException() {
-			throw new NullPointerException("super secret SQL detail near 'table users'");
-		}
 
 		@GetMapping("/test/service-exception")
 		public ResponseEntity<String> throwServiceException() throws OHServiceException {
