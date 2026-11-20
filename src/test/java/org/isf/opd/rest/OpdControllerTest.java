@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -48,17 +48,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class OpdControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(OpdControllerTest.class);
 
 	@Mock
 	protected OpdBrowserManager opdBrowserManagerMock;
@@ -100,7 +95,7 @@ class OpdControllerTest {
 	}
 
 	@Test
-	void testNewOpd_201() throws Exception {
+	void newOpd_shouldReturnCreated() throws Exception {
 		String request = "/opds";
 		Patient patient = PatientHelper.setup();
 		Integer patientCode = 1;
@@ -115,16 +110,13 @@ class OpdControllerTest {
 
 		when(opdBrowserManagerMock.newOpd(opdMapper.map2Model(body))).thenReturn(opd);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(OpdHelper.asJsonString(body))))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 }
