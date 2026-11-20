@@ -547,6 +547,24 @@ class UserControllerTest {
 
 		@Test
 		@WithMockUser(username = "doctor")
+		void updateProfile_shouldReturnBadRequest_whenPasswordIsSameAsCurrent() throws Exception {
+			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "SamePass1@", "Simple user");
+
+			when(userManager.getUserByName(any())).thenReturn(user);
+			when(userManager.isPasswordValid(any())).thenReturn(true);
+			when(userManager.isSameAsCurrentPassword(any(), any())).thenReturn(true);
+
+			mvc.perform(
+					put("/users/me").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(userMapper.map2DTO(user))))
+				.andDo(log())
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("The new password must be different from the current one.")));
+
+			verify(userManager, never()).updatePassword(any());
+		}
+
+		@Test
+		@WithMockUser(username = "doctor")
 		void updateProfile_shouldUpdateFieldsButNotPassword_whenPasswordIsEmpty() throws Exception {
 			var user = new User("doctor", new UserGroup("doctor", "Doctor group"), "", "Simple user");
 
