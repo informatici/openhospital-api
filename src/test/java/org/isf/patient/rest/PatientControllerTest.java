@@ -146,7 +146,7 @@ class PatientControllerTest {
 	 * @throws Exception When error occurs
 	 */
 	@Test
-	void when_post_patients_is_call_without_contentType_header_then_HttpMediaTypeNotSupportedException() throws Exception {
+	void newPatient_shouldReturnUnsupportedMediaType_whenContentTypeIsMissing() throws Exception {
 		String request = "/patients";
 
 		MvcResult result = this.mockMvc
@@ -170,7 +170,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_post_patients_is_call_with_empty_body_then_BadRequest_HttpMessageNotReadableException() throws Exception {
+	void newPatient_shouldReturnBadRequest_whenBodyIsEmpty() throws Exception {
 		String request = "/patients";
 		String empty_body = "";
 
@@ -198,7 +198,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_post_patients_PatientBrowserManager_getPatient_returns_null_then_OHAPIException_BadRequest() throws Exception {
+	void newPatient_shouldReturnBadRequest_whenManagerReturnsNull() throws Exception {
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
 
@@ -228,7 +228,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_post_patients_PatientBrowserManager_newPatient_returns_false_then_Created() throws Exception {
+	void newPatient_shouldReturnCreatedPatient_whenManagerReturnsPatientMappedFromPayload() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -258,7 +258,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_post_patients_and_both_calls_to_PatientBrowserManager_success_then_Created() throws Exception {
+	void newPatient_shouldReturnCreatedPatient() throws Exception {
 		Integer code = 12345;
 		String request = "/patients";
 		PatientDTO newPatientDTO = PatientHelper.setup(patientMapper);
@@ -285,7 +285,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_put_update_patient_with_valid_body_and_existent_code_then_BadRequest() throws Exception {
+	void updatePatient_shouldReturnBadRequest_whenManagerReturnsNull() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 12345;
@@ -325,7 +325,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_put_update_patient_with_invalid_body_and_existent_code_then_HttpMessageNotReadableException_BadRequest() throws Exception {
+	void updatePatient_shouldReturnBadRequest_whenBodyIsNotReadable() throws Exception {
 		Integer code = 12345;
 		String request = "/patients/{code}";
 
@@ -351,7 +351,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_put_update_patient_with_valid_body_and_unexistent_code_then_OHAPIException_BadRequest() throws Exception {
+	void updatePatient_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/patients/{code}";
 
 		Integer code = 123;
@@ -381,7 +381,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_non_parameters_then_return_list_of_PatientDTO_page_0_default_size_and_OK() throws Exception {
+	void getPatients_shouldReturnPatients_whenPageAndSizeAreOmitted() throws Exception {
 		String request = "/patients";
 
 		int expectedPageSize = Integer.parseInt(PatientController.DEFAULT_PAGE_SIZE);
@@ -403,8 +403,7 @@ class PatientControllerTest {
 				.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList.getData()))))
-			.andReturn();
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTOList.getData()))));
 
 	}
 
@@ -414,7 +413,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_with_existent_code_and_not_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void getPatient_shouldReturnPatientWithStatusO_whenPatientIsNotAdmitted() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -434,8 +433,7 @@ class PatientControllerTest {
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-			.andReturn();
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))));
 
 	}
 
@@ -445,7 +443,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_with_existent_code_and_admitted_then_response_PatientDTO_and_OK() throws Exception {
+	void getPatient_shouldReturnPatientWithStatusI_whenPatientIsAdmitted() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -467,8 +465,7 @@ class PatientControllerTest {
 					.contentType(MediaType.APPLICATION_JSON))
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))))
-			.andReturn();
+			.andExpect(content().string(containsString(PatientHelper.asJsonString(expectedPatientDTO))));
 
 	}
 
@@ -479,7 +476,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_search_without_name_and_unexistent_code_then_response_null_and_NO_Content() throws Exception {
+	void searchPatient_shouldReturnOk_whenOnlyUnsupportedCodeParameterIsGiven() throws Exception {
 		Integer code = 1000;
 		String request = "/patients/search";
 
@@ -501,7 +498,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_search_without_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void searchPatient_shouldReturnOk_whenNoParameterIsGiven() throws Exception {
 		String request = "/patients/search";
 
 		this.mockMvc
@@ -519,7 +516,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_search_with_unexistent_name_and_without_code_then_response_null_and_NO_Content() throws Exception {
+	void searchPatient_shouldReturnOk_whenOnlyUnsupportedNameParameterIsGiven() throws Exception {
 		String name = null;
 		String request = "/patients/search";
 
@@ -540,7 +537,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_delete_patients_with_existent_code_then_response_true_and_OK() throws Exception {
+	void deletePatient_shouldReturnTrue_whenCodeExists() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -563,7 +560,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_delete_patients_with_unexistent_code_then_response_Not_Found() throws Exception {
+	void deletePatient_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		Integer code = 111;
 		String request = "/patients/{code}";
 
@@ -583,7 +580,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_delete_patients_with_existent_code_but_fail_deletion_then_OHAPIException_BadRequest() throws Exception {
+	void deletePatient_shouldReturnBadRequest_whenManagerThrows() throws Exception {
 		Integer code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -617,7 +614,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-    void when_get_patients_with_the_list_of_existing_code_then_return_list_of_PatientDTO() throws Exception {
+    void getPatientByCodes_shouldReturnPatients() throws Exception {
         String request = "/patients/by-codes";
         List<Patient> patientList = PatientHelper.setupPatientList(5);
         
@@ -646,7 +643,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patient_with_open_administrative_issues_then_the_PatientDTO_carries_them() throws Exception {
+	void getPatient_shouldReturnPatientWithOpenAdministrativeIssues() throws Exception {
 		int code = 123;
 		String request = "/patients/{code}";
 		Patient patient = PatientHelper.setup();
@@ -677,7 +674,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_post_patients_by_codes_then_the_open_issues_are_read_once_and_grouped_by_patient() throws Exception {
+	void getPatientByCodes_shouldReadOpenIssuesOnceAndGroupThemByPatient() throws Exception {
 		String request = "/patients/by-codes";
 		Patient twiceFlagged = PatientHelper.setup();
 		twiceFlagged.setCode(1);
@@ -719,7 +716,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_get_patients_returns_an_empty_page_then_no_open_issue_is_read() throws Exception {
+	void getPatients_shouldNotReadOpenIssues_whenPageIsEmpty() throws Exception {
 		String request = "/patients";
 		PagedResponse<Patient> emptyPage = new PagedResponse<>();
 		emptyPage.setData(List.of());
@@ -742,7 +739,7 @@ class PatientControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	void when_put_patient_with_client_supplied_administrative_issues_then_they_are_ignored() throws Exception {
+	void updatePatient_shouldIgnoreAdministrativeIssues_whenSentInPayload() throws Exception {
 		String request = "/patients/{code}";
 		Integer code = 12345;
 		PatientDTO updatePatientDTO = PatientHelper.setup(patientMapper);
