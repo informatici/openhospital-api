@@ -88,7 +88,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testGetAllDiseaseTypes_200() throws Exception {
+	void getAllDiseaseTypes_shouldReturnAllDiseaseTypes() throws Exception {
 		String request = "/diseasetypes";
 
 		List<DiseaseType> results = DiseaseTypeHelper.setupDiseaseTypeList(3);
@@ -106,7 +106,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testNewDiseaseType_201() throws Exception {
+	void newDiseaseType_shouldReturnCreatedDiseaseType() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -129,7 +129,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void newDiseaseType_400() throws Exception {
+	void newDiseaseType_shouldReturnBadRequest_whenCodeAlreadyExists() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -150,7 +150,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void newDiseaseType_500() throws Exception {
+	void newDiseaseType_shouldReturnInternalServerError_whenCreationFails() throws Exception {
 		String request = "/diseasetypes";
 		int code = 123;
 		DiseaseType diseaseType = DiseaseTypeHelper.setup(code);
@@ -174,7 +174,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testUpdateDiseaseType_200() throws Exception {
+	void updateDiseaseType_shouldReturnUpdatedDiseaseType() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -198,7 +198,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void updateDiseaseType_404() throws Exception {
+	void updateDiseaseType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -220,7 +220,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void updateDiseaseType_500() throws Exception {
+	void updateDiseaseType_shouldReturnInternalServerError_whenUpdateFails() throws Exception {
 		String request = "/diseasetypes";
 		int code = 456;
 
@@ -245,7 +245,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void testDeleteDiseaseType_200() throws Exception {
+	void deleteDiseaseType_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
@@ -263,7 +263,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void deleteDiseaseType_404() throws Exception {
+	void deleteDiseaseType_shouldReturnNotFound_whenCodeDoesNotExist() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		when(diseaseTypeBrowserManager.getDiseaseType(anyString()))
@@ -277,7 +277,7 @@ class DiseaseTypeControllerTest {
 	}
 
 	@Test
-	void deleteDiseaseType_200_NotDeleted() throws Exception {
+	void deleteDiseaseType_shouldReturnFalse_whenDeletionFails() throws Exception {
 		String request = "/diseasetypes/{code}";
 
 		DiseaseTypeDTO body = diseaseTypeMapper.map2DTO(DiseaseTypeHelper.setup(0));
