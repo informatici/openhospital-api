@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -49,17 +49,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class DeliveryTypeControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(DeliveryTypeControllerTest.class);
 
 	@Mock
 	protected DeliveryTypeBrowserManager deliveryTypeBrowserManagerMock;
@@ -89,7 +84,7 @@ class DeliveryTypeControllerTest {
 	}
 
 	@Test
-	void testNewDeliveryType_201() throws Exception {
+	void newDeliveryType_shouldReturnCreated() throws Exception {
 		String request = "/deliverytypes";
 		int code = 123;
 		DeliveryType deliveryType = DeliveryTypeHelper.setup(code);
@@ -104,21 +99,18 @@ class DeliveryTypeControllerTest {
 		when(deliveryTypeBrowserManagerMock.newDeliveryType(deliveryTypeMapper.map2Model(body)))
 			.thenReturn(deliveryType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(post(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DeliveryTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isCreated())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isCreated());
 	}
 
 	@Test
-	void testUpdateDeliveryTypet_200() throws Exception {
+	void updateDeliveryTypes_shouldReturnOk_whenCodeExists() throws Exception {
 		String request = "/deliverytypes";
 		int code = 456;
 
@@ -131,21 +123,18 @@ class DeliveryTypeControllerTest {
 		when(deliveryTypeBrowserManagerMock.updateDeliveryType(deliveryTypeMapper.map2Model(body)))
 			.thenReturn(deliveryType);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(put(request, "ZZ" + code)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(Objects.requireNonNull(DeliveryTypeHelper.asJsonString(body)))
 			)
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
-			.andExpect(status().isOk())
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(status().isOk());
 	}
 
 	@Test
-	void testGetDeliveryTypes_200() throws Exception {
+	void getDeliveryTypes_shouldReturnAllTypes() throws Exception {
 		String request = "/deliverytypes";
 
 		List<DeliveryType> results = DeliveryTypeHelper.setupDeliveryTypeList(3);
@@ -155,19 +144,16 @@ class DeliveryTypeControllerTest {
 		when(deliveryTypeBrowserManagerMock.getDeliveryType())
 			.thenReturn(results);
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(DeliveryTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(DeliveryTypeHelper.getObjectMapper().writeValueAsString(dlvrrestTypeDTOs))));
 	}
 
 	@Test
-	void testDeleteDeliveryType_200() throws Exception {
+	void deleteDeliveryType_shouldReturnTrue_whenCodeExists() throws Exception {
 		String request = "/deliverytypes/{code}";
 
 		DeliveryTypeDTO body = deliveryTypeMapper.map2DTO(DeliveryTypeHelper.setup(0));
@@ -180,15 +166,12 @@ class DeliveryTypeControllerTest {
 			.thenReturn(DeliveryTypeHelper.setupDeliveryTypeList(1));
 
 		String isDeleted = "true";
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(delete(request, code))
 			.andDo(log())
 			.andExpect(status().is2xxSuccessful())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString(isDeleted)))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString(isDeleted)));
 	}
 
 }
