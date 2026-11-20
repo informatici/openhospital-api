@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -88,19 +88,11 @@ public class AgeTypeController {
 	@PutMapping(value = "/agetypes")
 	public List<AgeTypeDTO> updateAgeType(@Valid @RequestBody List<AgeTypeDTO> ageTypeDTOs) throws OHServiceException {
 
-		ageTypeDTOs.forEach(ageTypeDTO -> {
-			try {
-				if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty() || ageTypeManager.getTypeByCode(ageTypeDTO.getCode()) == null) {
-					try {
-						throw new OHAPIException(new OHExceptionMessage("The age type with code "+ageTypeDTO.getCode()+" is not valid."));
-					} catch (OHAPIException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			} catch (OHServiceException e) {
-				throw new RuntimeException(e);
+		for (AgeTypeDTO ageTypeDTO : ageTypeDTOs) {
+			if (ageTypeDTO.getCode() == null || ageTypeDTO.getCode().trim().isEmpty() || ageTypeManager.getTypeByCode(ageTypeDTO.getCode()) == null) {
+				throw new OHAPIException(new OHExceptionMessage("The age type with code " + ageTypeDTO.getCode() + " is not valid."));
 			}
-		});
+		}
 
 		LOGGER.info("Updating age types");
 		List<AgeType> ageTypes = mapper.map2ModelList(ageTypeDTOs);
