@@ -45,7 +45,7 @@ class MovementDateContractTest {
 	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@Test
-	void aMovementDateCarriesItsTime() throws Exception {
+	void deserialize_shouldKeepTimeOfMovementDate() throws Exception {
 		MovementDTO movement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24T10:15:30\"}", MovementDTO.class);
 		MovementWardDTO wardMovement = objectMapper.readValue("{\"code\":1,\"date\":\"2020-06-24T10:15:30\"}", MovementWardDTO.class);
 
@@ -54,7 +54,7 @@ class MovementDateContractTest {
 	}
 
 	@Test
-	void aLotCarriesPlainDates() throws Exception {
+	void deserialize_shouldReadLotDatesAsPlainDates() throws Exception {
 		LotDTO lot = objectMapper.readValue(
 			"{\"code\":\"LOT1\",\"preparationDate\":\"2020-06-24\",\"dueDate\":\"2021-06-24\"}", LotDTO.class);
 
@@ -63,7 +63,7 @@ class MovementDateContractTest {
 	}
 
 	@Test
-	void aValueThatIsNeitherIsRejected() {
+	void deserialize_shouldThrow_whenDateIsInvalid() {
 		assertThatThrownBy(() -> objectMapper.readValue("{\"code\":1,\"date\":\"not a date\"}", MovementDTO.class))
 			.isInstanceOf(Exception.class);
 		assertThatThrownBy(() -> objectMapper.readValue("{\"code\":\"LOT1\",\"dueDate\":\"not a date\"}", LotDTO.class))
