@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -78,6 +78,10 @@ public class JWTFilter extends GenericFilterBean {
 
 			case EXPIRED:
 				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_UNAUTHORIZED, "JWT token is expired.");
+				return;
+
+			case REVOKED:
+				sendErrorResponse(httpServletResponse, HttpServletResponse.SC_UNAUTHORIZED, "JWT token has been revoked.");
 				return;
 
 			case MALFORMED:
