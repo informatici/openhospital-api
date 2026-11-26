@@ -21,6 +21,7 @@
  */
 package org.isf.accounting.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
@@ -43,7 +44,7 @@ public class BillPaymentsDTO {
 
 	@NotNull
 	@Schema(description = "The payment amount", example = "500")
-	private double amount;
+	private BigDecimal amount;
 
 	@NotNull
 	@Schema(description = "The current user", example = "admin")
@@ -63,7 +64,7 @@ public class BillPaymentsDTO {
 		return this.date;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return this.amount;
 	}
 
@@ -88,7 +89,7 @@ public class BillPaymentsDTO {
 		this.date = date;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

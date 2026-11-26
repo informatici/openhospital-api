@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2023 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -24,7 +24,10 @@ package org.isf.medicalstock.mapper;
 import org.isf.medicalstock.dto.LotDTO;
 import org.isf.medicalstock.model.Lot;
 import org.isf.shared.GenericMapper;
+import org.isf.shared.mapper.mappings.LotMapping;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class LotMapper extends GenericMapper<Lot, LotDTO> {
@@ -32,5 +35,10 @@ public class LotMapper extends GenericMapper<Lot, LotDTO> {
 	public LotMapper() {
 		super(Lot.class, LotDTO.class);
 	}
-	
+
+	@PostConstruct
+	private void postConstruct() {
+		LotMapping.addMapping(modelMapper);
+	}
+
 }

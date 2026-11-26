@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -547,6 +547,11 @@ public class AdmissionController {
 		}
 
 		Admission updateAdmission = admissionMapper.map2Model(updateAdmissionDTO);
+
+		// OP-892: the sex/age snapshot is taken at insertion and is not part of the DTO, so carry it
+		// over from the stored admission or the mapped entity would overwrite it with null on update
+		updateAdmission.setSex(old.getSex());
+		updateAdmission.setAge(old.getAge());
 
 		if (updateAdmissionDTO.getWard() != null && updateAdmissionDTO.getWard().getCode() != null
 			&& !updateAdmissionDTO.getWard().getCode().trim().isEmpty()) {

@@ -24,9 +24,12 @@ package org.isf.admission.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
+
 import org.isf.admission.dto.AdmissionDTO;
 import org.isf.admission.model.Admission;
 import org.isf.shared.GenericMapper;
+import org.isf.shared.mapper.mappings.AdmissionMapping;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,6 +37,11 @@ public class AdmissionMapper extends GenericMapper<Admission, AdmissionDTO> {
 
 	public AdmissionMapper() {
 		super(Admission.class, AdmissionDTO.class);
+	}
+
+	@PostConstruct
+	private void postConstruct() {
+		AdmissionMapping.addMapping(modelMapper);
 	}
 
 	@Override
