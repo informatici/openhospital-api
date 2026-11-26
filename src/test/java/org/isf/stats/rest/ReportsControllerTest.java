@@ -1,6 +1,6 @@
 /*
  * Open Hospital (www.open-hospital.org)
- * Copyright © 2006-2025 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
+ * Copyright © 2006-2026 Informatici Senza Frontiere (info@informaticisenzafrontiere.org)
  *
  * Open Hospital is a free and open source software for healthcare data management.
  *
@@ -41,16 +41,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 class ReportsControllerTest {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(ReportsControllerTest.class);
 
 	@Mock
 	protected JasperReportsManager reportsManagerMock;
@@ -83,7 +78,7 @@ class ReportsControllerTest {
 		ReportLauncherDto report = new ReportLauncherDto("rpt_stat", "POI_ByAgeBySex", "Patients by age and sex", List.of("month", "year"));
 		when(reportsManagerMock.getReportsList()).thenReturn(List.of(report));
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().isOk())
@@ -91,10 +86,7 @@ class ReportsControllerTest {
 			.andExpect(jsonPath("$[0].fileName").value("POI_ByAgeBySex"))
 			.andExpect(jsonPath("$[0].title").value("Patients by age and sex"))
 			.andExpect(jsonPath("$[0].userInputParameters[0]").value("month"))
-			.andExpect(jsonPath("$[0].userInputParameters[1]").value("year"))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(jsonPath("$[0].userInputParameters[1]").value("year"));
 	}
 
 	@Test
@@ -103,13 +95,10 @@ class ReportsControllerTest {
 
 		when(reportsManagerMock.getReportsList()).thenReturn(List.of());
 
-		MvcResult result = this.mockMvc
+		this.mockMvc
 			.perform(get(request))
 			.andDo(log())
 			.andExpect(status().isOk())
-			.andExpect(content().string(containsString("[]")))
-			.andReturn();
-
-		LOGGER.debug("result: {}", result);
+			.andExpect(content().string(containsString("[]")));
 	}
 }
