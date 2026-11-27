@@ -25,6 +25,8 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -114,6 +116,7 @@ class LoginControllerTest {
 		String password = "testPassword";
 		String mockToken = "mockJwtToken";
 		String mockRefreshToken = "mockRefreshToken";
+		String tokenFamilyId = "mockTokenFamilyId";
 
 		// Create a mock User object
 		User user = new User();
@@ -127,8 +130,9 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(mockToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(tokenProvider.newTokenFamilyId()).thenReturn(tokenFamilyId);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId))).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any(), eq(tokenFamilyId))).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
 		// Expected LoginResponse object
@@ -142,6 +146,10 @@ class LoginControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
 			.andReturn();
+
+		// Verify both tokens were minted with the same fresh family id
+		verify(tokenProvider).generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId));
+		verify(tokenProvider).generateRefreshToken(any(), eq(tokenFamilyId));
 	}
 
 	@Test
@@ -178,8 +186,8 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true), any())).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any(), any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 		when(userManager.getPasswordLeaseDays()).thenReturn(90);
 
@@ -214,8 +222,8 @@ class LoginControllerTest {
 		LoginRequest loginRequest = new LoginRequest(username, password);
 
 		when(authenticationManager.authenticate(any())).thenReturn(authentication);
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(mockToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(mockRefreshToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true), any())).thenReturn(mockToken);
+		when(tokenProvider.generateRefreshToken(any(), any())).thenReturn(mockRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 		when(userManager.isPasswordExpired(user)).thenReturn(true);
 		when(userManager.getPasswordLeaseDays()).thenReturn(90);
@@ -240,6 +248,7 @@ class LoginControllerTest {
 		String newAccessToken = "newAccessToken";
 		String username = "testUser";
 		String newRefreshToken = "newValidRefreshToken";
+		String tokenFamilyId = "mockTokenFamilyId";
 
 		// Create a mock TokenRefreshRequest object
 		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
@@ -251,8 +260,9 @@ class LoginControllerTest {
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false))).thenReturn(newAccessToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(tokenProvider.getJtiFromToken(refreshToken)).thenReturn(tokenFamilyId);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any(), eq(tokenFamilyId))).thenReturn(newRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
 		// Expected LoginResponse object
@@ -267,6 +277,68 @@ class LoginControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
 			.andReturn();
+
+		// Verify the family id of the presented refresh token was propagated to the new pair
+		verify(tokenProvider, never()).newTokenFamilyId();
+		verify(tokenProvider).generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId));
+		verify(tokenProvider).generateRefreshToken(any(), eq(tokenFamilyId));
+	}
+
+	@Test
+	void testRefreshToken_LegacyTokenWithoutJti() throws Exception {
+		String refreshToken = "legacyRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String username = "testUser";
+		String newRefreshToken = "newValidRefreshToken";
+		String tokenFamilyId = "freshTokenFamilyId";
+
+		// Create a mock TokenRefreshRequest object
+		TokenRefreshRequest request = new TokenRefreshRequest(refreshToken);
+
+		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
+		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
+		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
+		when(tokenProvider.getJtiFromToken(refreshToken)).thenReturn(null); // token minted before revocation support carries no jti
+		when(tokenProvider.newTokenFamilyId()).thenReturn(tokenFamilyId);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId))).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any(), eq(tokenFamilyId))).thenReturn(newRefreshToken);
+
+		// Expected LoginResponse object
+		LoginResponse loginResponse = new LoginResponse(newAccessToken, newRefreshToken, username);
+		String expectedJson = UserHelper.asJsonString(loginResponse);
+
+		// Perform POST request to refresh-token endpoint
+		mvc.perform(post("/auth/refresh-token")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isOk())
+			.andExpect(content().string(Objects.requireNonNull(expectedJson)))
+			.andReturn();
+
+		// Verify the legacy token was adopted into a new, revocable family
+		verify(tokenProvider).newTokenFamilyId();
+		verify(tokenProvider).generateJwtToken(any(), eq(false), eq(false), eq(tokenFamilyId));
+		verify(tokenProvider).generateRefreshToken(any(), eq(tokenFamilyId));
+	}
+
+	@Test
+	void testRefreshToken_Revoked() throws Exception {
+		String revokedRefreshToken = "revokedRefreshToken";
+
+		TokenRefreshRequest request = new TokenRefreshRequest(revokedRefreshToken);
+
+		// Mock the TokenProvider to return REVOKED when validating the refresh token
+		when(tokenProvider.validateToken(revokedRefreshToken)).thenReturn(TokenValidationResult.REVOKED);
+
+		// Perform POST request to refresh-token endpoint
+		mvc.perform(
+				post("/auth/refresh-token")
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON)
+					.content(Objects.requireNonNull(UserHelper.asJsonString(request))))
+			.andExpect(status().isBadRequest())
+			.andExpect(content().string(containsString("Invalid Refresh Token")));
 	}
 
 	@Test
@@ -286,8 +358,8 @@ class LoginControllerTest {
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true), any())).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any(), any())).thenReturn(newRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 
 		// Expected LoginResponse with mustChangePassword = true
@@ -320,8 +392,8 @@ class LoginControllerTest {
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true), any())).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any(), any())).thenReturn(newRefreshToken);
 		when(userManager.getUserByName(username)).thenReturn(user);
 		when(userManager.isPasswordExpired(user)).thenReturn(true);
 		when(userManager.getPasswordLeaseDays()).thenReturn(90);
@@ -352,8 +424,8 @@ class LoginControllerTest {
 		when(tokenProvider.getUsernameFromToken(refreshToken)).thenReturn(username);
 		when(tokenProvider.validateToken(refreshToken)).thenReturn(TokenValidationResult.VALID);
 		when(tokenProvider.getAuthenticationByUsername(username)).thenReturn(mock(Authentication.class));
-		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true))).thenReturn(newAccessToken);
-		when(tokenProvider.generateRefreshToken(any())).thenReturn(newRefreshToken);
+		when(tokenProvider.generateJwtToken(any(), eq(false), eq(true), any())).thenReturn(newAccessToken);
+		when(tokenProvider.generateRefreshToken(any(), any())).thenReturn(newRefreshToken);
 		when(userManager.getUserByName(username)).thenThrow(new OHServiceException(new OHExceptionMessage("Database error")));
 		when(userManager.getPasswordLeaseDays()).thenReturn(90);
 
